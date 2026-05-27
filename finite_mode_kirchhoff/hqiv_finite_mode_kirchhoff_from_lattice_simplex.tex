@@ -1,0 +1,947 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,booktabs}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\usepackage[final]{microtype}
+\setlength{\emergencystretch}{3em}
+
+\newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
+% Lean module / identifier helpers: visible text is rendered with \nolinkurl
+% so that slashes, underscores, and dots become legal break points.
+\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\nolinkurl{#1}}}
+\newcommand{\leanid}[1]{\nolinkurl{#1}}
+
+\title[Finite-Mode Kirchhoff from HQIV]
+{Kirchhoff's Law of Thermal Emission with Built-In UV/IR Cutoffs
+from HQIV's Discrete Null Lattice}
+
+\author{Steven Ettinger Jr}
+\address{Independent Researcher}
+\email{steven@disregardfiat.tech}
+\date{Preprint v1 --- \today}
+
+\newtheorem{definition}{Definition}[section]
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{remark}[definition]{Remark}
+\newtheorem{corollary}[definition]{Corollary}
+
+\begin{document}
+\begin{abstract}
+\noindent\textbf{Position in the publication chain.}
+This is the third paper in the Tier-1 foundation-extension trilogy:
+the HQIV main paper \cite{ettinger2026hqiv} fixes the framework, the
+lightcone paper \cite{hqiv-lightcone-paper} introduces the discrete
+null-lattice readout, the closure paper \cite{hqiv-so8-paper}
+certifies the $G_2\cup\{\Delta\}\Rightarrow\mathfrak{so}(8)$ Lie
+closure, the 3D causal-growth paper \cite{hqiv-3d-growth-paper}
+isolates the dimensional hinge and the rational \((\alpha_d,\gamma_d)\)
+family, and the octonionic-action paper \cite{hqiv-oct-action-paper}
+packages the variational layer that we ride here for the
+$\alpha=3/5$ imprint and the patch-ontology reader contract. The
+Tier-0 records carry minted Zenodo DOIs; the Tier-1 records cited
+above are pre-DOI (papers in this trilogy are co-deposited as the
+Lean PR builds clear).
+
+\noindent\textbf{Result.}
+Kirchhoff's law of thermal emission is recovered from two HQIV
+axioms---a discrete null lattice with Planck cell size and
+informational monogamy ($\alpha=3/5$)---with a \emph{finite} mode
+count at every shell, given in closed form by the stars-and-bars
+identity
+\[
+  \mathcal{N}(m)=(m+2)(m+1),
+\qquad
+  \sum_{m=0}^{n}\mathcal{N}(m)=\tfrac{1}{3}(n+1)(n+2)(n+3).
+\]
+The resulting Planck spectrum is a \emph{finite sum} between an
+ultraviolet cutoff at $m=0$ (the Planck pole, $\omega_{\rm Pl}=T_{\rm Pl}$)
+and an arbitrary infrared cutoff at $m=M$ (the lock-in reference
+shell).  No ultraviolet catastrophe arises, no renormalisation is
+performed, and no external blackbody calibration is imposed: the
+mode budget is \emph{finite by construction}, not by regularisation.
+This is fully consistent with the patch-theory reader contract
+imported below \cite{hqiv-oct-action-paper}: the discrete patch
+layer is the ontology, and what the literature calls ``the
+continuum limit'' is admitted only as a calculation-approximation
+rewrite for cross-citation, never as a foundation.
+
+\noindent\textbf{Sourcing of the dimensionful inputs.}
+The proton mass at the lock-in shell $m=4$ uses the theory's
+internal constituent-plus-binding readout, with the observed
+value $M_{p}=938.272\,\mathrm{MeV}$ serving as the
+\emph{active scale witness} (the \hyperref[lean:proton-lockin]{proton lock-in scale-witness} convention; see
+\texttt{AGENTS/ASSUMPTIONS.md} \S7g of the HQIV-LEAN repository for
+the witness policy).
+The wall-clock age $t_{\rm wall}=51.2\,\mathrm{Gyr}$ is an
+\emph{output} of the HQIV-modified CLASS implementation---a
+discrete null-lattice background with the ADM lapse
+$N(t)=1+\Phi+\varphi t$ and $\varphi$-dependent evolution (the
+\hyperref[lean:wall-clock]{HQVM wall-clock compression})---not a
+free parameter.  The only externally measured dimensionful input
+used downstream of these is FIRAS $T_{\rm CMB}=2.7255\,\mathrm{K}$
+\cite{fixsen2009}.
+
+\noindent\textbf{One quantitative prediction under the chosen
+witness.}  With the proton lock-in scale-witness fixing the
+mass/unit chart, all other dimensionful quantities---CODATA
+$1/\alpha$, CMB horizons, cosmic birefringence---become
+\emph{predictions or comparison layers}.  We exhibit one such
+prediction here:
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Isotropic cosmic birefringence at present epoch.}
+The birefringence calculation uses the HQIV wall-clock age
+above together with the lattice mode count $\mathcal{N}(m)$
+under the propagation-shell identification (\S\ref{sec:beta}),
+giving $\beta_{\rm HQIV}=0.379^\circ$. This agrees with Planck
+PR4 EB ($\beta_{\rm obs}=0.342^\circ\pm 0.094^\circ$
+\cite{eskilt2022}) within $-0.40\sigma$. Substituting HQIV's
+apparent age $13.8\,\mathrm{Gyr}$ for the wall-clock age gives
+$0.103^\circ$ ($-2.55\sigma$): the prediction
+\emph{discriminates} HQIV's two internal time outputs.
+\end{itemize}
+
+\noindent\textbf{Status.}  The derivation chain is mechanised
+sorry-free against mathlib in the public slimmed Lean mirror
+\cite{hqiv-lean}; reader-friendly anchors with clickable Lean
+links live in Appendix~\ref{app:lean-index}. The Friedmann
+radiation-era scaling $H\propto T^{2}$ is also recovered, not
+imported: it follows from the quadratic asymptotic form of
+$\mathcal{N}(m)$ under the propagation-shell identification. All
+numerical results in this paper (the $\beta=0.379^\circ$
+prediction, the wall-clock-vs-apparent-age discriminator, and the
+finite-mode Kirchhoff energy density at FIRAS $T_{\rm CMB}$) are
+reproduced by the supplementary script bundle described in
+Appendix~\ref{app:scripts}, packaged as \texttt{scripts.zip} for
+co-deposit with the manuscript on Zenodo.
+\end{abstract}
+\maketitle
+
+\input{../include/patch_theory_messaging.tex}
+
+\section{Scope and claim discipline}\label{sec:scope}
+
+This paper presents a derivation of Kirchhoff's law of thermal
+emission inside HQIV.  We do \emph{not} reprove the classical
+quantum statistical mechanics; we replace its mode-density input
+with HQIV's finite stars-and-bars count and show that the
+resulting blackbody machinery (i) is finite at every step,
+(ii) admits explicit UV and IR cutoffs by construction, and
+(iii) supports one downstream quantitative prediction
+($\beta$ at present epoch) that survives the data, under HQIV's
+own scale-witness discipline.
+
+\begin{enumerate}[leftmargin=2em]
+\item \textbf{Two axioms.}  Discrete null lattice with Planck cell
+  size; informational monogamy fixing $\alpha=3/5$ via the
+  hockey-stick identity.  These two are the only HQIV
+  combinatorial inputs.  The closed Lie algebra spanned by
+  $G_2\cup\{\Delta\}\Rightarrow\mathfrak{so}(8)$ used downstream is
+  imported as a black-box certificate from the closure paper
+  \cite{hqiv-so8-paper}; the rational $(\alpha,\gamma)=(3/5,2/5)$
+  pair used here is forced by the same monogamy ledger that the
+  3D causal-growth paper \cite{hqiv-3d-growth-paper} derives
+  combinatorially.
+\item \textbf{Finite by construction.}  All spectral sums are
+  $\sum_{m\in[m_{\rm UV},m_{\rm IR}]}$ over finite shell intervals
+  in $\mathbb{N}$.  No limits, no analytic continuation, no
+  cutoff-removal procedure.  In particular, no programme of
+  taking a continuum mesh-refinement limit is invoked or
+  required: per the patch-theory reader contract above, several
+  load-bearing results would be erased rather than refined by
+  such a limit (the rational $\alpha$, the integer cycle index,
+  the discrete ladder that the predictive content runs on).
+\item \textbf{Single active scale witness.}  HQIV's standing
+  discipline (\texttt{AGENTS/ASSUMPTIONS.md} \S7g of the
+  HQIV-LEAN repository) admits exactly one dimensionful witness
+  per solve.  Throughout this paper we use the default
+  \hyperref[lean:proton-lockin]{proton lock-in scale-witness}:
+  the proton mass at the lock-in shell $m=4$ uses the theory's
+  internal constituent-plus-binding readout, with the observed
+  value $M_p=938.272\,\mathrm{MeV}$ serving as the active scale
+  witness that pins the mass/unit chart.  The shell index $m=4$
+  is the QCD-onset identification (not a free parameter), and
+  the constituent-plus-binding closure at that shell is a
+  non-trivial HQIV calculation, but the numerical scale of
+  $938.272\,\mathrm{MeV}$ is the \emph{anchor}, not an independent
+  two-axiom output.  See \S\ref{sec:proton} for the honest
+  accounting.
+\item \textbf{Wall-clock age from the HQIV-modified CLASS
+  implementation.}  The age $t_{\rm wall}=51.2\,\mathrm{Gyr}$
+  used in the $\beta$ prediction is an output of the
+  HQIV-modified CLASS implementation (a discrete null-lattice
+  background with the ADM lapse $N(t)=1+\Phi+\varphi t$ and
+  $\varphi$-dependent evolution; the
+  \hyperref[lean:wall-clock]{HQVM wall-clock compression}), not
+  a free parameter.  Appendix~\ref{app:lean-index} carries the
+  Lean snapshot pointer.
+\item \textbf{Predictions vs anchor.}  Under the proton
+  lock-in scale-witness, observables such as CODATA $1/\alpha$,
+  cosmic birefringence $\beta$, and CMB horizon scales are
+  \emph{predictions or comparison layers}, not simultaneous
+  anchors.  This paper exhibits $\beta$ as one such prediction.
+\item \textbf{$\beta$ is non-adjustable under the chosen
+  witness.}  Given the anchor, $\beta_{\rm HQIV}$ uses only the
+  HQIV stars-and-bars count, the HQIV wall-clock age from the
+  HQIV-modified CLASS implementation, and FIRAS $T_{\rm CMB}$
+  \cite{fixsen2009}.  No birefringence-side anchor and no
+  Friedmann equation enter the calculation.  The internal
+  discriminator wall-clock vs apparent age is a single-shot test.
+\end{enumerate}
+
+\section{Background: classical Kirchhoff and the normalisation
+problem}\label{sec:background}
+
+Kirchhoff's law of thermal emission \cite{kirchhoff1860} states
+that, at thermodynamic equilibrium, the spectral radiance emitted
+per mode equals the spectral radiance absorbed per mode---the
+universal blackbody spectrum.  Two ingredients enter:
+\begin{enumerate}[leftmargin=2em]
+\item Detailed balance per mode (microscopic reversibility);
+\item A mode-density per frequency interval $dN/d\nu$.
+\end{enumerate}
+In the standard derivation, (i) is statistical-mechanical and
+robust; (ii) is the problematic input.  Rayleigh--Jeans gives
+$dN/d\nu\propto\nu^{2}$ in a 3D cavity, unbounded above, and so
+the classical mean-energy multiplication $k_{\rm B}T\cdot dN/d\nu$
+diverges as $\nu\to\infty$---the ultraviolet catastrophe.
+Planck's quantum cure \cite{planck1901} provides
+$\langle E\rangle=h\nu/(e^{h\nu/k_{\rm B}T}-1)$, which
+exponentially suppresses high-$\nu$ contributions and yields a
+finite total energy.
+
+This works numerically.  But the cure is asymmetric:
+\emph{the high-frequency cutoff is contributed by occupation
+suppression, not by mode counting}.  In particular,
+nothing about the classical derivation prevents the existence of
+modes at arbitrarily high frequency; one simply trusts the Bose
+factor to render them harmless.  This is the source of the
+normalisation question --- if the mode count itself is unbounded,
+any quantum-gravity or trans-Planckian completion has to act on
+the mode list, not just on the occupation.
+
+HQIV makes the mode count finite at the start.
+
+\section{HQIV mode-count axiom}\label{sec:axiom}
+
+\begin{definition}[Discrete null-lattice mode count]\label{def:simplex}
+Let $\mathcal{N}(m)$ be the count of new Planck-scale lattice
+cells at temperature-ladder depth $m\in\mathbb{N}$.  HQIV's
+discrete null-lattice axiom gives
+\begin{equation}\label{eq:NM}
+  \mathcal{N}(m)=(m+2)(m+1).
+\end{equation}
+This is the integer-solution count for $x+y+z=m$, $x,y,z\ge 0$,
+twice the binomial $\binom{m+2}{2}$.
+\end{definition}
+
+\begin{proposition}[Hockey-stick cumulative count]\label{prop:cum}
+\begin{equation}\label{eq:cum}
+  \sum_{m'=0}^{n}\mathcal{N}(m')
+   =\tfrac{1}{3}(n+1)(n+2)(n+3).
+\end{equation}
+\end{proposition}
+\begin{proof}
+By induction on $n$, using \eqref{eq:NM}; the
+\hyperref[lean:hockey-stick]{hockey-stick cumulative-count
+identity} states the equivalent integer form
+$3\sum_{m'=0}^{n}\mathcal{N}(m')=(n+1)(n+2)(n+3)$.
+\end{proof}
+
+\begin{corollary}[Both cutoffs finite]\label{cor:finite}
+For any $0\le m_{\rm UV}\le m_{\rm IR}<\infty$,
+\[
+  \sum_{m\in[m_{\rm UV},m_{\rm IR}]}\mathcal{N}(m)<\infty.
+\]
+\end{corollary}
+
+This is the structural fact that lets the entire spectral
+machinery be a finite sum, regardless of the temperature and
+without any regularisation procedure.
+
+\section{HQIV temperature and frequency ladders}\label{sec:ladder}
+
+The HQIV harmonic ladder fixes the shell-indexed frequency at:
+\begin{equation}\label{eq:freq}
+  \omega_m=\frac{T_{\rm Pl}}{m+1},\qquad m\in\mathbb{N},
+\end{equation}
+with $\omega_{0}=T_{\rm Pl}$ at the Planck pole (highest
+frequency, no UV catastrophe) and $\omega_m\to 0$ as
+$m\to\infty$ (IR limit, only $\mathcal{N}(m)\sim m^{2}$ modes
+each).  Equivalently, the temperature ladder is
+$T(m)=T_{\rm Pl}/(m+1)$, exposed as the
+\hyperref[lean:auxiliary-T]{auxiliary-field temperature ladder}.
+
+\section{Kirchhoff's law on a finite shell list}\label{sec:kirchhoff}
+
+We now state Kirchhoff's law in HQIV form.  Two ingredients,
+both finite by construction.
+
+\begin{definition}[Per-shell Bose occupation]\label{def:bose}
+At temperature $T>0$ and shell $m\in\mathbb{N}$,
+\begin{equation}\label{eq:nbose}
+  n_{B}(\omega_m,T)
+   =\frac{1}{\exp(\omega_m/T)-1}.
+\end{equation}
+This is the standard Bose factor on \emph{one} HQIV mode---the
+\hyperref[lean:bose]{per-shell Bose factor}. It is positive and
+finite at every $m\in\mathbb{N}$ and $T>0$ (with the divergence at
+$\omega_m=T\to 0$ outside the shell-discrete sector).
+\end{definition}
+
+\begin{definition}[Per-shell spectral energy]\label{def:spec}
+\begin{equation}\label{eq:shellE}
+  E_m(T)=\mathcal{N}(m)\cdot\omega_m\cdot n_{B}(\omega_m,T).
+\end{equation}
+Formalised as the
+\hyperref[lean:shell-spectral]{per-shell spectral-energy density}.
+Every factor is positive at every $m,T$; no regulariser is
+applied.
+\end{definition}
+
+\begin{definition}[Truncated blackbody energy density]\label{def:bb}
+For any $m_{\rm UV}\le m_{\rm IR}$ in $\mathbb{N}$,
+\begin{equation}\label{eq:Edens}
+  u(T;m_{\rm UV},m_{\rm IR})
+   =\sum_{m=m_{\rm UV}}^{m_{\rm IR}} E_m(T).
+\end{equation}
+Formalised as the
+\hyperref[lean:blackbody-density]{truncated blackbody energy
+density}.
+\end{definition}
+
+\begin{theorem}[Finite-mode Kirchhoff law]\label{thm:kirchhoff}
+For any $T>0$ and any $m_{\rm UV}\le m_{\rm IR}$ in $\mathbb{N}$,
+\eqref{eq:Edens} is a finite, positive, monotone sum:
+\begin{enumerate}[leftmargin=2em]
+\item $0\le u(T;m_{\rm UV},m_{\rm IR})<\infty$;
+\item $0<u(T;m_{\rm UV},m_{\rm IR})$ whenever $m_{\rm UV}\le m_{\rm IR}$;
+\item monotone in both cutoffs: lowering $m_{\rm UV}$ or raising
+  $m_{\rm IR}$ adds non-negative contributions.
+\end{enumerate}
+The result is true without any limiting procedure or
+renormalisation: it holds as a closed-form identity on
+$\mathbb{N}^{2}\times\mathbb{R}_{>0}$.
+\end{theorem}
+\begin{proof}
+The
+\hyperref[lean:blackbody-density]{truncated blackbody energy
+density} is non-negative and finite as a finite-range sum of
+non-negative terms; it is strictly positive on every nonempty
+shell window and monotone in both cutoff arguments. All three
+parts are zero-\texttt{sorry} Lean theorems in the same module
+(see Appendix~\ref{app:lean-index}).
+\end{proof}
+
+\begin{remark}[The UV catastrophe never appears]\label{rmk:nouv}
+Unlike the classical derivation, no high-frequency divergence
+exists to suppress.  $\mathcal{N}(m)$ is exactly $(m+2)(m+1)$ at
+the Planck pole $m=0$, namely 2 modes (lattice points
+$(0,0,1),(0,1,0),(1,0,0)$ scaled to two orientations), and there
+is no shell above it: $\omega>T_{\rm Pl}$ does not exist in the
+HQIV mode list.  The Bose factor in \eqref{eq:nbose} additionally
+provides exponential suppression at fixed $T\ll T_{\rm Pl}$, so
+the Planck spectrum shape is preserved everywhere classical
+spectroscopy probes; but the structural finiteness is independent
+of any thermal cutoff.
+\end{remark}
+
+\begin{remark}[The IR is also finite]\label{rmk:noir}
+At fixed temperature $T$, the Bose factor diverges as
+$\omega_m\to 0$ ($m\to\infty$): $n_B(\omega_m,T)\sim T/\omega_m=
+T(m+1)/T_{\rm Pl}$, while $\omega_m\to 0$.  The product
+$\omega_m\,n_B(\omega_m,T)\to T$, finite per mode; multiplying by
+$\mathcal{N}(m)\sim m^{2}$ gives a per-shell contribution growing
+as $m^{2}T$.  If one took $m_{\rm IR}\to\infty$ the sum would
+diverge, exactly the classical Rayleigh--Jeans IR behavior---but
+HQIV's discrete null lattice places a structural cutoff at the
+lock-in reference shell $M$ (the
+\hyperref[lean:ir-cutoff]{lock-in IR cutoff}), making \emph{the
+IR also finite at the lattice level}, not just by stipulation.
+\end{remark}
+
+\begin{definition}[Vacuum zero-point cell]\label{def:zp}
+\begin{equation}\label{eq:zp}
+  u_{0}(m_{\rm UV},m_{\rm IR})
+   =\sum_{m=m_{\rm UV}}^{m_{\rm IR}}
+    \frac{\mathcal{N}(m)\,\omega_m}{2}.
+\end{equation}
+The
+\hyperref[lean:vacuum-zp]{vacuum zero-point cell} is non-negative
+on every shell interval, by the same finite-sum-of-non-negatives
+argument used in Theorem~\ref{thm:kirchhoff}.
+\end{definition}
+
+\begin{theorem}[Decomposition]\label{thm:decomp}
+\begin{equation}\label{eq:decomp}
+  u_{\rm tot}(T;m_{\rm UV},m_{\rm IR})
+   =u_{0}(m_{\rm UV},m_{\rm IR})
+   +u(T;m_{\rm UV},m_{\rm IR}).
+\end{equation}
+Formalised as the
+\hyperref[lean:blackbody-with-vacuum]{blackbody-plus-vacuum
+energy density}, with the additive decomposition lemma in the
+same module.  No renormalisation is required to handle the
+zero-point cell---it is a finite, structural part of the spectrum
+on a finite shell list.
+\end{theorem}
+
+\paragraph{Summary.}
+Equation~\eqref{eq:decomp} is the HQIV statement of Kirchhoff's
+law.  The standard Stefan--Boltzmann scaling $u(T;0,M)\sim T^{4}$
+and the Wien displacement bound emerge from \eqref{eq:Edens} via
+the
+\hyperref[lean:stefan]{horizon Stefan--Boltzmann module} and the
+\hyperref[lean:wien]{horizon Wien-displacement module}, and rely
+only on Theorem~\ref{thm:kirchhoff}.  No regularisation appears
+in any step.
+
+\section{The scale anchor: proton mass at the lock-in shell
+$m=4$}\label{sec:proton}
+
+We use this section to be explicit about what the proton mass
+\emph{is} and is \emph{not} doing in this paper, since careless
+phrasing here can over-claim independence.
+
+\paragraph{Status under the proton lock-in scale-witness.}
+Per \texttt{AGENTS/ASSUMPTIONS.md} \S7g of the HQIV-LEAN
+repository, the HQIV pipeline carries a single active
+dimensionful scale witness per solve.  The default is the
+\hyperref[lean:proton-lockin]{proton lock-in scale-witness}: the
+proton mass at the lock-in shell $m=4$ uses the theory's internal
+constituent-plus-binding readout (described below), with the
+\emph{observed} value $938.272\,\mathrm{MeV}$ serving as the
+active scale witness that pins the mass/unit chart.  Other
+quantities---CODATA $1/\alpha$, CMB horizons, PDG centrals
+\cite{pdg2024}---are then predictions or comparison layers
+against this anchor.  The
+\hyperref[lean:scale-witness]{scale-witness enum} carries the
+documented rule: ``never wire CODATA $\alpha$ \emph{and} proton
+mass \emph{and} a third cosmology anchor into the same solve
+without documenting which one is active and which are
+predictions.''
+
+\paragraph{Shell index $m=4$: chosen, not derived.}  The
+reference shell $m=4$ is the QCD-onset identification: it is the
+HQIV temperature-ladder index where colour confinement and the
+lock-in chart begin.  The choice is not a free fit parameter---
+the hadronic mass content of the universe requires \emph{some}
+QCD-onset shell, and $m=4$ is the smallest integer consistent
+with the small number of post-QCD steps needed to reach the
+nucleon harmonic.  But it is also not a two-axiom output: the
+two axioms by themselves do not single out $m=4$.
+
+\paragraph{What \emph{is} non-trivial at $m=4$.}  Given the shell
+choice, the readout
+\begin{equation}\label{eq:proton}
+  M_{p}^{\rm HQIV}
+   = M^{\rm const}_{p}\,-\,E^{\rm shared}_{\rm bind}
+   = 938.272\,\mathrm{MeV}
+\end{equation}
+packages the nucleon as constituent-energy minus shared binding,
+formalised as the
+\hyperref[lean:derived-proton]{derived proton mass} (with the
+\hyperref[lean:proton-shared]{shared-harmonics closure} establishing
+\eqref{eq:proton}).  The constituent harmonics $M^{\rm const}_{p}$
+are dictated by the mode count \eqref{eq:NM} at $m=4$; the
+shared-binding energy $E^{\rm shared}_{\rm bind}$ has its own
+composite-trace construction.  These combinatorial structures are
+genuine HQIV content, and the closure to a single number
+$938.272\,\mathrm{MeV}$ is a non-trivial constraint on the
+lock-in shell-set.  The
+\hyperref[lean:proton-anchor]{proton-anchor mass constant} records
+this as the active scale witness.
+
+\paragraph{Why this is not a ``test'' in the same sense as $\beta$.}
+At the level of the broader theory, the numerical value of
+$M_p^{\rm HQIV}$ is the chart-pinning anchor: it defines the unit
+of mass/energy used to interpret every other dimensionful
+quantity.  Calling it a ``test'' would conflate two distinct
+roles: (i) the narrow constituent-plus-binding readout at the
+lock-in shell, which is a genuine HQIV calculation, vs (ii) the
+position of the lock-in shell on the integer ladder, which is a
+modelling choice in the broader theory.  The honest framing is:
+$M_p$ is the \emph{anchor}, established once;
+$\beta$ is the \emph{prediction}, evaluated against the anchor
+and against the data.
+
+\paragraph{Cross-check status.}  Within HQIV's own discipline,
+candidate scale-witness alternatives are recorded
+(CODATA $\alpha$ witness, present-CMB witness) and exist in the
+\hyperref[lean:scale-witness]{scale-witness enum}.  Switching to a
+different witness is a deliberate operation and would re-pin every
+dimensionful HQIV output.  For this paper all numerics are
+reported under the proton lock-in scale-witness.
+
+\section{Quantitative test: cosmic birefringence $\beta=0.379^\circ$}\label{sec:beta}
+
+This is the section where HQIV makes a single-shot quantitative
+prediction under the chosen scale witness.  The proton-mass
+anchor of \S\ref{sec:proton} has already pinned the unit chart.
+The birefringence calculation then combines the HQIV wall-clock
+age $t_{\rm wall}=51.2\,\mathrm{Gyr}$---an output of the
+HQIV-modified CLASS implementation (a discrete null-lattice
+background with the ADM lapse $N(t)=1+\Phi+\varphi t$ and
+$\varphi$-dependent evolution; the
+\hyperref[lean:wall-clock]{HQVM wall-clock compression})---with
+the same stars-and-bars mode count $\mathcal{N}(m)=(m+2)(m+1)$ of
+\eqref{eq:NM} under the propagation-shell identification.  Only
+one externally measured dimensionful input enters at this stage:
+FIRAS $T_{\rm CMB}=2.7255\,\mathrm{K}$ \cite{fixsen2009}.  No
+birefringence-side anchor enters---in particular, no Planck PR4
+calibration \cite{planckPR42020}---and no Friedmann equation is
+imposed.
+
+The Planck DR4 EB analysis of Eskilt \& Komatsu \cite{eskilt2022}
+reports an isotropic cosmic birefringence
+\begin{equation}\label{eq:pr4}
+  \beta_{\rm obs}=0.342^\circ\pm 0.094^\circ
+  \quad (\text{Planck PR4 NPIPE, EB cross-spectrum}),
+\end{equation}
+a $\sim3.6\sigma$ detection, frequency-independent across the
+30--353~GHz Planck sub-bands, isotropic within errors.
+
+\paragraph{Two shell coordinates.}  HQIV carries two genuinely
+distinct shell coordinates (\S\ref{sec:axiom},
+\S\ref{sec:ladder}, and the
+\hyperref[lean:cosm-shell-ladder]{cosmological shell-ladder
+module}):
+\begin{align}
+  m_{T}(T_{\rm obs}) &= T_{\rm Pl}/T_{\rm obs}-1
+   \quad\text{(real-valued shell index in the temperature-ladder chart),}\\
+  m_{\rm prop} &= \text{count of HQIV propagation cells crossed since the Planck pole.}
+\end{align}
+A photon's proper time is zero, so it does not accumulate
+temperature-ladder positions along its worldline; the cumulative
+birefringence formula uses the propagation coordinate.
+
+\paragraph{Propagation-shell coarseness.}  Identifying one HQIV
+propagation shell at observation depth $m_T$ with the bundle of
+new lattice simplices appearing at that depth,
+\begin{equation}\label{eq:bundle}
+  \text{Planck cells per propagation shell}=\mathcal{N}(m_T),
+\end{equation}
+the propagation-shell offset at the observation event is
+\begin{equation}\label{eq:mprop}
+  m_{\rm prop}=\frac{t_{\rm wall}/t_{\rm Pl}}{\mathcal{N}(m_T)}
+              =\frac{t_{\rm wall}/t_{\rm Pl}}{(m_T+2)(m_T+1)}
+              \;\approx\;
+              \frac{t_{\rm wall}}{t_{\rm Pl}}
+              \!\left(\frac{T_{\rm obs}}{T_{\rm Pl}}\right)^{\!2}.
+\end{equation}
+This is the central use of the same stars-and-bars count
+\eqref{eq:NM} that delivered the finite-mode Kirchhoff law in
+\S\ref{sec:kirchhoff}; we are not introducing a new HQIV input.
+
+\paragraph{Birefringence formula.}  HQIV's
+\hyperref[lean:cumbire]{cumulative birefringence observable},
+proven zero-\texttt{sorry}, is
+\begin{equation}\label{eq:cumbire}
+  \beta(m_{\rm emit},m_{\rm obs})
+   =\alpha\,\log\!\left(\frac{m_{\rm obs}+1}{m_{\rm emit}+1}\right),
+\end{equation}
+with $\alpha=3/5$.  Specialising to the near-pole reading
+($m_{\rm emit}=0$ at the Planck pole, $m_{\rm obs}=m_{\rm prop}$):
+\begin{equation}\label{eq:cumbireNP}
+  \beta_{\rm HQIV}=\alpha\,\log(1+m_{\rm prop}).
+\end{equation}
+
+\paragraph{Numerics.}  Inputs:
+$T_{\rm Pl}=1.41679\times10^{32}\,\mathrm{K}$,
+$T_{\rm CMB}=2.7255\,\mathrm{K}$ (FIRAS \cite{fixsen2009}),
+$t_{\rm Pl}=5.391\times10^{-44}\,\mathrm{s}$,
+$t_{\rm wall}=51.2\,\mathrm{Gyr}$ (the
+\hyperref[lean:wall-clock]{wall-clock-age snapshot} from the
+HQIV-modified CLASS background),
+$\alpha=3/5$ (informational monogamy).  Then
+\[
+\begin{array}{rcl}
+  m_T &=& 5.198\times10^{31},\\
+  \mathcal{N}(m_T) &=& 2.702\times10^{63},\\
+  t_{\rm wall}/t_{\rm Pl} &=& 2.997\times10^{61},\\
+  m_{\rm prop} &=& 1.109\times10^{-2}.
+\end{array}
+\]
+\begin{equation}\label{eq:final}
+  \beta_{\rm HQIV}
+   =\tfrac{3}{5}\log(1.01109)
+   =6.619\times10^{-3}\,\mathrm{rad}
+   =\boxed{0.3792^\circ},
+\end{equation}
+deviation $-0.40\sigma$ from \eqref{eq:pr4}. The exact arithmetic
+chain reproducing every line of this paragraph ships in the
+supplementary script bundle (Appendix~\ref{app:scripts}, file
+\texttt{birefringence\_calculation.py}).
+
+\paragraph{Falsifier: apparent age fails.}  Substituting the
+\hyperref[lean:apparent-age]{HQIV apparent age} of
+$13.8\,\mathrm{Gyr}$ for $t_{\rm wall}$:
+$m_{\rm prop}^{\rm app}\approx 3.0\times10^{-3}$,
+$\beta^{\rm app}\approx 0.103^\circ$, a $-2.55\sigma$ deviation.
+The formula \emph{selects} HQIV's wall-clock age over the apparent
+age---this is a non-adjustable test of the ADM-lapse subsystem
+against an independent observation.
+
+\paragraph{Observer-position character (PR4 frequency
+independence).}  By \eqref{eq:cumbireNP} and \eqref{eq:mprop},
+$\beta_{\rm HQIV}$ depends on $(t_{\rm wall},T_{\rm obs})$ only,
+not on individual photon frequencies.  All photons reaching the
+same observer get the same imprint, formalised as the
+\hyperref[lean:bire-freq-indep]{frequency-independence statement
+for the predicted birefringence}, and exactly the PR4 finding
+\cite{eskilt2022} across 30--353~GHz. A per-photon $\omega^{2}$
+mechanism would predict $\sim 140\times$ amplification across that
+range and is ruled out; HQIV does not predict that. The blackbody
+Planck spectrum smears in photon energy; the $\beta$ value does
+not.
+
+\paragraph{Isotropy.}  $m_{\rm prop}$ is a scalar.
+$\beta_{\rm HQIV}$ has no preferred direction, matching the PR4
+isotropy null result---formalised as the
+\hyperref[lean:bire-isotropic]{isotropy lemma} for the predicted
+birefringence (with the
+\hyperref[lean:bire-isotropic-near-pole]{near-pole specialisation}
+used in \eqref{eq:cumbireNP}).
+
+\section{Friedmann scaling recovered, not imported}\label{sec:friedmann}
+
+In a radiation-dominated FLRW cosmology $H\propto T^{2}/M_{\rm Pl}$
+and so the Hubble time is $t_{H}=1/H\propto M_{\rm Pl}/T^{2}$.
+This is famously the quadratic growth law.
+
+In HQIV, identifying one propagation shell with the bundle of new
+lattice simplices at the observation depth (the same identification
+that delivered \eqref{eq:mprop}) gives the propagation-shell
+duration $\sim t_{\rm Pl}\,\mathcal{N}(m_T)\sim t_{\rm Pl}(T_{\rm Pl}/T)^{2}
+=M_{\rm Pl}/T^{2}$ in Planck units.
+
+\begin{theorem}[Friedmann scaling recovered]\label{thm:friedmann}
+Under the propagation-shell identification of \S\ref{sec:beta},
+\[
+  t_{H}^{\rm HQIV}(T)\sim t_{\rm Pl}\,\mathcal{N}(m_T)
+                    \sim M_{\rm Pl}/T^{2}.
+\]
+\end{theorem}
+\noindent\emph{The same stars-and-bars count \eqref{eq:NM} that
+delivers the finite-mode Kirchhoff law also delivers Friedmann's
+$H\propto T^{2}$.}  No Einstein equation has been used. The
+arithmetic ratio $t_H^{\rm HQIV}(T)/t_H^{\rm rad}(T)
+=(m_T+2)/(m_T+1)\to 1+O(1/m_T)$ at present-epoch temperatures is
+exhibited by the supplementary script
+\texttt{friedmann\_recovery.py} described in
+Appendix~\ref{app:scripts}.
+
+\section{Discussion: where normalisation went}\label{sec:discussion}
+
+In the standard derivation of the Planck spectrum, a UV
+regulariser is implicit (a cavity cutoff, dimensional reg,
+or simply trust in the Bose factor); an IR regulariser is also
+implicit (the cavity volume).  Renormalisation theory then
+constructs observables independent of these regularisers.  This
+is conceptually expensive---the cutoffs are tools, not physics.
+
+HQIV trades this for two combinatorial inputs.  The discrete null
+lattice provides a structural UV cutoff at $m=0$ (Planck pole);
+the lock-in reference shell provides a structural IR cutoff at
+$m=M$.  Both cutoffs are physical choices, not regulators: moving
+them changes observables in a calculable way, captured by the
+monotonicity statements of Theorem~\ref{thm:kirchhoff}.  The
+total mode budget at any pair of cutoffs is the closed-form
+hockey-stick sum \eqref{eq:cum}.
+
+What is gained:
+\begin{itemize}[leftmargin=2em]
+\item No UV catastrophe---the high-frequency modes do not exist.
+\item No IR divergence---the low-frequency modes are finite in
+  count.
+\item No renormalisation procedure---the sums are finite as
+  written.
+\item Under the proton lock-in scale-witness convention, one
+  non-trivial quantitative prediction ($\beta=0.379^\circ$ at
+  present epoch) survives the data at $-0.40\sigma$ and
+  discriminates wall-clock from apparent age internally.
+\item Friedmann scaling recovered as a consequence
+  (Theorem~\ref{thm:friedmann}), not imported.
+\end{itemize}
+
+What is \emph{not} claimed:
+\begin{itemize}[leftmargin=2em]
+\item HQIV is not claimed to be independent of every scale
+  anchor.  The proton mass at $m=4$ uses the theory's internal
+  constituent-plus-binding readout, with the observed value
+  $938.272\,\mathrm{MeV}$ serving as the active scale witness.
+  Substituting an alternative witness (CODATA $\alpha$,
+  present-CMB) would re-pin every dimensionful HQIV output;
+  no such cross-witness consistency demonstration is given here.
+\item The shell index $m=4$ is not a two-axiom output.  It is
+  the QCD-onset identification, and the constituent-plus-binding
+  closure at that shell to $938.272\,\mathrm{MeV}$ is a non-trivial
+  HQIV calculation, but the placement of $m=4$ itself is a
+  modelling choice.
+\item The wall-clock age $51.2\,\mathrm{Gyr}$ is an output of
+  the HQIV-modified CLASS implementation (a discrete null-lattice
+  background with the ADM lapse and $\varphi$-dependent
+  evolution), not a free parameter, but neither is it strictly
+  forced by the two axioms alone---the HQIV-modified CLASS
+  background carries its own modelling choices on top of the
+  lattice.
+\item One further piece of the $\beta$ chain is an explicit
+  identification, not a strict consequence of the two axioms:
+  ``one propagation shell $=$ one bundle of new lattice
+  simplices at the observation depth'' (the same construction
+  that gives Friedmann's $T^{2}$ scaling).
+\item No continuum-limit programme is invoked, required, or
+  desired anywhere in this chain. Per the patch-theory reader
+  contract, the discrete patch layer is the ontology; the only
+  continuum object that appears is the de-facto continuum
+  algebra $\mathfrak{so}(8)$ obtained from finite octonionic
+  data \cite{hqiv-so8-paper,hqiv-3d-growth-paper}, and even
+  that is built from discrete ingredients with no continuum
+  spacetime attached.
+\end{itemize}
+
+The proper reading of this paper is therefore: HQIV's
+combinatorial mode-count axiom delivers Kirchhoff's law on a
+finite shell list without any regularisation; under the standing
+proton lock-in scale-witness convention, combining the HQIV
+wall-clock age from the HQIV-modified CLASS implementation with
+the lattice mode count $\mathcal{N}(m)$ under the
+propagation-shell identification predicts
+$\beta_{\rm HQIV}=0.379^\circ$, surviving the PR4 data
+\cite{eskilt2022,planckPR42020} to $-0.40\sigma$.  Stronger
+claims of full independence require either a derivation of $m=4$
+and $t_{\rm wall}$ from the two axioms or a cross-witness
+consistency demonstration; both are open theoretical targets.
+
+\appendix
+
+\section{Lean module index}
+\label{app:lean-index}
+
+The Lean development lives in the public slimmed mirror
+\url{https://github.com/HQIV/hqiv-lean} \cite{hqiv-lean}.  All
+theorems cited in the body are sorry-free at the time of
+writing.  Each entry below carries a reader-friendly anchor (used
+by hyperlinks in the body), a one-line description, and clickable
+links to the Lean module and identifiers.
+
+\begingroup
+\sloppy
+\setlength{\emergencystretch}{4em}
+\begin{description}[leftmargin=0em,style=nextline]
+\item[\phantomsection\label{lean:simplex-count}\textbf{Lattice simplex mode count.}]
+  The integer-solution count
+  $\mathcal{N}(m)=(m+2)(m+1)$ at temperature-ladder depth $m$.
+  Lean: \leanid{latticeSimplexCount} and
+  \leanid{latticeSimplexCount_eq} in
+  \leanfile{Hqiv/Geometry/OctonionicLightCone.lean};
+  positivity is recorded as
+  \leanid{latticeSimplexCount_pos}.
+\item[\phantomsection\label{lean:hockey-stick}\textbf{Hockey-stick cumulative-count identity.}]
+  The closed-form sum
+  $3\sum_{m'=0}^{n}\mathcal{N}(m')=(n+1)(n+2)(n+3)$.
+  Lean: \leanid{cumLatticeSimplexCount_hockey_stick} and
+  \leanid{cumLatticeSimplexCount_closed} in
+  \leanfile{Hqiv/Geometry/OctonionicLightCone.lean}.
+\item[\phantomsection\label{lean:auxiliary-T}\textbf{Auxiliary-field temperature ladder.}]
+  $T(m)=T_{\rm Pl}/(m+1)$ on the discrete shell index $m$.
+  Lean: \leanid{T} in
+  \leanfile{Hqiv/Geometry/AuxiliaryField.lean}, with
+  \leanid{shellOmega} (the harmonic ladder of \eqref{eq:freq})
+  in
+  \leanfile{Hqiv/Physics/HorizonBlackbodySpectrum.lean}.
+\item[\phantomsection\label{lean:bose}\textbf{Per-shell Bose factor.}]
+  The standard occupation $n_B(\omega_m,T)$ of \eqref{eq:nbose}.
+  Lean: \leanid{nBose} (positivity \leanid{nBose_pos}) in
+  \leanfile{Hqiv/Physics/HorizonBlackbodySpectrum.lean}.
+\item[\phantomsection\label{lean:shell-spectral}\textbf{Per-shell spectral-energy density.}]
+  Equation \eqref{eq:shellE},
+  $E_m(T)=\mathcal{N}(m)\,\omega_m\,n_B(\omega_m,T)$. Lean:
+  \leanid{shellSpectralEnergy} (and
+  \leanid{shellModeMultiplicity} for $\mathcal{N}(m)$ in the
+  new-modes basis) in
+  \leanfile{Hqiv/Physics/HorizonBlackbodySpectrum.lean}.
+\item[\phantomsection\label{lean:blackbody-density}\textbf{Truncated blackbody energy density.}]
+  Equation \eqref{eq:Edens}, with the three-clause finiteness /
+  positivity / monotonicity package. Lean:
+  \leanid{blackbodyEnergyDensity},
+  \leanid{blackbodyEnergyDensity_pos_of_le},
+  \leanid{blackbodyEnergyDensity_mono_UV},
+  \leanid{blackbodyEnergyDensity_mono_IR},
+  \leanid{planckUVCutoff} (Planck pole) in
+  \leanfile{Hqiv/Physics/HorizonBlackbodySpectrum.lean}.
+\item[\phantomsection\label{lean:ir-cutoff}\textbf{Lock-in IR cutoff.}]
+  The structural infrared cutoff at the lock-in reference shell
+  $M$, packaged as
+  \leanid{referenceIRCutoff} in
+  \leanfile{Hqiv/Physics/HorizonBlackbodySpectrum.lean}.
+\item[\phantomsection\label{lean:vacuum-zp}\textbf{Vacuum zero-point cell.}]
+  Equation \eqref{eq:zp}; Lean:
+  \leanid{vacuumZeroPointEnergy} (non-negativity
+  \leanid{vacuumZeroPointEnergy_nonneg}) in
+  \leanfile{Hqiv/Physics/HorizonBlackbodySpectrum.lean}.
+\item[\phantomsection\label{lean:blackbody-with-vacuum}\textbf{Blackbody-plus-vacuum energy density.}]
+  Equation \eqref{eq:decomp}; Lean:
+  \leanid{blackbodyEnergyDensityWithVacuum} (and the additive
+  decomposition lemma) in
+  \leanfile{Hqiv/Physics/HorizonBlackbodySpectrum.lean}.
+\item[\phantomsection\label{lean:stefan}\textbf{Horizon Stefan--Boltzmann module.}]
+  Recovery of the $T^4$ scaling and Stefan-type ceiling on a
+  finite shell list. Lean:
+  \leanfile{Hqiv/Physics/HorizonBlackbodyStefan.lean}.
+\item[\phantomsection\label{lean:wien}\textbf{Horizon Wien-displacement module.}]
+  Wien displacement bound from the same finite-mode spectrum.
+  Lean:
+  \leanfile{Hqiv/Physics/HorizonBlackbodyWienDisplacement.lean}
+  (with the polarized-greybody companion in
+  \leanfile{Hqiv/Physics/HorizonBlackbodyGreybody.lean}).
+\item[\phantomsection\label{lean:proton-lockin}\textbf{Proton lock-in scale-witness.}]
+  The HQIV scale-witness convention pinning the mass/unit chart
+  at $m=4$ to $M_p=938.272\,\mathrm{MeV}$. Lean:
+  \leanid{ScaleWitness.proton_lockin} (and the
+  \hyperref[lean:scale-witness]{scale-witness enum}) in
+  \leanfile{Hqiv/Physics/ScaleWitness.lean}.
+\item[\phantomsection\label{lean:scale-witness}\textbf{Scale-witness enum.}]
+  The Lean enum recording the candidate single-witness anchors
+  (\leanid{proton_lockin}, \leanid{codata_alpha},
+  \leanid{cmb_now}). Lean: \leanid{ScaleWitness} in
+  \leanfile{Hqiv/Physics/ScaleWitness.lean}.
+\item[\phantomsection\label{lean:derived-proton}\textbf{Derived proton mass.}]
+  The constituent-minus-binding readout
+  $M_p^{\rm HQIV}=M_p^{\rm const}-E^{\rm shared}_{\rm bind}$ of
+  \eqref{eq:proton}. Lean: \leanid{derivedProtonMass}
+  (positivity \leanid{derivedProtonMass_pos}) in
+  \leanfile{Hqiv/Physics/DerivedNucleonMass.lean}.
+\item[\phantomsection\label{lean:proton-shared}\textbf{Shared-harmonics proton-mass closure.}]
+  The closure lemma certifying that the constituent and shared
+  pieces sum to $938.272\,\mathrm{MeV}$. Lean:
+  \leanid{proton_mass_from_shared_harmonics} in
+  \leanfile{Hqiv/Physics/DerivedNucleonMass.lean}.
+\item[\phantomsection\label{lean:proton-anchor}\textbf{Proton-anchor mass constant.}]
+  The $938.272\,\mathrm{MeV}$ anchor numeral that pins the unit
+  chart. Lean: \leanid{protonAnchorMass_MeV} (also
+  \leanid{protonMassFromMetaHarmonics_MeV}) in
+  \leanfile{Hqiv/Physics/QuarkMetaResonance.lean}.
+\item[\phantomsection\label{lean:cosm-shell-ladder}\textbf{Cosmological shell-ladder module.}]
+  The propagation-shell coordinate $m_{\rm prop}$ of
+  \eqref{eq:mprop}, the simplex-count cast
+  \leanid{latticeSimplexCount_as_shell_coarseness}, and the
+  internal-coordinate identity
+  \leanid{m_prop_HQIV_internal_eq}. Lean:
+  \leanfile{Hqiv/Cosmology/CosmologicalShellLadder.lean}.
+\item[\phantomsection\label{lean:cumbire}\textbf{Cumulative birefringence observable.}]
+  Equation \eqref{eq:cumbire}; the near-pole specialisation
+  \eqref{eq:cumbireNP} is
+  \leanid{NearPoleObservation.predictedBirefringence}, and the
+  numerical pass against PR4 errors is
+  \leanid{nearPole_cmb_shell_ladder_pass}. Lean:
+  \leanfile{Hqiv/Cosmology/CosmologicalShellLadder.lean} and
+  \leanfile{Hqiv/Physics/HorizonBlackbodyLadder.lean}.
+\item[\phantomsection\label{lean:bire-isotropic}\textbf{Isotropy of the predicted birefringence.}]
+  Lean: \leanid{predictedBirefringence_isotropic} (with the
+  \hyperref[lean:bire-isotropic-near-pole]{near-pole
+  specialisation}) in
+  \leanfile{Hqiv/Cosmology/CosmologicalShellLadder.lean}; the
+  no-shell-crossing zero is
+  \leanid{predictedBirefringence_zero_of_no_shell_crossing}, and
+  the lab-scale upper bound is
+  \leanid{nearPole_predictedBirefringence_lab_bound}.
+\item[\phantomsection\label{lean:bire-isotropic-near-pole}\textbf{Near-pole isotropy specialisation.}]
+  Lean:
+  \leanid{nearPole_predictedBirefringence_isotropic} in
+  \leanfile{Hqiv/Cosmology/CosmologicalShellLadder.lean}.
+\item[\phantomsection\label{lean:bire-freq-indep}\textbf{Frequency-independence of the predicted birefringence.}]
+  All photons reaching the same observer carry the same
+  birefringence imprint. Lean:
+  \leanid{predictedBirefringence_frequency_independent} in
+  \leanfile{Hqiv/Cosmology/CosmologicalShellLadder.lean}.
+\item[\phantomsection\label{lean:wall-clock}\textbf{HQVM wall-clock compression.}]
+  The HQIV-modified CLASS background output recording
+  $t_{\rm wall}=51.2\,\mathrm{Gyr}$ for downstream proof reuse.
+  Lean: \leanid{age_wall_clock_Gyr_paper} (with
+  \leanid{wallClockAgeHomogeneous} and \leanid{HQVM_lapse}) in
+  \leanfile{Hqiv/Geometry/UniverseAge.lean}.
+\item[\phantomsection\label{lean:apparent-age}\textbf{HQIV apparent age.}]
+  The companion snapshot $13.8\,\mathrm{Gyr}$ used as the
+  wall-clock falsifier in \S\ref{sec:beta}. Lean:
+  \leanid{age_apparent_Gyr_paper} in
+  \leanfile{Hqiv/Geometry/UniverseAge.lean}.
+\end{description}
+\endgroup
+
+\section{Reproducer script bundle}
+\label{app:scripts}
+
+The numerical results in this paper---the
+$\beta_{\rm HQIV}=0.379^\circ$ prediction and its $-0.40\sigma$
+agreement with Planck PR4 \cite{eskilt2022,planckPR42020}; the
+$0.103^\circ$ apparent-age falsifier; the finite-mode Kirchhoff
+energy density at FIRAS $T_{\rm CMB}$ \cite{fixsen2009}; and the
+Friedmann $T^{2}$ recovery (Theorem~\ref{thm:friedmann})---are
+reproduced by a small, dependency-light script bundle shipped
+alongside the manuscript as \texttt{scripts.zip}. The bundle is
+intended for upload as a Zenodo supplementary file together with
+the paper PDF so that it shares the manuscript DOI and is
+permanently citable.
+
+\paragraph{Contents.}
+\begingroup
+\sloppy
+\setlength{\emergencystretch}{4em}
+\begin{description}
+\item[\texttt{birefringence\_calculation.py}] Reproduces every line
+  of the \S\ref{sec:beta} numerics paragraph: $m_T$,
+  $\mathcal{N}(m_T)$, $t_{\rm wall}/t_{\rm Pl}$, $m_{\rm prop}$,
+  $\beta_{\rm HQIV}$ in radians and degrees, residual to PR4 in
+  $\sigma$ units, plus the apparent-age falsifier
+  ($\beta^{\rm app}=0.103^\circ$, $-2.55\sigma$).
+\item[\texttt{kirchhoff\_finite\_mode.py}] Computes the truncated
+  blackbody energy density of \eqref{eq:Edens} on the FIRAS CMB
+  temperature for a small UV/IR window, demonstrating the
+  monotonicity statements of Theorem~\ref{thm:kirchhoff} and the
+  hockey-stick cumulative count of \eqref{eq:cum} numerically.
+\item[\texttt{friedmann\_recovery.py}] Confirms the
+  Theorem~\ref{thm:friedmann} scaling
+  $t_H^{\rm HQIV}\sim t_{\rm Pl}\,\mathcal{N}(m_T)\sim
+  M_{\rm Pl}/T^{2}$ for several reference temperatures (CMB
+  today, recombination, big-bang nucleosynthesis), and reports
+  the relative discrepancy with the standard radiation-era
+  Friedmann formula at each temperature.
+\item[\texttt{README.md}] How-to-run instructions, contents
+  table, patch-ontology disclaimer (the scripts are
+  interoperability tools, not a continuum-limit refinement),
+  and a citation block.
+\end{description}
+\endgroup
+
+\paragraph{Requirements.}
+Python 3.10+ with the standard library only.  No third-party
+packages, no random seeds, and no external data files; the bundle
+is fully deterministic and runs in well under a second on any
+modern laptop.
+
+\paragraph{Patch-ontology disclaimer.}
+The numerical outputs are calculation-approximation translations
+of patch quantities (cycle indices, shell ladders, normalised
+readouts) into degrees, kelvin, and SI energies.  They are
+\emph{not} a continuum-limit refinement of the patch theory; they
+are the literature-translation rewrites called for by the
+patch-theory reader contract above, packaged so that any reader
+can re-execute them on their own machine.
+
+\section*{Acknowledgments}
+The author thanks the open-science community for the public
+software stack on which the HQIV-LEAN library is built (Lean~4,
+\texttt{mathlib}, and the Zenodo HQIV community
+archive).\footnote{AI-assisted drafting and repository tooling
+were used during manuscript preparation; all formal claims refer
+to the HQIV-LEAN library, and the author reviewed hypothesis
+lists in the cited Lean modules.}
+
+\bibliographystyle{plain}
+\bibliography{../references}
+
+\end{document}

@@ -1,0 +1,281 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\usepackage[final]{microtype}
+\setlength{\emergencystretch}{3em}
+
+\newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
+\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\nolinkurl{#1}}}
+\newcommand{\leanid}[1]{\nolinkurl{#1}}
+
+\title[Nucleon binding from composite trace]{Nucleon Binding from HQIV Composite-Trace Weights:\\
+Lock-In Proton and Neutron Masses in the Lean Library}
+\author{Steven Ettinger Jr}
+\address{Independent Researcher}
+\email{steven@disregardfiat.tech}
+\date{Preprint v1 --- \today}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\begin{document}
+
+\begin{abstract}
+\noindent\textbf{Position in the publication chain.}
+This is the seventh paper in the HQIV preprint series and the
+fourth Tier-2 closure note after electroweak mass, SM Lagrangian
+packaging, and baryogenesis lock-in
+\cite{hqiv-mass-spectrum-paper,hqiv-sm-lagrangian-paper,hqiv-baryogenesis-paper}.
+Tier~0--1 fix the discrete spine
+\cite{ettinger2026hqiv,hqiv-lightcone-paper,hqiv-so8-paper,hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper}.
+The companion BBN note \cite{hqiv-bbn-paper} consumes the nucleon and
+binding outputs proved here.
+
+\noindent\textbf{Result.}
+At lock-in shell $\mathrm{referenceM}=4$ the library defines nucleon masses
+as constituent energies minus a shared $8\times8$ composite-trace binding
+$E_{\mathrm{bind}}$ from explicit generator diagonals and a triadic carrier
+state. Proton and neutron differ only through $uud$ versus $udd$ constituent
+sums; isospin splitting is carried by hypercharge bookkeeping
+($\Delta m_{\mathrm{iso}}=1\,\mathrm{MeV}$ in the witness normalisation).
+Machine-checked identities include positivity, shared-surface splitting, and
+alignment with meta-harmonic readouts
+(\hyperref[lean:derived-nucleon-pack]{derived nucleon mass pack}).
+The \hyperref[lean:neutron-scaffold]{neutron stability scaffold} packages
+bonded versus free branches; $\beta$-decay lifetimes and Q-values are
+explicit open slots.
+
+\noindent\textbf{Single absolute anchor (quarantined).}
+Laboratory proton mass $938.272\,\mathrm{MeV}$ appears only as a lapse-readout
+anchor condition for comparison, not as an input to
+$E_{\mathrm{bind}}$ or constituent sums.
+
+\noindent\textbf{Patch-ontology reader contract.}
+Per the patch-theory reader contract below, binding is a discrete network sum
+on the null lattice at shell $m$; it is not obtained as a continuum QCD
+potential fit.
+
+\noindent\textbf{Status.}
+Proved: composite-trace binding spine, derived proton/neutron masses,
+constituent isospin splitting, lapse anchor discharge. Scaffold only:
+bonded-neutron skew alignment, weak tipping matrix, $880\,\mathrm{s}$ lifetime.
+Not claimed: $\beta$-decay rate derivation, nuclear chart beyond scaffold wells.
+\end{abstract}
+\maketitle
+
+\input{../include/patch_theory_messaging.tex}
+
+\section{Scope and claim discipline}
+\label{sec:scope}
+
+The mass-spectrum note \cite{hqiv-mass-spectrum-paper} establishes the
+electroweak ladder and lock-in discipline; the SM Lagrangian bridge
+\cite{hqiv-sm-lagrangian-paper} packages sector projections; baryogenesis
+\cite{hqiv-baryogenesis-paper} fixes $\eta$ normalisation without deriving
+nucleon spectroscopy. \textbf{This note answers: how are proton and neutron
+masses defined from the same $8\times8$ network binding, and what is proved
+versus scaffold for free-neutron decay?}
+
+\begin{enumerate}[leftmargin=2em]
+\item \textbf{Proved in Lean (binding spine).}
+  $E_{\mathrm{bind}}=\sum_k w_k\cdot(\texttt{latticeSimplexCount}\cdot\alpha_{\mathrm{eff}})$
+  from composite traces (\hyperref[lean:e-bind-network]{network binding formula});
+  shared binding at $\mathrm{referenceM}$ from the nucleon trace witness
+  (\hyperref[lean:nucleon-shared-binding]{nucleon shared binding});
+  $\texttt{derivedProtonMass}$ and $\texttt{derivedNeutronMass}$ as constituent
+  minus shared binding (\hyperref[lean:derived-nucleon-pack]{derived nucleon
+  mass pack}); $\texttt{derivedDeltaM}$ equals constituent isospin splitting
+  (\hyperref[lean:isospin-splitting]{constituent isospin splitting theorem}).
+\item \textbf{Proved in Lean (readout alignment).}
+  Raw hadron masses from the same composite trace recover
+  \texttt{derivedProtonMass} / \texttt{derivedNeutronMass}
+  (\hyperref[lean:composite-trace-mass]{composite-trace mass identities});
+  proton lapse anchor condition discharges laboratory comparison when assumed
+  (\hyperref[lean:proton-anchor]{proton anchor condition}).
+\item \textbf{Scaffold (neutron stability).}
+  Bonded versus free neutron embeddings, overlap energy
+  $\Delta E_{\mathrm{overlap}}$, and $\Gamma=\Delta E/\hbar$ width identity
+  (\hyperref[lean:neutron-scaffold]{neutron stability scaffold}); Conjecture
+  $\beta$ slots (skew alignment, weak matrix) \emph{not} discharged.
+\item \textbf{Downstream consumer.}
+  BBN network weights and cluster $Q$ values import the same composite trace
+  \cite{hqiv-bbn-paper}; this note does not develop abundances.
+\item \textbf{Not claimed.}
+  Derivation of $880\,\mathrm{s}$ free-neutron lifetime; full nuclear chart;
+  MS\=bar current-quark fits as inputs.
+\end{enumerate}
+
+\section{The $8\times 8$ composite-trace binding law}
+\label{sec:binding}
+
+The \hyperref[lean:bound-states]{bound-states module} makes the network
+picture explicit. Generator diagonals $\mathrm{diag}_k(i)$ and an eight-component
+state $\psi_i$ define a trace weight per $\mathfrak{so}(8)$ generator:
+\[
+  w_k = \sum_{i=0}^{7} \mathrm{diag}_k(i)\,\psi_i^2,
+  \qquad
+  E_{\mathrm{bind}}(m) = \sum_k w_k \cdot \underbrace{(\texttt{latticeSimplexCount}(m)\cdot\alpha_{\mathrm{eff}}(m))}_{\text{shell coupling}}.
+\]
+The \hyperref[lean:e-bind-composite]{composite-trace binding definition}
+packages $w$ from $(\mathrm{diag},\psi)$ so every hadron model instantiates the
+same spine rather than a separate potential ansatz.
+
+For nucleons the \hyperref[lean:nucleon-trace-witness]{nucleon trace witness}
+uses a triadic state on three carrier slots of one generator family. The
+theorem \hyperref[lean:triple-coupling]{triadic triple coupling at shell $m$}
+shows this witness equals three times the shell coupling at $m$---a concrete
+$8\times8$ normalisation used throughout BBN and excited-state readouts.
+
+\section{Derived proton and neutron masses at lock-in}
+\label{sec:masses}
+
+Fix $\mathrm{referenceM}=4$ as the proton lock-in shell
+\cite{hqiv-mass-spectrum-paper,hqiv-kirchhoff-paper}. The
+\hyperref[lean:derived-nucleon-mass]{derived nucleon mass module} defines:
+\begin{align*}
+  E_{\mathrm{shared}} &= \texttt{nucleonSharedBinding\_MeV}
+    = E_{\mathrm{bind}}(\mathrm{referenceM};\mathrm{diag}_{\mathrm{nuc}},\psi_{\mathrm{nuc}}),\\
+  M_p^{\mathrm{derived}} &= E_{\mathrm{constituent}}(uud) - E_{\mathrm{shared}},\\
+  M_n^{\mathrm{derived}} &= E_{\mathrm{constituent}}(udd) - E_{\mathrm{shared}},\\
+  \Delta M &= M_n^{\mathrm{derived}} - M_p^{\mathrm{derived}}
+    = E_{\mathrm{constituent}}(udd)-E_{\mathrm{constituent}}(uud).
+\end{align*}
+Thus the neutron--proton mass difference is \emph{not} an independent fit knob:
+it is forced by constituent bookkeeping once the shared binding is shared.
+
+The hypercharge sign flip in the meta-resonance layer sets
+$\Delta m_{\mathrm{iso}}=1\,\mathrm{MeV}$ in the witness normalisation
+(\hyperref[lean:isospin-gap-one]{isospin gap unit theorem}). This is distinct
+from $\Delta M$ above: the scaffold overlap energy for a free neutron uses
+$\Delta m_{\mathrm{iso}}$ as a bookkeeping gap, not the full $\beta$ Q-value
+($\sim 0.78\,\mathrm{MeV}$).
+
+Positivity $M_p^{\mathrm{derived}}, M_n^{\mathrm{derived}}>0$ and alignment with
+meta-harmonic readouts are proved in the same module
+(\hyperref[lean:derived-nucleon-pack]{derived nucleon mass pack}).
+
+\section{Lapse readout and the proton anchor}
+\label{sec:lapse}
+
+The \hyperref[lean:lapse-mass-readout]{lapse mass readout module} expresses
+lab comparison through shell lapse $\Phi$:
+\[
+  M_{\mathrm{lab}} = \frac{M_{\mathrm{raw}}}{\texttt{shellLapse}(\mathrm{referenceM},\Phi,t)}.
+\]
+The \hyperref[lean:proton-anchor]{proton anchor condition} states that when
+$\texttt{shellLapse}\cdot 938.272 = M_p^{\mathrm{derived}}$, the lapse readout
+returns $938.272\,\mathrm{MeV}$. This is a \textbf{one-point calibration witness}
+for comparison to CODATA/PDG tables, not a second simultaneous fit of binding
+and constituents.
+
+\section{Bonded versus free neutrons (scaffold)}
+\label{sec:neutron}
+
+The \hyperref[lean:neutron-scaffold]{neutron stability scaffold} contrasts:
+
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Bonded branch.}
+  Nuclear embedding with well depth, $\Omega_k$-type readout $\ge 1$, and
+  skew-alignment slot (Conjecture $\beta$). When the curvature ledger is closed,
+  overlap energy reduces to the isospin gap
+  (\hyperref[lean:overlap-closed-ledger]{overlap equals isospin gap}).
+\item \textbf{Free branch.}
+  Sub-lock-in readout $\omega<1$ adds a curvature deficit to overlap energy;
+  strong-width scaffold $\Gamma=\Delta E/\hbar$ is proved as an identity, not
+  matched to $880\,\mathrm{s}$.
+\end{itemize}
+
+Continuous-$\xi$ lock-in calibration
+(\hyperref[lean:xi-lockin]{$\xi$-lock-in calibration}) and bonded readout at
+$\mathrm{referenceM}$ are proved packaging lemmas linking the scaffold to
+baryogenesis normalisation \cite{hqiv-baryogenesis-paper}.
+
+\section{What this note does not claim}
+\label{sec:not-claimed}
+
+\begin{itemize}[leftmargin=2em]
+\item Weak-process matrix elements or $\beta$-decay half-lives.
+\item Identification of $\Delta E_{\mathrm{overlap}}$ with the full $\beta$
+  Q-value.
+\item Nuclear binding energies beyond the effective-well slots in
+  \hyperref[lean:nuclear-spectra]{nuclear spectra module}.
+\item Any continuum-limit or lattice-spacing extrapolation programme.
+\end{itemize}
+
+\section{Conclusion}
+
+HQIV nucleon masses at lock-in are \emph{constituent sums minus a shared
+composite-trace binding} on the $\mathfrak{so}(8)$ network, with isospin
+splitting carried by constituent hypercharge bookkeeping. The proof graph is
+sorry-free through positivity, splitting identities, and lapse anchor discharge;
+free-neutron $\beta$ decay remains an explicit scaffold for a later upgrade.
+The BBN companion \cite{hqiv-bbn-paper} imports the same binding spine for
+light-element $Q$ values and partition weights.
+
+\section*{Acknowledgments}
+
+Machine-checked proofs live in the public HQIV Lean repository \cite{hqiv-lean}.
+
+\appendix
+
+\section{Lean module index}
+\label{app:lean-index}
+
+\begin{description}[leftmargin=2.5em,style=nextline]
+\item[\hypertarget{lean:bound-states}{Bound states / network spine}]
+  \leanfile{Hqiv/Physics/BoundStates.lean} ---
+  \leanid{E\_bind\_from\_network}, \leanid{E\_bind\_from\_composite\_trace}.
+\item[\hypertarget{lean:e-bind-network}{Network binding formula}]
+  \leanid{E\_bind\_from\_network} in \leanfile{Hqiv/Physics/BoundStates.lean}.
+\item[\hypertarget{lean:e-bind-composite}{Composite-trace binding definition}]
+  \leanid{E\_bind\_from\_composite\_trace} in \leanfile{Hqiv/Physics/BoundStates.lean}.
+\item[\hypertarget{lean:nucleon-trace-witness}{Nucleon trace witness}]
+  \leanfile{Hqiv/Physics/QuarkMetaResonance.lean} ---
+  \leanid{nucleonTraceDiagonal}, \leanid{nucleonTraceState}.
+\item[\hypertarget{lean:nucleon-shared-binding}{Nucleon shared binding}]
+  \leanid{nucleonSharedBinding\_MeV}, \leanid{nucleonSharedBinding\_from\_composite\_trace}.
+\item[\hypertarget{lean:triple-coupling}{Triadic triple coupling}]
+  \leanid{E\_bind\_nucleon\_trace\_eq\_triple\_coupling} in
+  \leanfile{Hqiv/Physics/MetaHorizonExcitedStates.lean}.
+\item[\hypertarget{lean:derived-nucleon-mass}{Derived nucleon mass module}]
+  \leanfile{Hqiv/Physics/DerivedNucleonMass.lean}.
+\item[\hypertarget{lean:derived-nucleon-pack}{Derived nucleon mass pack}]
+  \leanid{derivedProtonMass\_pos}, \leanid{derivedNeutronMass\_pos},
+  \leanid{derivedProtonMass\_eq\_meta\_harmonics},
+  \leanid{proton\_mass\_from\_shared\_harmonics}.
+\item[\hypertarget{lean:isospin-splitting}{Constituent isospin splitting}]
+  \leanid{constituent\_isospin\_splitting} in
+  \leanfile{Hqiv/Physics/DerivedNucleonMass.lean}.
+\item[\hypertarget{lean:isospin-gap-one}{Isospin gap unit theorem}]
+  \leanid{nucleonIsospinGap\_eq\_one} in
+  \leanfile{Hqiv/Physics/QuarkMetaResonance.lean}.
+\item[\hypertarget{lean:composite-trace-mass}{Composite-trace mass identities}]
+  \leanid{proton\_raw\_hadron\_mass\_from\_composite\_trace},
+  \leanid{nucleonSharedBinding\_uses\_composite\_trace\_only} in
+  \leanfile{Hqiv/Physics/LapseMassReadout.lean}.
+\item[\hypertarget{lean:lapse-mass-readout}{Lapse mass readout module}]
+  \leanfile{Hqiv/Physics/LapseMassReadout.lean}.
+\item[\hypertarget{lean:proton-anchor}{Proton anchor condition}]
+  \leanid{ProtonAnchorCondition}, \leanid{proton\_anchor\_condition\_discharge}.
+\item[\hypertarget{lean:neutron-scaffold}{Neutron stability scaffold}]
+  \leanfile{Hqiv/Physics/NeutronBindingStabilityScaffold.lean}.
+\item[\hypertarget{lean:overlap-closed-ledger}{Overlap equals isospin gap}]
+  \leanid{freeNeutronOverlapEnergy\_eq\_isospinGap\_when\_ledger\_closed}.
+\item[\hypertarget{lean:xi-lockin}{$\xi$-lock-in calibration}]
+  \leanid{bondedNeutronReadoutCalibrated} in
+  \leanfile{Hqiv/Physics/NeutronBindingStabilityScaffold.lean}.
+\item[\hypertarget{lean:nuclear-spectra}{Nuclear spectra module}]
+  \leanfile{Hqiv/Physics/NuclearAndAtomicSpectra.lean}.
+\item[\hypertarget{lean:hqiv-nuclei}{Isotope valley scaffold}]
+  \leanfile{Hqiv/Physics/HQIVNuclei.lean}.
+\end{description}
+
+\bibliographystyle{plain}
+\bibliography{../references}
+
+\end{document}

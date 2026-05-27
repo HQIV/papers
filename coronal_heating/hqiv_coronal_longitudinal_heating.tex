@@ -1,0 +1,322 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\usepackage[final]{microtype}
+\setlength{\emergencystretch}{3em}
+
+\newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
+\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\nolinkurl{#1}}}
+\newcommand{\leanid}[1]{\nolinkurl{#1}}
+
+\title[Coronal heating from longitudinal HQIV stress]{A Longitudinal HQIV/O-Maxwell Channel for Coronal Heating:\\
+Boundary-Form Stress on Photosphere-to-Corona Flux Tubes}
+\author{Steven Ettinger Jr}
+\address{Independent Researcher}
+\email{steven@disregardfiat.tech}
+\date{Preprint v1 --- \today}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\begin{document}
+
+\begin{abstract}
+\noindent\textbf{Position in the publication chain.}
+This is the tenth paper in the HQIV preprint series and the
+second Tier-3 applied note, written back-to-back with the axial wire-force
+companion \cite{ettinger2026longitudinal}. Tier~0--1 supply the O-Maxwell spine
+\cite{ettinger2026hqiv,hqiv-lightcone-paper,hqiv-so8-paper,hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper};
+Tier~2 closes cosmological and nucleon readouts
+\cite{hqiv-mass-spectrum-paper,hqiv-sm-lagrangian-paper,hqiv-baryogenesis-paper,hqiv-nucleon-binding-paper,hqiv-bbn-paper}.
+
+\noindent\textbf{Result.}
+A coronal magnetic loop is the domain in which the wire-paper's three
+preconditions coincide: an axial current channel, a photosphere--corona
+$\varphi$ jump on the HQIV shell ladder, and asymmetric footpoint
+``contacts.'' The \hyperref[lean:coronal-longitudinal]{coronal longitudinal
+stress module} packages the boundary-form integrated force
+\[
+\Delta F_\parallel
+  = A\,nq\,E_\ast\,\frac{3}{20\pi}\,\Lambda_s\,
+    \bigl[\varphi_{\mathrm{cor}}-\varphi_{\mathrm{photo}}\bigr],
+\]
+the heating-flux analogue $Q_\parallel/A$, shell-gap scaling
+$\Delta\varphi=2(m_{\mathrm{cor}}-m_{\mathrm{photo}})$, and even/odd-in-current
+discriminants---all as sorry-free $\mathsf{Prop}$ certificates.
+
+\noindent\textbf{Honesty.}
+This note does \emph{not} derive a full stellar-atmosphere $\varphi(s)$ profile,
+match observed coronal energy budgets in SI, or displace Alfv\'en-wave or
+nanoflare candidates. It fixes the algebraic spine for a falsifiable \emph{third}
+steady-state channel when longitudinal phase-gradient stress is nonzero.
+
+\noindent\textbf{Patch-ontology reader contract.}
+Coronal heating here is a discrete shell-ladder boundary readout, not a
+continuum-limit completion programme.
+\end{abstract}
+\maketitle
+
+\input{../include/patch_theory_messaging.tex}
+
+\section{Scope and claim discipline}
+\label{sec:scope}
+
+The longitudinal wire note \cite{ettinger2026longitudinal} derives an axial
+O-Maxwell source term from $\alpha\Lambda_s\partial_s\varphi$ and lists
+laboratory discriminants (current reversal, contact asymmetry, length scans).
+\textbf{This note instantiates the same mechanism on a stellar flux tube} and
+states what Lean already proves about boundary-form heating.
+
+\begin{enumerate}[leftmargin=2em]
+\item \textbf{Proved in Lean.}
+  Axial HQIV field with $\alpha=3/5$ rewrite
+  (\hyperref[lean:hqiv-field-alpha]{HQIV field $\alpha$ form});
+  vanishing when $\partial_s\varphi=0$
+  (\hyperref[lean:flat-limit]{flat-limit collapse});
+  boundary force and heating-flux boundary forms
+  (\hyperref[lean:boundary-force]{boundary force},
+  \hyperref[lean:heating-flux]{heating-flux boundary});
+  shell-ladder $\varphi$ jump $\Delta\varphi=2(m_{\mathrm{cor}}-m_{\mathrm{photo}})$
+  (\hyperref[lean:phi-jump]{shell $\varphi$ jump});
+  fluid axial momentum source $g_{{\rm vac},s}=-\frac{1}{15}(\cdots)$
+  (\hyperref[lean:vacuum-momentum]{vacuum momentum source});
+  even/odd current decomposition for $I^2$ vs $I,I^3$ channels
+  (\hyperref[lean:even-odd]{even/odd current split}).
+\item \textbf{Interpretive (not Lean).}
+  Mapping $(m_{\mathrm{photo}},m_{\mathrm{corona}})$ to observed atmospheric
+  heights; absolute SI heating rates; network-wide energetics.
+\item \textbf{Not claimed.}
+  Replacement of wave heating or reconnection; peer-reviewed wire-force
+  confirmation \cite{graneau2026}; horizon-shell derivation of solar $\varphi(s)$.
+\end{enumerate}
+
+\section{Why a coronal loop satisfies the wire preconditions}
+\label{sec:geometry}
+
+A force-free coronal flux tube carries axial current along $\mathbf B$.
+In HQIV readout:
+
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Axial channel.}
+  $J_\parallel$ along the loop supplies the Ohmic background
+  $E_{\mathrm{Ohm}}=J/\sigma$; in the corona $\sigma$ is enormous, so Ohmic
+  heating is suppressed while the HQIV channel does not scale as $1/\sigma$
+  (\hyperref[lean:ohmic-suppression]{high-conductivity Ohmic limit}).
+\item \textbf{Nonzero $\partial_s\varphi$.}
+  The discrete ladder gives $\varphi(m)=2(m+1)$ at shell $m$
+  (\hyperref[lean:phi-of-shell]{shell $\varphi$ ladder}). A column with
+  $m_{\mathrm{photo}}<m_{\mathrm{corona}}$ has positive
+  $\varphi_{\mathrm{cor}}-\varphi_{\mathrm{photo}}$
+  (\hyperref[lean:phi-jump-pos]{positive $\varphi$ jump}).
+\item \textbf{Asymmetric contacts.}
+  Opposite-polarity convecting footpoints play the role of oriented wire
+  contacts, enabling odd-in-current components in the wire-paper test polynomial
+  (\hyperref[lean:test-poly-odd]{odd part of force test polynomial}).
+\end{itemize}
+
+\section{Axial HQIV field and boundary force}
+\label{sec:field}
+
+Along the loop axis $s$, the HQIV electric channel is
+\[
+E_{\mathrm{HQIV}}
+  = E_\ast\,\frac{\alpha}{4\pi}\,\Lambda_s\,\partial_s\varphi
+  = E_\ast\,\frac{3}{20\pi}\,\Lambda_s\,\partial_s\varphi,
+\qquad \alpha=\frac35,
+\]
+with $E_\ast$ the dimensionless-to-SI readout factor as in
+\cite{ettinger2026longitudinal}. The effective axial field is
+$E_{\mathrm{eff}}=E_{\mathrm{Ohm}}+E_{\mathrm{HQIV}}$; when $\partial_s\varphi=0$,
+$E_{\mathrm{eff}}$ reduces to pure Ohmic
+(\hyperref[lean:classical-effective]{classical effective-field limit}).
+
+Integrating over a column of cross-section $A$ with approximately constant
+$\Lambda_s$ gives the boundary form proved in Lean:
+\[
+\Delta F_\parallel
+  = A\,nq\,E_\ast\,\frac{3}{20\pi}\,\Lambda_s\,
+    \bigl[\varphi_{\mathrm{cor}}-\varphi_{\mathrm{photo}}\bigr].
+\]
+Equal footpoint $\varphi$ values imply $\Delta F_\parallel=0$
+(\hyperref[lean:boundary-zero]{zero boundary force at equal $\varphi$}).
+The \hyperref[lean:column-witness]{column boundary witness} packages the
+integration step the wire paper performs explicitly.
+
+\section{Heating-rate density and flux boundary}
+\label{sec:heating}
+
+Force density $f_\parallel=nq\,E_{\mathrm{eff}}$ yields heating-rate density
+$\dot q=f_\parallel v_\parallel$. In the flat limit ($\partial_s\varphi=0$),
+$\dot q$ collapses to Joule-style $nq(J/\sigma)v_\parallel$
+(\hyperref[lean:heating-flat]{classical heating-rate limit}). With Ohmic channel
+zeroed, the HQIV-only contribution is linear in $\partial_s\varphi$
+(\hyperref[lean:heating-hqiv-only]{HQIV-only heating rate}).
+
+The area-normalised heating-flux boundary form is
+\[
+\frac{Q_\parallel}{A}
+  = nq\,v_\parallel\,E_\ast\,\frac{3}{20\pi}\,\Lambda_s\,
+    \bigl[\varphi_{\mathrm{cor}}-\varphi_{\mathrm{photo}}\bigr],
+\]
+registered as \hyperref[lean:heating-flux]{heating-flux boundary} in Lean.
+The end-to-end \hyperref[lean:heating-witness]{coronal HQIV heating witness}
+records $\dot q$ for caller-supplied plasma parameters.
+
+\section{Shell-ladder anchoring and length independence}
+\label{sec:shell}
+
+Given a shell pair $m_{\mathrm{photo}}\le m_{\mathrm{corona}}$,
+\[
+\Delta\varphi
+  = \varphi(m_{\mathrm{corona}})-\varphi(m_{\mathrm{photo}})
+  = 2\,(m_{\mathrm{corona}}-m_{\mathrm{photo}}),
+\]
+so the integrated boundary force scales with the \emph{shell index gap}, not
+with bulk loop length $L$
+(\hyperref[lean:shell-gap-force]{boundary force shell-gap form},
+\hyperref[lean:shell-gap-flux]{heating flux shell-gap form}).
+This is the coronal analogue of the wire-paper prediction that symmetric bulk
+with oriented boundaries can show a boundary-dominated signal.
+
+\section{Fluid momentum companion}
+\label{sec:fluid}
+
+The wire note's mechanical channel
+\[
+g_{{\rm vac},s}
+  =
+  -\frac{\gamma}{6}
+  \bigl(\varphi\,\partial_s\dot{\delta\theta'}
+        +\dot{\delta\theta'}\,\partial_s\varphi\bigr),
+\qquad \gamma=\frac25,
+\]
+appears in Lean as \hyperref[lean:vacuum-momentum]{coronal axial vacuum
+momentum source}, identified with component $0$ of the three-vector
+$\mathbf g_{\rm vac}$ from the \hyperref[lean:fluid-scaffold]{fluid closure
+scaffold}. With $\gamma=2/5$ the prefactor is $-1/15$
+(\hyperref[lean:minus-fifteenth]{$-1/15$ prefactor identity}).
+
+\section{Solar discriminants}
+\label{sec:discriminants}
+
+Translating the wire-paper tests to loops:
+
+\begin{enumerate}[leftmargin=2em]
+\item \textbf{Footpoint polarity / network asymmetry.}
+  Odd-in-current components isolate oriented $\partial_s\varphi$ or
+  $\partial_s\dot{\delta\theta'}$; opposite-polarity footpoints are the solar
+  realisation of asymmetric contacts
+  (\hyperref[lean:even-odd]{even/odd decomposition}).
+\item \textbf{Length independence at fixed footpoints.}
+  If heating flux depends only on $\varphi_{\mathrm{cor}}-\varphi_{\mathrm{photo}}$,
+  lengthening the loop while holding footpoint anchoring fixed should modulate
+  standard wave/reconnection channels differently from the HQIV boundary term.
+\item \textbf{Sub-Alfv\'enic timing.}
+  Phase-equilibration signatures can precede thermal diffusion along the loop,
+  analogous to fast electrical pulses in wires.
+\item \textbf{Quiet-Sun vs active-region networks.}
+  Footpoint complexity and $\Lambda_s$ readout should correlate with odd-channel
+  strength if the HQIV boundary term is physical.
+\end{enumerate}
+
+Use the wire-paper test polynomial with even part $a_2 I^2+a_4 I^4+F_0$ and odd
+part $b_1 I+b_3 I^3$; Lean proves the decomposition
+(\hyperref[lean:test-poly-even]{even part},
+\hyperref[lean:test-poly-odd]{odd part}).
+
+\section{What this note does not claim}
+\label{sec:not-claimed}
+
+\begin{itemize}[leftmargin=2em]
+\item A derived $(m_{\mathrm{photo}},m_{\mathrm{corona}})$ pair from horizon
+  thermodynamics alone.
+\item Agreement with $10^3\,\mathrm{W\,m^{-2}}$ coronal flux budgets without an
+  $E_\ast$ and plasma-parameter witness layer.
+\item Displacement of Alfv\'en-wave dissipation or nanoflare reconnection.
+\item Any continuum-limit or patch-refinement programme.
+\end{itemize}
+
+\section{Conclusion}
+
+Coronal loops are the natural stellar laboratory for the longitudinal HQIV
+stress mechanism: enormous conductivity suppresses Ohmic heating while a
+photosphere--corona $\varphi$ jump on the shell ladder supplies a boundary-form
+HQIV channel. The Lean module fixes every algebraic identity needed for a
+falsifiable third heating channel; stellar profile derivation and SI energetics
+remain programme targets. The wire companion \cite{ettinger2026longitudinal}
+gives the laboratory protocol; this note gives the flux-tube instantiation.
+
+\section*{Acknowledgments}
+
+Machine-checked proofs live in the public HQIV Lean repository \cite{hqiv-lean}.
+
+\appendix
+
+\section{Lean module index}
+\label{app:lean-index}
+
+\begin{description}[leftmargin=2.5em,style=nextline]
+\item[\hypertarget{lean:coronal-longitudinal}{Coronal longitudinal stress module}]
+  \leanfile{Hqiv/Physics/CoronalLongitudinalStress.lean} --- umbrella for this paper.
+\item[\hypertarget{lean:hqiv-field-alpha}{HQIV field $\alpha$ form}]
+  \leanid{coronalLongitudinalHQIVField\_alpha\_3\_5}.
+\item[\hypertarget{lean:flat-limit}{Flat-limit collapse}]
+  \leanid{coronalLongitudinalHQIVField\_zero\_of\_dphi\_zero}.
+\item[\hypertarget{lean:boundary-force}{Boundary force}]
+  \leanid{coronalLongitudinalForceBoundary},
+  \leanid{coronalLongitudinalForceBoundary\_eq\_alpha\_form}.
+\item[\hypertarget{lean:boundary-zero}{Zero boundary force at equal $\varphi$}]
+  \leanid{coronalLongitudinalForceBoundary\_zero\_of\_phi\_equal}.
+\item[\hypertarget{lean:column-witness}{Column boundary witness}]
+  \leanid{CoronalColumnBoundaryWitness}.
+\item[\hypertarget{lean:ohmic-suppression}{High-conductivity Ohmic limit}]
+  \leanid{ohmicAxialField\_eq\_zero\_of\_J\_zero}; HQIV channel not $1/\sigma$-suppressed
+  (\leanid{coronalHeatingRateDensity\_hqiv\_only}).
+\item[\hypertarget{lean:classical-effective}{Classical effective-field limit}]
+  \leanid{coronalEffectiveAxialField\_classical\_limit}.
+\item[\hypertarget{lean:heating-flat}{Classical heating-rate limit}]
+  \leanid{coronalHeatingRateDensity\_classical\_flat\_limit}.
+\item[\hypertarget{lean:heating-hqiv-only}{HQIV-only heating rate}]
+  \leanid{coronalHeatingRateDensity\_hqiv\_only}.
+\item[\hypertarget{lean:heating-flux}{Heating-flux boundary}]
+  \leanid{coronalHeatingFluxBoundary},
+  \leanid{coronalHeatingFluxBoundary\_eq\_alpha\_form}.
+\item[\hypertarget{lean:heating-witness}{Coronal HQIV heating witness}]
+  \leanid{CoronalHQIVHeatingWitness}.
+\item[\hypertarget{lean:phi-of-shell}{Shell $\varphi$ ladder}]
+  \leanid{phi\_of\_shell}, \leanid{phi\_of\_shell\_closed\_form} (imported in module).
+\item[\hypertarget{lean:phi-jump}{Shell $\varphi$ jump}]
+  \leanid{coronalPhiJump}, \leanid{coronalPhiJump\_closed\_form}.
+\item[\hypertarget{lean:phi-jump-pos}{Positive $\varphi$ jump}]
+  \leanid{coronalPhiJump\_pos\_of\_lt}.
+\item[\hypertarget{lean:shell-gap-force}{Boundary force shell-gap form}]
+  \leanid{coronalLongitudinalForceBoundaryShells\_eq\_two\_shellGap}.
+\item[\hypertarget{lean:shell-gap-flux}{Heating flux shell-gap form}]
+  \leanid{coronalHeatingFluxBoundaryShells\_eq\_two\_shellGap}.
+\item[\hypertarget{lean:vacuum-momentum}{Vacuum momentum source}]
+  \leanid{coronalAxialVacuumMomentumSource}.
+\item[\hypertarget{lean:minus-fifteenth}{$-1/15$ prefactor identity}]
+  \leanid{coronalAxialVacuumMomentumSource\_eq\_minus\_one\_fifteenth}.
+\item[\hypertarget{lean:fluid-scaffold}{Fluid closure scaffold}]
+  \leanfile{Hqiv/Physics/HQIVFluidClosureScaffold.lean}.
+\item[\hypertarget{lean:even-odd}{Even/odd current split}]
+  \leanid{evenInCurrent}, \leanid{oddInCurrent},
+  \leanid{evenInCurrent\_pow\_two}, \leanid{oddInCurrent\_id}.
+\item[\hypertarget{lean:test-poly-even}{Even part of force test polynomial}]
+  \leanid{coronalForceTestPoly\_even\_part}.
+\item[\hypertarget{lean:test-poly-odd}{Odd part of force test polynomial}]
+  \leanid{coronalForceTestPoly\_odd\_part}.
+\item[\hypertarget{lean:o-maxwell-upstream}{O-Maxwell upstream}]
+  \leanfile{Hqiv/Physics/OMaxwellAlgebraSeed.lean},
+  \leanfile{Hqiv/Physics/ModifiedMaxwell.lean}.
+\end{description}
+
+\bibliographystyle{plain}
+\bibliography{../references}
+
+\end{document}

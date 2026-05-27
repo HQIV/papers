@@ -1,0 +1,424 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\usepackage[final]{microtype}
+\setlength{\emergencystretch}{3em}
+
+\newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
+\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\nolinkurl{#1}}}
+\newcommand{\leanid}[1]{\nolinkurl{#1}}
+
+\title[Longitudinal EM Stress in Conductors]{Longitudinal Electromagnetic Stress in Current-Carrying Conductors:\\
+An HQIV/O-Maxwell Explanation of Axial Wire Forces}
+
+\author{Steven Ettinger Jr}
+\address{Independent Researcher}
+\email{steven@disregardfiat.tech}
+\date{Preprint v1 --- \today}
+
+\newtheorem{definition}{Definition}[section]
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{remark}[definition]{Remark}
+
+\begin{document}
+\begin{abstract}
+\noindent\textbf{Position in the publication chain.}
+This is the ninth paper in the HQIV preprint series and the
+first Tier-3 applied phenomenology note. Tier~0--1 fix the discrete spine
+and O-Maxwell variational layer
+\cite{ettinger2026hqiv,hqiv-lightcone-paper,hqiv-so8-paper,hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper};
+Tier~2 closes mass, baryogenesis, nucleon binding, and BBN readouts
+\cite{hqiv-mass-spectrum-paper,hqiv-sm-lagrangian-paper,hqiv-baryogenesis-paper,hqiv-nucleon-binding-paper,hqiv-bbn-paper}.
+
+\noindent\textbf{Background.}
+A recent Cambridge Open Engage working paper \cite{graneau2026} reports direct
+measurements of an axial expansion force in metallic wires carrying direct
+current and argues that the residual force is not explained by thermal
+expansion, magnetic pinch, or electromigration alone. The result is not yet
+peer reviewed, but it reopens whether a current-carrying conductor can
+support a longitudinal electromagnetic stress parallel to the current.
+
+\noindent\textbf{Result.}
+For a straight conductor with axial coordinate $s$, cross-sectional area $A$,
+current $I$, conductivity $\sigma$, mobile charge density $nq$, and HQIV scalar
+$\varphi$, the predicted longitudinal electric/stress channel is
+\[
+E_{\parallel}^{\rm eff}
+  = \frac{I}{\sigma A}
+  + E_\ast\,\frac{\alpha}{4\pi}\,\Lambda_s\,\partial_s\varphi,
+\qquad
+f_{\parallel}
+  = nq\,E_{\parallel}^{\rm eff},
+\]
+where $\alpha=3/5$, $\Lambda_s$ is the algebra-first O-Maxwell coupling log for
+the axial component, and $E_\ast$ converts the dimensionless O-Maxwell cell
+readout to SI. The measurable axial excess over calibrated Ohmic/thermal response is
+\[
+\Delta f_{\parallel}
+  = nq\,E_\ast\,\frac{3}{20\pi}\,\Lambda_s\,\partial_s\varphi .
+\]
+The model predicts reversal with current direction only through the
+current-induced odd part of $\partial_s\varphi$, scaling with the resistive
+phase-gradient profile rather than with magnetic pinch pressure
+$B^2/(2\mu_0)$. Formal identities live in the
+\hyperref[lean:o-maxwell-closure]{O-Maxwell closure layer} and the
+\hyperref[lean:coronal-longitudinal]{coronal longitudinal stress module}
+(Appendix~\ref{app:lean-index}).
+
+\noindent\textbf{Scope boundary.}
+This note is a \emph{laboratory-scale} O-Maxwell channel motivated by an unpublished
+wire-force working paper \cite{graneau2026}. Millimetre-per-second effects in
+\emph{spacecraft Doppler tracking}---Earth flybys, drag, media noise---are catalogued
+in the orbital companion \cite{hqiv-flyby-paper}; they are not explained here by
+longitudinal wire stress.
+
+\noindent\textbf{Patch-ontology reader contract.}
+The axial term is a discrete O-Maxwell source readout; smooth continuum
+Maxwell is the comparison limit when $\partial_s\varphi\to 0$.
+\end{abstract}
+\maketitle
+
+\input{../include/patch_theory_messaging.tex}
+
+\section{Scope and claim discipline}
+\label{sec:scope}
+
+The experimental prompt for this note is the Cambridge Open Engage working
+paper \cite{graneau2026}. That posting reports axial wire forces under DC
+current and states that the measurement protocol separates the force from
+thermal expansion, magnetic pinch, and electromigration. Because the source is
+a working paper rather than a peer-reviewed article, the present note treats
+the result as a target phenomenon to be explained and tested, not as an
+established fact.
+
+\begin{enumerate}[leftmargin=2em]
+\item \textbf{Claimed (HQIV/O-Maxwell).} A longitudinal conductor stress when
+  the current establishes an axial phase/lapse gradient in the inhomogeneous
+  source balance (\hyperref[lean:phase-gradient-source]{phase-gradient source
+  slot}); vanishes in the flat, constant-$\varphi$ limit
+  (\hyperref[lean:classical-limit]{classical Maxwell limit}).
+\item \textbf{Not claimed.} Violation of the point-particle Lorentz force;
+  replacement of Joule heating or pinch physics; peer-reviewed confirmation
+  of Graneau et al.
+\item \textbf{Companion.} Coronal flux-tube application
+  \cite{hqiv-coronal-paper} extends the same boundary-form stress to
+  photosphere--corona loops (\hyperref[lean:coronal-longitudinal]{coronal
+  longitudinal module}).
+\end{enumerate}
+
+The accepted textbook statement is narrower than it is often presented. For a point charge with velocity $\mathbf v$,
+\[
+\mathbf F = q(\mathbf E+\mathbf v\times\mathbf B),
+\]
+so the magnetic part is perpendicular to $\mathbf v$. This does not imply that a resistive many-body conductor cannot carry a longitudinal electromagnetic stress. A conductor is not a free particle: it has lattice constraints, boundary conditions, charge relaxation, contact potentials, Joule heating, and internal momentum exchange between carriers, phonons, surfaces, and fields. The question is therefore not whether $q\mathbf v\times\mathbf B$ has an axial component for one carrier. It does not. The question is whether the field-current-lattice system has an axial stress component after the carrier momentum budget is coarse-grained.
+
+HQIV answers yes, conditionally: a longitudinal component appears when the current drives a nonzero axial phase/lapse gradient in the O-Maxwell source balance. The term vanishes in the flat, constant-$\varphi$, uniform-readout limit, so the model preserves the ordinary Maxwell/Lorentz limit.
+
+\section{Accepted mechanisms and the residual}
+
+Let the wire axis be $s$. In the conventional budget, the main axial readouts are:
+\[
+E_{\rm Ohm}=\frac{J}{\sigma}=\frac{I}{\sigma A},
+\qquad
+P_{\rm Joule}=J E_{\rm Ohm}=\frac{J^2}{\sigma},
+\]
+plus thermal expansion through the temperature field $T(s,r,t)$. The magnetic self-field of a long round wire is azimuthal,
+\[
+B_\theta(r)=\frac{\mu_0 I r}{2\pi R^2}\quad (r<R),
+\]
+and produces a radial pinch stress, not a leading axial stress in an ideal straight isotropic cylinder. Electromigration produces axial momentum transfer, but it is tied to carrier drift, defects, and material transport; it should show strong dependence on microstructure, temperature, and long-time mass displacement.
+
+The reported residual is interesting only if the following calibrated model cannot account for it:
+\[
+F_{\rm meas}(I,t)
+  = F_{\rm thermal}(I^2,t)
+  + F_{\rm pinch}(I^2,t)
+  + F_{\rm electromigration}(I,t;{\rm material})
+  + F_{\rm residual}(I,t).
+\]
+The HQIV claim concerns $F_{\rm residual}$. It does not deny the first three terms.
+
+\section{O-Maxwell source balance}
+\label{sec:omaxwell}
+
+The relevant formal layer is the O-Maxwell action and continuum closure proved in
+\cite{hqiv-oct-action-paper}:
+\[
+{\rm EL}_{a\nu}
+  =
+  \sum_\mu F_{a\mu\nu}
+  -4\pi J_{a\nu}
+  - \mathbf{1}_{a=0}\,\alpha \log(\varphi+1)\,\partial_\nu\varphi ,
+\]
+with the continuum version replacing $\partial_\nu\varphi$ by chart gradient components or by a metric-raised gradient. In the algebra-first Maxwell layer, the same correction is written with the component coupling log $\Lambda_\nu$:
+\[
+\mathcal{M}_{a\nu}
+  =
+  -4\pi J_{a\nu}
+  -\alpha\,\Lambda_\nu\,\partial_\nu\varphi ,
+\]
+up to the common divergence side of the equation.
+
+For the electromagnetic channel $a=0$ and axial component $\nu=s$, stationarity gives
+\[
+\sum_\mu F_{0\mu s}
+  =
+  4\pi J_{0s}
+  +\alpha\,\Lambda_s\,\partial_s\varphi .
+\]
+Thus the source that a coarse-grained conductor reads along its axis is
+\[
+J^{\rm eff}_{s}
+  =
+  J_s+\frac{\alpha}{4\pi}\Lambda_s\,\partial_s\varphi .
+\]
+This is the minimal mathematical location of the longitudinal term. It is not an extra force law pasted onto Lorentz theory; it is the longitudinal component of the same inhomogeneous source equation once the HQIV phase-gradient slot is nonzero.
+
+\section{Force density}
+
+The carrier/lattice force density associated with an effective axial field is
+\[
+f_{\parallel}=nq\,E_{\parallel}^{\rm eff},
+\]
+where $n$ is the mobile carrier number density and $q$ is the carrier charge magnitude. In SI readout,
+\[
+E_{\parallel}^{\rm eff}
+  =
+  E_{\rm Ohm}+E_{\rm HQIV},
+\qquad
+E_{\rm Ohm}=\frac{I}{\sigma A},
+\]
+and
+\[
+E_{\rm HQIV}
+  =
+  E_\ast\,\frac{\alpha}{4\pi}\Lambda_s\,\partial_s\varphi
+  =
+  E_\ast\,\frac{3}{20\pi}\Lambda_s\,\partial_s\varphi .
+\]
+Here $E_\ast$ is not a fitted material constant. It is the unit/readout conversion between the dimensionless O-Maxwell cell residual and SI electric field units. In a purely natural-unit HQIV computation, $E_\ast=1$.
+
+For a wire segment of length $L$ and cross-section $A$, the excess axial force is
+\[
+\Delta F_{\parallel}
+  =
+  A\int_0^L nq\,E_{\rm HQIV}(s)\,ds
+  =
+  A\,nq\,E_\ast\,\frac{3}{20\pi}
+  \int_0^L \Lambda_s(s)\,\partial_s\varphi(s)\,ds .
+\]
+If $\Lambda_s$ is approximately constant over the segment,
+\[
+\Delta F_{\parallel}
+  \approx
+  A\,nq\,E_\ast\,\frac{3}{20\pi}\Lambda_s
+  \bigl[\varphi(L)-\varphi(0)\bigr].
+\]
+This boundary form is experimentally important: a uniform interior with symmetric contacts can suppress the integrated signal even if local stresses exist; asymmetric contacts, gradients, or clamps can reveal it.
+
+\section{Connection to phase-horizon tipping}
+
+The algebra-first O-Maxwell seed defines the phase-horizon tipping angle
+\[
+\delta\theta'(E')=\arctan(E')\,\frac{\pi}{2},
+\]
+and the effective fluid closure uses the vacuum momentum source
+\[
+\mathbf g_{\rm vac}
+  =
+  -\frac{\gamma}{6}\nabla(\varphi\,\dot{\delta\theta'}).
+\]
+For a conductor in steady current, the axial component is
+\[
+g_{{\rm vac},s}
+  =
+  -\frac{\gamma}{6}
+  \left(\varphi\,\partial_s\dot{\delta\theta'}
+        +\dot{\delta\theta'}\,\partial_s\varphi\right),
+\qquad
+\gamma=\frac25.
+\]
+This gives the mechanical stress channel complementary to the O-Maxwell source equation. The source-balance expression identifies the longitudinal electromagnetic residual; the fluid expression says how that residual appears as momentum transfer into the lattice/continuum medium
+(\hyperref[lean:fluid-closure]{HQIV fluid closure scaffold}).
+
+At small electric proxy $E'$,
+\[
+\delta\theta'(E')
+  =
+  \frac{\pi}{2}E' + O((E')^3).
+\]
+Since $E'$ is driven by local electric energy/readout, the leading current dependence of the HQIV axial term is determined by which part of $\partial_s\varphi$ and $\partial_s\dot{\delta\theta'}$ is odd or even under $I\mapsto -I$. This is a discriminator:
+\[
+F_{\rm thermal},F_{\rm pinch}\sim I^2,
+\qquad
+F_{\rm HQIV}\sim c_1 I+c_2 I^2+c_3 I^3+\cdots ,
+\]
+with the odd part controlled by contact/asymmetry-induced phase gradients.
+
+\section{Why this does not contradict the Lorentz force}
+
+The standard objection is:
+\[
+\mathbf v\cdot(\mathbf v\times\mathbf B)=0,
+\]
+so magnetic force cannot do work along the carrier motion. HQIV agrees with that statement. The proposed longitudinal term is not the axial projection of $\mathbf v\times\mathbf B$. It is a constrained-medium source term:
+\[
+\partial_\mu F^{\mu s}
+  =
+  4\pi J^s
+  +\alpha\Lambda_s\partial^s\varphi .
+\]
+The additional axial stress is carried by the phase/lapse gradient and then exchanged with the lattice through the same current source budget. In the constant-$\varphi$ limit,
+\[
+\partial_s\varphi=0,
+\qquad
+\partial_s\dot{\delta\theta'}=0,
+\]
+and the longitudinal residual vanishes. The accepted meta is therefore recovered as a limiting case, not rejected.
+
+\section{Order-of-magnitude readout}
+
+For copper-like conductivity $\sigma\approx 5.8\times10^7\,{\rm S/m}$, current $I=10\,{\rm A}$, and radius $R=1\,{\rm mm}$,
+\[
+A=\pi R^2\approx 3.14\times10^{-6}\,{\rm m^2},
+\qquad
+J\approx 3.18\times10^6\,{\rm A/m^2},
+\]
+so
+\[
+E_{\rm Ohm}\approx 5.5\times10^{-2}\,{\rm V/m}.
+\]
+The dimensionless fractional residual is
+\[
+\epsilon_{\rm HQIV}
+  :=
+  \frac{E_{\rm HQIV}}{E_{\rm Ohm}}
+  =
+  \frac{
+    E_\ast\,(3/20\pi)\Lambda_s\partial_s\varphi
+  }{
+    I/(\sigma A)
+  }.
+\]
+This form is useful because it does not require guessing the absolute HQIV readout scale before doing comparisons. Experiments can first fit or bound $\epsilon_{\rm HQIV}$ after subtracting the calibrated thermal/pinch/electromigration terms, then test whether the inferred value scales with $\partial_s\varphi$-like controls: contact asymmetry, material coherence, current density profile, and shell/temperature gradients.
+
+\section{Experimental discriminants}
+
+The HQIV residual differs from standard backgrounds in the following ways.
+
+\begin{enumerate}
+\item \textbf{Current reversal.}
+Thermal expansion and magnetic pressure are even in $I$. A phase-gradient residual can contain an odd component if the conductor/contact geometry creates an oriented $\partial_s\varphi$ or $\partial_s\dot{\delta\theta'}$. Measure
+\[
+F_{\rm odd}(I)=\frac{F(I)-F(-I)}{2},
+\qquad
+F_{\rm even}(I)=\frac{F(I)+F(-I)}{2}.
+\]
+
+\item \textbf{Contact dependence.}
+If the integrated force is approximately a boundary term,
+\[
+\Delta F_\parallel\propto \varphi(L)-\varphi(0),
+\]
+then changing contacts, clamps, surface preparation, or lead geometry should alter the residual more strongly than it alters bulk Joule heating.
+
+\item \textbf{Length dependence.}
+A uniform bulk thermal expansion force scales differently from a boundary-dominated phase-gradient force. Under fixed $I$ and radius, compare multiple $L$ while independently measuring temperature fields.
+
+\item \textbf{Pulse timing.}
+Thermal expansion follows heat diffusion times. The O-Maxwell source response should track electrical/phase equilibration first, with thermal drift later. Fast pulses can separate these channels.
+
+\item \textbf{Material coherence.}
+The fluid closure predicts sensitivity to coherence and microstructure through the effective medium terms. Annealed, cold-worked, polycrystalline, and single-crystal samples should not collapse to one universal thermal curve if the residual is real.
+\end{enumerate}
+
+\section{Minimal test equation}
+
+For data analysis, use
+\[
+F_{\rm meas}(I,t)
+  =
+  a_2(t)I^2
+  +a_4(t)I^4
+  +b_1(t)I
+  +b_3(t)I^3
+  +F_0(t),
+\]
+where $a_2,a_4$ absorb thermal and magnetic even-in-current channels, while $b_1,b_3$ capture oriented longitudinal residuals. HQIV predicts that the odd coefficients should be correlated with axial phase-gradient controls:
+\[
+b_1,b_3
+  \longleftrightarrow
+  \frac{3}{20\pi}A\,nq\,E_\ast
+  \int \Lambda_s\,\partial_s\varphi\,ds
+  \quad
+  \text{and}
+  \quad
+  -\frac{\gamma}{6}\int \partial_s(\varphi\dot{\delta\theta'})\,ds .
+\]
+If all odd components vanish under carefully reversed contacts and the remaining even residual scales exactly with measured temperature and pinch pressure, the HQIV explanation is not needed. If an oriented component persists after those controls, the O-Maxwell phase-gradient channel is the natural place in the present framework to put it.
+
+\section{Astrophysical extension: coronal magnetic flux tubes}
+
+The three preconditions for the longitudinal residual to be non-negligible (axial current channel, non-zero $\partial_s\varphi$, asymmetric boundary geometry) are jointly extremized in solar coronal magnetic loops: photospheric footpoints provide opposite-polarity asymmetric ``contacts,'' the chromosphere--transition region--corona stratification realises the steepest $\varphi$ gradient in the solar atmosphere via the HQIV shell ladder $\varphi(m)=2(m+1)$, and the loop's force-free flux tube is the natural current-carrying conductor. The boundary form
+\[
+\frac{Q_\parallel}{A}
+  =
+  nq\,v_\parallel\,E_\ast\,\frac{3}{20\pi}\,\Lambda_s\,\bigl[\varphi(\mathrm{corona})-\varphi(\mathrm{photosphere})\bigr]
+\]
+gives a candidate \emph{third} steady-state coronal-heating channel beside Alfvén-wave dissipation and Parker-type nanoflare reconnection. The companion note
+\cite{hqiv-coronal-paper} works out the discriminants (footpoint-polarity asymmetry, length-independence, sub-Alfvénic timing, network correlation); the
+\hyperref[lean:coronal-longitudinal]{coronal longitudinal stress module} registers each equation as a $\mathsf{Prop}$ theorem with zero \texttt{sorry}.
+
+\section{Conclusion}
+
+The accepted meta says that the magnetic part of the Lorentz force is transverse to carrier velocity. That statement is correct but incomplete for a constrained resistive conductor. HQIV/O-Maxwell predicts a longitudinal conductor stress when the current establishes an axial phase/lapse gradient. The quantified residual is
+\[
+\Delta F_{\parallel}
+  =
+  A\,nq\,E_\ast\,\frac{3}{20\pi}
+  \int_0^L \Lambda_s\,\partial_s\varphi\,ds,
+\]
+with a companion momentum-source expression
+\[
+g_{{\rm vac},s}
+  =
+  -\frac{1}{15}
+  \left(\varphi\,\partial_s\dot{\delta\theta'}
+        +\dot{\delta\theta'}\,\partial_s\varphi\right),
+\]
+using $\gamma=2/5$. Both vanish in the constant-$\varphi$, symmetric, flat Maxwell limit. The theory therefore explains a possible longitudinal wire force as a residual phase-gradient stress, not as a violation of the point-particle Lorentz force law.
+
+\appendix
+
+\section{Lean module index}
+\label{app:lean-index}
+
+\begin{description}[leftmargin=2.5em,style=nextline]
+\item[\hypertarget{lean:o-maxwell-closure}{O-Maxwell closure layer}]
+  \leanfile{Hqiv/Physics/Action.lean},
+  \leanfile{Hqiv/Physics/ModifiedMaxwell.lean},
+  \leanfile{Hqiv/Physics/ContinuumOmaxwellClosure.lean}.
+\item[\hypertarget{lean:phase-gradient-source}{Phase-gradient source slot}]
+  Inhomogeneous $\alpha\Lambda_\nu\partial_\nu\varphi$ correction in
+  \leanfile{Hqiv/Physics/ModifiedMaxwell.lean}.
+\item[\hypertarget{lean:classical-limit}{Classical Maxwell limit}]
+  \leanid{O\_reduces\_to\_classic\_Maxwell\_in\_H},
+  \leanid{classic\_Maxwell\_in\_H\_under\_flat\_limit}.
+\item[\hypertarget{lean:algebra-seed}{O-Maxwell algebra seed}]
+  \leanfile{Hqiv/Physics/OMaxwellAlgebraSeed.lean} ---
+  $\delta\theta'(E')$, coupling logs $\Lambda_\nu$.
+\item[\hypertarget{lean:fluid-closure}{HQIV fluid closure scaffold}]
+  \leanfile{Hqiv/Physics/HQIVFluidClosureScaffold.lean} ---
+  vacuum momentum source $\mathbf g_{\rm vac}$.
+\item[\hypertarget{lean:coronal-longitudinal}{Coronal longitudinal stress module}]
+  \leanfile{Hqiv/Physics/CoronalLongitudinalStress.lean} ---
+  boundary-form force, $\alpha=3/5$ identities, even/odd current split.
+\end{description}
+
+\bibliographystyle{plain}
+\bibliography{../references}
+
+\end{document}

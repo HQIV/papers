@@ -1,0 +1,27 @@
+# Reproducer scripts — BBN paper
+
+These scripts live at the repository root and export the witness JSON cited in the paper.
+
+## Contents
+
+| Script | Reproduces | Notes |
+| --- | --- | --- |
+| `../../scripts/hqiv_bbn_abundances.py` | Partition readout, epoch sweep, `data/bbn_witnesses.json` | Default run writes witness bundle |
+| `../../scripts/hqiv_bbn_epoch_network.py` | Epoch cooling network integration (400-step scaffold) | Feeds integrated $Y_p$ witnesses in Lean |
+
+Run from the repository root:
+
+```bash
+python3 scripts/hqiv_bbn_abundances.py
+python3 scripts/hqiv_bbn_epoch_network.py
+```
+
+## Inputs
+
+- Lock-in $\eta$ from the baryogenesis witness chain (`eta_paper` in Lean; see baryogenesis paper).
+- Nucleon masses and binding from `derivedProtonMass`, `derivedDeltaM` (proton lock-in witness).
+- Coc et al. semi-analytic fits are **not** HQIV inputs; they appear only in the comparison layer.
+
+## Patch-ontology disclaimer
+
+BBN abundances are discrete-ladder readouts at a cosmological epoch on the temperature shell map. They are not obtained as a continuum-limit refinement of the patch theory.

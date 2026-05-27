@@ -1,0 +1,354 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\usepackage[final]{microtype}
+\setlength{\emergencystretch}{3em}
+
+\newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
+\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\nolinkurl{#1}}}
+\newcommand{\leanid}[1]{\nolinkurl{#1}}
+
+\title[BBN light elements from network weights]{Big-Bang Nucleosynthesis from HQIV Network Weights:\\
+Lock-In $\eta$, Epoch Ladder, and Integrated Witnesses in the Lean Library}
+\author{Steven Ettinger Jr}
+\address{Independent Researcher}
+\email{steven@disregardfiat.tech}
+\date{Preprint v1 --- \today}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\begin{document}
+
+\begin{abstract}
+\noindent\textbf{Position in the publication chain.}
+This is the eighth paper in the HQIV preprint series and the
+fifth Tier-2 closure note. Tier~0--1 fix the discrete spine
+\cite{ettinger2026hqiv,hqiv-lightcone-paper,hqiv-so8-paper,hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper};
+Tier~2 supplies mass lock-in, baryogenesis normalisation, and nucleon
+composite-trace binding \cite{hqiv-mass-spectrum-paper,hqiv-sm-lagrangian-paper,hqiv-baryogenesis-paper,hqiv-nucleon-binding-paper}.
+The present note states what the BBN Lean stack \emph{actually proves} about
+primordial light-element readouts when lock-in $\eta$, nucleon masses, and
+composite-trace binding weights are already fixed upstream.
+
+\noindent\textbf{Result.}
+At lock-in the library defines an $8\times8$ network readout for
+$Y_p$, $D/H$, $^3\mathrm{He}/H$, and $^7\mathrm{Li}/H$ from valley
+counts, Boltzmann weights, and cluster binding $Q$ values tied to
+\cite{hqiv-mass-spectrum-paper}. A separate epoch module places the BBN
+window on the temperature shell ladder between QCD lock-in and the CMB
+today; an integrated witness certifies $Y_p$ in the observed band and
+within $1\%$ of the freeze-out partition value at the same $\eta$.
+Machine-checked vital bundles aggregate positivity, ladder ordering, and
+$\eta$ consistency (\hyperref[lean:bbn-full-vital]{full BBN vital readout}).
+Reader-friendly anchors with clickable Lean links are in
+Appendix~\ref{app:lean-index}.
+
+\noindent\textbf{Single absolute anchor (quarantined).}
+Dimensionful nucleon masses enter only through the proton lock-in witness
+at $\mathrm{referenceM}=4$; lock-in $\eta_{\mathrm{paper}}$ is imported from
+the baryogenesis witness layer, not refit here. Coc et al.\ semi-analytic
+fits \cite{coc2015} are labelled \emph{comparison-only} in Lean and are
+never HQIV inputs.
+
+\noindent\textbf{Patch-ontology reader contract.}
+Per the patch-theory reader contract below, BBN is a discrete-epoch
+readout on the shell--temperature map, not a continuum-limit completion
+programme. Full PRIMAT-style reaction networks, Li-problem resolution, and
+sphaleron/chemical-potential transport remain comparison-layer or future
+work.
+
+\noindent\textbf{Status.}
+Proved: network vital readout, epoch vital readout, integrated $Y_p$
+witness pack, umbrella \texttt{bbn\_full\_vital\_readout}. Honest
+scaffold: $^7\mathrm{Li}/H$ from the weight ansatz can diverge at mid-epoch
+(JSON witnesses); not claimed as an observational match. Not claimed:
+derivation of $\eta_{\mathrm{paper}}$ from first principles in this note.
+\end{abstract}
+\maketitle
+
+\input{../include/patch_theory_messaging.tex}
+
+\section{Scope and claim discipline}
+\label{sec:scope}
+
+The HQIV programme ties discrete null-shell counting, horizon ratios, and
+octonionic-sector packaging \cite{ettinger2026hqiv,hqiv-so8-paper}. The
+baryogenesis note \cite{hqiv-baryogenesis-paper} fixes how
+$\eta(n;N)$ shares the same normalisation as $\Omega_k(n;N)$ at lock-in.
+\textbf{This note answers: given that normalisation, what light-element
+statements are already theorems in Lean, and what remains interpretive or
+comparison-layer physics?}
+
+\begin{enumerate}[leftmargin=2em]
+\item \textbf{Proved in Lean (network spine).}
+  Valley counts for $A=2,3,4$; cluster binding $Q$ for deuterium and
+  $^4\mathrm{He}$ aligned with composite-trace nucleon binding; neutron
+  fraction and $Y_p=2x_n/(1+x_n)$ in $(0,1)$; $\eta$ at BBN equals
+  $\eta_{\mathrm{paper}}$ (the \hyperref[lean:eta-bbn-eq]{BBN--$\eta$ identity});
+  positivity of $D/H$, $^3\mathrm{He}/H$, $^7\mathrm{Li}/H$ readouts at
+  lock-in (the \hyperref[lean:bbn-network-vital]{network vital readout}).
+\item \textbf{Proved in Lean (epoch spine).}
+  Shell index $m(T)=\lfloor T_{\mathrm{Pl,MeV}}/T\rfloor-1$; BBN mid-epoch
+  shell strictly above lock-in and below today (the
+  \hyperref[lean:bbn-mid-shell-order]{mid-epoch shell ordering});
+  epoch readout positivity at $T\approx 0.1\,\mathrm{MeV}$ (the
+  \hyperref[lean:bbn-epoch-vital]{epoch vital readout}).
+\item \textbf{Proved in Lean (integrated witness).}
+  Freeze-out $Y_p$ in the Cooke-style observed band; integrated $Y_p$
+  within $1\%$ of freeze-out at exported numerics (the
+  \hyperref[lean:bbn-integrated-vital]{integrated witness vital readout}).
+\item \textbf{Comparison layer only.}
+  Coc et al.\ \cite{coc2015} semi-analytic $Y_p(\eta,N_\nu,\tau_n)$ and
+  $D/H(\eta)$ in the \hyperref[lean:bbn-umbrella]{BBN umbrella module}---not
+  derived from HQIV weights.
+\item \textbf{Not claimed.}
+  Full 400-reaction PRIMAT network in Lean; Li-problem solution; independent
+  refit of $\eta$ or nucleon masses; continuum transport of weak rates.
+\end{enumerate}
+
+\section{Upstream inputs consumed at lock-in}
+\label{sec:inputs}
+
+The BBN stack does not introduce new dimensionful anchors. It consumes:
+
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Baryon asymmetry.}
+  $\eta_{\mathrm{paper}}$ from the baryogenesis witness chain
+  \cite{hqiv-baryogenesis-paper}, with
+  $\eta_{\mathrm{BBN}}=\eta_{\mathrm{paper}}$ proved in the
+  \hyperref[lean:bbn-network]{network-from-weights module}.
+\item \textbf{Nucleon masses.}
+  $\texttt{derivedProtonMass}$ and $\texttt{derivedDeltaM}$ (neutron--proton
+  gap) from the mass-spectrum lock-in discipline
+  \cite{hqiv-mass-spectrum-paper,hqiv-kirchhoff-paper}; binding shell
+  $\texttt{bbnBindingShell}=\mathrm{referenceM}$.
+\item \textbf{Composite-trace binding.}
+  Deuterium and $^4\mathrm{He}$ reaction $Q$ values identified with
+  cluster binding from the eight-dimensional composite trace (the
+  \hyperref[lean:bbn-cluster-binding]{cluster-binding alignment theorems}).
+\end{itemize}
+
+Laboratory abundances and semi-analytic fits are \emph{comparison targets}
+for scripts and narrative; they are not simultaneous fit rows in the proof
+graph.
+
+\section{Network readout from valley weights}
+\label{sec:network}
+
+The \hyperref[lean:bbn-network]{network-from-weights module} encodes light
+elements as a weighted readout on the same Fano/network picture used for
+nucleon binding \cite{hqiv-mass-spectrum-paper}:
+
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Valley counts.}
+  $A=2\mapsto 2$, $A=3\mapsto 4$, $A=4\mapsto 6$ (helium-4 valley).
+\item \textbf{Boltzmann factor.}
+  $\exp(-Q/T)$ at temperature $T$ (MeV) for each channel $Q$.
+\item \textbf{Neutron sector.}
+  $x_n=n/p$ from $\Delta m$ and $T$; $Y_p=2x_n/(1+x_n)$.
+\item \textbf{Light ions.}
+  $D/H\propto \eta_{10}^{-\alpha_D}\times$ thermal sink $\times$
+  Boltzmann weight; analogous exponent slots for $^3\mathrm{He}$ and
+  $^7\mathrm{Li}$.
+\end{itemize}
+
+At lock-in temperature the readout packages
+$(\eta,Y_p,D/H,{}^3\mathrm{He}/H,{}^7\mathrm{Li}/H)$ with
+$\eta=\eta_{\mathrm{paper}}$. The
+\hyperref[lean:bbn-network-vital]{network vital readout} theorem bundles
+positivity and the $\eta$ identity---this is the certificate-level content
+of ``BBN from network weights,'' not a hand-tuned abundance table.
+
+\begin{remark}[Epoch dependence]
+Partition formulas evaluated at lock-in temperature are \emph{not} the same
+as relic abundances after integration over the BBN window; Section~\ref{sec:epoch}
+and Section~\ref{sec:integrated} separate partition readouts from
+cooling-integrated witnesses.
+\end{remark}
+
+\section{BBN as a cosmological epoch on the temperature ladder}
+\label{sec:epoch}
+
+The \hyperref[lean:bbn-epoch-evolution]{epoch evolution module} maps
+temperature to shell index
+\[
+  m(T)+1 = T_{\mathrm{Pl,MeV}}/T,
+\]
+with a QCD onset shell, lock-in shell $m_{\mathrm{lockin}}=\mathrm{referenceM}$,
+BBN window $T\in[0.01,1]\,\mathrm{MeV}$, and CMB today as the cold end of
+the ladder. Proved ordering:
+\[
+  m_{\mathrm{lockin}} < m_{\mathrm{BBN,mid}} < m_{\mathrm{now}},
+\]
+where $m_{\mathrm{BBN,mid}}$ corresponds to $T\approx 0.1\,\mathrm{MeV}$.
+Freeze-out internal temperature is defined consistently with neutron--proton
+equilibrium break (the \hyperref[lean:bbn-freezeout-temp]{freeze-out
+temperature identity}).
+
+The \hyperref[lean:bbn-epoch-network]{epoch network module} supplies a
+rate scaffold (weak, $np$, $dd$, $^3\mathrm{He}$ branches) and Hubble
+dilution---schematic reaction bookkeeping for integration witnesses, not a
+published PRIMAT clone in Lean.
+
+\section{Integrated witnesses and Python export}
+\label{sec:integrated}
+
+The \hyperref[lean:bbn-witness]{BBN witness module} pins numeric exports
+from \texttt{data/bbn\_witnesses.json} (generated by
+\texttt{scripts/hqiv\_bbn\_abundances.py} and
+\texttt{scripts/hqiv\_bbn\_epoch\_network.py}; Appendix~\ref{app:scripts}).
+At the exported lock-in $\eta=6.10\times 10^{-10}$:
+
+\begin{itemize}[leftmargin=2em]
+\item Integrated window $Y_p\approx 0.247$ lies in the Cooke et al.\ band
+  checked in Lean (\hyperref[lean:bbn-yp-band]{freeze-out $Y_p$ band witness}).
+\item Integrated $Y_p$ is within $1\%$ of the freeze-out partition value
+  (\hyperref[lean:bbn-yp-near-freeze]{integrated--freeze-out proximity
+  witness}).
+\end{itemize}
+
+\textbf{Honesty on lithium.}
+Mid-epoch and window-integrated $^7\mathrm{Li}/H$ from the current weight
+ansatz can be enormous in the JSON export (Boltzmann exponent with a
+scaffold $Q$). The library proves positivity at the epoch readout level, not
+agreement with the observed Li problem. Treat Li channels as
+\emph{scaffold only} until a dedicated nuclear-network upgrade is proved.
+
+\section{Comparison layer: Coc et al.\ semi-analytics}
+\label{sec:comparison}
+
+The \hyperref[lean:bbn-umbrella]{BBN umbrella module} records Coc et al.\
+(2015) semi-analytic $Y_p(\eta,N_\nu,\tau_n)$ and $D/H(\eta)$ for
+side-by-side plots. These definitions are explicitly \textbf{not HQIV
+inputs}; they exist so reviewers can see how close the weight readout sits
+to standard BBN phenomenology without contaminating the proof graph.
+
+\section{Umbrella certificate}
+\label{sec:umbrella}
+
+The \hyperref[lean:bbn-umbrella]{BBN umbrella module} conjoins network,
+epoch, and integrated vital readouts into
+\texttt{bbn\_full\_vital\_readout}. This is the single top-level Prop a
+downstream cosmology or CMB paper can cite once lock-in $\eta$ and nucleon
+witnesses are accepted from earlier tiers.
+
+\section{What this note does not claim}
+\label{sec:not-claimed}
+
+\begin{itemize}[leftmargin=2em]
+\item Derivation of $\eta_{\mathrm{paper}}$ from associator phases or
+  sphaleron yields (baryogenesis interpretive layer).
+\item Replacement of PRIMAT/MESA with the HQIV rate scaffold.
+\item Resolution of the lithium problem or precision $D/H$ without further
+  nuclear-network work.
+\item Any continuum-limit or patch-refinement programme.
+\end{itemize}
+
+\section{Conclusion}
+
+Big-bang nucleosynthesis in HQIV is formalised as a \emph{weighted network
+readout} at lock-in, lifted to a \emph{cosmological epoch} on the
+temperature--shell ladder, and closed by \emph{integrated $Y_p$ witnesses}
+tied to Python exports. The proof graph is sorry-free at the vital-bundle
+level; observational agreement is claimed only where the witness module
+states it (chiefly $Y_p$). Companion reproduction is documented in
+Appendix~\ref{app:scripts}. Later Tier-3 notes may cite this certificate when
+discussing primordial abundances alongside CMB and fluid applications.
+
+\section*{Acknowledgments}
+
+Machine-checked proofs live in the public HQIV Lean repository
+\cite{hqiv-lean}. BBN witness JSON is regenerated from the scripts named in
+Appendix~\ref{app:scripts}.
+
+\appendix
+
+\section{Lean module index}
+\label{app:lean-index}
+
+Each entry lists the repository path (audit) and the reader-facing label used
+in the body. All modules are in the \texttt{Hqiv.Physics} namespace unless
+noted.
+
+\begin{description}[leftmargin=2.5em,style=nextline]
+\item[\hypertarget{lean:bbn-umbrella}{BBN umbrella}]
+  \leanfile{Hqiv/Physics/BigBangNucleosynthesis.lean} ---
+  Coc comparison defs; \leanid{bbn\_full\_vital\_readout}.
+\item[\hypertarget{lean:bbn-network}{Network from weights}]
+  \leanfile{Hqiv/Physics/BBNNetworkFromWeights.lean} ---
+  Valley counts, $Y_p$, $D/H$, $\eta$ identity;
+  \leanid{bbn\_network\_vital\_readout\_holds}.
+\item[\hypertarget{lean:bbn-epoch-evolution}{Epoch evolution}]
+  \leanfile{Hqiv/Physics/BBNEpochEvolution.lean} ---
+  Shell ladder, epoch readout;
+  \leanid{bbn\_epoch\_vital\_readout\_holds}.
+\item[\hypertarget{lean:bbn-epoch-network}{Epoch network}]
+  \leanfile{Hqiv/Physics/BBNEpochNetwork.lean} ---
+  Rate scaffold, cooling integration state.
+\item[\hypertarget{lean:bbn-witness}{BBN witness}]
+  \leanfile{Hqiv/Physics/BBNWitness.lean} ---
+  JSON-linked $Y_p$ witnesses;
+  \leanid{bbn\_integrated\_witness\_vital\_holds}.
+\item[\hypertarget{lean:bbn-network-vital}{Network vital readout}]
+  \leanid{bbn\_network\_vital\_readout} in
+  \leanfile{Hqiv/Physics/BBNNetworkFromWeights.lean}.
+\item[\hypertarget{lean:bbn-epoch-vital}{Epoch vital readout}]
+  \leanid{bbn\_epoch\_vital\_readout} in
+  \leanfile{Hqiv/Physics/BBNEpochEvolution.lean}.
+\item[\hypertarget{lean:bbn-integrated-vital}{Integrated witness vital}]
+  \leanid{bbn\_integrated\_witness\_vital} in
+  \leanfile{Hqiv/Physics/BBNWitness.lean}.
+\item[\hypertarget{lean:bbn-full-vital}{Full BBN vital readout}]
+  \leanid{bbn\_full\_vital\_readout} in
+  \leanfile{Hqiv/Physics/BigBangNucleosynthesis.lean}.
+\item[\hypertarget{lean:eta-bbn-eq}{BBN--$\eta$ identity}]
+  \leanid{eta\_bbn\_eq\_eta\_paper} in
+  \leanfile{Hqiv/Physics/BBNNetworkFromWeights.lean}.
+\item[\hypertarget{lean:bbn-mid-shell-order}{Mid-epoch shell ordering}]
+  \leanid{bbnMidEpochShell\_gt\_lockinShell},
+  \leanid{bbnMidEpochShell\_lt\_nowShell} in
+  \leanfile{Hqiv/Physics/BBNEpochEvolution.lean}.
+\item[\hypertarget{lean:bbn-freezeout-temp}{Freeze-out temperature identity}]
+  \leanid{bbnInternalTemperatureMeV\_eq\_freezeout} in
+  \leanfile{Hqiv/Physics/BBNEpochEvolution.lean}.
+\item[\hypertarget{lean:bbn-cluster-binding}{Cluster-binding alignment}]
+  \leanid{bbnDeuteronBindingQ\_eq\_clusterBinding},
+  \leanid{bbnHelium4BindingQ\_eq\_clusterBinding} in
+  \leanfile{Hqiv/Physics/BBNNetworkFromWeights.lean}.
+\item[\hypertarget{lean:bbn-yp-band}{Freeze-out $Y_p$ band witness}]
+  \leanid{bbnYpFreezeoutWitness\_in\_observed\_band} in
+  \leanfile{Hqiv/Physics/BBNWitness.lean}.
+\item[\hypertarget{lean:bbn-yp-near-freeze}{Integrated--freeze-out proximity}]
+  \leanid{bbnIntegratedYp\_near\_freezeout\_witness} in
+  \leanfile{Hqiv/Physics/BBNWitness.lean}.
+\item[\hypertarget{lean:nuclei}{Nuclear valley scaffold}]
+  \leanfile{Hqiv/Physics/HQIVNuclei.lean} ---
+  Isotope valley counts feeding BBN weights.
+\item[\hypertarget{lean:eta-paper}{Lock-in $\eta$ paper module}]
+  \leanfile{Hqiv/Physics/BaryogenesisEtaPaper.lean} (upstream).
+\item[\hypertarget{lean:derived-mass}{Derived nucleon mass}]
+  \leanfile{Hqiv/Physics/DerivedNucleonMass.lean} (upstream).
+\end{description}
+
+\section{Reproducer scripts}
+\label{app:scripts}
+
+From the repository root:
+\begin{verbatim}
+python3 scripts/hqiv_bbn_abundances.py
+python3 scripts/hqiv_bbn_epoch_network.py
+\end{verbatim}
+Outputs: \texttt{data/bbn\_witnesses.json}. See
+\texttt{papers/bbn/scripts/README.md} for the patch-ontology disclaimer and
+input list.
+
+\bibliographystyle{plain}
+\bibliography{../references}
+
+\end{document}

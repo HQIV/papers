@@ -1,0 +1,859 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,booktabs}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\usepackage[final]{microtype}
+\setlength{\emergencystretch}{3em}
+
+\newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
+\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\nolinkurl{#1}}}
+\newcommand{\leanid}[1]{\nolinkurl{#1}}
+
+\title[HQIV Acceleration Anomalies]{Acceleration Anomalies at Multiple Scales from Direction-Dependent HQIV Inertia Screening\\
+and O-Maxwell Horizon Probes}
+
+\author{Steven Ettinger Jr}
+\address{Independent Researcher}
+\email{steven@disregardfiat.tech}
+\date{Preprint v1 --- \today}
+
+\newtheorem{definition}{Definition}[section]
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{remark}[definition]{Remark}
+
+\begin{document}
+\begin{abstract}
+\noindent\textbf{Position in the publication chain.}
+This is the twelfth paper in the HQIV preprint series (Tier-3 applied phenomenology).
+Tier~0--1 fix the O-Maxwell spine
+\cite{ettinger2026hqiv,hqiv-lightcone-paper,hqiv-so8-paper,hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper};
+the longitudinal--coronal pair
+\cite{ettinger2026longitudinal,hqiv-coronal-paper} documents boundary-oriented
+phase-gradient stress on wires and flux tubes. The present note applies the same
+horizon-repartition picture to flybys, SPARC rotation curves, and wide binaries.
+
+\noindent\textbf{Background.}
+Anderson et al.\ \cite{anderson2008} reported millimetre-per-second discrepancies between
+Doppler tracking and classical Newton$+$J$_2$ models for several Earth gravity assists.
+Among the four most quoted cases, two are clean (NEAR-Shoemaker 1998, Galileo I 1990), one is
+contaminated by thruster activity within an hour of closest approach (Cassini 1999), and one
+(Rosetta-I 2005) sits above the atmosphere with no agreed-upon classical explanation.
+
+\noindent\textbf{Approach.}
+HQIV adds a direction-dependent inertia screen $f(a,\varphi)=a/(a+\varphi/6)$ with horizon
+repartition ($\varphi_{\rm eff,part}$ on the geodesic, $\varphi_{\rm eff,full}$ on the
+metric channel), a derived Lense--Thirring release fraction
+$\lambda=\gamma\sin^2\theta\,\rho_{\rm pol}$ ($\gamma=2/5$), and a co-spinning mass-horizon
+Doppler lapse $\epsilon_{\rm spin}$ in the metric channel only---the same structural split
+as the boundary $\varphi$ jump in \cite{hqiv-coronal-paper}. Reproducers:
+\hyperref[lean:orbital-scaffold]{orbital flyby scaffold} and
+\texttt{scripts/hqiv\_orbital\_flyby\_omaxwell.py}; SPARC import via
+\texttt{scripts/hqiv\_sparc\_rotation.py}.
+
+\noindent\textbf{Solver.}
+Classical RK4 with corrected $(1,2,2,1)/6$ weights, verified to fourth-order on a Kepler
+benchmark, with Sun and Moon positions advanced \emph{per substage} from the encounter
+epoch. The HQIV minus classical excess is stable to $\lesssim 0.01$~mm/s across
+$\Delta t\in[0.5,4]$~s.
+
+\noindent\textbf{Result.}
+At the nominal paper coupling ($\kappa_{\rm vac}=50$, $\kappa_\varphi=5$) the calculator
+delivers, for the four catalog Earth flybys (literature Doppler residual in parentheses):
+NEAR $+16.34$~mm/s ($+13.46$),
+Galileo I $+4.15$~mm/s ($+3.92$),
+Cassini $+0.74$~mm/s ($-0.50$, thruster-contaminated; excluded from goodness),
+Rosetta-I $-3.49$~mm/s ($+1.80$, unexplained).
+The derived $\lambda$ is the dominant single change versus the legacy scalar lapse
+($\lambda=0.5$ fixed, NEAR $+33.5$~mm/s). Replacing the derived $\lambda$ by zero
+(``no Lense--Thirring 3-vector'') gives NEAR $-1.91$~mm/s, confirming the L--T channel is the
+load-bearing piece. The spin input is not a fitted Anderson-style scalar: it is the
+Doppler projection of the rotating mass horizon onto the spacecraft velocity, suppressing
+radial and polar passages relative to equatorial tangential passages. No PDG mass or fitted
+ephemeris is used; the proton anchor shell $m_\oplus=4$ enters only the $\varphi$ readout.
+On the full SPARC catalog \cite{lelli2016sparc} with gas$+$stellar$+$bulge components and a
+\emph{single-exponent} radial lapse $\varphi(R)=\varphi_{\rm hom}/(1+R/R_d)$ (no halo fit),
+HQIV improves baryonic-only $\chi^2$ on most quality-1--2 disks; diffuse late-type galaxies
+(Im/Sm/BCD/DDO) are reported separately via catalog $R^2$ (regenerate
+Figure~\ref{fig:sparc-map} with \texttt{papers/orbital\_flyby/scripts/generate\_sparc\_map.py}).
+\end{abstract}
+\maketitle
+
+\input{../include/patch_theory_messaging.tex}
+
+\section{Scope and claim discipline}\label{sec:scope}
+
+This is a falsifiable model and a reproducible set of calculators, not a proof that
+acceleration anomalies are HQIV in origin. We make the following claim discipline explicit:
+
+\begin{enumerate}
+\item \textbf{Locked equations.} A single LaTeX equation sheet (this manuscript,
+\texttt{scripts/hqiv\_flyby\_equations.py}, and the Lean scaffold) is the only source of
+truth. CLI: \texttt{--equations latex} prints the same sheet used here.
+\item \textbf{Per-mission honesty.} We only score the integrator against missions whose
+literature residual is plausibly clean (NEAR, Galileo I). Cassini's $-0.5$~mm/s is well below
+its thruster injection budget and is reported but not scored. Rosetta-I's sign mismatch is
+flagged as an open item. Galileo's 1992 flyby (GLI-2) at $\sim$300~km altitude is
+atmospheric-drag dominated and is not included.
+\item \textbf{No PDG injection.} The horizon shell ladder $\varphi(m)=2(m+1)$ uses
+$m_\oplus=4$ as a discrete index, not a measured mass.
+\item \textbf{Comparisons use HQIV$-$classical.} Absolute classical $\Delta v$ from the
+present RK4$+$J$_2$ baseline can reach m/s because of asymptotic-shell truncation; the
+relevant observable is the same-integrator difference.
+\item \textbf{Galaxy presets are not halo fits.} The named-galaxy rows in
+\S\ref{sec:galaxies} use approximate single-disk baryonic inputs to test scale transfer of
+the same equations. They are not substitutes for SPARC gas$+$stellar decompositions.
+\item \textbf{mm/s is not exotic.} Extended Earth-flyby literature (Table~\ref{tab:extended-flybys})
+includes null-class assists ($\lesssim 0.05$~mm/s) and large anomalies ($\sim 14$~mm/s)
+on the same Doppler observable; routine pre-fit scatter is already $\mathcal{O}(0.03)$--$0.09)$~mm/s
+\cite{anderson2008,thorne2004doppler}.
+\end{enumerate}
+
+\section{Millimetre-per-second residuals are routine}\label{sec:mm-s-routine}
+
+Anderson-style flyby papers quote asymptotic velocity changes $\Delta v_\infty$ at the
+millimetre-per-second level, but precision Doppler tracking already exhibits mm/s scatter
+\emph{before} any post-perigee bias is called anomalous. For Galileo~I the pre-perigee
+residual distribution has $\sigma\approx 0.087$~mm/s; for NEAR, $\sigma\approx 0.028$~mm/s
+\cite{anderson2008}. Deep-space link budgets (troposphere, ionosphere, station mechanical
+effects) contribute comparable range-rate floors at long integration times
+\cite{thorne2004doppler}.
+
+\textbf{Implication:} a few-mm/s flyby ``anomaly'' is the same unit as (i)~unmodeled drag
+at low perigee, (ii)~thruster events (Cassini), (iii)~geometry and media systematics, and
+(iv)~genuine post-perigee biases. The scientific question is which channel separates the
+null-class cases (MESSENGER, Rosetta~II/III, Juno) from the large ones (NEAR, Galileo~I),
+not whether mm/s variations exist.
+
+Table~\ref{tab:extended-flybys} lists Earth flybys beyond the original four-case Anderson
+set. Regenerate HQIV columns with
+\texttt{python3 scripts/hqiv\_flyby\_extended\_catalog.py}.
+
+\begin{table}[t]
+\centering
+\caption{Extended Earth flyby literature $\Delta v_\infty$ (mm/s). HQIV$-$classical
+from nominal coupling where the calculator has a case; ``---'' = not in repo catalog yet.}
+\label{tab:extended-flybys}
+\small
+\begin{tabular}{@{}llrrrl@{}}
+\toprule
+Mission & Date & Lit.\ $\Delta v$ & $\sigma$ & HQIV$-$cls & Note \\
+\midrule
+Galileo I    & 1990-12-08 & $+3.92$  & 0.08 & (see \S\ref{sec:results}) & scored \\
+Galileo II   & 1992-12-08 & $-4.60$  & 1.00 & --- & drag-dominated \\
+NEAR         & 1998-01-23 & $+13.46$ & 0.13 & (see \S\ref{sec:results}) & scored \\
+Cassini      & 1999-08-18 & $-0.50$  & ---  & (report only) & thrusters \\
+Rosetta I    & 2005-03-04 & $+1.80$  & 0.05 & $-3.49$ & sign open \\
+MESSENGER    & 2005-08-02 & $+0.02$  & 0.01 & --- & null-class \\
+Rosetta II   & 2007-11-13 & $\sim 0$ & 0.05 & --- & null-class \\
+Rosetta III  & 2009-11-13 & $\sim 0$ & 0.05 & --- & null-class \\
+Juno         & 2013-10-09 & $\sim 0$ & 0.8  & --- & add geometry \\
+Hayabusa2    & 2015-12-03 & ---      & ---  & --- & OD TBD \\
+OSIRIS-REx   & 2017-09-22 & ---      & ---  & --- & OD TBD \\
+BepiColombo  & 2020-04-10 & ---      & ---  & --- & post-Anderson \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Mission accounting}\label{sec:missions}
+
+\subsection*{NEAR-Shoemaker (1998-01-23, $h_p=539$~km).}
+The largest reported residual ($+13.46$~mm/s) and the cleanest tracking. Anderson's analysis
+already includes a conservative atmospheric drag estimate, but the residual sits above the
+drag uncertainty band ($\sim 1$~mm/s for the $\sim 539$~km perigee). We treat the
+$+13.46$~mm/s as the target observation with $\mathcal{O}(1\text{-}2)$~mm/s systematic from
+atmospheric drag and orbit-determination geometry.
+
+\subsection*{Galileo I (1990-12-08, $h_p=960$~km).}
+First-flyby residual $+3.92$~mm/s. At 960~km the atmospheric drag contribution is small but
+non-zero. Galileo's second Earth flyby (1992) had a $\sim$300~km perigee that placed it deep
+in the residual atmosphere; the corresponding Doppler residual was either consistent with
+zero or atmospheric-drag dominated. We score only GLI-1 against the model.
+
+\subsection*{Cassini (1999-08-18, $h_p=1175$~km).}
+Anderson's table reports $-0.50$~mm/s with notably larger error bars than NEAR or Galileo,
+because Cassini fired thrusters within roughly one hour of closest approach. The Doppler
+residual at that level is dominated by thruster $\Delta v$ injection and is not a clean
+gravitational target. We \emph{report} the HQIV value for transparency but \emph{exclude}
+Cassini from the goodness-of-fit accounting.
+
+\subsection*{Rosetta-I (2005-03-04, $h_p\approx 1955$~km).}
+Anderson reports $+1.80\pm 0.05$~mm/s. Closest approach was
+22:09~UTC on 4~March~2005 (ESA operations report). The perigee is well above any significant
+atmosphere, so thermospheric \emph{storm} drag is not the leading classical explanation.
+Space-weather records for that week show \textbf{quiet} geomagnetic conditions:
+Kyoto final Dst remained near $-19$ to $-33$~nT on 4--5~March (no ring-current storm);
+planetary $K_p$ was mostly $0$--$2$ on the flyby night. The famous May~2005 superstorm
+($\mathrm{Dst}_{\min}\approx -263$~nT) occurred \emph{later}. Rosetta did carry SREM
+(space radiation monitor) in the background---useful for a future correlation study, but
+not evidence that a storm caused the Anderson residual on flyby day.
+
+At the mm/s scale, Rosetta-I is \emph{not} exotic: MESSENGER and Rosetta~II/III sit near
+$0$~mm/s, while NEAR reaches $+13.5$~mm/s (Table~\ref{tab:extended-flybys}). Pre-perigee
+Doppler fits already scatter at $\mathcal{O}(0.03$--$0.09)$~mm/s before any post-perigee
+bias is interpreted as an anomaly \cite{anderson2008}. The HQIV model's $-3.49$~mm/s is an
+honest geometry/L--T open item (\S\ref{sec:rosetta}), not a settled storm narrative.
+
+\section{Classical baseline}\label{sec:classical}
+
+Earth-centred inertial frame with spin $\boldsymbol\omega=\Omega_\oplus\hat z$.
+The classical acceleration on the probe is
+\begin{align}
+\mathbf a_{\rm cls}(\mathbf r,t) &= \mathbf a_{\rm N}+\mathbf a_{J_2}+\mathbf a_{3{\rm b}},\\
+\mathbf a_{\rm N} &= -\frac{GM_\oplus}{r^3}\mathbf r,\\
+\mathbf a_{J_2} &= -\frac{3}{2}\frac{J_2 GM_\oplus R_\oplus^2}{r^5}
+  \begin{pmatrix} x\bigl(5z^2/r^2-1\bigr) \\ y\bigl(5z^2/r^2-1\bigr) \\
+    z\bigl(5z^2/r^2-3\bigr) \end{pmatrix},\\
+\mathbf a_{3{\rm b}}(\mathbf r,t) &= \!\!\!\sum_{B\in\{\odot,\mathrm{Moon}\}}\!\!\! GM_B
+  \left(\frac{\mathbf R_B(t)-\mathbf r}{|\mathbf R_B(t)-\mathbf r|^3}
+    -\frac{\mathbf R_B(t)}{|\mathbf R_B(t)|^3}\right),
+\end{align}
+with $J_2=1.08263\times 10^{-3}$, $GM_\oplus=3.986004418\times 10^{14}$~m$^3$s$^{-2}$, and
+$R_\oplus=6.378137\times 10^6$~m. The Sun and Moon positions $\mathbf R_B(t)$ are supplied by
+an ephemeris backend seeded from the encounter ISO date and advanced by $t$ during the
+integration. The reproducibility calculator keeps the former mean-element approximation as a
+fallback and adds a SPICE/JPL backend for the main catalog reruns (\S\ref{sec:solver}).
+
+\subsection*{Hyperbolic seed.}
+For impact parameter $b$ and asymptotic speed $v_\infty$,
+\[
+|\mathbf h|=|\mathbf r\times\mathbf v|=b\,v_\infty,\qquad
+\tfrac{1}{2}v^2-GM_\oplus/r = \tfrac{1}{2}v_\infty^2 .
+\]
+We seed at $r_{\rm start}=80\,R_\oplus$ with the inbound velocity declination set to the
+mission's $\delta_{\rm in}$ and the impact-plane azimuth tuned so that a pure Kepler outbound
+declination matches the mission's $\delta_{\rm out}$.
+
+\subsection*{Asymptotic Doppler readout.}
+We sample on the outbound at $r>40\,R_\oplus$ and reduce to $v_\infty$ via
+\[
+v_{\infty,{\rm shell}}=\sqrt{v^2-2GM_\oplus/r},\qquad
+\Delta v = \langle v_{\infty,{\rm shell}}\rangle_{\rm out}
+        - \langle v_{\infty,{\rm shell}}\rangle_{\rm in}.
+\]
+The averages are over all post-CA (post-encounter) and pre-CA samples in the shell, so the
+diagnostic is invariant to the precise truncation step.
+
+\section{HQIV layer}\label{sec:hqiv}
+
+\subsection{Shell ladder, lapse contributions, and modified inertia.}
+The Lean-proved invariants
+\(\alpha=3/5,\ \gamma=2/5,\ \varphi(m)=2(m+1)\) (\texttt{alpha\_eq\_3\_5},
+\texttt{phi\_shell\_def}) fix the algebra. Earth's anchor shell is $m_\oplus=4$,
+$\varphi_{\rm ref}=10$. The homogeneous SI bridge is
+$\varphi_{\rm hom}\approx 2cH_0$, and the local readout
+\begin{equation}
+\varphi_{\rm loc}(\mathbf r)=\varphi_{\rm hom}\,\frac{\varphi(m_\oplus)}{1+r/R_\oplus}.
+\end{equation}
+
+The flyby calculator carries three lapse contributions:
+\begin{align}
+\epsilon_{\rm spin}(\mathbf r,\mathbf v) &= \frac{2\Omega_\oplus R_\oplus}{c}
+  \left(\frac{R_\oplus}{r}\right)^2
+  \times \sin^2\theta_{\rm geo}\,
+  |\hat{\mathbf v}\cdot\hat{\boldsymbol\phi}|, \\
+\epsilon_{\rm yr}(t) &= \frac{v_\oplus}{c}\,\hat{\mathbf v}\cdot\hat{\mathbf v}_\oplus(t), \\
+\epsilon_{\rm gal}(t) &= \frac{2(v_c/c)\,f_{\rm disk}}{D_R}
+  \,\frac{v_\oplus}{v_c}\,\hat{\mathbf v}_\oplus(t)\cdot\hat{\mathbf v}_{\rm gal},
+\end{align}
+where $\epsilon_{\rm spin}$ is the Doppler shift of the rotating mass horizon: the
+co-spinning tangential velocity projects onto the probe motion, while polar inclinations
+and the spin axis carry little or no shift,
+$f_{\rm disk}=M_{\rm disk}(<R_0)/(v_c^2 R_0/G)$ measures the disk-supported fraction of the
+Sun's circular speed, and $D_R=1+\tfrac{\gamma}{2}(c/v_c)^2$ is the Rindler-horizon
+denominator from the galactic angular-momentum lapse. In the paper run the annual term is
+not used ($\lambda_{\rm yr}=0$) and the galactic term contributes at the $10^{-10}$ level.
+
+Two effective $\varphi$ readouts are then defined:
+\begin{align}
+\varphi_{\rm eff,full} &= \varphi_{\rm loc}+6a_{\rm loc}\,
+  \max\!\bigl(0,\epsilon_{\rm spin}+\epsilon_{\rm gal}+\lambda_{\rm yr}\epsilon_{\rm yr}\bigr),\\
+\varphi_{\rm eff,part} &= \varphi_{\rm loc}.
+\end{align}
+$\varphi_{\rm eff,part}$ feeds the particle geodesic; $\varphi_{\rm eff,full}$ feeds the
+horizon metric channel. The repartition prevents the lapse contributions from
+\emph{double-counting} as both a geodesic divide and a metric-side acceleration.
+
+\subsection{Modified inertia geodesic.}
+The Brodie/main.tex particle action
+\(S_{\rm particle}=-m_g\!\int f(a,\varphi)\,\mathrm ds\)
+yields the modified geodesic
+\begin{equation}\label{eq:geodesic}
+m_i\,\mathbf a = m_g\,\mathbf a_{\rm GR},\qquad
+m_i = m_g\, f_{\rm part},\qquad
+\mathbf a = \mathbf a_{\rm GR}\big/f_{\rm part},
+\end{equation}
+with $f_{\rm part}=f(a_{\rm probe},\varphi_{\rm eff,part})$ and $a_{\rm probe}$ the
+unscaled magnitude of $\mathbf a_{\rm N}+\mathbf a_{J_2}+\mathbf a_{3{\rm b}}$.
+
+\subsection{Direction-dependent screen weight.}
+\begin{align}
+a_{\rm eq} &= |g|+\left(\frac{h^2}{r^3}+a_{\rm ang}\right)
+  \left(\frac{h_z}{h}\right)^2,\quad
+h_z=|(\mathbf r\times\mathbf v)_z|,\\
+\rho_{\rm pol} &= 1-(h_z/h_{\rm ref})^2,\quad h_{\rm ref}=b\,v_\infty,\\
+h_{z,{\rm eff,asym}}^2 &= h_z^2+\frac{h_{\rm ref}^2}{(m+1)^2},\quad
+h_{z,{\rm eff,loc}}^2 = h_z^2+\frac{h^2}{(m+1)^2},\\
+\varphi_{\rm pol} &= \varphi_{\rm eff,full}\Bigl(1+\rho_{\rm pol}
+  \max\bigl(\bigl[\tfrac{h_{\rm ref}^2}{h_{z,{\rm eff,asym}}^2}-1\bigr]_+,
+           \bigl[\tfrac{h^2}{h_{z,{\rm eff,loc}}^2}-1\bigr]_+\bigr)\Bigr),\\
+f_{\rm full} &= \sin^2\theta\,f(a_{\rm eq},\varphi_{\rm eff,full})
+  +\cos^2\theta\,f(|g|,\varphi_{\rm pol}),\quad \sin^2\theta=1-(z/r)^2,\\
+w &= 1-f_{\rm full}.
+\end{align}
+The shell-ladder floors $h_{z,{\rm eff}}^2 = h_z^2 + (\,\cdot\,)/(m+1)^2$ replace the older
+ad-hoc $\max(h_z,0.01h_{\rm ref})$ regulariser with a physically motivated discrete
+contribution from the shell index, so the polar-fiber $\varphi$ boost saturates at the
+lattice level rather than at a chosen $10^{-2}$ floor.
+
+\subsection{Horizon metric channel (repartitioned).}
+The acceleration deficit between the full and particle screens is delivered as a metric-side
+force, not via further geodesic division:
+\begin{equation}\label{eq:horizon}
+\mathbf a_{\rm hor} = \frac{\mathbf a_{\rm GR}}{f_{\rm part}}
+  \left(\frac{f_{\rm part}}{f_{\rm full}}-1\right),
+\end{equation}
+split into an isotropic radial component and a Lense--Thirring-style tangential component
+along $\hat{\boldsymbol\omega}\times\hat{\mathbf r}$:
+\begin{equation}\label{eq:lambda}
+\mathbf a_{\rm hor} = (1-\lambda)\,\mathbf a_{\rm hor}^{\rm iso}
+  + \lambda\,\bigl|\mathbf a_{\rm hor}\bigr|\,
+  \widehat{\boldsymbol\omega\times\mathbf r},\qquad
+\lambda = \gamma\,\sin^2\theta\,\rho_{\rm pol}.
+\end{equation}
+The fraction $\lambda$ is \emph{derived}, not fitted: $\gamma=2/5$ is the locked HQIV
+constant, $\sin^2\theta$ vanishes on the spin axis (no horizon drag at the pole), and
+$\rho_{\rm pol}=1-(h_z/h_{\rm ref})^2$ vanishes for equatorially locked orbits (no L--T
+release when $|L_z|=|L|$). Replacing $\lambda$ by the previous fixed value $0.5$ overshoots
+NEAR by $\sim 2.5\times$; setting $\lambda=0$ drives NEAR's HQIV excess negative
+(\S\ref{sec:results}).
+
+\subsection{Vacuum chart slot.}
+\begin{align}
+\mathbf g_{\rm vac} &= -\tfrac{\gamma}{6}\bigl(\varphi\,\nabla\dot\theta'
+  +\dot\theta'\,\nabla\varphi\bigr),\quad
+\mathbf a_\varphi = \tfrac{\alpha}{4\pi}\ln(\varphi+1)\,\nabla\varphi,\\
+\mathbf a_{\rm HQIV} &= w(1-\beta^2)\bigl(\kappa_{\rm vac}\mathbf g_{\rm vac}
+  +\kappa_\varphi\mathbf a_\varphi\bigr),\quad \beta=|\mathbf v|/c.
+\end{align}
+The signed spin--phase tip $\dot\theta'$ is suppressed inside the horizon shell
+(\texttt{suppress\_vacuum\_spin\_coupling=True}); the spin-odd dependence at flyby altitudes
+is now carried by the horizon channel \eqref{eq:horizon} rather than duplicated in the
+vacuum source.
+
+\subsection{Effective Newton coupling and time-factor application.}
+\begin{equation}\label{eq:geff}
+\frac{G_{\rm eff}}{G_0}=1+\Bigl(\bigl(\varphi/\varphi_{\rm ref}\bigr)^\alpha-1\Bigr)\,w.
+\end{equation}
+$G_{\rm eff}$ rescales coordinate time, not individual gravitational sources: the total
+acceleration vector is multiplied by $G_{\rm eff}/G_0$ at the end of the per-step
+assembly, after the geodesic divide, the horizon channel, and the vacuum slot
+(\texttt{geff\_as\_time\_factor=True}). Applying it instead to each GM term separately is a
+double-count of the screen and inflates the excess at low $w$.
+
+\subsection{Putting it together.}
+Per integration step at $(\mathbf r,\mathbf v,t)$,
+\begin{align}
+\mathbf a(\mathbf r,\mathbf v,t)
+  &= \frac{G_{\rm eff}}{G_0}\biggl[
+       \frac{\mathbf a_{\rm cls}(\mathbf r,t)}{f_{\rm part}}
+     + \mathbf a_{\rm hor}(\mathbf r,\mathbf v)
+     + \mathbf a_{\rm HQIV}(\mathbf r,\mathbf v)\biggr],
+\end{align}
+with $\mathbf a_{\rm cls}$ from \S\ref{sec:classical} evaluated at the substage time and
+$\mathbf a_{\rm hor}$, $\mathbf a_{\rm HQIV}$ as above.
+
+\section{Numerical integrator}\label{sec:solver}
+
+\subsection{RK4 (corrected weights).}
+For state $\mathbf y=(\mathbf r,\mathbf v)$ with $\dot{\mathbf y}=\mathbf f(\mathbf y,t)
+=(\mathbf v,\mathbf a(\mathbf r,\mathbf v,t))$ and step $\Delta t$,
+\begin{align*}
+\mathbf k_1 &= \mathbf f(\mathbf y_n,t_n),\\
+\mathbf k_2 &= \mathbf f(\mathbf y_n+\tfrac{\Delta t}{2}\mathbf k_1, t_n+\tfrac{\Delta t}{2}),\\
+\mathbf k_3 &= \mathbf f(\mathbf y_n+\tfrac{\Delta t}{2}\mathbf k_2, t_n+\tfrac{\Delta t}{2}),\\
+\mathbf k_4 &= \mathbf f(\mathbf y_n+\Delta t\,\mathbf k_3, t_n+\Delta t),\\
+\mathbf y_{n+1} &= \mathbf y_n + \tfrac{\Delta t}{6}\bigl(\mathbf k_1+2\mathbf k_2
+  +2\mathbf k_3+\mathbf k_4\bigr).
+\end{align*}
+The repository previously contained a transcription bug
+($\tfrac{1}{6}(k_1+2k_2+k_3+2k_4)$) that produced 50\% error after 1000 steps on a damped
+harmonic-oscillator benchmark; the corrected $(1,2,2,1)$ weights reach 5$\times 10^{-5}$ at
+the same step count. A unit test (\texttt{test\_rk4\_fourth\_order\_convergence\_on\_kepler})
+now requires the energy-error ratio at $\Delta t=120$ vs $60$ to exceed 12 on a circular
+Kepler orbit at $3R_\oplus$.
+
+\subsection{Time-advancing ephemeris.}
+$\mathbf a_{\rm cls}$ contains the Sun/Moon differential tide. Both bodies move appreciably
+during a multi-hour flyby (Moon $\sim 0.5^\circ$/h). The integrator passes the substage time
+$t_n+c_i\Delta t$ into the ephemeris call and snaps it to 60-s buckets so the LRU cache hits
+across the four RK4 substages without freezing the ephemeris. A unit test
+(\texttt{test\_sun\_moon\_advance\_with\_time\_offset}) verifies the Sun moves $\sim 1^\circ$
+and Moon $\sim 13^\circ$ per simulated day.
+
+\subsection{SPICE/JPL ephemeris backend.}
+The companion calculator \texttt{HQIV\_Orbital} exposes
+\texttt{--ephemeris mean|spice}. In \texttt{spice} mode it loads NAIF kernels
+\texttt{naif0012.tls}, \texttt{de440s.bsp}, and \texttt{pck00011.tpc}, evaluates
+\texttt{spkezr(SUN,ET,J2000,NONE,EARTH)} and \texttt{spkezr(MOON,ET,J2000,NONE,EARTH)}, and
+converts the returned kilometre state vector to SI metres before the differential tide is
+assembled. This is the first catalog rerun that directly tests whether Rosetta-I's sign
+mismatch is an artefact of the former mean-element geometry. The mean backend remains
+available so every table can be reproduced without external kernels, but paper-grade
+mission rows should be regenerated with
+\begin{verbatim}
+python -m hqiv_orbital.cli --catalog earth --run-all \
+    --paper-nominal --ephemeris spice
+\end{verbatim}
+from the \texttt{HQIV\_Orbital} repository.
+
+\subsection{Step-size policy.}
+For Earth flybys the calculator defaults to $\Delta t=4$~s for $v_\infty>12$~km/s and
+$\Delta t=2$~s otherwise, with $r_{\rm escape}=40\,R_{\rm lapse}$,
+$t_{\rm max}=2.5\times 10^5$~s. The HQIV minus classical excess is dt-converged to
+$\sim 0.01$~mm/s for NEAR across $\Delta t\in[0.5,4]$~s:
+
+\begin{center}
+\begin{tabular}{@{}rrrr@{}}
+\toprule
+$\Delta t$ [s] & $\Delta v_{\rm cls}$ [mm/s] & $\Delta v_{\rm HQIV}$ [mm/s] & excess [mm/s]\\
+\midrule
+4.0 & $-928.158$ & $-911.815$ & $+16.3425$ \\
+2.0 & $-928.155$ & $-911.812$ & $+16.3425$ \\
+1.0 & $-928.132$ & $-911.790$ & $+16.3425$ \\
+0.5 & $-928.123$ & $-911.771$ & $+16.3523$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+Absolute $|\Delta v|$ drifts by $\sim 0.04$~mm/s with $\Delta t$ because of asymptotic-shell
+truncation rather than RK4 truncation; the same drift appears in the classical baseline and
+cancels in the difference.
+
+\subsection{Structure-preserving benchmarks.}
+The calculator now treats RK4 as the baseline integrator rather than as an assumption. The
+same propagation interface can dispatch to a velocity-Verlet leapfrog split and to SciPy's
+DOP853 embedded RK 8(7) solver:
+\begin{verbatim}
+python -m hqiv_orbital.cli --case near_1998 --integrator rk4
+python -m hqiv_orbital.cli --case near_1998 --integrator leapfrog
+python -m hqiv_orbital.cli --case near_1998 --integrator dop853
+\end{verbatim}
+The leapfrog path is a deliberately conservative benchmark because the HQIV horizon channel
+is velocity dependent; agreement in HQIV$-$classical excess therefore argues against an
+RK4-weight artefact. The DOP853 path supplies the high-order adaptive reference for
+short-arc flybys and for quiet heliocentric visitor runs.
+
+\subsection{HQIV channel evaluation at substages.}
+Every HQIV term in \eqref{eq:geodesic}, \eqref{eq:horizon}, \eqref{eq:lambda}, \eqref{eq:geff}
+is re-evaluated at each of the four substages with the substage $(\mathbf r,\mathbf v,t)$.
+In particular the L--T direction $\hat{\boldsymbol\omega}\times\hat{\mathbf r}$, the derived
+$\lambda$, the colatitude factor $\sin^2\theta$, the third-body tide, and the screened
+$G_{\rm eff}$ are all updated four times per macro-step. There is no operator-splitting and
+no fractional-step delay between the gravity assembly, the screen, and the metric channel.
+
+\section{Reproducibility and Lean spine}\label{sec:repro}
+
+\textbf{Code.} \texttt{scripts/hqiv\_orbital\_flyby\_omaxwell.py} (calculator + CLI),
+\texttt{scripts/hqiv\_flyby\_equations.py} (locked equations),
+\texttt{scripts/hqiv\_galaxy\_rotation.py} (named disk rotation checks), and
+\texttt{scripts/hqiv\_flyby\_gap\_report.py} (Anderson-style comparison tables). The
+companion \texttt{HQIV\_Orbital} repository adds the HTML calculator, FastAPI wrapper,
+SPICE ephemerides, drag posterior, integrator ablations, and non-gravitational channels
+without changing the Lean-script physics spine.
+
+\textbf{Tests.} \texttt{scripts/test\_hqiv\_orbital\_flyby\_omaxwell.py} and
+\texttt{scripts/test\_hqiv\_galaxy\_rotation.py} contain the unit
+suite: geodesic divide isolation, repartition consistency,
+co-spin lapse zeros on the spin axis, L--T direction orthogonality, $G_{\rm eff}$ scalar
+behaviour, derived-$\lambda$ vs equatorial-lock limit, galaxy Doppler projection,
+named-preset reference rows, RK4 4th-order convergence,
+ephemeris time advance, third-body tide vanishing at the geocentre.
+
+\textbf{Lean.} \texttt{Hqiv/Physics/OrbitalFlybyScaffold.lean} defines
+\texttt{hqivFluidInertiaFactor}, \texttt{hqivFlybyScreenWeight},
+\texttt{hqivScreenedGeffRatio}, and the anchor-shell limit lemmas. It does not yet contain
+the orbit-level $\lambda$ derivation; that is listed in \S\ref{sec:open}.
+
+\textbf{Commands.}
+\begin{verbatim}
+python3 scripts/hqiv_orbital_flyby_omaxwell.py --paper-table \
+    > papers/flyby_paper_table.tex
+python3 scripts/hqiv_orbital_flyby_omaxwell.py --catalog all --run-all \
+    --paper-nominal --output scripts/artifacts/orbital_flyby_results_paper.json
+python3 scripts/hqiv_flyby_gap_report.py        # nominal + ablation tables
+python3 -m unittest scripts.test_hqiv_orbital_flyby_omaxwell -q
+python3 scripts/hqiv_galaxy_rotation.py --preset ngc3198
+\end{verbatim}
+
+\textbf{HTML calculator.}
+\begin{verbatim}
+cd ../HQIV_Orbital
+export PYTHONPATH="${PWD}/HQIV_LEAN/scripts:${PWD}"
+bash scripts/download_naif_kernels.sh           # optional, for --ephemeris spice
+bash scripts/serve_calculator.sh                # FastAPI on http://127.0.0.1:8000
+\end{verbatim}
+Open \texttt{orbital\_flyby\_calculator.html} to rerun single cases, catalog rows,
+Monte-Carlo posteriors, and falsification probes.
+
+\section{Nominal paper coupling}
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Parameter & Symbol & Value \\
+\midrule
+Vacuum chart scale & $\kappa_{\rm vac}$ & 50 \\
+Metric-$\varphi$ scale & $\kappa_\varphi$ & 5 \\
+Inertia screen & $f(a,\varphi)$ & on \\
+Modified geodesic $\mathbf a_{\rm GR}/f_{\rm part}$ & --- & on \\
+Co-spinning lapse $\epsilon_{\rm spin}$ (horizon only) & --- & on \\
+Galactic disk Rindler lapse $\epsilon_{\rm gal}$ & --- & on (tiny) \\
+Annual lapse $\epsilon_{\rm yr}$ & $\lambda_{\rm yr}=0$ & off \\
+$L_z$ / colatitude blend & --- & on \\
+Horizon repartition & particle / metric & on \\
+Horizon metric channel & $\mathbf a_{\rm hor}$ & on \\
+Lense--Thirring vector & $\lambda$ derived & on \\
+$G_{\rm eff}$ as time-factor & --- & on \\
+Spin coupling in $\mathbf g_{\rm vac}$ & --- & suppressed \\
+Velocity screen $1-\beta^2$ & --- & on \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Catalog snapshot (corrected RK4, derived $\lambda$)}\label{sec:results}
+
+Earth-centred runs, RK4 with $(1,2,2,1)/6$ weights and time-advancing Sun/Moon.
+
+\IfFileExists{flyby_paper_table.tex}{\input{flyby_paper_table}}{\begin{center}
+\textit{Run \texttt{--paper-table} to generate \texttt{papers/flyby\_paper\_table.tex}.}
+\end{center}}
+
+\subsection*{Reading the table.}
+$r_{\rm CA}$ is closest-approach radius; $\langle 1{-}f\rangle_{\rm out}$ is the mean
+outbound screen weight; $\Delta v_{\rm cls}$ is the same-integrator classical asymptotic
+$\Delta v$ (negative because of the asymptotic-shell truncation discussed in
+\S\ref{sec:solver}); HQIV$-$cls is the observable. The Anderson literature value is in the
+\textsl{Lit} column.
+
+\subsection*{Mission-by-mission summary (nominal coupling).}
+\begin{center}
+\begin{tabular}{@{}lrrrl@{}}
+\toprule
+Mission & Lit. [mm/s] & HQIV$-$cls [mm/s] & status & note \\
+\midrule
+NEAR-1998 (1998-01-23) & $+13.46$ & $+16.34$ & matched & residual within drag systematics \\
+Galileo I (1990-12-08) & $+3.92$  & $+4.15$  & matched & 5\% above literature \\
+Cassini (1999-08-18)   & $-0.50$  & $+0.74$  & excluded & thruster $\lesssim 1$~hr from CA \\
+Rosetta-I (2005-03-04) & $+1.80$  & $-3.49$  & open & sign mismatch; above atmosphere \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Ablation table.}
+HQIV minus classical excess [mm/s] for the four catalog Earth flybys under the nominal
+coupling and three ablations. Numbers are direct CLI output from
+\texttt{scripts/hqiv\_flyby\_gap\_report.py}.
+\begin{center}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Configuration & NEAR & Galileo I & Cassini & Rosetta-I \\
+\midrule
+Lit.\ residual           & $+13.46$ & $+3.92$ & $-0.50$ & $+1.80$ \\
+\midrule
+Nominal (derived $\lambda$)        & $+16.34$ & $+4.15$ & $+0.74$ & $-3.49$ \\
+Fixed $\lambda=0.5$                & $+33.46$ & $+15.31$ & $+9.80$ & $-17.39$ \\
+Drop L--T (isotropic only)         & $-1.91$  & $+0.40$ & $-0.56$ & $+0.10$ \\
+Drop colatitude $+$ L--T           & $+48.71$ & $+2.31$ & $-1.00$ & $+1.41$ \\
+Drop modified geodesic $\mathbf a_{\rm GR}/f$ & $+16.34$ & $+4.15$ & $+0.74$ & $-3.49$ \\
+Drop co-spin lapse $\epsilon_{\rm spin}$ & $\sim 0$ & $\sim 0$ & $\sim 0$ & $\sim 0$ \\
+Drop galactic disk Rindler         & $+16.34$ & $+4.15$ & $+0.74$ & $-3.49$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The picture is clear: the co-spin mass-horizon Doppler lapse $\epsilon_{\rm spin}$ is the
+entire source of the HQIV excess at flyby accelerations. It is largest when the spacecraft
+velocity samples the rotating horizon tangent and is suppressed for radial, polar, and
+spin-axis passages. The derived $\lambda=\gamma\sin^2\theta\rho_{\rm pol}$ sets the
+magnitude and sign of how that lapse is partitioned between an isotropic horizon force and
+a tangential Lense--Thirring force; and the modified-geodesic divide is dynamically
+sub-dominant at flyby altitudes ($w\sim 10^{-9}$). The galactic disk Rindler lapse
+contributes at $10^{-10}$ relative and is reported only for completeness.
+
+\subsection*{Cassini exclusion.}
+The $-0.5$~mm/s entry is reported but not scored. With thruster firings within roughly an
+hour of closest approach contributing an unmodeled $\Delta v$ injection comparable to or
+larger than the reported residual, any HQIV value in the $\sim$1~mm/s range is consistent
+with ``the model is silent on this case''.
+
+\section{Uncertainty, drag, and falsification harness}\label{sec:posterior}
+
+\subsection{Monte-Carlo residual posterior.}
+The companion calculator propagates catalog uncertainty rather than quoting central
+geometries only. Each mission draw perturbs $\delta_{\rm in}$, impact-plane azimuth,
+$v_\infty$, and epoch within documented priors, then recomputes the same-integrator
+HQIV$-$classical excess. The output is a posterior on the excess with 68\% and 95\%
+credible intervals plus a simple Gaussian log-Bayes factor against the null model
+``classical plus nuisance channels only.'' A reproducible NEAR run is
+\begin{verbatim}
+python -m hqiv_orbital.cli --case near_1998 --mc 10000 \
+    --ephemeris spice --drag
+\end{verbatim}
+The drag flag folds the atmospheric nuisance model into the same sample so the quoted
+$\sim 3$~mm/s NEAR gap becomes a posterior on the \emph{unexplained} residual, not a single
+central-value discrepancy.
+
+\subsection{Atmospheric drag for NEAR and Galileo I.}
+For Earth flybys the drag channel uses
+\[
+  \rho(h)=\rho_0\exp[-(h-h_{\rm ref})/H],\qquad
+  \mathbf a_{\rm drag}=-\frac12(C_DA/m)\rho\,|\mathbf v-\boldsymbol\omega\times\mathbf r|
+  (\mathbf v-\boldsymbol\omega\times\mathbf r).
+\]
+The Monte-Carlo layer samples $\rho_0$, scale height $H$, and $C_DA/m$ rather than choosing a
+single density curve. NEAR's $539$~km perigee therefore receives the broadest nuisance
+posterior; Galileo I at $960$~km receives the same channel with a much smaller density tail.
+This is intentionally a first-pass exponential atmosphere, with an MSIS backend left as an
+optional density provider for mission-grade orbit determination.
+
+\subsection{Falsification table.}
+The calculator emits a compact set of null and scaling probes:
+\begin{verbatim}
+python -m hqiv_orbital.cli --falsification-table
+\end{verbatim}
+The table includes a polar flyby ($\theta\to0$, $\lambda\to0$, excess $\to0$), a high
+$v_\infty$ Earth flyby that separates screen weight from the velocity-projected
+$\epsilon_{\rm spin}$ term, Jupiter/Saturn templates scaling with the rotating horizon and local
+$\varphi$, and the quiet interstellar catalog used to overlay published radial
+non-gravitational accelerations. These entries are predictions, not fitted rows.
+
+\subsection*{Rosetta-I and the boundary-oriented horizon channel.}
+\label{sec:rosetta}
+
+Rosetta-I is the only catalog Earth flyby whose HQIV$-$classical sign disagrees with
+Anderson's reported $+1.80$~mm/s (nominal model $-3.49$~mm/s). The ablation row ``drop
+Lense--Thirring'' in \S\ref{sec:results} is diagnostic: without the oriented metric release,
+Rosetta-I moves to $+0.10$~mm/s---essentially the literature scale. The mismatch is therefore
+\emph{not} in the co-spin Doppler lapse $\epsilon_{\rm spin}$ (which vanishes when dropped
+separately) but in how the derived $\lambda$ partitions that lapse between isotropic horizon
+force and tangential L--T stress.
+
+Horizon repartition in the calculator splits particle and metric channels:
+\begin{align}
+\varphi_{\rm eff,part} &= \varphi_{\rm loc}
+  &&\text{(inertia screen / geodesic)},\\
+\varphi_{\rm eff,full} &= \varphi_{\rm loc}+6a_{\rm loc}\,\epsilon_{\rm horizon}
+  &&\text{(metric / L--T release)}.
+\end{align}
+NEAR and Galileo~I sample $\epsilon_{\rm spin}$ with geometry that yields positive
+HQIV$-$classical $\Delta v$. Rosetta-I is different: $\delta_{\rm in}=-2.81^\circ$ but
+$\delta_{\rm out}\approx -34.3^\circ$ (large inbound--outbound declination asymmetry). With
+small $|\delta_{\rm in}|$ the trajectory can sit in a band where the derived
+$\lambda=\gamma\sin^2\theta\,\rho_{\rm pol}$ over-releases L--T stress and flips the sign
+of the integrated metric impulse---while \emph{quiet} space weather on 4--5~March~2005
+makes a storm-time drag explanation unlikely (\S\ref{sec:missions}).
+
+\textbf{Space weather vs geometry (honest split).}
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Not favoured:} major geomagnetic storm during CA (Dst $\approx -20$ to $-30$~nT;
+  $K_p\lesssim 2$; May~2005 superstorm was weeks later).
+\item \textbf{Still possible at mm/s:} ionospheric/tropospheric Doppler noise, OD geometry,
+  and L--T partitioning---the same $\mathcal{O}(1)$~mm/s scales as Table~\ref{tab:extended-flybys}.
+\item \textbf{Diagnostic ablation:} dropping L--T moves Rosetta-I to $+0.10$~mm/s (near
+  $+1.80$ literature); the sign problem is in oriented metric release, not $\epsilon_{\rm spin}$
+  alone.
+\end{itemize}
+We do not add a fitted sign flip. Priority fixes: SPICE/JPL impact-plane azimuth and
+velocity at CA; correlate SREM/space-weather archives for \emph{sub-mm} nuisance bounds, not
+for a multi-mm storm narrative.
+
+\section{Quiet interstellar visitors}
+
+The same integrator runs heliocentric hyperbolae with \texttt{--catalog interstellar}:
+1I/'Oumuamua, 2I/Borisov, and generic ecliptic/polar templates. Central body is the Sun
+($\varphi$ readout at $R=1$~AU, $m=0$ horizon shell, no J$_2$, no third-body tide), impact
+parameter from periapsis $q$ and $v_\infty$, and early exit once the trajectory re-crosses
+the launch shell outbound. With the co-spinning mass-horizon Doppler lapse enabled, the
+quiet nominal rerun gives HQIV$-$classical excesses
+\(-6.8583\times10^{-2}\)~mm/s for 1I/'Oumuamua and
+\(+4.2601\times10^{-6}\)~mm/s for 2I/Borisov in the symmetric
+\(v_{\infty,\rm out}-v_{\infty,\rm in}\) energy readout. That is not the observable used in
+1I trajectory fitting: a radial \(1/r^2\) nongravitational term is nearly conservative in
+that readout and cancels between inbound and outbound legs. The trajectory-arc impulse
+diagnostic gives the expected scale: for \(A_1=5\times10^{-7}\,\mathrm{m\,s^{-2}}\) at
+1~AU, 1I accumulates \(16.98\)~m/s over the full integration arc (\(14.85\)~m/s inside
+2~AU), while 2I at the same reference \(A_1\) accumulates \(3.06\)~m/s because its perihelion
+is \(2.01\)~AU. The \texttt{HQIV\_Orbital} wrapper adds explicit
+non-gravitational channels for radial outgassing, thermal transverse acceleration, and
+piecewise thrust windows:
+\begin{verbatim}
+python -m hqiv_orbital.cli --catalog interstellar --case oumuamua_2017 \
+    --outgassing-a1 5e-7 --integrator dop853
+\end{verbatim}
+These channels are nuisance overlays for mission and comet work; they do not alter the HQIV
+ladder, $\kappa_{\rm vac}$, or $\kappa_\varphi$. They make the interstellar catalog useful as
+a falsification test: the same HQIV constants must remain compatible when published
+non-gravitational accelerations are superposed.
+
+\section{SPARC disk galaxies at single-exponent lapse}\label{sec:galaxies}
+
+The same modified-inertia screen is evaluated on the SPARC catalog \cite{lelli2016sparc}
+through \texttt{scripts/hqiv\_sparc\_rotation.py}. At each radius the baryonic circular speed
+uses SPARC's measured $V_{\rm gas}$, $V_{\rm disk}$, and $V_{\rm bul}$ with fiducial
+$\Upsilon_\odot=0.5$ and $\Upsilon_{\rm bul}=0.7$ (external photometry, not HQIV fits).
+The lapse uses one radial exponent only:
+\[
+\varphi(R)=\frac{\varphi_{\rm hom}}{1+R/R_d},
+\qquad
+\varphi_{\rm full}=\varphi(R)+6a_b(R)\,\epsilon_{\rm disk},
+\qquad
+f_{\rm gal}=\frac{a_b}{a_b+\varphi_{\rm full}/6},
+\qquad
+v_{\rm HQIV}=\sqrt{\frac{a_b R}{f_{\rm gal}}},
+\]
+with $\epsilon_{\rm disk}$ the disk analogue of the flyby co-spin Doppler term and
+$D_R=1+\tfrac{\gamma}{2}(c/v_b)^2$. No halo profile, concentration, or per-galaxy
+acceleration scale is fitted.
+
+Catalog-level goodness uses reduced $\chi^2$ per galaxy and the coefficient of determination
+$R^2$ between $v_{\rm obs}$ and $v_{\rm HQIV}$ over all valid SPARC points. The diffuse
+late-type subset (Hubble types Im, Sm, BCD, Sdm, and DDO names) is the stress test called
+out in the abstract: these are gas-rich systems where a single stellar exponential placeholder
+overpredicts rotation speeds; SPARC's gas channel is essential.
+
+\begin{figure}[t]
+\centering
+\IfFileExists{figures/sparc_hqiv_map.pdf}{%
+  \includegraphics[width=0.62\textwidth]{figures/sparc_hqiv_map.pdf}}{%
+  \fbox{\parbox{0.58\textwidth}{\centering\vspace{2.2cm}%
+    Run \texttt{papers/orbital\_flyby/scripts/generate\_sparc\_map.py}\\%
+    to build \texttt{figures/sparc\_hqiv\_map.pdf}\vspace{2.2cm}}}}
+\caption{SPARC $v_{\rm obs}$ versus HQIV $v_{\rm HQIV}$ at every catalog radius with
+quality $Q\le 2$ and $i\ge 30^\circ$. Points are unweighted; the dashed line is $1{:}1$.
+Red highlights diffuse galaxies (Im/Sm/BCD/DDO). $R^2_{\rm all}$ and $R^2_{\rm diffuse}$
+are printed on the figure when regenerated.}
+\label{fig:sparc-map}
+\end{figure}
+
+\IfFileExists{artifacts/sparc_hqiv_catalog.json}{%
+  \noindent\textit{SPARC summary loaded from \texttt{artifacts/sparc\_hqiv\_catalog.json}.}%
+}{%
+  \noindent\textit{Regenerate \texttt{artifacts/sparc\_hqiv\_catalog.json} with the script above; the JSON records median $\chi^2_{\rm red}$, fraction of galaxies with HQIV beating baryonic-only, and the $R^2$ block for all points versus the diffuse subset.}}
+
+Named-galaxy sanity checks (\texttt{scripts/hqiv\_galaxy\_rotation.py}) remain useful for
+spot comparisons: M33 and NGC~6503 land near quoted flat speeds; UGC~2885 is low at the
+chosen reference radius; DDO~154 was overpredicted under a stellar-only exponential placeholder
+---exactly the failure mode removed by importing SPARC gas kinematics.
+
+\section{Wide-binary systems}\label{sec:widebinaries}
+
+Recent wide-binary work reports a low-acceleration gravitational boost
+$\gamma\equiv G_{\rm eff}/G_{\rm N}\approx1.60$ from 36 Gaia systems with accurate
+radial velocities \cite{chae2026wide}, while a hierarchical 3D forward model of the
+same sample gives $\gamma=1.12^{+0.27}_{-0.22}$ when the semi-major axis is free and
+$\gamma=1.56^{+0.21}_{-0.18}$ when $a$ is replaced by geometric de-projection of the
+projected separation \cite{saad2026wide}. The HQIV calculator ingests the public Chae
+clean-sample tables (via the Saad \& Ting reproduction repository) and applies the
+same inertia screen without fitting $\gamma$.
+
+The same equation sheet extends to bound two-body motion in a barycentric frame.
+For each component $i$ with position $\mathbf r_i$, velocity $\mathbf v_i$, and
+companion mass $m_j$,
+\[
+\mathbf a_{i,{\rm N}}=\frac{G m_j}{|\mathbf r_j-\mathbf r_i|^3}(\mathbf r_j-\mathbf r_i),
+\qquad
+f_i=\frac{|\mathbf a_{i,{\rm N}}|}{|\mathbf a_{i,{\rm N}}|+\varphi_{{\rm full},i}/6},
+\qquad
+\mathbf a_{i,{\rm HQIV}}=\frac{|\mathbf a_{i,{\rm N}}|}{f_i}\,\hat{\mathbf a}_{i,{\rm N}}.
+\]
+The readout $\varphi_{{\rm full},i}=\varphi_{\rm hom}/(1+|\mathbf r_i|/R_{{\rm lapse},i})
++6|\mathbf a_{i,{\rm N}}|\,\epsilon_i$ uses the stellar co-spin Doppler lapse
+$\epsilon_i=2(v_{{\rm spin},i}/c)\,|\hat{\mathbf v}_i\cdot\hat{\mathbf t}_i|/D_R$
+with $v_{{\rm spin},i}=|\omega_i|R_i$. No fitted external acceleration scale enters.
+The scripts \texttt{hqiv\_wide\_binary.py} and \texttt{hqiv\_wide\_binary\_catalog.py}
+integrate the coupled system with RK4, load the 36-system Chae (2026) CSVs, and expose
+a \texttt{--full-treatment} mode. The reference system \textbf{chae2026\_58}
+(Gaia~5607190344506642432 / 5607189485513198208; HARPS RV; Chae
+$v_{\rm obs}/v_{\rm esc,N}=0.35$) uses projected separation
+$r_{\rm obs}=1.23\times10^{4}$~AU at $d=38.1$~pc, $g_{\rm N}=7.9\times10^{-11}$~m~s$^{-2}$,
+and Chae-scaled tangential speed $v=0.19$~km~s$^{-1}$. The instantaneous HQIV
+$\gamma_{\rm eff}\equiv a_{\rm HQIV}/a_{\rm N}$ is $\approx1.000006$ on the primary
+( ppm-level screen, not $\gamma\approx1.6$). Vis-viva gives $a\approx7.0\times10^{3}$~AU,
+$P\approx4.1\times10^{5}$~yr for the same inputs.
+
+\begin{center}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Preset & $a$ [AU] & $e$ & $P$ [yr] & $(a_{\rm HQIV}/a_{\rm N}-1)_{\rm apo}$ \\
+\midrule
+demo\_circular\_1au      & 1     & 0.0 & 0.71      & $3.2\times10^{-6}$ \\
+demo\_wide\_eccentric    & 5000  & 0.4 & $2.4\times10^{5}$ & $8.1\times10^{-6}$ \\
+literature\_scale\_10kau & 10000 & 0.3 & $6.9\times10^{5}$ & $6.0\times10^{-6}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The apastron column quotes the fractional boost at the slower, lower-acceleration leg;
+the periastron boost is slightly smaller at the same eccentricity. At $10^4$~AU the
+Newtonian binding acceleration is $\sim2.5\times10^{-10}\,\mathrm{m\,s^{-2}}$, still
+well above the homogeneous scale $\varphi_{\rm hom}/6\sim2.3\times10^{-10}\,\mathrm{m\,s^{-2}}$,
+so the correction remains percent-level in $1-f$ rather than a MOND-like factor-of-two
+shift. Running \texttt{--run-all-chae} on the bundled 36-system table gives mean
+$\gamma_{\rm eff,HQIV}\approx1.000003$ with $1-f\sim10^{-6}$ while the Chae per-system
+$\gamma=10^{2\Gamma}$ scatter from $\sim0.25$ to $\sim2.7$. A decisive comparison with
+\cite{chae2026wide,saad2026wide} still requires matching their 3D orbital posteriors
+(semi-major axis, eccentricity, inclination) rather than instantaneous projected geometry
+alone; the catalog loader is structured for that extension.
+
+\section{Open items}\label{sec:open}
+
+\begin{itemize}
+\item \textbf{Lean orbit theorems.} Bundle the chart-level orbit hypotheses
+(\texttt{OMaxwellFluidChartHypothesis} style) so the derived $\lambda$, the horizon
+repartition, and the $G_{\rm eff}$ time-factor application are theorems rather than
+calculator conventions.
+\item \textbf{Wide-binary posteriors.} Import per-system MCMC orbital elements from
+\cite{chae2026wide,saad2026wide} into \texttt{hqiv\_wide\_binary\_catalog.py} and
+compare HQIV $\gamma_{\rm eff}(t)$ along forward-modelled 3D trajectories.
+\item \textbf{Asymptotic shell.} Replace the fixed $r_{\rm escape}=40\,R_\oplus$ truncation
+by an adaptive condition $r\dot v_\infty/c<\epsilon$ to push absolute classical
+$|\Delta v|$ below mm/s without sacrificing wall-clock.
+\item \textbf{Per-mission geometry reconstruction.} The calculator now has a SPICE/JPL
+Sun--Moon tide backend. The remaining mission-grade step is replacing the approximate
+impact-plane azimuth fits with SPICE/JPL-derived
+$(\delta_{\rm in},\delta_{\rm out},\text{az})$ for each spacecraft trajectory. This is the
+cleanest way to either resolve or sharpen the Rosetta-I sign mismatch.
+\item \textbf{$\kappa_{\rm vac},\kappa_\varphi$ from first principles.} Map the two
+chart-coupling scales to a non-fitted SI normalisation derived from the lattice ladder, so
+the paper's nominal coupling is itself a Lean theorem rather than a chosen value.
+\item \textbf{Mission-grade density model.} The calculator implements the exponential drag
+posterior used in \S\ref{sec:posterior}. A future MSIS density backend should replace the
+current prior envelope before claiming mission-grade atmospheric closure for NEAR or
+Galileo I.
+\item \textbf{SPARC figure refresh.} Keep \texttt{artifacts/sparc\_hqiv\_catalog.json} and
+Figure~\ref{fig:sparc-map} in sync when SPARC data or lapse conventions change.
+\end{itemize}
+
+\appendix
+
+\section{Lean module index}
+\label{app:lean-index}
+
+\begin{description}[leftmargin=2.5em,style=nextline]
+\item[\hypertarget{lean:orbital-scaffold}{Orbital flyby scaffold}]
+  \leanfile{Hqiv/Physics/OrbitalFlybyScaffold.lean} ---
+  inertia screen, screened $G_{\rm eff}$, anchor-shell lemmas.
+\item[\hypertarget{lean:fluid-scaffold}{Fluid closure scaffold}]
+  \leanfile{Hqiv/Physics/HQIVFluidClosureScaffold.lean}.
+\item[\hypertarget{lean:coronal-longitudinal}{Coronal longitudinal stress}]
+  \leanfile{Hqiv/Physics/CoronalLongitudinalStress.lean} ---
+  boundary $\varphi$ jump and even/odd-in-$I$ discriminants (companion papers).
+\item[\hypertarget{lean:lightcone-phi}{Shell ladder $\varphi(m)$}]
+  \leanfile{Hqiv/Geometry/OctonionicLightCone.lean} ---
+  \leanid{phi\_of\_shell}, \leanid{alpha\_eq\_3\_5}.
+\end{description}
+
+\bibliographystyle{plain}
+\bibliography{../references}
+
+\end{document}
