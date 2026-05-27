@@ -44,6 +44,15 @@ python friedmann_recovery.py --json            # machine-readable JSON
 All three scripts are fully deterministic and run in well under a
 second on any modern laptop.
 
+## Regenerating scripts.zip
+
+From the paper directory (`papers/finite_mode_kirchhoff`):
+
+```bash
+cd /home/jr/Repos/HQIV_LEAN/papers/finite_mode_kirchhoff
+zip -r scripts.zip scripts/ -x "*.pyc" "__pycache__/*"
+```
+
 ## Provenance and versioning
 
 * The constants used (`T_Pl`, `t_Pl`, `alpha = 3/5`, the wall-clock
@@ -76,7 +85,7 @@ repository:
 
 * Steven Ettinger Jr., *Kirchhoff's Law of Thermal Emission with
   Built-In UV/IR Cutoffs from HQIV's Discrete Null Lattice*
-  (Preprint v1, 2026).  DOI to be minted on Zenodo deposit; this
-  script bundle shares that DOI.
+  (2026).  \url{https://doi.org/10.5281/zenodo.20416564} (this
+  script bundle is filed on the same Zenodo record).
 * HQIV Lean 4 formalization (slimmed public mirror), 2026,
   <https://github.com/HQIV/hqiv-lean>.

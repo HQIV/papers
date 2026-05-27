@@ -7,11 +7,17 @@
 \usepackage[final]{microtype}
 \setlength{\emergencystretch}{3em}
 
+% url package (pulled by hyperref) gives us \path which breaks cleanly at / . -
+% This is the key fix for the long Lean file paths in Appendix A.
+\usepackage{url}
+\urlstyle{same}
+
 \newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
-% Lean module / identifier helpers: visible text is rendered with \nolinkurl
-% so that slashes, underscores, and dots become legal break points.
-\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\nolinkurl{#1}}}
-\newcommand{\leanid}[1]{\nolinkurl{#1}}
+% Lean module / identifier helpers: use \path (not \nolinkurl) so that slashes,
+% dots, and hyphens become legal break points. This eliminates the flood of
+% Underfull \hbox warnings from the long Hqiv/... paths.
+\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\path{#1}}}
+\newcommand{\leanid}[1]{\path{#1}}
 
 \title[Finite-Mode Kirchhoff from HQIV]
 {Kirchhoff's Law of Thermal Emission with Built-In UV/IR Cutoffs
@@ -20,7 +26,7 @@ from HQIV's Discrete Null Lattice}
 \author{Steven Ettinger Jr}
 \address{Independent Researcher}
 \email{steven@disregardfiat.tech}
-\date{Preprint v1 --- \today}
+\date{Published v1 --- Zenodo \href{https://doi.org/10.5281/zenodo.20416564}{10.5281/zenodo.20416564} (2026-05-27)}
 
 \newtheorem{definition}{Definition}[section]
 \newtheorem{proposition}[definition]{Proposition}
@@ -42,10 +48,8 @@ isolates the dimensional hinge and the rational \((\alpha_d,\gamma_d)\)
 family, and the octonionic-action paper \cite{hqiv-oct-action-paper}
 packages the variational layer that we ride here for the
 $\alpha=3/5$ imprint and the patch-ontology reader contract. The
-Tier-0 records and the 3D causal-growth companion
-\cite{hqiv-3d-growth-paper} carry minted Zenodo DOIs; the
-octonionic-action record cited above remains pre-DOI (this manuscript
-and the remaining Tier-1 queue co-deposit as the Lean PR builds clear).
+Tier-0 records and the preceding Tier-1 companions
+\cite{hqiv-3d-growth-paper,hqiv-oct-action-paper} carry minted Zenodo DOIs.
 
 \noindent\textbf{Result.}
 Kirchhoff's law of thermal emission is recovered from two HQIV
@@ -74,9 +78,10 @@ rewrite for cross-citation, never as a foundation.
 The proton mass at the lock-in shell $m=4$ uses the theory's
 internal constituent-plus-binding readout, with the observed
 value $M_{p}=938.272\,\mathrm{MeV}$ serving as the
-\emph{active scale witness} (the \hyperref[lean:proton-lockin]{proton lock-in scale-witness} convention; see
-\texttt{AGENTS/ASSUMPTIONS.md} \S7g of the HQIV-LEAN repository for
-the witness policy).
+sole dimensionful anchor for the mass chart (the
+\hyperref[lean:proton-lockin]{proton lock-in} convention, recorded in
+the \hyperref[lean:scale-witness]{scale-witness} formalism of
+\cite{hqiv-lean}).
 The wall-clock age $t_{\rm wall}=51.2\,\mathrm{Gyr}$ is an
 \emph{output} of the HQIV-modified CLASS implementation---a
 discrete null-lattice background with the ADM lapse
@@ -116,8 +121,8 @@ numerical results in this paper (the $\beta=0.379^\circ$
 prediction, the wall-clock-vs-apparent-age discriminator, and the
 finite-mode Kirchhoff energy density at FIRAS $T_{\rm CMB}$) are
 reproduced by the supplementary script bundle described in
-Appendix~\ref{app:scripts}, packaged as \texttt{scripts.zip} for
-co-deposit with the manuscript on Zenodo.
+Appendix~\ref{app:scripts}, packaged as \texttt{scripts.zip} on the Zenodo record
+\cite{hqiv-kirchhoff-paper}.
 \end{abstract}
 \maketitle
 
@@ -155,21 +160,18 @@ own scale-witness discipline.
   load-bearing results would be erased rather than refined by
   such a limit (the rational $\alpha$, the integer cycle index,
   the discrete ladder that the predictive content runs on).
-\item \textbf{Single active scale witness.}  HQIV's standing
-  discipline (\texttt{AGENTS/ASSUMPTIONS.md} \S7g of the
-  HQIV-LEAN repository) admits exactly one dimensionful witness
-  per solve.  Throughout this paper we use the default
-  \hyperref[lean:proton-lockin]{proton lock-in scale-witness}:
-  the proton mass at the lock-in shell $m=4$ uses the theory's
-  internal constituent-plus-binding readout, with the observed
-  value $M_p=938.272\,\mathrm{MeV}$ serving as the active scale
-  witness that pins the mass/unit chart.  The shell index $m=4$
-  is the QCD-onset identification (not a free parameter), and
-  the constituent-plus-binding closure at that shell is a
-  non-trivial HQIV calculation, but the numerical scale of
-  $938.272\,\mathrm{MeV}$ is the \emph{anchor}, not an independent
-  two-axiom output.  See \S\ref{sec:proton} for the honest
-  accounting.
+\item \textbf{One dimensionful anchor.}  The HQIV formalisation
+  \cite{hqiv-lean} allows only one dimensionful calibration per
+  phenomenology pass; we take the default
+  \hyperref[lean:proton-lockin]{proton lock-in}.  At shell
+  $m=4$ the proton mass follows the internal
+  constituent-plus-binding readout below, calibrated to the
+  measured value $M_p=938.272\,\mathrm{MeV}$ to fix the mass/unit
+  chart.  The shell index $m=4$ is the QCD-onset identification
+  (not a free parameter), and the binding closure at that shell is
+  a non-trivial HQIV calculation, but the MeV scale itself is an
+  \emph{anchor}, not an independent two-axiom output.
+  Section~\ref{sec:proton} states what is and is not claimed.
 \item \textbf{Wall-clock age from the HQIV-modified CLASS
   implementation.}  The age $t_{\rm wall}=51.2\,\mathrm{Gyr}$
   used in the $\beta$ prediction is an output of the
@@ -407,23 +409,22 @@ We use this section to be explicit about what the proton mass
 \emph{is} and is \emph{not} doing in this paper, since careless
 phrasing here can over-claim independence.
 
-\paragraph{Status under the proton lock-in scale-witness.}
-Per \texttt{AGENTS/ASSUMPTIONS.md} \S7g of the HQIV-LEAN
-repository, the HQIV pipeline carries a single active
-dimensionful scale witness per solve.  The default is the
-\hyperref[lean:proton-lockin]{proton lock-in scale-witness}: the
-proton mass at the lock-in shell $m=4$ uses the theory's internal
-constituent-plus-binding readout (described below), with the
-\emph{observed} value $938.272\,\mathrm{MeV}$ serving as the
-active scale witness that pins the mass/unit chart.  Other
-quantities---CODATA $1/\alpha$, CMB horizons, PDG centrals
-\cite{pdg2024}---are then predictions or comparison layers
-against this anchor.  The
-\hyperref[lean:scale-witness]{scale-witness enum} carries the
-documented rule: ``never wire CODATA $\alpha$ \emph{and} proton
-mass \emph{and} a third cosmology anchor into the same solve
-without documenting which one is active and which are
-predictions.''
+\paragraph{Proton lock-in as the mass chart.}
+The HQIV library \cite{hqiv-lean} is written so that a given
+phenomenology pass fixes \emph{one} dimensionful scale before
+derived readouts are compared to experiment.  We use the default,
+\hyperref[lean:proton-lockin]{proton lock-in}: at shell $m=4$ the
+proton mass comes from the internal constituent-plus-binding
+readout in the next paragraph, and the measured value
+$938.272\,\mathrm{MeV}$ is the calibration that sets the mass/unit
+chart for this paper---not a parameter we adjust elsewhere in the
+derivation.  Once that chart is fixed, CODATA $1/\alpha$, CMB
+horizon scales, and PDG centrals \cite{pdg2024} enter only as
+predictions or comparison checks.  The
+\hyperref[lean:scale-witness]{scale-witness} enum in Lean makes the
+same rule explicit: proton mass, fine-structure data, and a separate
+cosmological scale must not be treated as simultaneous inputs unless
+the active anchor is stated.
 
 \paragraph{Shell index $m=4$: chosen, not derived.}  The
 reference shell $m=4$ is the QCD-onset identification: it is the
@@ -732,7 +733,7 @@ links to the Lean module and identifiers.
 \begingroup
 \sloppy
 \setlength{\emergencystretch}{4em}
-\begin{description}[leftmargin=0em,style=nextline]
+\begin{description}[style=nextline]
 \item[\phantomsection\label{lean:simplex-count}\textbf{Lattice simplex mode count.}]
   The integer-solution count
   $\mathcal{N}(m)=(m+2)(m+1)$ at temperature-ladder depth $m$.

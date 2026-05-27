@@ -6,7 +6,7 @@ All publications go to the [Zenodo HQIV community](https://zenodo.org/communitie
 
 ## Publication order
 
-The series is published in tiers so that each later paper can cite the earlier ones by their minted DOIs. Tier 0 and the first Tier-1 record (`3d_causal_growth`) are on Zenodo; remaining Tier-1–3 entries are unpublished drafts queued in the order below.
+The series is published in tiers so that each later paper can cite the earlier ones by their minted DOIs. Tier 0 and Tier-1 records #1–3 (`3d_causal_growth`, `octonionic_action`, `finite_mode_kirchhoff`) are on Zenodo; remaining Tier-1–3 entries are unpublished drafts queued in the order below.
 
 ### Tier 0 — Already published on Zenodo (frozen)
 
@@ -27,13 +27,13 @@ Each paper here is a direct mathematical/variational sequel to `closure` and mus
 | # | Folder | Source `.tex` | DOI (version) | Date | Bib key |
 |---|---|---|---|---|---|
 | 1 | `3d_causal_growth/` | `hqiv_3d_causal_growth_octonionic_gauge.tex` | [`10.5281/zenodo.20415586`](https://doi.org/10.5281/zenodo.20415586) | 2026-05-27 | `hqiv-3d-growth-paper` |
+| 2 | `octonionic_action/` | `hqiv_octonionic_action_and_uniqueness.tex` | [`10.5281/zenodo.20416085`](https://doi.org/10.5281/zenodo.20416085) | 2026-05-27 | `hqiv-oct-action-paper` |
+| 3 | `finite_mode_kirchhoff/` | `hqiv_finite_mode_kirchhoff_from_lattice_simplex.tex` | [`10.5281/zenodo.20416564`](https://doi.org/10.5281/zenodo.20416564) | 2026-05-27 | `hqiv-kirchhoff-paper` |
 
 #### In queue (pre-DOI)
 
 | # | Folder | Bib key | Role |
 |---|---|---|---|
-| 2 | `octonionic_action/` | `hqiv-oct-action-paper` | Variational sequel: O-Maxwell action, EL identities, holonomy/Wilson glue, `S_HQVM_grav`, lapse dragging. Every applied paper depends on this. |
-| 3 | `finite_mode_kirchhoff/` | `hqiv-kirchhoff-paper` | First clean physics readout of the lattice + action spine: finite-mode Planck spectrum, `H ∝ T²` recovered, falsifiable cosmic-birefringence prediction. |
 | 4 | `thermodynamics_arrow/` | `hqiv-thermo-arrow-paper` | Thermodynamic laws 0–3 on the shell ladder; finite blackbody entropy; arrow from causal monogamy + discrete dissipation signs. Sequel to Kirchhoff. |
 
 ### Tier 2 — Standard Model and mass closure
@@ -69,8 +69,8 @@ When drafting any companion, use these keys when citing earlier work in the chai
 | `closure/` | `hqiv-so8-paper` |
 | `lightcone_to_oshoracle/` | `hqiv-lightcone-paper` |
 | `3d_causal_growth/` | `hqiv-3d-growth-paper` (Zenodo [`10.5281/zenodo.20415586`](https://doi.org/10.5281/zenodo.20415586), v1 2026-05-27) |
-| `octonionic_action/` | `hqiv-oct-action-paper` |
-| `finite_mode_kirchhoff/` | `hqiv-kirchhoff-paper` |
+| `octonionic_action/` | `hqiv-oct-action-paper` (Zenodo [`10.5281/zenodo.20416085`](https://doi.org/10.5281/zenodo.20416085), v1 2026-05-27) |
+| `finite_mode_kirchhoff/` | `hqiv-kirchhoff-paper` (Zenodo [`10.5281/zenodo.20416564`](https://doi.org/10.5281/zenodo.20416564), v1 2026-05-27) |
 | `thermodynamics_arrow/` | `hqiv-thermo-arrow-paper` |
 | `lean_to_mass_spectrum/` | `hqiv-mass-spectrum-paper` |
 | `sm_lagrangian/` | `hqiv-sm-lagrangian-paper` |
@@ -100,7 +100,9 @@ The DOI is already minted (concept `10.5281/zenodo.19227897`); a tightened v3 wi
 ### Next sessions (queued, not started)
 
 - [x] Tier 1 #1: `3d_causal_growth/` published on Zenodo ([`10.5281/zenodo.20415586`](https://doi.org/10.5281/zenodo.20415586), 2026-05-27).
-- [ ] Tier 1 remainder: tighten `octonionic_action/`, `finite_mode_kirchhoff/`, `thermodynamics_arrow/` against shared `include/` and live upstream DOIs; publish in the listed order.
+- [x] Tier 1 #2: `octonionic_action/` published on Zenodo ([`10.5281/zenodo.20416085`](https://doi.org/10.5281/zenodo.20416085), 2026-05-27; `scripts.zip` on record).
+- [x] Tier 1 #3: `finite_mode_kirchhoff/` published on Zenodo ([`10.5281/zenodo.20416564`](https://doi.org/10.5281/zenodo.20416564), 2026-05-27; `scripts.zip` on record).
+- [ ] Tier 1 remainder: tighten `thermodynamics_arrow/` against shared `include/` and live upstream DOIs; publish in the listed order.
 - [ ] Move `rapidity_so8_closure/` into `archive/`.
 - [ ] Tier 2: `lean_to_mass_spectrum/` → `sm_lagrangian/` → `baryogenesis_lockin/` → `nucleon_binding/` → `bbn/`.
 - [x] Tier 3 (start): `longitudinal_em_force/` + `coronal_heating/` (back-to-back).
@@ -177,8 +179,8 @@ papers/
 | `closure/`                      | `closure.tex` (+ bundled `so8_closure_full_appendix.tex`) | 0c   |
 | `lightcone_to_oshoracle/`       | `octonion_lightcone_to_oshoracle.tex`               | 0b   |
 | `3d_causal_growth/`             | `hqiv_3d_causal_growth_octonionic_gauge.tex`        | 1.1 (Zenodo) |
-| `octonionic_action/`            | `hqiv_octonionic_action_and_uniqueness.tex`         | 1.2  |
-| `finite_mode_kirchhoff/`        | `hqiv_finite_mode_kirchhoff_from_lattice_simplex.tex` | 1.3  |
+| `octonionic_action/`            | `hqiv_octonionic_action_and_uniqueness.tex`         | 1.2 (Zenodo) |
+| `finite_mode_kirchhoff/`        | `hqiv_finite_mode_kirchhoff_from_lattice_simplex.tex` | 1.3 (Zenodo) |
 | `thermodynamics_arrow/`         | `hqiv_thermodynamics_and_arrow_of_time.tex`         | 1.4  |
 | `lean_to_mass_spectrum/`        | `hqiv_lean_from_combinatorics_to_mass_spectrum.tex` | 2.5  |
 | `sm_lagrangian/`                | `hqiv_sm_lagrangian_from_discrete_action.tex`       | 2.6  |
