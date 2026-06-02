@@ -1,6 +1,6 @@
 \documentclass[11pt]{amsart}
 \usepackage[margin=1in]{geometry}
-\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{amsmath,amssymb,amsthm,mathtools,booktabs}
 \usepackage{enumitem}
 \usepackage{hyperref}
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
@@ -16,7 +16,7 @@ Ratio-Level First Principles in the HQIV Lean Library}
 \author{Steven Ettinger Jr}
 \address{Independent Researcher}
 \email{steven@disregardfiat.tech}
-\date{Preprint v1 --- \today}
+\date{Preprint v2 --- \today}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{proposition}[theorem]{Proposition}
@@ -27,13 +27,13 @@ Ratio-Level First Principles in the HQIV Lean Library}
 
 \begin{abstract}
 \noindent\textbf{Position in the publication chain.}
-This is the sixth paper in the HQIV preprint series and the
+This is the seventh paper in the HQIV preprint series and the
 third of the Tier-2 Standard-Model layer. Tier~0 fixes the
 framework \cite{ettinger2026hqiv,hqiv-lightcone-paper,hqiv-so8-paper};
 Tier~1 supplies the variational and lattice spine
-\cite{hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper};
-Tier~2 adds electroweak and mass closure
-\cite{hqiv-mass-spectrum-paper,hqiv-sm-lagrangian-paper}. The present
+\cite{hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper,hqiv-thermo-arrow-paper};
+Tier~2 adds the published Lagrangian bridge and mass-spectrum synthesis
+\cite{hqiv-tuft-sm-lagrangian-paper}. The present
 note states the strongest \emph{ratio-level} baryogenesis theorem
 currently supported by the library: baryon-asymmetry bookkeeping is
 not an independent knob---it is the same partial curvature imprint as
@@ -60,7 +60,7 @@ The observed-order scale $\eta_{\mathrm{paper}}$ appears in exactly one
 module (the \hyperref[lean:eta-paper]{baryogenesis $\eta$ paper module})
 and is wired only through the witness layer. Ratio laws and lock-in
 calibration are proved without it. Under the proton lock-in witness
-discipline of \cite{hqiv-mass-spectrum-paper,hqiv-kirchhoff-paper},
+discipline of \cite{hqiv-tuft-sm-lagrangian-paper,hqiv-kirchhoff-paper},
 laboratory $\eta$ is a comparison target, not a simultaneous fit row
 alongside other PDG inputs.
 
@@ -70,13 +70,35 @@ is the ontology. Smooth-manifold transport, washout, and sphaleron
 yield are comparison-layer physics targets---not foundational
 requirements and not a continuum-completion programme.
 
+\noindent\textbf{Dynamic bulk witnesses (v2 addition).}
+A per-shell matter integrator now derives comparison-layer
+$\Omega_b$ and $\eta$ without importing $\eta_{\mathrm{paper}}$ as an
+input. Central readout: $\eta_{10}=6.20$, $Y_p=0.245$, $D/H=2.39\times 10^{-5}$
+from \texttt{data/dynamic\_bulk\_bbn\_v2.json} and
+\texttt{data/integrator\_lean\_audit.json} (witnesses
+\texttt{scripts/hqiv\_dynamic\_bulk\_bbn.py},
+\texttt{scripts/hqiv\_integrator\_lean\_audit.py}). Different legitimate
+stages bracket $\eta_{10}\approx 6.0$--$6.4$: legacy lock-in anchor
+($6.10$), early dynamic-baryogenesis correction ($6.28$), and
+comparison-layer $H_0$ propagation at fixed $\Omega_b$ ($6.04$ at
+$H_0=70$, $6.39$ at $H_0=72\,\mathrm{km\,s^{-1}\,Mpc^{-1}}$). Casimir
+inside/outside balance ($B_{\mathrm{curv}}$) sets the temperature-relative
+vev and comparison-layer $\eta$; bound-state binding release modulates BBN
+$Q$ values; \textbf{dynamic lapse concentration $C_2(\xi)$} calibrates the
+deuterium-bottleneck shell clock
+(\hyperref[lean:bbn-dynamic-C2]{BBN dynamic-$C_2$ pack}). The network
+advances by shell reaction opportunity, not by Hubble rate as an input clock.
+
 \noindent\textbf{Status.}
 Proved in this note: monotonicity of $I$ and $\Omega_k$, lock-in
 calibration, parallel $\eta$ laws, triality tilt averaging, and
-GR/O--Maxwell compatibility. Companion \cite{hqiv-bbn-paper}: BBN umbrella and network/epoch/witness
-modules consuming lock-in $\eta$. Not claimed here: derivation
-of $\eta_{\mathrm{paper}}$ from associator phases, SM chemical
-potentials, or BBN abundance certificates.
+GR/O--Maxwell compatibility. Computed witnesses (not yet full Lean
+certificates): dynamic bulk $\eta$ band and shell-opportunity BBN
+integration (\S\ref{sec:dynamic-bulk}). Companion \cite{hqiv-bbn-paper}:
+BBN umbrella and network/epoch/witness modules consuming lock-in
+$\eta$. Not claimed here: derivation of $\eta_{\mathrm{paper}}$ from
+associator phases, SM chemical potentials, or a unique closed-form
+$\eta$ without comparison-layer inputs.
 \end{abstract}
 \maketitle
 
@@ -94,7 +116,7 @@ $G_2\cup\{\Delta\}\Rightarrow\mathfrak{so}(8)$ data
 \cite{hqiv-oct-action-paper} documents how the same $(\alpha,\phi)$ slots
 feed discrete O--Maxwell stationarity and an HQVM Friedmann
 \emph{compatibility} identity; the SM Lagrangian bridge
-\cite{hqiv-sm-lagrangian-paper} packages the same ledger at sector level.
+\cite{hqiv-tuft-sm-lagrangian-paper} packages the same ledger at sector level.
 
 This note answers: \textbf{what baryogenesis statement is already a
 theorem, and what is still interpretive physics?} Geometry and ratios
@@ -153,7 +175,7 @@ m_{\mathrm{lockin}} \;:=\; m_{\mathrm{QCD}}+\texttt{stepsFromQCDToLockin},
 \]
 aligned with $M=\mathrm{referenceM}$ (the same lock-in convention used
 throughout the formalisation and pinned by the proton lock-in witness in
-\cite{hqiv-mass-spectrum-paper,hqiv-kirchhoff-paper}). Temperatures on the
+\cite{hqiv-tuft-sm-lagrangian-paper,hqiv-kirchhoff-paper}). Temperatures on the
 ladder are $T(m)=1/(m+1)$ in natural units (the
 \hyperref[lean:T-QCD-lockin]{QCD and lock-in temperature closures} in the
 baryogenesis core module).
@@ -259,6 +281,223 @@ calibration} quarantined to one module---analogous to how the mass and
 Kirchhoff papers treat amplitude normalisation while keeping imprint
 \emph{shape} combinatorially rigid.
 
+\section{Dynamic bulk matter and method range for \texorpdfstring{$\eta$}{eta}}
+\label{sec:dynamic-bulk}
+
+The ratio spine of \S\ref{sec:scope}--\S5 fixes how $\eta(n;N)$ is
+\emph{normalized} once an absolute anchor is declared. A separate Python
+witness chain now asks what $\eta$ is when that anchor is \emph{not}
+imported: baryon budget is accumulated shell-by-shell from curvature
+imprint, Casimir inside/outside balance, and composite-trace binding
+feedback, then converted to $\eta$ only at a late comparison layer using
+present-day $H_0$, $T_{\mathrm{CMB}}$, and $\Omega_b$.
+
+\paragraph{Per-shell integrator (v3).}
+The calculator \texttt{scripts/hqiv\_dynamic\_bulk\_bbn.py} evolves
+shells $m_{\mathrm{QCD}}\le m\le m_{\mathrm{lock}}$ with emergent
+hadronic lock-in at $m=4$ ($\xi_{\mathrm{lock}}=5$). At each step it
+reads shell shape $\sigma(m)$, inner/outer curvature proxies, the
+per-shell curvature budget $B_{\mathrm{curv}}(m)$ (early matter--antimatter /
+radiation seed relaxing to $1$ at lock-in; excess imprint outside the baryon track),
+a temperature-relative vev factor from the inner/outer Casimir balance
+(described below), and dynamic proton mass and nuclear $Q$ values from
+the $8\times8$ composite-trace network. Matter increments
+\[
+\Delta S_m = \sigma(m)\,f_{\mathrm{vev}}(\xi_m)
+  + w_{\mathrm{strong}}\,f_{\mathrm{bind}}(m,\xi_m)\,B_{\mathrm{curv}}(\xi_m)
+\]
+accumulate into a cumulative source $C=\sum_m \Delta S_m$. Baryon and
+total matter fractions follow
+\[
+\Omega_m = \gamma\, C/(C+\rho_{\mathrm{rad}}),
+\qquad
+\Omega_b = \Omega_m \cdot w_{\mathrm{strong}} \cdot f_{\mathrm{color}},
+\]
+with HQIV structural weights $\gamma=2/5$, $w_{\mathrm{strong}}=4/8$,
+and a colour-singlet projector $f_{\mathrm{color}}=1/3$ (trace-derived
+sweep below). The inner/outer Casimir scale uses a dynamic \emph{outer}
+suppression $\omega K(\xi)/140$ (not a fixed $1/140$ at all epochs;
+the integer $140$ counts discrete fluctuation modes on the outer
+neutral horizon shell at lock-in, while the amplitude runs with
+$\omega K(\xi)$ like the inner trapped-Casimir factor). The witness
+reports $C=2.18$, $\Omega_b=0.0496$, $\Omega_m=0.298$ at $m=4$.
+
+\paragraph{What ``inside'' and ``outside'' mean (reader-facing).}
+HQIV treats the octonionic carrier as having two competing Casimir-like
+surfaces on the \emph{same} geometric object, not two unrelated constants.
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Inside (contact shells).}
+  On the three inner Hopf contact shells (the heavy-sector winding
+  ladder), modes are ``trapped'' by phase-lift and Beltrami torsion.
+  This inner surface sets the scale of binding, the heavy-lepton gap,
+  and the hadronic chart.  Its strength grows with the curvature
+  readout $\omega K(\xi)$ on the temperature ladder.
+\item \textbf{Outside (neutral horizon shell).}
+  On the first shell \emph{beyond} proton lock-in, fluctuations on the
+  right-handed neutrino/neutral channel of the same carrier are
+  coarse-grained into a finite number of discrete modes.  At lock-in
+  that count is $140$, giving the familiar factor $1/140$ when the
+  curvature amplitude is normalized to unity.  Away from lock-in the
+  outer suppression is $\omega K(\xi)/140$, parallel to the inner side.
+\end{itemize}
+The overall mass scale and vev factor are the ratio inner/outer.  In the
+Lean library this outside construction is filed under an internal label
+\texttt{outerShellNeutrinoFluctuationWitness}; it is \emph{not} a
+standard physics abbreviation and should be read as ``outer neutral-shell
+fluctuation coarse-graining,'' not as a particle label.
+
+\paragraph{Comparison-layer $\eta$.}
+Only after the shell ladder is integrated does the witness form
+\[
+\eta = \frac{n_b}{n_\gamma}
+  = \frac{\Omega_b\,\rho_{\mathrm{crit}}}{m_p\,n_\gamma(T_{\mathrm{CMB}})},
+\]
+with default $H_0=67.4\,\mathrm{km\,s^{-1}\,Mpc^{-1}}$ and
+$T_{\mathrm{CMB}}=2.7255\,\mathrm{K}$. This is \textbf{not} part of the
+proved Lean ratio graph; it is an auditable late-universe comparison
+readout. Lean modules
+\hyperref[lean:dynamic-bbn]{Dynamic BBN and baryogenesis} and
+\hyperref[lean:bbn-shell-opportunity]{shell reaction opportunity} now
+mirror the binding-release and shell-clock factors used in the witness.
+
+\paragraph{Why $\eta_{10}$ moved: $6.09\to 6.36\to 5.59$.}
+The three numbers are not random drift; they label different stages of
+the programme:
+\begin{itemize}[leftmargin=2em]
+\item \textbf{$6.10$ (legacy anchor).}
+  $\eta_{\mathrm{paper}}$ in the quarantined
+  \hyperref[lean:eta-paper]{baryogenesis $\eta$ paper module}; still the
+  lock-in calibration used by the fixed-$\eta$ BBN witness.
+\item \textbf{$\approx 6.28$--$6.36$ (intermediate dynamic paths).}
+  Early \texttt{hqiv\_dynamic\_bbn\_baryogenesis.py} runs with
+  \texttt{eta\_at\_horizon\_dynamic} and binding-curvature correction
+  ($\eta_{10}=6.28$); alternatively, holding the dynamic bulk
+  $\Omega_b$ fixed and raising only the comparison $H_0$ to
+  $70$--$72\,\mathrm{km\,s^{-1}\,Mpc^{-1}}$ gives
+  $\eta_{10}=6.04$--$6.39$.
+\item \textbf{$6.20$ (current bulk v3 central value).}
+  Full per-shell $\Omega_b$ accumulation with dynamic vev, $B_{\mathrm{curv}}$
+  on shells, and binding feedback, then comparison-layer conversion at
+  $H_0=67.4$.
+\end{itemize}
+None of these replaces the proved identity
+$\eta(n;N)=\eta_{\mathrm{paper}}\cdot\Omega_k(n;N)$; they test how much
+of the observed scale can be \emph{derived} before the single-point
+anchor is applied.
+
+\begin{table}[h]
+\centering
+\caption{Comparison-layer $\eta_{10}\equiv \eta\times 10^{10}$ from
+different HQIV stages and inputs. Errors on the dynamic-bulk central
+value propagate $H_0=67.4\pm 2.5\,\mathrm{km\,s^{-1}\,Mpc^{-1}}$ at
+fixed $\Omega_b$; other rows are deterministic readouts at stated
+inputs. Observed band from BBN+$CMB$ synthesis \cite{coc2015}.}
+\label{tab:eta-methods}
+\begin{tabular}{@{}lcc p{5.8cm}@{}}
+\toprule
+Method & $\eta_{10}$ & uncertainty & Notes \\
+\midrule
+Observed (BBN+$CMB$) & $6.10$ & $\pm 0.06$ & Comparison target \cite{coc2015} \\
+Lean lock-in anchor ($\eta_{\mathrm{paper}}$) & $6.10$ & --- & Quarantined calibration; not derived here \\
+Early dynamic baryogenesis & $6.28$ & --- & \texttt{eta\_at\_horizon\_dynamic} + binding correction \\
+Dynamic bulk v3 (primary) & $6.20$ & $\pm 0.42$ & Per-shell $\Omega_b$; $B_{\mathrm{curv}}$ + dynamic $C_2$ BBN clock \\
+\quad $H_0=70$ at fixed $\Omega_b$ & $6.04$ & --- & Comparison-layer $H_0$ sensitivity \\
+\quad $H_0=72$ at fixed $\Omega_b$ & $6.39$ & --- & Upper bracket of $H_0$ sweep \\
+\quad $\rho_{\mathrm{rad}}=0.5$ vs.\ $1.0$ & $6.68$ / $5.60$ & --- & Radiation-floor sensitivity on shell source \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Casimir-modulated binding and BBN clock.}
+Bound-state Casimir trapping in the early curvature background changes
+effective nuclear $Q$ values during BBN. The witness uses a
+curvature--temperature binding-release factor
+\[
+f_{\mathrm{bind}}(T)=\exp\!\Bigl(-\gamma\,w_{\mathrm{strong}}\,
+  \frac{s}{1+s}\Bigr),
+\quad
+s=\frac{\Omega_k(\xi)-\Omega_k(\xi_{\mathrm{lock}})}
+  {\log(\xi/\xi_{\mathrm{lock}})},
+\]
+applied to lock-in nuclear cluster $Q$'s (inside/outside composite trace and
+caustics; \cite{hqiv-nucleon-binding-paper}) rather than raw
+$\xi=T_{\mathrm{Pl}}/T$ vev blow-up. For BBN network integration the native clock is a \textbf{shell reaction
+opportunity}
+\[
+\mathcal{O}_{\mathrm{shell}}=
+  \Delta\log\xi\cdot\bigl[\log(\xi/\xi_{\mathrm{lock}})\bigr]^3\,
+  B_{\mathrm{curv}}(\xi(T))\,
+  f_{C_2}(T)\,(1+\delta_{\mathrm{bind}}/4),
+\]
+where $B_{\mathrm{curv}}$ is the same-epoch Casimir/nuclear outside budget
+in the $\kappa_6$ matter slot (\cite{hqiv-tuft-sm-lagrangian-paper}), and
+\[
+T_{\mathrm{bn}}(\eta)=\gamma_{\mathrm{HQIV}}\,w_{\mathrm{strong}}\,T_{\mathrm{freeze}}(\eta),
+\quad
+T_{\mathrm{freeze}}(\eta)=\frac{Q_{np}}{\log(\eta_{10})},
+\quad
+w_{C_2}(T)=\gamma_{\mathrm{HQIV}}\,w_{\mathrm{strong}}\,\frac{Q_D^{\mathrm{eff}}(T)}{Q_{np}},
+\]
+\[
+f_{C_2}(T,\eta)=
+\begin{cases}
+(\kappa_{6,\mathrm{ref}}/\kappa_6(\xi(T)))^{w_{C_2}}, & T\le T_{\mathrm{bn}}(\eta),\\
+1, & T>T_{\mathrm{bn}}(\eta),
+\end{cases}
+\qquad
+\kappa_6=\eta_{\mathrm{paper}}\,B_{\mathrm{curv}}\,\gamma\,C_2(\xi),
+\]
+with $\kappa_{6,\mathrm{ref}}$ at $T_{\mathrm{ref}}=T_{\mathrm{freeze}}(\eta)$,
+$w_{\mathrm{strong}}=4/8$, and $Q_D^{\mathrm{eff}}(T)$ from
+\leanid{bbnDeuteronBindingQ_effectiveAtT} (curvature-temperature binding release on
+the lock-in deuteron trace). No fitted MeV cutoffs: $w_{C_2}(T)$ rises toward
+$\approx 0.36$ in the bottleneck and $T_{\mathrm{bn}}\approx 0.14\,\mathrm{MeV}$
+at $\eta_{10}\approx 6.2$ are \emph{derived}. Raw $\kappa_6$ growth on the hot
+chart over-burns D; the inverse lapse clock is the BBN readout of dynamic $C_2$.
+Standard
+radiation-dominated $H(T)$ is retained only as a diagnostic comparison
+(\texttt{legacy\_H\_cooling} mode).
+
+\begin{table}[h]
+\centering
+\caption{BBN abundance readout at dynamic-bulk
+$\eta=6.20\times 10^{-10}$ (witness
+\texttt{integrator\_lean\_audit.json}, 2026-05). Abundance certificates
+remain in \cite{hqiv-bbn-paper}; rows document integrator modes.}
+\label{tab:bbn-methods}
+\begin{tabular}{@{}lcc p{5.5cm}@{}}
+\toprule
+Network driver & $Y_p$ & $D/H$ & Notes \\
+\midrule
+Shell opportunity + dynamic $Q$ + dynamic $C_2$ & $0.245$ & $2.39\times 10^{-5}$ & Primary v3 (\texttt{bbnShellReactionOpportunity\_dynamic\_integrator}) \\
+Shell opportunity + dynamic $Q$ (no $C_2$) & $0.244$ & $7.5\times 10^{-6}$ & $B_{\mathrm{curv}}$ only; D bottleneck \\
+Legacy $H(T)$ + fixed lock-in $Q$ & $0.249$ & $5.3\times 10^{-10}$ & Fixed-$\eta_{\mathrm{paper}}$ baseline \\
+\midrule
+Observed band & $0.244\pm 0.004$ & $(2.53\pm 0.04)\times 10^{-5}$ & \cite{coc2015} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Honest error budget.}
+The dynamic bulk central value sits $\approx 8\%$ below the observed
+$\eta_{10}$ at default $H_0$. Propagating only the comparison-layer
+$H_0$ uncertainty ($\pm 2.5\,\mathrm{km\,s^{-1}\,Mpc^{-1}}$) gives
+$\eta_{10}=5.60\pm 0.42$. A parallel early-dynamic baryogenesis
+correction and an $H_0$-only raise bracket $6.0$--$6.4$ without
+changing the per-shell source. Remaining upward levers visible in the
+witness---not yet promoted to theorems---include a
+trace-derived colour-singlet projector above $1/3$ and the Lean
+\texttt{baryogenesis\_binding\_curvature\_correction} term in
+\texttt{eta\_at\_horizon\_dynamic}. Downward levers include a larger
+effective radiation floor in the shell partition and stopping the
+integrator before additional post-lock-in shell accumulation.
+
+\paragraph{Witness discipline.}
+Machine-checked JSON:
+\texttt{data/dynamic\_bulk\_bbn\_v2.json} (bulk + BBN v3);
+\texttt{data/bbn\_witnesses\_dynamic.json} (early dynamic demo).
+Recompute with \texttt{python3 scripts/hqiv\_dynamic\_bulk\_bbn.py}.
+
 \section{CP bias without naming \(\eta\): triality coupling}
 
 The \hyperref[lean:triality-well]{triality--rapidity-well module} defines
@@ -325,9 +564,10 @@ honest baryogenesis paper aligned to actual Lean artifacts.
 
 \section*{Companion: big-bang nucleosynthesis \cite{hqiv-bbn-paper}}
 
-This note stops where BBN begins: at the lock-in calibration
-$\Omega_k(M;M)=1$ and the shared $\eta(n;N)=\eta_{\mathrm{paper}}\cdot\Omega_k(n;N)$
-readout. The companion BBN preprint documents the library stack: the
+This note stops where BBN begins at the \emph{ratio-level} lock-in
+calibration $\Omega_k(M;M)=1$ and the shared
+$\eta(n;N)=\eta_{\mathrm{paper}}\cdot\Omega_k(n;N)$ readout. The
+companion BBN preprint documents the library stack: the
 \hyperref[lean:bbn-umbrella]{BBN umbrella module} re-exports a
 network readout from composite-trace binding and isotope-ladder weights
 (\hyperref[lean:bbn-network]{BBN network-from-weights module}), an epoch
@@ -337,9 +577,14 @@ checked against \texttt{data/bbn\_witnesses.json}. Standard
 semi-analytic $Y_p$ and D/H reference fits (Coc et al.) appear only as
 \emph{comparison layers}, not as HQIV-derived inputs.
 
-We do not develop that stack here so this paper stays a clean
-ratio-level baryogenesis certificate; see \cite{hqiv-bbn-paper} for
-abundance theorems and witness discipline.
+The present v2 update adds the dynamic-bulk path that \emph{feeds} BBN:
+per-shell $\Omega_b$ and $\eta$ from
+\texttt{hqiv\_dynamic\_bulk\_bbn.py}, Casimir-modulated binding $Q$'s,
+and shell reaction opportunity in place of $H(T)$ as the integrator
+clock (Tables~\ref{tab:eta-methods}--\ref{tab:bbn-methods}). Those
+witnesses are documented here because they determine the comparison-layer
+$\eta$ passed into the BBN network; full abundance theorems remain in
+\cite{hqiv-bbn-paper}.
 
 \section{Conclusion}
 
@@ -350,15 +595,21 @@ The first-principles content formalised today is:
 \item a parallel \(\eta(n;N)\) law sharing the \emph{identical} normalization as \(\Omega_k(n;N)\), with matching monotonicity lemmas and \(\eta(n;N)\le \eta_{\mathrm{paper}}\) for \(n\le N\), and with \(\eta_{\mathrm{paper}}\) quarantined to a single module;
 \item a triality representation scaffold coupling curvature-ratio bias to CP-sensitive increments, without importing \(\eta_{\mathrm{paper}}\).
   This scaffold ties CP-odd increments to the same curvature-ratio channel used for \(\mathrm{Spin}(8)\) closure and measurement; it does \emph{not} derive the bias itself from non-associativity of the octonion product (that remains a Tier-IV target).
-\item a GR/O--Maxwell compatibility package tying \((\alpha,\phi)\) across sectors.
+\item a GR/O--Maxwell compatibility package tying \((\alpha,\phi)\) across sectors;
+\item \textbf{(v2--v3 witnesses)} a dynamic bulk integrator deriving comparison-layer $\eta_{10}\approx 6.0$--$6.4$ from per-shell curvature, Casimir vev, and $B_{\mathrm{curv}}$; shell-opportunity BBN with dynamic $C_2$ yields $Y_p\approx 0.245$ and $D/H\approx 2.4\times 10^{-5}$ at $\eta_{10}\approx 6.2$ (Tables~\ref{tab:eta-methods}--\ref{tab:bbn-methods}, \texttt{integrator\_lean\_audit.json}).
 \end{enumerate}
 That package is already enough for a mathematically disciplined
 ``baryogenesis stands on the same shoulders as $\mathrm{Spin}(8)$
-closure'' paper. The natural next formal manuscript in the programme is
-the BBN stack above; the remaining distance to textbook electroweak
+closure'' paper, now augmented by an explicit method-range audit for the
+observed $\eta$ band. The natural next formal manuscript in the programme
+is the BBN stack above; the remaining distance to textbook electroweak
 baryogenesis beyond that is washout, sphaleron integration, and
 associator-derived CP violation---yield-level dynamics not yet in the
-Lean corpus.
+Lean corpus. Closing the $\approx 8\%$ gap between the dynamic-bulk
+central $\eta_{10}$ and the observed value is expected to come from
+trace-derived baryon projectors and binding-sourced baryogenesis
+corrections already scaffolded in Lean, not from refitting
+$\eta_{\mathrm{paper}}$.
 
 \section*{Acknowledgments}
 AI-assisted drafting and repository tooling were used during manuscript
@@ -450,6 +701,28 @@ The Lean development lives at \url{https://github.com/HQIV/hqiv-lean}
 \item[\phantomsection\label{lean:bbn-witness}\textbf{BBN witness module.}]
   Integrated witness + Python \texttt{data/bbn\_witnesses.json}.
   \leanfile{Hqiv/Physics/BBNWitness.lean}.
+\item[\phantomsection\label{lean:dynamic-bbn}\textbf{Dynamic BBN and baryogenesis module.}]
+  Curvature-temperature binding release, effective BBN $Q$'s at temperature,
+  shell reaction opportunity with binding feedback.
+  \leanfile{Hqiv/Physics/DynamicBBNBaryogenesis.lean}.
+\item[\phantomsection\label{lean:bbn-dynamic-C2}\textbf{BBN dynamic-$C_2$ pack.}]
+  \leanid{bbnKappa6AtT\_MeV}, \leanid{bbnLapseConcentrationAtT\_MeV},
+  \leanid{bbnDynamicC2BottleneckT\_MeV},
+  \leanid{bbnDynamicC2LapseExponent},
+  \leanid{bbnDynamicC2OpportunitySuppression},
+  \leanid{bbnShellReactionOpportunity\_dynamic\_integrator} in
+  \leanfile{Hqiv/Physics/DynamicBBNBaryogenesis.lean};
+  \leanid{tuftHopfKappa6AtXi}, \leanid{tuftLapseConcentrationAtXi} in
+  \leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean}.
+\item[\phantomsection\label{lean:bbn-shell-opportunity}\textbf{Shell reaction opportunity.}]
+  \leanid{bbnShellReactionOpportunity},
+  \leanid{bbnCurvatureOpportunityFactor} in
+  \leanfile{Hqiv/Physics/BBNEpochNetwork.lean}.
+\item[\phantomsection\label{lean:dynamic-bulk-witness}\textbf{Dynamic bulk witness (Python).}]
+  \texttt{scripts/hqiv\_dynamic\_bulk\_bbn.py} $\to$
+  \texttt{data/dynamic\_bulk\_bbn\_v2.json};
+  \texttt{scripts/hqiv\_integrator\_lean\_audit.py} $\to$
+  \texttt{data/integrator\_lean\_audit.json}.
 \end{description}
 \endgroup
 
@@ -480,10 +753,18 @@ BaryogenesisWitness
    eta_at_horizon_le_eta_paper,
    baryogenesis_same_normalization_as_omega_k, ...)
 
+DynamicBBNBaryogenesis  (bbnBindingReleaseFactor, *_effectiveAtT,
+  bbnDynamicC2OpportunitySuppression,
+  bbnShellReactionOpportunity_dynamic_integrator)
+  --> HopfShellBeltramiMassBridge.tuftHopfKappa6AtXi / tuftLapseConcentrationAtXi
+  --> BBNEpochNetwork.bbnShellReactionOpportunity
+
 GRFromMaxwell  (same_phi / same_alpha / HQVM Friedmann compatibility)
 
 BigBangNucleosynthesis  (companion hqiv-bbn-paper; not in this note's graph)
   --> BBNNetworkFromWeights, BBNEpochNetwork, BBNEpochEvolution, BBNWitness
+
+Python witnesses: dynamic_bulk_bbn_v2.json, bbn_witnesses_dynamic.json
 \end{verbatim}
 
 \bibliographystyle{plain}

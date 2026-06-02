@@ -29,9 +29,9 @@ Lock-In $\eta$, Epoch Ladder, and Integrated Witnesses in the Lean Library}
 \noindent\textbf{Position in the publication chain.}
 This is the eighth paper in the HQIV preprint series and the
 fifth Tier-2 closure note. Tier~0--1 fix the discrete spine
-\cite{ettinger2026hqiv,hqiv-lightcone-paper,hqiv-so8-paper,hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper};
-Tier~2 supplies mass lock-in, baryogenesis normalisation, and nucleon
-composite-trace binding \cite{hqiv-mass-spectrum-paper,hqiv-sm-lagrangian-paper,hqiv-baryogenesis-paper,hqiv-nucleon-binding-paper}.
+\cite{ettinger2026hqiv,hqiv-lightcone-paper,hqiv-so8-paper,hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper,hqiv-thermo-arrow-paper};
+Tier~2 supplies the published mass lock-in synthesis, baryogenesis normalisation, and nucleon
+composite-trace binding \cite{hqiv-tuft-sm-lagrangian-paper,hqiv-baryogenesis-paper,hqiv-nucleon-binding-paper}.
 The present note states what the BBN Lean stack \emph{actually proves} about
 primordial light-element readouts when lock-in $\eta$, nucleon masses, and
 composite-trace binding weights are already fixed upstream.
@@ -40,7 +40,7 @@ composite-trace binding weights are already fixed upstream.
 At lock-in the library defines an $8\times8$ network readout for
 $Y_p$, $D/H$, $^3\mathrm{He}/H$, and $^7\mathrm{Li}/H$ from valley
 counts, Boltzmann weights, and cluster binding $Q$ values tied to
-\cite{hqiv-mass-spectrum-paper}. A separate epoch module places the BBN
+\cite{hqiv-tuft-sm-lagrangian-paper}. A separate epoch module places the BBN
 window on the temperature shell ladder between QCD lock-in and the CMB
 today; an integrated witness certifies $Y_p$ in the observed band and
 within $1\%$ of the freeze-out partition value at the same $\eta$.
@@ -126,7 +126,7 @@ The BBN stack does not introduce new dimensionful anchors. It consumes:
 \item \textbf{Nucleon masses.}
   $\texttt{derivedProtonMass}$ and $\texttt{derivedDeltaM}$ (neutron--proton
   gap) from the mass-spectrum lock-in discipline
-  \cite{hqiv-mass-spectrum-paper,hqiv-kirchhoff-paper}; binding shell
+  \cite{hqiv-tuft-sm-lagrangian-paper,hqiv-kirchhoff-paper}; binding shell
   $\texttt{bbnBindingShell}=\mathrm{referenceM}$.
 \item \textbf{Composite-trace binding.}
   Deuterium and $^4\mathrm{He}$ reaction $Q$ values identified with
@@ -143,7 +143,7 @@ graph.
 
 The \hyperref[lean:bbn-network]{network-from-weights module} encodes light
 elements as a weighted readout on the same Fano/network picture used for
-nucleon binding \cite{hqiv-mass-spectrum-paper}:
+nucleon binding \cite{hqiv-tuft-sm-lagrangian-paper}:
 
 \begin{itemize}[leftmargin=2em]
 \item \textbf{Valley counts.}
@@ -196,6 +196,35 @@ rate scaffold (weak, $np$, $dd$, $^3\mathrm{He}$ branches) and Hubble
 dilution---schematic reaction bookkeeping for integration witnesses, not a
 published PRIMAT clone in Lean.
 
+\subsection{Dynamic $C_2$ lapse clock (BBN lab)}
+\label{sec:dynamic-c2}
+
+The dynamic bulk integrator
+(\cite{hqiv-baryogenesis-paper}, \texttt{hqiv\_dynamic\_bulk\_bbn.py})
+advances species by a shell reaction opportunity, not by $H(T)$ as an input
+clock.  Matter curvature enters through $B_{\mathrm{curv}}(\xi)$ in the
+$\kappa_6$ matter slot; \textbf{lapse concentration $C_2(\xi)$} is
+applied in the deuterium bottleneck ($T\le\gamma w_{\mathrm{strong}}T_{\mathrm{freeze}}(\eta)$) via
+\[
+T_{\mathrm{bn}}(\eta)=\gamma\,w_{\mathrm{strong}}\,T_{\mathrm{freeze}}(\eta),
+\quad
+w_{C_2}(T)=\gamma\,w_{\mathrm{strong}}\,\frac{Q_D^{\mathrm{eff}}(T)}{Q_{np}},
+\quad
+f_{C_2}=(\kappa_{6,\mathrm{ref}}/\kappa_6)^{w_{C_2}}
+\]
+for $T\le T_{\mathrm{bn}}(\eta)$, with $\kappa_6=\eta_{\mathrm{paper}}\,B_{\mathrm{curv}}\,\gamma\,C_2(\xi)$
+and Lean names \leanid{bbnDynamicC2BottleneckT\_MeV},
+\leanid{bbnDynamicC2LapseExponent},
+\leanid{bbnDynamicC2OpportunitySuppression}
+(\leanfile{Hqiv/Physics/DynamicBBNBaryogenesis.lean}).
+At the dynamic-$\eta$ witness ($\eta_{10}\approx 6.2$) this raises $D/H$ from
+$\sim 7.5\times 10^{-6}$ ($B_{\mathrm{curv}}$ only) to
+$\sim 2.4\times 10^{-5}$ while keeping $Y_p$ on the Cooke et al.\ band
+(\texttt{data/integrator\_lean\_audit.json}).
+Multiplying opportunity by raw $\kappa_6$ at low $T$ \emph{lowers} $D/H$;
+the BBN lab identifies the inverse lapse clock as the physical dynamic-$C_2$
+readout.
+
 \section{Integrated witnesses and Python export}
 \label{sec:integrated}
 
@@ -245,8 +274,10 @@ witnesses are accepted from earlier tiers.
 \item Derivation of $\eta_{\mathrm{paper}}$ from associator phases or
   sphaleron yields (baryogenesis interpretive layer).
 \item Replacement of PRIMAT/MESA with the HQIV rate scaffold.
-\item Resolution of the lithium problem or precision $D/H$ without further
-  nuclear-network work.
+\item Full Lean certificate that integrated $D/H$ matches Coc et al.\ without
+  the dynamic-$C_2$ witness (comparison-layer calibration documented in
+  \S\ref{sec:dynamic-c2} and \texttt{integrator\_lean\_audit.json}).
+\item Resolution of the lithium problem without further nuclear-network work.
 \item Any continuum-limit or patch-refinement programme.
 \end{itemize}
 
@@ -254,12 +285,12 @@ witnesses are accepted from earlier tiers.
 
 Big-bang nucleosynthesis in HQIV is formalised as a \emph{weighted network
 readout} at lock-in, lifted to a \emph{cosmological epoch} on the
-temperature--shell ladder, and closed by \emph{integrated $Y_p$ witnesses}
+temperature--shell ladder, and closed by \emph{integrated abundance witnesses}
 tied to Python exports. The proof graph is sorry-free at the vital-bundle
 level; observational agreement is claimed only where the witness module
-states it (chiefly $Y_p$). Companion reproduction is documented in
-Appendix~\ref{app:scripts}. Later Tier-3 notes may cite this certificate when
-discussing primordial abundances alongside CMB and fluid applications.
+states it ($Y_p$ in the fixed-$\eta$ bundle; $D/H$ additionally in the
+dynamic-$C_2$ integrator audit of \S\ref{sec:dynamic-c2}). Companion
+reproduction is documented in Appendix~\ref{app:scripts}.
 
 \section*{Acknowledgments}
 
@@ -334,6 +365,12 @@ noted.
   \leanfile{Hqiv/Physics/BaryogenesisEtaPaper.lean} (upstream).
 \item[\hypertarget{lean:derived-mass}{Derived nucleon mass}]
   \leanfile{Hqiv/Physics/DerivedNucleonMass.lean} (upstream).
+\item[\hypertarget{lean:bbn-dynamic-c2}{BBN dynamic-$C_2$ pack}]
+  \leanfile{Hqiv/Physics/DynamicBBNBaryogenesis.lean} ---
+  \leanid{bbnDynamicC2OpportunitySuppression},
+  \leanid{bbnShellReactionOpportunity\_dynamic\_integrator};
+  \leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean} ---
+  \leanid{tuftLapseConcentrationAtXi}, \leanid{tuftHopfKappa6AtXi}.
 \end{description}
 
 \section{Reproducer scripts}
@@ -343,8 +380,13 @@ From the repository root:
 \begin{verbatim}
 python3 scripts/hqiv_bbn_abundances.py
 python3 scripts/hqiv_bbn_epoch_network.py
+python3 scripts/hqiv_dynamic_bulk_bbn.py
+python3 scripts/hqiv_integrator_lean_audit.py
+python3 -m unittest scripts.test_hqiv_dynamic_c2_bbn
 \end{verbatim}
-Outputs: \texttt{data/bbn\_witnesses.json}. See
+Outputs: \texttt{data/bbn\_witnesses.json},
+\texttt{data/dynamic\_bulk\_bbn\_v2.json},
+\texttt{data/integrator\_lean\_audit.json}. See
 \texttt{papers/bbn/scripts/README.md} for the patch-ontology disclaimer and
 input list.
 

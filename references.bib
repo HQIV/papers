@@ -54,6 +54,38 @@
   urldate      = {2026-05-21}
 }
 
+@unpublished{NielsenSemitaNS2026,
+  author       = {Nielsen, Jenny Lorraine and Semita, Lu},
+  title        = {The Solution to the Navier {Stokes} Problem},
+  year         = {2026},
+  note         = {Complex-time Stokes semigroup on Hopf fibration; real-time blowup (Option C) and holomorphic regularity for $\Re t>0$; PhilPapers NIETST-3},
+  url          = {https://philpapers.org/rec/NIETST-3},
+  urldate      = {2026-05-28}
+}
+
+@unpublished{NielsenBeltramiComplexTime2026,
+  author       = {Nielsen, Jenny Lorraine},
+  title        = {The Laws of Thermodynamics from Beltrami Navier {Stokes} in Complex Time},
+  year         = {2026},
+  note         = {Related complex-time NS/Beltrami program in the Nielsen line; PhilPapers/manuscript},
+  urldate      = {2026-05-28}
+}
+
+@unpublished{hqiv-complex-time-stokes-paper,
+  author       = {Ettinger Jr, Steven},
+  title        = {Complex Time, Lapse, and Stokes Semigroup Factors from the {HQIV} Null Lattice: A Wick Bridge to Nielsen's Complex-Time Navier--Stokes Program},
+  year         = {2026},
+  note         = {Preprint in \texttt{papers/complex\_time\_stokes\_bridge/}; Lean module \texttt{ComplexTimeStokesWickBridge.lean}},
+  url          = {https://github.com/HQIV/hqiv-lean/tree/main/papers/complex_time_stokes_bridge}
+}
+
+@unpublished{hqiv-tuft-bridge-paper,
+  author       = {Ettinger Jr, Steven},
+  title        = {Topology, the Complex Hopf Fibration, and Finite Approximations in {HQIV}: {TUFT} Alignments, Contact Spectra, and the Discrete--Continuous Interface},
+  year         = {2026},
+  note         = {Preprint in \texttt{papers/tuft\_topology\_hqiv\_bridge/}}
+}
+
 @article{Okubo1978,
   author  = {Okubo, Susumu},
   title   = {Pseudo-quaternion and pseudo-octonion algebras},
@@ -643,10 +675,12 @@
   author       = {Ettinger, Steven Jr},
   title        = {Thermodynamics and the Arrow of Time from the {HQIV} Temperature Ladder: Finite Blackbody Entropy, Causal Monogamy, and Machine-Checked Dissipation Signs},
   year         = {2026},
-  howpublished = {Preprint, HQIV-LEAN repository (\texttt{papers/thermodynamics\_arrow/})},
-  note         = {In preparation. Tier-1 sequel to \texttt{hqiv-kirchhoff-paper}; packages ladder laws and arrow readouts from \texttt{ThermodynamicLawsFromLadder.lean} and horizon blackbody modules.},
-  url          = {https://github.com/HQIV/hqiv-lean/blob/main/papers/thermodynamics_arrow/hqiv_thermodynamics_and_arrow_of_time.tex},
-  urldate      = {2026-05-27}
+  publisher    = {Zenodo},
+  howpublished = {Zenodo (HQIV community)},
+  doi          = {10.5281/zenodo.20478826},
+  url          = {https://doi.org/10.5281/zenodo.20478826},
+  note         = {Version v1 (2026-05-31). Tier-1 \#4 (sequel to Kirchhoff); closes the foundation-extension quartet. Packages ladder laws 0--3, finite blackbody entropy, $C_3$ dissipation sign with Euler witness, and discrete arrow readouts. Includes \texttt{scripts.zip}. Source: \texttt{papers/thermodynamics\_arrow/}.},
+  urldate      = {2026-05-31}
 }
 
 @misc{codata2018,
@@ -662,20 +696,22 @@
   author       = {Ettinger, Steven Jr},
   title        = {Electroweak Scale and Fermion Masses from Horizon Readouts: First-Principles Electroweak Closure inside the {HQIV} Lean Library},
   year         = {2026},
-  howpublished = {Preprint, HQIV-LEAN repository (\texttt{papers/lean\_to\_mass\_spectrum/})},
-  note         = {In preparation. To be deposited at Zenodo (HQIV community) on Lean PR build completion; this entry will be updated with the minted DOI on publication.},
-  url          = {https://github.com/HQIV/hqiv-lean/blob/main/papers/lean_to_mass_spectrum/hqiv_lean_from_combinatorics_to_mass_spectrum.tex},
-  urldate      = {2026-05-26}
+  howpublished = {Superseded draft, HQIV-LEAN archive (\texttt{papers/archive/lean\_to\_mass\_spectrum/})},
+  note         = {Superseded by the combined \texttt{hqiv-tuft-sm-lagrangian-paper}. Content merged into the TUFT+SM Lagrangian synthesis; not in the publication chain.},
+  url          = {https://github.com/HQIV/hqiv-lean/blob/main/papers/archive/lean_to_mass_spectrum/hqiv_lean_from_combinatorics_to_mass_spectrum.tex},
+  urldate      = {2026-05-31}
 }
 
-@misc{hqiv-sm-lagrangian-paper,
+@misc{hqiv-tuft-sm-lagrangian-paper,
   author       = {Ettinger, Steven Jr},
-  title        = {Building the Standard Model Lagrangian from the {HQIV} Discrete Action: A Sector-by-Sector Lean Bridge},
+  title        = {Dynamic Fermion Mass Spectrum and Standard Model Lagrangian from the {HQIV} Discrete Octonion Action: {Nielsen} {TUFT} Hopf Shells and Inner--Outer Casimir Realization},
   year         = {2026},
-  howpublished = {Preprint, HQIV-LEAN repository (\texttt{papers/sm\_lagrangian/})},
-  note         = {In preparation. To be deposited at Zenodo (HQIV community) on Lean PR build completion; this entry will be updated with the minted DOI on publication.},
-  url          = {https://github.com/HQIV/hqiv-lean/blob/main/papers/sm_lagrangian/hqiv_sm_lagrangian_from_discrete_action.tex},
-  urldate      = {2026-05-26}
+  publisher    = {Zenodo},
+  howpublished = {Zenodo (HQIV community)},
+  doi          = {10.5281/zenodo.20517172},
+  url          = {https://doi.org/10.5281/zenodo.20517172},
+  note         = {Version v1 (2026-06-02). Tier-2 \#5 (combined opener). Unifies Nielsen/TUFT Hopf-fibration necessity, the discrete octonion-carrier realization, the dynamic inner--outer Casimir mechanism with explicit $\kappa_6$ factorisation, and the sector-by-sector projection of the proved discrete octonion action onto $\mathcal{L}_{\rm SM}$. Includes \texttt{scripts.zip}. Source: \texttt{papers/tuft\_sm\_lagrangian/}. Lean target: \texttt{paper\_tuft\_sm\_lagrangian}.},
+  urldate      = {2026-06-02}
 }
 
 @book{peskin1995,
@@ -697,7 +733,7 @@
   title        = {Baryon Asymmetry as Curvature-Ratio Lock-In: Ratio-Level First Principles in the {HQIV} Lean Library},
   year         = {2026},
   howpublished = {Preprint, HQIV-LEAN repository (\texttt{papers/baryogenesis\_lockin/})},
-  note         = {In preparation. To be deposited at Zenodo (HQIV community) on Lean PR build completion; this entry will be updated with the minted DOI on publication.},
+  note         = {In preparation. Tier-2 \#6; cites published Tier-2 opener \texttt{hqiv-tuft-sm-lagrangian-paper} (DOI 10.5281/zenodo.20517172). Next in the Tier-2 publication queue.},
   url          = {https://github.com/HQIV/hqiv-lean/blob/main/papers/baryogenesis_lockin/hqiv_baryogenesis_curvature_lockin.tex},
   urldate      = {2026-05-26}
 }
@@ -721,7 +757,7 @@
   title        = {Nucleon Binding from {HQIV} Composite-Trace Weights: Lock-In Masses, Lapse Readout, and Neutron Stability Scaffold},
   year         = {2026},
   howpublished = {Preprint, HQIV-LEAN repository (\texttt{papers/nucleon\_binding/})},
-  note         = {In preparation. Tier-2 \#7: $8\times8$ network binding at \texttt{referenceM}; companion to baryogenesis and precursor to BBN.},
+  note         = {In preparation. Tier-2 \#7: $8\times8$ network binding at \texttt{referenceM}; cites \texttt{hqiv-tuft-sm-lagrangian-paper} (DOI 10.5281/zenodo.20517172) and \texttt{hqiv-baryogenesis-paper}; precursor to BBN.},
   url          = {https://github.com/HQIV/hqiv-lean/blob/main/papers/nucleon_binding/hqiv_nucleon_binding_from_composite_trace.tex},
   urldate      = {2026-05-27}
 }
@@ -731,8 +767,18 @@
   title        = {Big-Bang Nucleosynthesis from {HQIV} Network Weights: Lock-In $\eta$, Epoch Ladder, and Integrated Witnesses in the Lean Library},
   year         = {2026},
   howpublished = {Preprint, HQIV-LEAN repository (\texttt{papers/bbn/})},
-  note         = {In preparation. Companion to \texttt{hqiv-baryogenesis-paper}; consumes lock-in $\eta$ and nucleon witnesses.},
+  note         = {In preparation. Tier-2 \#8; companion to \texttt{hqiv-baryogenesis-paper} and \texttt{hqiv-nucleon-binding-paper}; consumes lock-in $\eta$ and nucleon witnesses. Upstream mass lock-in: \texttt{hqiv-tuft-sm-lagrangian-paper} (DOI 10.5281/zenodo.20517172).},
   url          = {https://github.com/HQIV/hqiv-lean/blob/main/papers/bbn/hqiv_bbn_light_elements_from_network_weights.tex},
+  urldate      = {2026-05-27}
+}
+
+@misc{hqiv-gluon-curvature-note,
+  author       = {Ettinger, Steven Jr},
+  title        = {The Gluon as Curvature Artifact: Strong Binding from the Inner--Outer Casimir on the Octonion Carrier},
+  year         = {2026},
+  howpublished = {Preprint, HQIV-LEAN repository (\texttt{papers/gluon\_curvature\_artifact/})},
+  note         = {Tier-2 closure note. Cites \texttt{hqiv-tuft-sm-lagrangian-paper} (DOI 10.5281/zenodo.20517172), nucleon binding, and Tier-1 records. Explicit identification of the gluon with the inner trapped-Casimir binding factor; no fundamental gluon fields in the proved discrete action.},
+  url          = {https://github.com/HQIV/hqiv-lean/blob/main/papers/gluon_curvature_artifact/hqiv_gluon_as_curvature_artifact.tex},
   urldate      = {2026-05-27}
 }
 
@@ -749,8 +795,8 @@
   author       = {Ettinger, Steven Jr},
   title        = {Longitudinal Electromagnetic Stress in Current-Carrying Conductors: An {HQIV/O-Maxwell} Explanation of Axial Wire Forces},
   year         = {2026},
-  howpublished = {Preprint, HQIV-LEAN repository (\texttt{papers/longitudinal\_em\_force/})},
-  note         = {In preparation. Tier-3 \#9; cites octonionic-action and coronal companion.},
+  howpublished = {Companion note, HQIV-LEAN repository (\texttt{papers/longitudinal\_em\_force/})},
+  note         = {Companion note, HQIV-LEAN repository (\texttt{papers/longitudinal\_em\_force/}). Tier-3 \#9; coronal/wire longitudinal channel.},
   url          = {https://github.com/HQIV/hqiv-lean/blob/main/papers/longitudinal_em_force/longitudinal_em_force_hqiv.tex},
   urldate      = {2026-05-27}
 }
@@ -765,12 +811,14 @@
 }
 
 @misc{saad2026wide,
-  author       = {Saad, Sultaan M. and Ting, Yuan-Sen},
+  author       = {Saad, Serat M. and Ting, Yuan-Sen},
   title        = {Gravitational Anomaly Measurement in Wide Binaries is Sensitive to Orbital Modeling},
   year         = {2026},
   eprint       = {2603.11015},
   archivePrefix = {arXiv},
-  primaryClass = {astro-ph.GA}
+  primaryClass = {astro-ph.GA},
+  note         = {Reanalysis of Chae et al.\ (2026) 36-system sample; baseline free-$a$ model $\gamma=1.12^{+0.27}_{-0.22}$, geometric de-projection $\gamma=1.56^{+0.21}_{-0.18}$. Code: \url{https://github.com/seratsaad/wb3d-gamma}},
+  url          = {https://arxiv.org/abs/2603.11015}
 }
 
 @article{thorne2004doppler,
@@ -793,13 +841,24 @@
   doi     = {10.1103/PhysRevLett.100.091102}
 }
 
+@article{carron2022filaments,
+  author  = {Carron Duque, J. and others},
+  title   = {A novel cosmic filament catalogue from {SDSS} data},
+  journal = {Astronomy and Astrophysics},
+  volume  = {659},
+  pages   = {A166},
+  year    = {2022},
+  doi     = {10.1051/0004-6361/202142028},
+  note    = {VizieR J/A+A/659/A166; block~1 LOWZ filaments used for SPARC cross-match.}
+}
+
 @misc{hqiv-flyby-paper,
   author       = {Ettinger, Steven Jr},
-  title        = {Acceleration Anomalies at Multiple Scales from Direction-Dependent {HQIV} Inertia Screening and O-Maxwell Horizon Probes},
+  title        = {Acceleration Readouts in {HQIV}: Flyby Anomalies, {SPARC} Disks, and Long-Term Galaxy--Filament Evolution},
   year         = {2026},
   howpublished = {Preprint, HQIV-LEAN repository (\texttt{papers/orbital\_flyby/})},
-  note         = {In preparation. Flybys, SPARC rotation curves, wide binaries; cites longitudinal/coronal companions.},
-  url          = {https://github.com/HQIV/hqiv-lean/blob/main/papers/orbital_flyby/hqiv_orbital_flyby_anomaly.tex},
+  note         = {In preparation. Flybys, SPARC+WHIM rotation curves, filament cross-match, $\sigma_8$ spin-alignment diagnostic, wide binaries; cites longitudinal/coronal companions.},
+  url          = {https://github.com/HQIV/hqiv-lean/blob/main/papers/orbital_flyby/hqiv_accelerations_galaxy_evolution.tex},
   urldate      = {2026-05-27}
 }
 
@@ -811,4 +870,403 @@
   note         = {In preparation. Back-to-back companion to \texttt{ettinger2026longitudinal}.},
   url          = {https://github.com/HQIV/hqiv-lean/blob/main/papers/coronal_heating/hqiv_coronal_longitudinal_heating.tex},
   urldate      = {2026-05-27}
+}
+
+% --- Standard Model, gauge theory, and foundational particle-physics literature ---
+
+@article{yang1954,
+  author  = {Yang, C. N. and Mills, R. L.},
+  title   = {Conservation of Isotopic Spin and Isotopic Gauge Invariance},
+  journal = {Physical Review},
+  volume  = {96},
+  pages   = {191--195},
+  year    = {1954},
+  doi     = {10.1103/PhysRev.96.191}
+}
+
+@article{yukawa1935,
+  author  = {Yukawa, Hideki},
+  title   = {On the Interaction of Elementary Particles. {I}},
+  journal = {Proceedings of the Physico-Mathematical Society of Japan},
+  series  = {3rd Series},
+  volume  = {17},
+  pages   = {48--57},
+  year    = {1935}
+}
+
+@article{fermi1934,
+  author  = {Fermi, Enrico},
+  title   = {Attempt at a Theory of Beta-Rays},
+  journal = {Il Nuovo Cimento},
+  volume  = {11},
+  pages   = {1--21},
+  year    = {1934},
+  doi     = {10.1007/BF02959820}
+}
+
+@article{glashow1961,
+  author  = {Glashow, Sheldon L.},
+  title   = {Partial-Symmetries of Weak Interactions},
+  journal = {Nuclear Physics},
+  volume  = {22},
+  pages   = {579--588},
+  year    = {1961},
+  doi     = {10.1016/0029-5582(61)90469-2}
+}
+
+@article{weinberg1967,
+  author  = {Weinberg, Steven},
+  title   = {A Model of Leptons},
+  journal = {Physical Review Letters},
+  volume  = {19},
+  pages   = {1264--1266},
+  year    = {1967},
+  doi     = {10.1103/PhysRevLett.19.1264}
+}
+
+@incollection{salam1968,
+  author    = {Salam, Abdus},
+  title     = {Weak and Electromagnetic Interactions},
+  booktitle = {Elementary Particle Theory: Relativistic Groups and Analyticity},
+  editor    = {Svartholm, N.},
+  publisher = {Almqvist \& Wiksell},
+  address   = {Stockholm},
+  pages     = {367--377},
+  year      = {1968},
+  note      = {Nobel Symposium 8; electroweak unification programme}
+}
+
+@article{higgs1964,
+  author  = {Higgs, Peter W.},
+  title   = {Broken Symmetries and the Masses of Gauge Bosons},
+  journal = {Physical Review Letters},
+  volume  = {13},
+  pages   = {508--509},
+  year    = {1964},
+  doi     = {10.1103/PhysRevLett.13.508}
+}
+
+@article{englert1964,
+  author  = {Englert, Fran{\c{c}}ois and Brout, Robert},
+  title   = {Broken Symmetry and the Mass of Gauge Vector Mesons},
+  journal = {Physical Review Letters},
+  volume  = {13},
+  pages   = {321--323},
+  year    = {1964},
+  doi     = {10.1103/PhysRevLett.13.321}
+}
+
+@article{nambu1960,
+  author  = {Nambu, Yoichiro},
+  title   = {Quasi-Particles and Gauge Invariance in the Theory of Superconductivity},
+  journal = {Physical Review},
+  volume  = {117},
+  pages   = {648--663},
+  year    = {1960},
+  doi     = {10.1103/PhysRev.117.648}
+}
+
+@article{goldstone1961,
+  author  = {Goldstone, J. and Salam, Abdus and Weinberg, Steven},
+  title   = {Broken Symmetries},
+  journal = {Physical Review},
+  volume  = {127},
+  pages   = {965--970},
+  year    = {1962},
+  doi     = {10.1103/PhysRev.127.965},
+  note    = {Goldstone's theorem and massless modes}
+}
+
+@article{tHooft1971,
+  author  = {'t Hooft, Gerard},
+  title   = {Renormalizable Lagrangians for Massive {Yang-Mills} Fields},
+  journal = {Nuclear Physics B},
+  volume  = {35},
+  pages   = {167--188},
+  year    = {1971},
+  doi     = {10.1016/0550-3213(71)90139-8}
+}
+
+@article{tHooft1972,
+  author  = {'t Hooft, Gerard and Veltman, Martinus},
+  title   = {Regularization and Renormalization of Gauge Fields},
+  journal = {Nuclear Physics B},
+  volume  = {44},
+  pages   = {189--213},
+  year    = {1972},
+  doi     = {10.1016/0550-3213(72)90279-9}
+}
+
+@article{gross1973,
+  author  = {Gross, David J. and Wilczek, Frank},
+  title   = {Ultraviolet Behavior of Non-Abelian Gauge Theories},
+  journal = {Physical Review Letters},
+  volume  = {30},
+  pages   = {1343--1346},
+  year    = {1973},
+  doi     = {10.1103/PhysRevLett.30.1343}
+}
+
+@article{politzer1973,
+  author  = {Politzer, H. David},
+  title   = {Reliable Perturbative Results for Strong Interactions?},
+  journal = {Physical Review Letters},
+  volume  = {30},
+  pages   = {1346--1349},
+  year    = {1973},
+  doi     = {10.1103/PhysRevLett.30.1346}
+}
+
+@article{wilczek1973,
+  author  = {Wilczek, Frank},
+  title   = {Asymptotically Free Gauge Theories. {I}},
+  journal = {Physical Review D},
+  volume  = {8},
+  pages   = {3633--3652},
+  year    = {1973},
+  doi     = {10.1103/PhysRevD.8.3633}
+}
+
+@article{gellmann1964,
+  author  = {Gell-Mann, Murray},
+  title   = {A Schematic Model of Baryons and Mesons},
+  journal = {Physics Letters},
+  volume  = {8},
+  pages   = {214--215},
+  year    = {1964},
+  doi     = {10.1016/S0031-9163(64)92001-3}
+}
+
+@article{cabibbo1963,
+  author  = {Cabibbo, Nicola},
+  title   = {Unitary Symmetry and Leptonic Decays},
+  journal = {Physical Review Letters},
+  volume  = {10},
+  pages   = {531--533},
+  year    = {1963},
+  doi     = {10.1103/PhysRevLett.10.531}
+}
+
+@article{kobayashi1973,
+  author  = {Kobayashi, Makoto and Maskawa, Toshihide},
+  title   = {{CP}-Violation in the Renormalizable Theory of Weak Interaction},
+  journal = {Progress of Theoretical Physics},
+  volume  = {49},
+  pages   = {652--657},
+  year    = {1973},
+  doi     = {10.1143/PTP.49.652}
+}
+
+@article{georgi1974,
+  author  = {Georgi, Howard and Glashow, Sheldon L.},
+  title   = {Unity of All Elementary-Particle Forces},
+  journal = {Physical Review Letters},
+  volume  = {32},
+  pages   = {438--441},
+  year    = {1974},
+  doi     = {10.1103/PhysRevLett.32.438}
+}
+
+@article{casimir1948,
+  author  = {Casimir, H. B. G.},
+  title   = {On the Attraction Between Two Perfectly Conducting Plates},
+  journal = {Proceedings of the Koninklijke Nederlandse Akademie van Wetenschappen},
+  volume  = {51},
+  pages   = {793--795},
+  year    = {1948}
+}
+
+@article{hopf1931,
+  author  = {Hopf, Heinz},
+  title   = {{\"U}ber die Abbildungen der dreidimensionalen Sph{\"a}re auf die Kugelfl{\"a}che},
+  journal = {Mathematische Annalen},
+  volume  = {104},
+  pages   = {637--665},
+  year    = {1931},
+  doi     = {10.1007/BF01457962}
+}
+
+@article{beltrami1892,
+  author  = {Beltrami, Eugenio},
+  title   = {Sulla teoria dei gas caldi},
+  journal = {Atti della Reale Accademia dei Lincei},
+  series  = {5},
+  volume  = {1},
+  pages   = {121--131},
+  year    = {1892},
+  note    = {Helical (Beltrami) flows; contact-line analogue in the Hopf-shell literature}
+}
+
+@article{maxwell1865,
+  author  = {Maxwell, James Clerk},
+  title   = {A Dynamical Theory of the Electromagnetic Field},
+  journal = {Philosophical Transactions of the Royal Society of London},
+  volume  = {155},
+  pages   = {459--512},
+  year    = {1865},
+  doi     = {10.1098/rstl.1865.0008}
+}
+
+@book{jackson1999,
+  author    = {Jackson, John David},
+  title     = {Classical Electrodynamics},
+  edition   = {3rd},
+  publisher = {Wiley},
+  year      = {1999},
+  isbn      = {978-0-471-30932-1}
+}
+
+@book{steenrod1951,
+  author    = {Steenrod, Norman},
+  title     = {The Topology of Fibre Bundles},
+  publisher = {Princeton University Press},
+  year      = {1951},
+  series    = {Princeton Mathematical Series},
+  volume    = {14}
+}
+
+@article{minakshisundaram1949,
+  author  = {Minakshisundaram, S. and Pleijel, {\AA}ke},
+  title   = {Some Properties of the Eigenfunctions of the {L}aplace Operator on a {R}iemannian Manifold},
+  journal = {Canadian Journal of Mathematics},
+  volume  = {1},
+  pages   = {242--256},
+  year    = {1949},
+  doi     = {10.4153/CJM-1949-024-8}
+}
+
+@article{witten1979,
+  author  = {Witten, Edward},
+  title   = {Analytic Torsion and the {M}orse Inequalities},
+  journal = {Communications in Mathematical Physics},
+  volume  = {65},
+  pages   = {473--480},
+  year    = {1979},
+  doi     = {10.1007/BF01223345}
+}
+
+@article{planck2018cosmo,
+  author       = {{Planck Collaboration} and Aghanim, N. and others},
+  title        = {Planck 2018 results. {VI}. Cosmological parameters},
+  journal      = {Astronomy \& Astrophysics},
+  volume       = {641},
+  pages        = {A6},
+  year         = {2020},
+  doi          = {10.1051/0004-6361/201833910},
+  eprint       = {1807.06209},
+  archivePrefix= {arXiv},
+  primaryClass = {astro-ph.CO}
+}
+
+@article{minkowski1977,
+  author  = {Minkowski, Peter},
+  title   = {$\mu \to e \gamma$ at a Rate of One Out of $10^9$ Muon Decays?},
+  journal = {Physics Letters B},
+  volume  = {67},
+  pages   = {421--428},
+  year    = {1977},
+  doi     = {10.1016/0370-2693(77)90435-X},
+  note    = {Seesaw-type neutrino mass; contrast with the outer-shell readout used here}
+}
+
+% --- Mathematical references for Hopf fibrations, classifying spaces, contact geometry,
+% spectral geometry, analytic torsion, and related structures cited in the synthesis ---
+
+@book{Husemoller1994,
+  author    = {Husemöller, Dale},
+  title     = {Fibre Bundles},
+  edition   = {3rd},
+  publisher = {Springer-Verlag},
+  year      = {1994},
+  series    = {Graduate Texts in Mathematics},
+  volume    = {20},
+  doi       = {10.1007/978-1-4757-2261-1}
+}
+
+@article{Milnor1956,
+  author  = {Milnor, John},
+  title   = {Construction of Universal Bundles, {I}},
+  journal = {Annals of Mathematics},
+  volume  = {63},
+  year    = {1956},
+  pages   = {272--284},
+  doi     = {10.2307/1969607}
+}
+
+@article{Milnor1956b,
+  author  = {Milnor, John},
+  title   = {Construction of Universal Bundles, {II}},
+  journal = {Annals of Mathematics},
+  volume  = {63},
+  year    = {1956},
+  pages   = {430--436},
+  doi     = {10.2307/1970012}
+}
+
+@book{MilnorStasheff1974,
+  author    = {Milnor, John W. and Stasheff, James D.},
+  title     = {Characteristic Classes},
+  publisher = {Princeton University Press},
+  year      = {1974},
+  series    = {Annals of Mathematics Studies},
+  volume    = {76},
+  isbn      = {978-0-691-08122-9}
+}
+
+@article{RaySinger1971,
+  author  = {Ray, D. B. and Singer, I. M.},
+  title   = {R-Torsion and the Laplacian on {R}iemannian Manifolds},
+  journal = {Advances in Mathematics},
+  volume  = {7},
+  year    = {1971},
+  pages   = {145--210},
+  doi     = {10.1016/0001-8708(71)90045-4}
+}
+
+@article{Cheeger1979,
+  author  = {Cheeger, Jeff},
+  title   = {Analytic Torsion and the Heat Equation},
+  journal = {Annals of Mathematics},
+  volume  = {109},
+  year    = {1979},
+  pages   = {259--322},
+  doi     = {10.2307/1971113}
+}
+
+@article{Muller1978,
+  author  = {Müller, Werner},
+  title   = {Analytic Torsion and {R}-Torsion of {R}iemannian Manifolds},
+  journal = {Advances in Mathematics},
+  volume  = {28},
+  year    = {1978},
+  pages   = {233--305},
+  doi     = {10.1016/0001-8708(78)90116-3}
+}
+
+@article{APS1975,
+  author  = {Atiyah, M. F. and Patodi, V. K. and Singer, I. M.},
+  title   = {Spectral Asymmetry and {R}iemannian Geometry. {I}},
+  journal = {Mathematical Proceedings of the Cambridge Philosophical Society},
+  volume  = {77},
+  year    = {1975},
+  pages   = {43--69},
+  doi     = {10.1017/S0305004100049410}
+}
+
+@book{Geiges2008,
+  author    = {Geiges, Hansjörg},
+  title     = {An Introduction to Contact Topology},
+  publisher = {Cambridge University Press},
+  year      = {2008},
+  series    = {Cambridge Studies in Advanced Mathematics},
+  volume    = {109},
+  isbn      = {978-0-521-86585-2},
+  doi       = {10.1017/CBO9780511611438}
+}
+
+@article{NashOConnor,
+  author  = {Nash, C. and O'Connor, D.},
+  title   = {Determinants of Laplacians on Lens Spaces},
+  note    = {Cited via the Sector Determinant Lemma in the topological construction of the contact spectrum (see also related work on Ray--Singer torsion for spherical space forms)},
+  year    = {1990s}
 }

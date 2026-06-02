@@ -6,7 +6,7 @@ All publications go to the [Zenodo HQIV community](https://zenodo.org/communitie
 
 ## Publication order
 
-The series is published in tiers so that each later paper can cite the earlier ones by their minted DOIs. Tier 0 and Tier-1 records #1–3 (`3d_causal_growth`, `octonionic_action`, `finite_mode_kirchhoff`) are on Zenodo; remaining Tier-1–3 entries are unpublished drafts queued in the order below.
+The series is published in tiers so that each later paper can cite the earlier ones by their minted DOIs. Tier~0, all four Tier-1 foundation-extension records, and the Tier-2 combined opener (#5) are on Zenodo; remaining Tier-2+ entries are unpublished drafts queued in the order below.
 
 ### Tier 0 — Already published on Zenodo (frozen)
 
@@ -29,22 +29,31 @@ Each paper here is a direct mathematical/variational sequel to `closure` and mus
 | 1 | `3d_causal_growth/` | `hqiv_3d_causal_growth_octonionic_gauge.tex` | [`10.5281/zenodo.20415586`](https://doi.org/10.5281/zenodo.20415586) | 2026-05-27 | `hqiv-3d-growth-paper` |
 | 2 | `octonionic_action/` | `hqiv_octonionic_action_and_uniqueness.tex` | [`10.5281/zenodo.20416085`](https://doi.org/10.5281/zenodo.20416085) | 2026-05-27 | `hqiv-oct-action-paper` |
 | 3 | `finite_mode_kirchhoff/` | `hqiv_finite_mode_kirchhoff_from_lattice_simplex.tex` | [`10.5281/zenodo.20416564`](https://doi.org/10.5281/zenodo.20416564) | 2026-05-27 | `hqiv-kirchhoff-paper` |
+| 4 | `thermodynamics_arrow/` | `hqiv_thermodynamics_and_arrow_of_time.tex` | [`10.5281/zenodo.20478826`](https://doi.org/10.5281/zenodo.20478826) | 2026-05-31 | `hqiv-thermo-arrow-paper` |
 
-#### In queue (pre-DOI)
+### Tier 2 — Standard Model and mass closure (combined foundation)
+
+#### Published on Zenodo
+
+| # | Folder | Source `.tex` | DOI (version) | Date | Bib key |
+|---|---|---|---|---|---|
+| 5 | `tuft_sm_lagrangian/` | `hqiv_tuft_sm_lagrangian_synthesis.tex` | [`10.5281/zenodo.20517172`](https://doi.org/10.5281/zenodo.20517172) | 2026-06-02 | `hqiv-tuft-sm-lagrangian-paper` |
+
+#### Queued (unpublished)
 
 | # | Folder | Bib key | Role |
 |---|---|---|---|
-| 4 | `thermodynamics_arrow/` | `hqiv-thermo-arrow-paper` | Thermodynamic laws 0–3 on the shell ladder; finite blackbody entropy; arrow from causal monogamy + discrete dissipation signs. Sequel to Kirchhoff. |
+| 6 | `baryogenesis_lockin/` | `hqiv-baryogenesis-paper` | Baryon asymmetry as curvature-ratio lock-in. Cites the combined Tier-2 foundation (#5, [`10.5281/zenodo.20517172`](https://doi.org/10.5281/zenodo.20517172)). **Next in Tier-2 queue.** |
+| 7 | `nucleon_binding/` | `hqiv-nucleon-binding-paper` | Nucleon masses from $8\times8$ composite-trace binding; three-ledger $\beta$ tipping (endpoint $Q$, $G_F$ width, valley geometry); outside $T(\xi)$ + gravity stack; free-neutron $\tau$ witness ($\sim 1.07\times$ ref, zero half-life knobs). |
+| 8 | `bbn/` | `hqiv-bbn-paper` | BBN light elements from network weights + epoch ladder; integrated $Y_p$ witnesses. Consumes lock-in $\eta$ (#6) and nucleon binding (#7). |
+| — | `gluon_curvature_artifact/` | `hqiv-gluon-curvature-note` | Tier-2 closure: the gluon is the curvature artifact of the inner-Casimir trapping on the strong octonion channels; identical in form and scale to the composite-trace binding and the inner trapped-Casimir heavy gap. Cites the combined TUFT+SM synthesis (#5), the nucleon-binding note, and the Tier-1 record. |
 
-### Tier 2 — Standard Model and mass closure
+### Lean formal proof notes
 
-| # | Folder | Bib key | Role |
-|---|---|---|---|
-| 5 | `lean_to_mass_spectrum/` | `hqiv-mass-spectrum-paper` | Electroweak scale + fermion ladder from lock-in `v` and outer-horizon `S(m)`. Cross-links lightcone's projected complex carrier. |
-| 6 | `sm_lagrangian/` | `hqiv-sm-lagrangian-paper` | Full SM Lagrangian as sectorial projection of the discrete action. |
-| 7 | `baryogenesis_lockin/` | `hqiv-baryogenesis-paper` | Baryon asymmetry as curvature-ratio lock-in. Cites all of Tier 1. |
-| 8 | `nucleon_binding/` | `hqiv-nucleon-binding-paper` | Nucleon masses from $8\times8$ composite-trace binding at lock-in; bonded vs free neutron scaffold. β-decay lifetimes marked future work. |
-| 9 | `bbn/` | `hqiv-bbn-paper` | BBN light elements from network weights + epoch ladder; integrated $Y_p$ witnesses. Consumes lock-in $\eta$ (#7) and nucleon binding (#8). |
+| Folder | Source `.tex` | Role |
+|---|---|---|
+| `factor_search_formalization/` | `hqiv_factor_search_formalization.tex` | Formal audit note for the factor-search drivers, certificate soundness, and cost scaffolding. |
+| `goldbach_so4_so2_delta/` | `goldbach_so4_so2_delta.tex` | Working Lean-backed reduction note for the `SO(4)` tangent carrier, selected `SO(2)+Δ` Goldbach parity channel, and threshold split into finite verification plus eventual selected-channel positivity. |
 
 ### Tier 3 — Applied phenomenology
 
@@ -53,10 +62,13 @@ Each paper here is a direct mathematical/variational sequel to `closure` and mus
 | 10 | `longitudinal_em_force/` | `ettinger2026longitudinal` | Axial wire force from the O-Maxwell phase-gradient term. |
 | 11 | `coronal_heating/` | `hqiv-coronal-paper` | Direct application of #10 to coronal flux tubes; back-to-back companion. |
 | 12 | `omaxwell_fluid_chart/` | `hqiv-fluid-chart-paper` | F2 fluid-closure chart companion to `Action.lean` / `ModifiedMaxwell.lean`. |
-| 13 | `orbital_flyby/` | `hqiv-flyby-paper` | Flyby anomalies + galaxy rotation from inertia screen and Lense–Thirring release fraction. |
+| 13 | `orbital_flyby/` | `hqiv-flyby-paper` | HQIV acceleration readouts: flybys, SPARC+WHIM disks, filament cross-match, long-term galaxy–filament evolution. |
+| 14 | `complex_time_stokes_bridge/` | `hqiv-complex-time-stokes-paper` | Lattice time angle / lapse / zeta phase; Wick bridge to Stokes factors; **functional PDE identity** with TUFT Beltrami--NS on finite Hopf modes (not Millennium smoothness). |
 
 ### Archived (not republished)
 
+- `archive/lean_to_mass_spectrum/` — early internal working draft; content merged into the combined TUFT+SM synthesis (`hqiv-tuft-sm-lagrangian-paper`).
+- `archive/sm_lagrangian/` and `archive/tuft_hqiv_dynamic_mass_spectrum/` — two internal working drafts (one on the Lagrangian sector projections, one on the TUFT/Hopf mass spectrum) that were consolidated into the single combined paper in `tuft_sm_lagrangian/` before any release. They were never preprinted or deposited.
 - `rapidity_so8_closure/` → moves into `archive/` next pass. Its own abstract identifies it as the long-form workspace draft of `closure.tex`; the published `closure` record (`10.5281/zenodo.20214211`) is the canonical version.
 
 ## Cross-citation bib keys
@@ -71,12 +83,12 @@ When drafting any companion, use these keys when citing earlier work in the chai
 | `3d_causal_growth/` | `hqiv-3d-growth-paper` (Zenodo [`10.5281/zenodo.20415586`](https://doi.org/10.5281/zenodo.20415586), v1 2026-05-27) |
 | `octonionic_action/` | `hqiv-oct-action-paper` (Zenodo [`10.5281/zenodo.20416085`](https://doi.org/10.5281/zenodo.20416085), v1 2026-05-27) |
 | `finite_mode_kirchhoff/` | `hqiv-kirchhoff-paper` (Zenodo [`10.5281/zenodo.20416564`](https://doi.org/10.5281/zenodo.20416564), v1 2026-05-27) |
-| `thermodynamics_arrow/` | `hqiv-thermo-arrow-paper` |
-| `lean_to_mass_spectrum/` | `hqiv-mass-spectrum-paper` |
-| `sm_lagrangian/` | `hqiv-sm-lagrangian-paper` |
+| `thermodynamics_arrow/` | `hqiv-thermo-arrow-paper` (Zenodo [`10.5281/zenodo.20478826`](https://doi.org/10.5281/zenodo.20478826), v1 2026-05-31) |
+| `tuft_sm_lagrangian/` | `hqiv-tuft-sm-lagrangian-paper` (Zenodo [`10.5281/zenodo.20517172`](https://doi.org/10.5281/zenodo.20517172), v1 2026-06-02) |
 | `baryogenesis_lockin/` | `hqiv-baryogenesis-paper` |
 | `nucleon_binding/` | `hqiv-nucleon-binding-paper` |
 | `bbn/` | `hqiv-bbn-paper` |
+| `gluon_curvature_artifact/` | `hqiv-gluon-curvature-note` |
 | `longitudinal_em_force/` | `ettinger2026longitudinal` |
 | `coronal_heating/` | `hqiv-coronal-paper` |
 | `omaxwell_fluid_chart/` | `hqiv-fluid-chart-paper` |
@@ -102,9 +114,11 @@ The DOI is already minted (concept `10.5281/zenodo.19227897`); a tightened v3 wi
 - [x] Tier 1 #1: `3d_causal_growth/` published on Zenodo ([`10.5281/zenodo.20415586`](https://doi.org/10.5281/zenodo.20415586), 2026-05-27).
 - [x] Tier 1 #2: `octonionic_action/` published on Zenodo ([`10.5281/zenodo.20416085`](https://doi.org/10.5281/zenodo.20416085), 2026-05-27; `scripts.zip` on record).
 - [x] Tier 1 #3: `finite_mode_kirchhoff/` published on Zenodo ([`10.5281/zenodo.20416564`](https://doi.org/10.5281/zenodo.20416564), 2026-05-27; `scripts.zip` on record).
-- [ ] Tier 1 remainder: tighten `thermodynamics_arrow/` against shared `include/` and live upstream DOIs; publish in the listed order.
+- [x] Tier 1 #4: `thermodynamics_arrow/` published on Zenodo ([`10.5281/zenodo.20478826`](https://doi.org/10.5281/zenodo.20478826), 2026-05-31; `scripts.zip` on record). **Tier-1 quartet complete.**
+- [x] Tier 2 #5 (combined): `tuft_sm_lagrangian/` published on Zenodo ([`10.5281/zenodo.20517172`](https://doi.org/10.5281/zenodo.20517172), v1 2026-06-02; `scripts.zip` on record). Lean support: [hqiv-lean PR #12](https://github.com/HQIV/hqiv-lean/pull/12) (`paper_tuft_sm_lagrangian` target).
+- [ ] Tier 2 #6: publish `baryogenesis_lockin/` (cites #5 DOI above).
 - [ ] Move `rapidity_so8_closure/` into `archive/`.
-- [ ] Tier 2: `lean_to_mass_spectrum/` → `sm_lagrangian/` → `baryogenesis_lockin/` → `nucleon_binding/` → `bbn/`.
+- [ ] Tier 2 remainder: `baryogenesis_lockin/` → `nucleon_binding/` → `bbn/`.
 - [x] Tier 3 (start): `longitudinal_em_force/` + `coronal_heating/` (back-to-back).
 - [x] Tier 3: `orbital_flyby/` (SPARC map + Rosetta boundary-channel note).
 - [ ] Tier 3 (remainder): `omaxwell_fluid_chart/`.
@@ -181,16 +195,19 @@ papers/
 | `3d_causal_growth/`             | `hqiv_3d_causal_growth_octonionic_gauge.tex`        | 1.1 (Zenodo) |
 | `octonionic_action/`            | `hqiv_octonionic_action_and_uniqueness.tex`         | 1.2 (Zenodo) |
 | `finite_mode_kirchhoff/`        | `hqiv_finite_mode_kirchhoff_from_lattice_simplex.tex` | 1.3 (Zenodo) |
-| `thermodynamics_arrow/`         | `hqiv_thermodynamics_and_arrow_of_time.tex`         | 1.4  |
-| `lean_to_mass_spectrum/`        | `hqiv_lean_from_combinatorics_to_mass_spectrum.tex` | 2.5  |
-| `sm_lagrangian/`                | `hqiv_sm_lagrangian_from_discrete_action.tex`       | 2.6  |
-| `baryogenesis_lockin/`          | `hqiv_baryogenesis_curvature_lockin.tex`            | 2.7  |
+| `factor_search_formalization/`  | `hqiv_factor_search_formalization.tex`          | Lean formal proof note |
+| `goldbach_so4_so2_delta/`       | `goldbach_so4_so2_delta.tex`                    | Lean formal proof note |
+| `thermodynamics_arrow/`         | `hqiv_thermodynamics_and_arrow_of_time.tex`         | 1.4 (Zenodo) |
+| `tuft_sm_lagrangian/`           | `hqiv_tuft_sm_lagrangian_synthesis.tex`             | 2.5 (Zenodo) |
+| `baryogenesis_lockin/`          | `hqiv_baryogenesis_curvature_lockin.tex`            | 2.6  |
 | `nucleon_binding/`              | `hqiv_nucleon_binding_from_composite_trace.tex`     | 2.8  |
 | `bbn/`                          | `hqiv_bbn_light_elements_from_network_weights.tex`  | 2.9  |
 | `longitudinal_em_force/`        | `longitudinal_em_force_hqiv.tex`                    | 3.10 |
 | `coronal_heating/`              | `hqiv_coronal_longitudinal_heating.tex`             | 3.11 |
 | `omaxwell_fluid_chart/`         | `HQIV_OMaxwell_fluid_chart.tex`                     | 3.12 |
-| `orbital_flyby/`                | `hqiv_orbital_flyby_anomaly.tex` (+ `flyby_paper_table.tex`) | 3.13 |
+| `orbital_flyby/`                | `hqiv_accelerations_galaxy_evolution.tex` (+ `flyby_paper_table.tex`) | 3.13 |
+| `tuft_topology_hqiv_bridge/`    | `hqiv_tuft_topology_discrete_continuous_bridge.tex` | working draft (Tier-2 topology companion) |
+| `archive/lean_to_mass_spectrum/`| `hqiv_lean_from_combinatorics_to_mass_spectrum.tex` | archive (superseded by TUFT synthesis) |
 | `rapidity_so8_closure/`         | `hqiv_rapidity_manifold_so8_closure.tex`            | archive (pending move) |
 | `archive/mainold/`              | `mainold.tex` (legacy monolithic draft)             | archive |
 | `archive/MHD/`                  | `mhd.tex`                                           | archive |
@@ -207,6 +224,7 @@ latexmk -pdf <paper>.tex
 Paths in the sources reference the shared bibliography and includes relatively:
 
 - `\input{../include/patch_theory_messaging.tex}`
+- `\input{../include/shell_ontology_messaging.tex}` (TUFT hadron / mass-spectrum papers — **not** cosmology-only drafts)
 - `\input{../include/release_archive_macros.tex}` (Tier 0/1 papers that ship a companion-code archive)
 - `\bibliography{../references}`
 
