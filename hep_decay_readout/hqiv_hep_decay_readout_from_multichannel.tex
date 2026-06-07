@@ -1,0 +1,738 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,booktabs}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\usepackage[final]{microtype}
+\usepackage{xurl}
+\urlstyle{same}
+\setlength{\emergencystretch}{3em}
+
+\newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
+\newcommand{\leanid}[1]{{\footnotesize\path{#1}}}
+\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\footnotesize\path{#1}}}
+% Appendix~\ref{app:lean} module tags: \leanmod{label}{n} -> hyperlinked [A,n]
+\newcommand{\leanmod}[2]{\protect\hyperlink{lean:#1}{[A,#2]}}
+\newcommand{\leanmodfn}[2]{[A,#2]}
+% Inline certificate with footnote: \leancert{text}{label}{n}{theorem}
+\newcommand{\leancert}[4]{#1\footnote{Lean certificate \leanid{#4}; module~\leanmodfn{#2}{#3}; Appendix~\ref{app:lean}.}}
+% Footnote-only certificate
+\newcommand{\leanfn}[4]{\footnote{Lean certificate \leanid{#4}; module~\leanmodfn{#2}{#3}; Appendix~\ref{app:lean}.}}
+\newcommand{\leanCertAnomaly}{}
+\newcommand{\leanCertTopology}{}
+\newcommand{\leanCertStrongColor}{}
+
+\title[Heavy-flavour decay from three-ledger readout]{Heavy-Flavour Decay Chains from {HQIV} Three-Ledger Readout:\\
+Discrete Multichannel Rules, Quarkonium Contact, and Branching without Partial-Width Inputs}
+\author{Steven Ettinger Jr}
+\address{Independent Researcher}
+\email{steven@disregardfiat.tech}
+\date{Preprint v2 --- \today}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\begin{document}
+
+\begin{abstract}
+Heavy-flavour hadron and quarkonium decays are usually described with large
+tables of fitted partial widths, current-quark masses, and channel-specific
+form factors.
+We extend the HQIV three-ledger decay structure---already validated on nuclear
+$\beta$ tipping \cite{hqiv-nucleon-binding-paper}---to open and hidden
+heavy-flavour states by generating decay channels from the same discrete
+combinatorial rules that govern the lock-in mass spectrum and weak widths.
+Branching ratios then follow by normalization, with no external partial-width
+tables; open-flavour topology seeds carry unit prior, and their relative
+competition comes only from derived ledger factors and phase space.
+
+On the monogamy split $\gamma=2/5$, hidden vector quarkonia carry a leptonic
+contact density $f_{\mathrm{EM}}=1/\gamma+1+\gamma=39/10$, a fixed consequence
+of inverse-shell contact, unit vector-current normalisation, and second-order
+Fano return on the discrete carrier.
+With hadronic/radiative width pooling and the contact factor, the HQIV readout
+gives $\mathcal{B}(J/\psi\to e^+e^-)\approx 5.99\%$, consistent with the
+PDG branching $\mathcal{B}(J/\psi\to e^+e^-)\approx 5.9\%$
+\cite{pdg2024,augustin1974,peskin1995,schwartz2014}; leading single-shell contact
+alone predicts $\sim 1.7\%$, roughly $3.5\times$ below that reference.
+
+The mass panel from pion through $\Upsilon(1S)$ uses the same quark
+meta-resonance gaps as the TUFT synthesis \cite{hqiv-tuft-sm-lagrangian-paper}.
+OZI suppression, CKM slot squares ($\gamma/8$, $\gamma/16$, $\gamma/32$), and
+phase-space factors weight programmatically generated daughter combinations;
+$\gamma$-derived production weights reproduce sensible $D$ vs.\ $B$ and on-shell
+$\Upsilon$ hierarchies at LHC and Belle-scale kinematics.
+A comparison discharge against PDG and facility references
+\cite{pdg2024,belle2002,cms2018} spans $502$ open-channel readout rows and
+$13$ curated diagnostic branching comparisons with Monte Carlo $\sigma$
+propagation (Table~\ref{tab:branching-comparison}).
+The structural suite has $80$ pass rows and zero failures; the broad readout
+comparison has $70.0\%$ of directly referenced open-channel rows within $10\%$
+of PDG and $92.3\%$ of the curated diagnostic rows within $20\%$.
+Laboratory proton mass and all PDG tabulations \cite{pdg2024,codata2018} enter only
+as comparison targets, never as prediction inputs.
+These relations are machine-checked in the Lean formalization
+(Appendix~\ref{app:lean}). Upstream of this note, the TUFT+SM synthesis also discharges
+finite-patch gauge consistency on the octonion light-cone carrier---including SO(8) matrix
+Wilson plaquettes, abelian Wilson--kinetic equivalence, and a partial strong-interacting
+discrete-action Poincaré bundle (\leanfile{Hqiv/Physics/DiscreteActionStrongPoincareBridge.lean},
+witness \leanid{fullActionStrongPoincare_discharged})---without claiming continuum
+path-integral measure choice on an external smooth base.
+This version also discharges the former flavour/QCD checklist at the finite-ledger
+level: CKM slot rows and columns normalize to one, the CP-odd Fano holonomy skew is
+nonzero, and inclusive $B$ channels carry a factorized NLO ledger multiplier before
+branching normalization.
+\end{abstract}
+\maketitle
+
+\renewcommand{\leanCertAnomaly}{\footnote{Formal certificate; Appendix~\ref{app:lean}, module~\leanmodfn{anomaly-cancellation}{6}.}}
+\renewcommand{\leanCertTopology}{\footnote{Formal certificate; Appendix~\ref{app:lean}, module~\leanmodfn{patch-topology}{7}.}}
+\renewcommand{\leanCertStrongColor}{\footnote{Formal certificate; Appendix~\ref{app:lean}, module~\leanmodfn{strong-color-su3}{8}.}}
+\input{../include/patch_theory_messaging.tex}
+
+\paragraph{Comparison layer.}
+All Standard-Model and laboratory numbers quoted below---masses, branching
+fractions, lifetimes, and facility $\sqrt{s}$ thresholds---are taken from the
+Particle Data Group compilation \cite{pdg2024}, from the original collider and
+fixed-target discovery papers where noted \cite{augustin1974,herb1977}, and from
+representative facility descriptions \cite{belle2002,cms2018}.  Textbook SM
+treatments of weak decays, quarkonia, and vector-current leptonic widths provide
+the interpretation layer
+\cite{peskin1995,schwartz2014,fermi1934,gellmann1964,cabibbo1963,kobayashi1973}.
+None of these references enter the HQIV prediction path.
+
+\section{Introduction}
+\label{sec:introduction}
+
+Heavy-flavour physics sits at the intersection of strong confinement, electroweak
+coupling, and collider phenomenology.
+Quarkonia such as $J/\psi$ and $\Upsilon(1S)$ probe both QCD binding and
+electromagnetic annihilation \cite{pdg2024,peskin1995,schwartz2014,augustin1974,herb1977};
+open charm and bottom hadrons anchor weak-decay CP studies and $B$-factory
+programs \cite{pdg2024,kobayashi1973,belle2002}.
+In standard treatments each parent state carries a long list of partial widths
+---often extracted from data or computed with model-dependent form factors
+\cite{pdg2024,peskin1995,schwartz2014}---and
+branching ratios are quoted as empirical inputs rather than derived outputs.
+
+The HQIV programme already separates decay into three \emph{ledgers} on the
+discrete null-lattice spine: \emph{(i)}~mass and kinematic endpoint $Q$,
+\emph{(ii)}~curvature overlap on strong and OZI-suppressed channels,
+\emph{(iii)}~weak width from $G_F$ and the Fano/Hopf bridge slot
+\cite{hqiv-nucleon-binding-paper,hqiv-tuft-sm-lagrangian-paper}.
+That separation fixed free-neutron $\beta$ width and light-isotope tipping
+without half-life fit parameters.
+\textbf{The present question is whether the same ledger discipline extends to
+charm and bottom}---including hidden $Q\bar Q$ vector states---without
+injecting PDG current-quark masses, MS\=bar inputs, or tabulated partial widths
+\cite{pdg2024}.
+
+We answer affirmatively at the readout level.
+Masses for open and hidden heavy-flavour states follow from the quark
+meta-resonance chart locked at $\mathrm{referenceM}=4$
+\cite{hqiv-tuft-sm-lagrangian-paper}.
+Decay channels are generated programmatically from discrete daughter pools and
+ledger weights (OZI factors, $\gamma$-indexed CKM slots, phase-space priors);
+partial widths sum within each ledger slot and branching ratios normalize to unity
+by construction.
+The strongest single physics result is the hidden-quarkonium electromagnetic
+contact factor: on $\gamma=2/5$, leptonic $e^+e^-$ widths acquire
+$1/\gamma+1+\gamma=39/10$ as a theorem of the monogamy bookkeeping, not an
+adjustable multiplier.
+That factor brings the HQIV leptonic readout into agreement with the PDG
+branching $\mathcal{B}(J/\psi\to e^+e^-)\approx 5.9\%$ \cite{pdg2024,augustin1974},
+whereas leading single-shell contact alone predicts $\sim 1.7\%$.
+
+This note is positioned after the published TUFT+SM synthesis
+\cite{hqiv-tuft-sm-lagrangian-paper} and the nucleon-binding three-ledger programme
+\cite{hqiv-nucleon-binding-paper}.
+Tier~0--1 supply the discrete spine
+\cite{ettinger2026hqiv,hqiv-lightcone-paper,hqiv-so8-paper,hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper,hqiv-thermo-arrow-paper}.
+Reproducibility details and formal certificates are deferred to
+Appendices~\ref{app:lean}--\ref{app:repro}.
+
+\section{Conceptual framework}
+\label{sec:framework}
+
+\subsection{Three ledgers on the discrete carrier}
+
+HQIV treats each decay edge as readout on the same information budget that fixes
+masses \cite{hqiv-tuft-sm-lagrangian-paper}.
+The three ledgers remain strictly non-interchangeable:
+
+\begin{description}[
+  font=\normalfont,
+  leftmargin=0pt,
+  labelwidth=0pt,
+  itemsep=0.35\baselineskip,
+  parsep=0.05\baselineskip,
+  style=nextline
+]
+  \item[Ledger I --- mass and $Q$.]
+  Endpoint energy $Q=m_{\mathrm{parent}}-\sum m_{\mathrm{daughters}}$ uses
+  HQIV lock-in masses only.
+  Kinematic openness is a threshold predicate; no Breit--Wigner fit parameters
+  enter the prediction path.
+  \item[Ledger II --- curvature overlap.]
+  Strong and electromagnetic hadronic channels carry OZI/Zweig suppression
+  \cite{zweig1964,lipkin1976} from the monogamy parameter $\gamma=2/5$.
+  Quarkonium hadronic and radiative sectors pool before normalization so that
+  no single low-multiplicity mode dominates the total width.
+  \item[Ledger III --- weak width.]
+  Charged-current partial widths reuse $G_F$ from $\beta$ decay and the bridge
+  energy slot \cite{hqiv-nucleon-binding-paper}.
+  Flavour weighting uses second-order Fano rungs $|V_{us}|^2=\gamma/8$,
+  $|V_{cd}|^2=\gamma/16$, $|V_{cb}|^2=\gamma/32$, with proved hierarchy
+  $|V_{cb}|^2<|V_{cd}|^2<|V_{us}|^2$ \cite{cabibbo1963,kobayashi1973,pdg2024}.
+\end{description}
+
+These slots are not fitted to branching tables; they are the same rational
+functions of $\gamma$ that appear in growth, thermodynamics, and weak tipping
+elsewhere in the library \cite{hqiv-3d-growth-paper,hqiv-oct-action-paper}.
+
+\subsection{Multichannel readout from discrete rules}
+
+Conventional phenomenology often begins with a static branching table per parent.
+Here, decay channels are \emph{generated} from combinatorial rules consistent
+with the discrete carrier:
+
+\begin{enumerate}[leftmargin=2em]
+\item \textbf{Daughter pools} --- pseudoscalar, vector, open-charm, open-bottom,
+  and lepton-pair sectors allowed by quantum numbers on the patch chart.
+\item \textbf{Kinematic filter} --- retain only combinations with $Q>0$ at HQIV
+  masses.
+\item \textbf{Ledger assignment} --- tag each open combination as strong, weak,
+  electromagnetic, or weak-hadronic.
+\item \textbf{Weighting} --- assign common topology seed weight, then apply OZI
+  overlap, CKM slots, strangeness factors, derived topology contacts, and
+  hadronic phase space $\propto Q^{3/2}$.
+\item \textbf{Normalization} --- branching ratios are partial widths divided by
+  the total; sums equal unity by construction when the total width is nonzero.
+\end{enumerate}
+
+This is a first-principles multichannel description in the patch sense: the
+channel list is an \emph{output} of the same discrete spine that fixes masses,
+not an imported table.
+Light hadrons ($\Lambda\to p\pi$, $K\to\pi\ell\nu$) retain small topology
+lists; open charm and bottom use topology seeds with the proved unit prior plus
+derived contact factors (e.g.\ $2/77$, $10$, $7/2$, $25/4$), and quarkonium
+parents use broad combinatorial expansion (Appendix~\ref{app:channels}).
+
+The rational imprint $\alpha=3/5$ and monogamy split $\gamma=2/5$ enter every
+weight; they are not per-channel knobs.
+Comparison with PDG branching fractions \cite{pdg2024}, facility $\sqrt{s}$, and
+production fractions is quarantined in a separate layer that never feeds back into
+predictions.
+
+\section{Mass gaps for open and hidden states}
+\label{sec:mass}
+
+Heavy-flavour masses are read out from the quark meta-resonance ladder, not from
+current-quark inputs.
+Up-type and down-type gaps $(m_c-m_u)$ and $(m_b-m_s)$ anchor open charm and
+bottom sectors; the proton lock-in at $\mathrm{referenceM}=4$ supplies the
+baryon reference \cite{hqiv-tuft-sm-lagrangian-paper}.
+
+\paragraph{Open charm and bottom.}
+Open charm mesons ($D$, $D_s$) add the up-type gap with heavy-flavour fraction
+$\tfrac12(1+\gamma/4)$.
+Charmed baryons ($\Lambda_c$, \ldots) combine the proton witness with charm and
+optional strangeness lifts $(m_K-m_\pi)$.
+Open bottom mesons ($B$) anchor on the bottom meta-resonance mass with a
+proton--pion offset; bottom baryons stack charm and strangeness similarly.
+
+\paragraph{Hidden quarkonia.}
+Hidden charm ($J/\psi$) binds the doubled up-type gap with chiral ground-state
+overlap:
+\begin{equation}
+  m_{J/\psi} = 2\,(m_c-m_u)\,\frac{1+\gamma/4}{2} + m_\pi\,(4/9)^2,
+\end{equation}
+where $(4/9)^2$ is the proved TUFT meson chiral factor.
+Hidden bottom ($\Upsilon$) closes on the open-$B$ readout:
+\begin{equation}
+  m_\Upsilon = m_b^{\mathrm{anchor}} + m_B - m_\pi.
+\end{equation}
+
+Representative agreement with PDG masses \cite{pdg2024} spans pion through
+$\Upsilon(1S)$ (Table~\ref{tab:mass-panel}); the full mass panel is in
+Appendix~\ref{app:benchmark}.
+
+\begin{table}[ht]
+\centering
+\caption{Representative lock-in masses (MeV). PDG values \cite{pdg2024} are
+comparison targets only.}
+\label{tab:mass-panel}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Species & HQIV & PDG \cite{pdg2024} \\
+\midrule
+$p$ & $938.272$ & $938.272$ \\
+$\pi^\pm$ & $\sim 140$ & $139.6$ \\
+$K^\pm$ & $\sim 494$ & $493.7$ \\
+$D^\pm$ & $\sim 1869$ & $1869.7$ \\
+$J/\psi$ & $\sim 3097$ & $3096.9$ \\
+$B^\pm$ & $\sim 5279$ & $5279.3$ \\
+$\Upsilon(1S)$ & $\sim 9460$ & $9460.3$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Decay structure and multichannel expansion}
+\label{sec:decay}
+
+\subsection{OZI and hadronic pooling}
+
+Hadronic partial widths on the curvature ledger carry OZI/Zweig suppression
+\begin{equation}
+  \mathcal{S}_{\mathrm{OZI}}(n_V) = \frac{\gamma}{4}\left(1 + \frac{\gamma\, n_V}{8}\right),
+\end{equation}
+with $n_V$ counting accessible vector modes in the daughter pool.
+Hidden-quarkonium decays to light hadrons are strongly suppressed; transitions
+to open charm or bottom pairs are less so.
+For vector quarkonia, hadronic and radiative partial widths \emph{pool} before
+branching normalization---otherwise a single $(\gamma)$ channel would spuriously
+dominate the total width and drain leptonic branching.
+
+Strong two-body topologies such as $\Delta(1232)\to p\pi$ and weak strange-baryon
+decays ($\Lambda\to p\pi^-$) use the same ledger separation as in the light-hadron
+regime; the weak branch $\mathcal{B}(\Lambda\to p\pi^-)\approx 0.64$ matches the
+PDG reference $0.639$ \cite{pdg2024} without a dedicated fit.
+
+\subsection{Why programmatic expansion}
+
+The number of kinematically open channels grows rapidly for heavy parents.
+Rather than extending a fitted branching table, HQIV enumerates allowed daughter
+combinations and assigns each edge a ledger weight.
+The result is a decay \emph{graph}---mass-budget edges weighted by OZI, CKM, and
+phase space---from which cascade observables (inclusive branching, multi-step
+chains at collider energy) are read off.
+
+This is more constrained than a general effective field theory treatment:
+every weight is a rational function of $\gamma$ already fixed by horizon
+monogamy \cite{hqiv-3d-growth-paper}.
+The trade-off is explicit: the proved object is not a continuum-QCD theorem but a
+finite-patch factorization certificate.  Inclusive $B$ channels factor into hard,
+jet, soft, bottom-rung, and first-return NLO ledger slots, with the fixed multiplier
+\begin{equation}
+  K^{B}_{\mathrm{NLO,ledger}} = 1+\frac{\gamma}{8} = \frac{21}{20}.
+\end{equation}
+The resulting multichannel readout remains testable against selected laboratory
+channels while keeping partial-width tables and open-flavour relative seed
+priors out of the prediction path.
+Channel counts and generation rules for representative parents appear in
+Appendix~\ref{app:channels}.
+
+\section{Quarkonium leptonic widths}
+\label{sec:quarkonium-em}
+
+Vector quarkonia couple to lepton pairs through the electromagnetic ledger
+\cite{peskin1995,schwartz2014,pdg2024}.
+On a compact $Q\bar Q$ carrier the naive QED vector-current estimate counts
+only the lowest shell contact.
+The HQIV monogamy bookkeeping adds two further terms already present elsewhere
+on the discrete spine:
+
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Inverse-shell contact} $1/\gamma$ --- overlap cost of accessing the
+  hidden flavour shell against the monogamy budget;
+\item \textbf{Unit normalisation} $+1$ --- standard vector-current counting at
+  leading contact;
+\item \textbf{Second-order Fano return} $+\gamma$ --- curvature round-trip on the
+  weak Fano chart at second order.
+\end{itemize}
+
+The leptonic width multiplier is therefore not a fit parameter but a theorem
+on the carrier:
+\begin{equation}
+  \label{eq:em-contact}
+  f_{\mathrm{EM}} = \frac{1}{\gamma} + 1 + \gamma.
+\end{equation}
+With $\gamma=2/5$, Eq.~\eqref{eq:em-contact} yields
+\leancert{$f_{\mathrm{EM}}=39/10$ exactly}{hep-decay-readout}{1}{hiddenQuarkoniumEMContactFactor_eq_thirtynine_tenths}.
+
+\paragraph{Effect on $J/\psi\to e^+e^-$.}
+At leading single-shell contact the HQIV readout gives
+$\mathcal{B}(J/\psi\to e^+e^-)\approx 1.7\%$, roughly $3.5\times$ below the
+PDG reference $\approx 5.9\%$ \cite{pdg2024,augustin1974}.
+Pooling hadronic and radiative sectors removes the spurious single-$\gamma$
+dominance that would otherwise drain leptonic branching; applying
+Eq.~\eqref{eq:em-contact} raises the electromagnetic partial width by $39/10$
+with no fitted leptonic-width input.
+The combined HQIV readout gives
+\begin{equation}
+  \mathcal{B}(J/\psi\to e^+e^-) \approx 5.99\%,
+\end{equation}
+in agreement with the PDG reference \cite{pdg2024,augustin1974} at the quoted
+tolerance (Section~\ref{sec:results}).
+
+The same factor applies to $\Upsilon\to e^+e^-$ and related vector-quarkonium
+electromagnetic channels; bottomonium cascade branching ($\Upsilon\to J/\psi$)
+remains a known refinement target (Section~\ref{sec:discussion}).
+
+\section{Production ordering at collider kinematics}
+\label{sec:production}
+
+Absolute cross sections are not derived here; instead HQIV exports
+$\gamma$-indexed \emph{production weights} and kinematic access predicates at
+facility $\sqrt{s}$.
+
+Open charm carries weight $\gamma/4$; open bottom carries $\gamma/8$.
+These are proved to satisfy $\gamma/8<\gamma/4$, so bottom production is
+suppressed relative to charm at the same ledger level---matching the qualitative
+hierarchy seen at LHC and fixed-target energies \cite{cms2018,herb1977,pdg2024}.
+
+On-shell thresholds distinguish which states are kinematically accessible:
+\begin{itemize}[leftmargin=2em]
+\item LHC $pp$ at $\sqrt{s}=13\,\mathrm{TeV}$ \cite{cms2018,pdg2024} --- $J/\psi$,
+  $\Upsilon$, $D$, $B$, and charmed baryons above threshold;
+\item SPS $400\,\mathrm{GeV}$ fixed target \cite{herb1977,pdg2024} --- charm
+  threshold, bottom off-shell;
+\item Belle-scale $\Upsilon(4S)$ \cite{belle2002,pdg2024} --- on-shell bottomonia
+  with $\Upsilon$ dominating the on-shell bottom sector over $B$ mesons at HQIV
+  masses.
+\end{itemize}
+
+Rate-ordering witnesses (e.g.\ $D$-over-$B$ fraction at LHC, $\Upsilon$ dominance
+at Belle-scale energies) pass consistency checks without importing measured
+cross-section tables into the prediction path.
+These ordering statements follow from the same $\gamma$ ladder that weights decays.
+
+\section{Collider field and stream curvature}
+\label{sec:collider-environment}
+
+Collider magnets and dense comoving particle streams are treated as laboratory
+curvature sources on the finite patch, not as fitted branching corrections.
+For weak widths the environment multiplier is
+\begin{equation}
+  F_{\mathrm{collider}}
+  =
+  1+\gamma\,\mathcal{S}_{\mathrm{weak}}
+  \left[\left(\frac{B}{B_{\mathrm{ref}}}\right)^2+f_{\mathrm{stream}}^2\right],
+\end{equation}
+where $\mathcal{S}_{\mathrm{weak}}$ is the default weak Fano/Hopf bridge shape,
+$B_{\mathrm{ref}}$ is the collider magnet reference scale used to nondimensionalize
+the field, and $f_{\mathrm{stream}}$ is the comoving stream occupancy fraction.
+Lean proves that the vacuum limit returns unity\footnote{Lean:
+\leanid{colliderCurvatureWidthFactor_vacuum}; module~\leanmodfn{hep-decay-readout}{1};
+Appendix~\ref{app:lean}.}.
+The Python experiment environment applies this factor multiplicatively to weak
+partial widths, together with the existing laboratory outside-support term.
+The benchmark includes ordering checks that increasing either $B$ or
+$f_{\mathrm{stream}}$ increases the weak-width dressing.
+
+\section{Results and comparison}
+\label{sec:results}
+
+We compare the Lean-aligned decay calculator against PDG and facility references
+\cite{pdg2024,belle2002,cms2018}.
+All reference values are quarantined; none enter partial-width formulas.
+The calculator implements the proved readout; the tables below are diagnostic
+comparisons, not pass/fail scorecards.
+
+\paragraph{Branching readout.}
+Table~\ref{tab:branching-comparison} lists $13$ well-studied channels from pion
+through bottomonium.
+For each row the HQIV prediction $\mathcal{B}_{\mathrm{pred}}$ is read from the
+multichannel graph after ledger normalization.
+Uncertainties propagate by Monte Carlo sampling on proton, chiral, and quark-gap
+witnesses ($120$ samples per channel); combined
+$n_\sigma=|\mathcal{B}_{\mathrm{pred}}-\mathcal{B}_{\mathrm{ref}}|/
+\sqrt{\sigma_{\mathrm{pred}}^2+\sigma_{\mathrm{ref}}^2}$ uses PDG comparison
+$\sigma_{\mathrm{ref}}$ only in the denominator.
+Representative agreement includes
+$\mathcal{B}(\Lambda\to p\pi^-)\approx 0.64$ vs.\ $0.639$,
+$\mathcal{B}(J/\psi\to e^+e^-)\approx 5.99\%$ vs.\ $5.9\%$, and inclusive
+$\mathcal{B}(\Upsilon\to J/\psi+X)\approx 0.62\%$ vs.\ $0.6\%$ when charge and
+strangeness ledgers are discharged on the cascade aggregate
+(Section~\ref{sec:decay}).
+The charm rows are ledger-family comparisons:
+$D\to K\pi(+\pi^0)$ sums the same-kaon pion outlets.
+The kaon row uses the explicit charged-lepton/neutrino outlet aperture
+$\gamma/4=1/10$, with the neutrino kept as an implicit neutral weak daughter.
+Open-flavour topology contacts are likewise Lean-backed: pion-only charm paths
+carry $2/77$, $\Lambda_c\to pK\pi$ carries the inverse open-charm aperture
+$10$, bottom external weak outlets carry $7/2$, and $B_s\to D_sK$ carries the
+double-monogamy coherence $25/4$.
+
+\input{generated/branching_comparison.tex}
+
+\paragraph{Full readout and structural checks.}
+The open-channel readout exports $502$ rows across the mass-panel parents
+(proton through $\Upsilon$): every kinematically open edge with predicted
+$\mathcal{B}$, $Q$, and channel tag.
+Structural checks (mass panel, topology openness, branching sums, facility access)
+use declared tolerances on an $80$-case structural subset with zero failures.
+The broad readout table is the primary comparison artifact, not a pass/fail
+claim for every open flavour outlet.
+Branching sums for $\Lambda$, $K^+$, $D^+$, $\Lambda_c$, $J/\psi$, and $B^+$
+normalize to unity at machine precision.
+
+\input{generated/readout_error_distribution.tex}
+
+\paragraph{Largest deviations.}
+Among the diagnostic branching panel, most rows are close at the branch-ratio
+level, but the neutral open-bottom row remains the largest outlier:
+$B^0\to D^0\pi^0$ reads at $0.294\%$ against the $16\%$ comparison target.
+This is therefore reported as a broad-readout discrepancy rather than hidden in
+a structural pass count.
+Further improvement should enlarge the generated topology set or refine the
+curvature ledger for neutral colour-suppressed outlets rather than introduce
+channel-specific priors.
+Half-life and production-rate panels use log-scale or ordering envelopes
+appropriate to width-level agreement (Appendix~\ref{app:benchmark}).
+
+Uncertainties on masses may be propagated by the same Monte Carlo engine; when
+pointwise tolerances fail, a combined $2\sigma$ band can still certify agreement
+(Appendix~\ref{app:repro}).
+
+\section{Discussion}
+\label{sec:discussion}
+
+\paragraph{Relation to continuum QCD.}
+OZI suppression and confinement language discharge through curvature overlap on
+the discrete carrier \cite{hqiv-gluon-curvature-note}, not through fitted
+potentials or MS\=bar current-quark masses.
+The present readout is therefore complementary to lattice QCD and factorization
+theorems: it asks what a zero-knob discrete spine predicts when branching is
+\emph{derived} rather than imported.
+For a direct continuum comparison, naive/factorized weak-decay treatments write
+schematically
+\[
+  \Gamma(B\to D\pi)
+    \propto |V_{cb}|^2\,a_i^2\,f_\pi^2\,|F_0^{B\to D}|^2\,p,
+\]
+with an external-emission coefficient $a_1$ for charged spectator modes and a
+colour-suppressed coefficient $a_2$ for neutral modes
+\cite{peskin1995,schwartz2014}.
+The HQIV ledger already reproduces the charged external-contact row
+$B^+\to D^0\pi^+$ at $46.34\%$ versus the $45\%$ comparison target, but it
+under-reads the neutral $B^0\to D^0\pi^0$ channel.
+In continuum language this is exactly the channel where colour-suppressed
+factorization and final-state rescattering are normally separated from the
+external-emission topology; in HQIV terms it points to a missing neutral
+spectator curvature contact, not to a fitted partial-width input.
+
+\paragraph{Discharged finite-ledger flavour/QCD items.}
+At the patch layer, the three-generation CKM probability ledger assembled from
+second-order Fano rungs has row and column sums equal to one\footnote{Lean:
+\leanid{ckmUnitaryLedgerSlotSquares_row_sums_one},
+\leanid{ckmUnitaryLedgerSlotSquares_column_sums_one}; module~\leanmodfn{hep-decay-readout}{1};
+Appendix~\ref{app:lean}.}.
+CP violation enters as the oriented Fano-holonomy skew
+\begin{equation}
+  \Delta_{\mathrm{CP}}^{\mathrm{Fano}}
+    = \frac{\gamma}{8}-\frac{\gamma}{32}
+    = \frac{3}{80} > 0,
+\end{equation}
+not as a fitted CKM phase\footnote{Lean:
+\leanid{cpOddFanoHolonomySkew_eq_three_over_eighty}; module~\leanmodfn{hep-decay-readout}{1};
+Appendix~\ref{app:lean}.}.
+Inclusive $B$ readouts use the factorized finite-patch NLO ledger weight\footnote{Lean:
+\leanid{inclusiveBDecayFactorizedWeight_eq},
+\leanid{inclusiveBNLOLedgerFactor_eq_twentyone_over_twenty}; module~\leanmodfn{hep-decay-readout}{1};
+Appendix~\ref{app:lean}.}.
+
+\paragraph{What remains open.}
+Half-life comparisons use log-scale envelopes appropriate to order-of-magnitude
+width agreement, not spectral line shapes.
+Smooth continuum factorization, if desired for comparison with textbook QCD, is a
+translation problem from the finite ledger rather than an extra input to the HQIV
+prediction path.
+
+\paragraph{Collider phenomenology.}
+The decay graph formalism supports multi-step chains at declared facility
+energy---for example $B\to J/\psi X \to e^+e^- X$---without refitting intermediate
+widths.
+Production ordering from $\gamma$ weights gives a falsifiable prior on relative
+charm vs.\ bottom yields before absolute cross sections are modeled.
+As the Fano-cycle mixing readout extends, the same ledger wiring should extend
+to rare decays and mixing-dependent channels without introducing new fit sectors.
+
+\section{Conclusion}
+
+We extend the HQIV three-ledger decay structure to open and hidden heavy-flavour
+states.
+Masses follow the quark meta-resonance chart; channels are generated from discrete
+daughter pools and ledger weights; branching ratios normalize without external
+partial-width tables or open-flavour relative seed priors.
+The hidden-quarkonium contact factor $1/\gamma+1+\gamma=39/10$ predicts
+$\mathcal{B}(J/\psi\to e^+e^-)\approx 5.99\%$, consistent with the PDG reference
+\cite{pdg2024,augustin1974}.
+Comparison against PDG and facility references \cite{pdg2024,belle2002,cms2018}
+spans $502$ open-channel readout rows and $13$ diagnostic branching comparisons with
+Monte Carlo $\sigma$ propagation (Tables~\ref{tab:branching-comparison}
+and~\ref{tab:readout-error-distribution}).
+Formal certificates and reproducibility notes are in the appendices.
+
+\appendix
+
+\section{Lean certificates and module index}
+\label{app:lean}
+
+Formal certificates live in the public HQIV Lean library
+(\url{https://github.com/HQIV/hqiv-lean}).
+Body-text references use module tags \textbf{[A,$n$]} hyperlinked to the rows
+below; theorem names appear in footnotes only.
+
+\begin{table}[ht]
+\centering
+\caption{Lean module index for this note.}
+\label{tab:lean-modules}
+\small
+\begin{tabular}{@{}clp{0.48\linewidth}@{}}
+\toprule
+Ref & Lean module & Principal certificates \\
+\midrule
+\hypertarget{lean:hep-decay-readout}{[A,1]} &
+\leanfile{Hqiv/Physics/HepDecayReadout.lean} &
+EM contact $39/10$; CKM slot hierarchy; CKM ledger normalization; CP skew;
+inclusive $B$ NLO factor; OZI positivity; branching normalization;
+$\gamma/8<\gamma/4$; collider curvature vacuum limit \\
+\hypertarget{lean:tuft-global-hadron}{[A,2]} &
+\leanfile{Hqiv/Physics/TuftGlobalHadronReadout.lean} &
+Chiral meson factor $(4/9)^2$; pion decay-constant ratio $2/3$ \\
+\hypertarget{lean:weak-fano-hopf}{[A,3]} &
+\leanfile{Hqiv/Physics/WeakFanoHopfBridge.lean} &
+Weak bridge energy slot; Fano/Hopf ledger wiring \\
+\hypertarget{lean:forces}{[A,4]} &
+\leanfile{Hqiv/Physics/Forces.lean} &
+$G_F$ from $\beta$ decay; golden-rule width slot \\
+\hypertarget{lean:quark-meta}{[A,5]} &
+\leanfile{Hqiv/Physics/QuarkMetaResonance.lean} &
+Up-type and down-type quark meta-resonance gaps \\
+\hypertarget{lean:anomaly-cancellation}{[A,6]} &
+\leanfile{Hqiv/Algebra/AnomalyCancellation.lean} &
+Finite SM anomaly-trace cancellation; three-generation label sum \\
+\hypertarget{lean:patch-topology}{[A,7]} &
+\leanfile{Hqiv/QuantumMechanics/PatchTopologicalObstruction.lean} &
+Single-sector instanton/$\theta$/Chern/winding discharge \\
+\hypertarget{lean:strong-color-su3}{[A,8]} &
+\leanfile{Hqiv/Physics/StrongColorSu3LieChartLaw.lean} &
+Global $\mathfrak{su}(3)$ Gell-Mann bracket law on the finite chart \\
+\hypertarget{lean:so8-plaquette}{[A,9]} &
+\leanfile{Hqiv/Physics/SO8PlaquetteHolonomy.lean} &
+Full four-edge SO(8) Wilson transport; Hopf-shell $T^4$ plaquette \\
+\hypertarget{lean:action-holonomy-glue}{[A,10]} &
+\leanfile{Hqiv/Physics/ActionHolonomyGlue.lean} &
+Cyclic Wilson-defect two-sided bound on \texttt{L\_O\_kinetic} \\
+\hypertarget{lean:discrete-action-poincare}{[A,11]} &
+\leanfile{Hqiv/Physics/DiscreteActionPoincareScaffold.lean} &
+Lorentz + abelian holonomy + partial strong Poincaré programme \\
+\hypertarget{lean:discrete-action-strong-poincare}{[A,12]} &
+\leanfile{Hqiv/Physics/DiscreteActionStrongPoincareBridge.lean} &
+Scalar-$\phi$ action rule; fiber Wilson; open HQVM kinetic-boost targets \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Representative theorems in module~\leanmod{hep-decay-readout}{1}.}
+\begin{itemize}[leftmargin=2em]
+\item \leanid{hiddenQuarkoniumEMContactFactor_eq_thirtynine_tenths} ---
+  $1/\gamma+1+\gamma=39/10$;
+\item \leanid{ckmUnitaryLedgerSlotSquares_row_sums_one},
+  \leanid{ckmUnitaryLedgerSlotSquares_column_sums_one} --- CKM ledger normalization;
+\item \leanid{cpOddFanoHolonomySkew_eq_three_over_eighty} --- CP-odd Fano skew $3/80$;
+\item \leanid{inclusiveBNLOLedgerFactor_eq_twentyone_over_twenty} --- inclusive $B$
+  NLO factor $21/20$;
+\item \leanid{branchingRatios_sum_one} --- $\sum_i \mathcal{B}_i=1$ when total width
+  is nonzero;
+\item \leanid{openBottomProductionWeight_lt_openCharm} --- production ordering
+  $\gamma/8<\gamma/4$.
+\end{itemize}
+
+\section{Channel generation rules}
+\label{app:channels}
+
+Decay channels are generated programmatically from the same discrete rules
+described in Section~\ref{sec:decay}.
+
+\paragraph{Algorithm.}
+\begin{enumerate}[leftmargin=2em]
+\item Form daughter pools: pseudoscalar ($\pi$, $K$, $\eta$), vector ($\rho$,
+  $\omega$, $\phi$), open charm ($D$, $D_s$, $\Lambda_c$, \ldots), open bottom
+  ($B$, $\Lambda_b$, \ldots), lepton pairs ($e^+e^-$, $\mu^+\mu^-$).
+\item Enumerate combinations consistent with quantum-number tags on the parent.
+\item Discard kinematically closed channels ($Q\le 0$).
+\item Assign ledger tag and partial-width prior (OZI, CKM slot, $Q^{3/2}$ phase
+  space for hadronic modes).
+\item Normalize to branching ratios per parent.
+\end{enumerate}
+
+\paragraph{Representative open-channel counts} at LHC $\sqrt{s}=13\,\mathrm{TeV}$:
+\begin{center}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Parent & Generated & Minimum benchmark \\
+\midrule
+$J/\psi$ & $190$ & $100$ \\
+$\Upsilon(1S)$ & $228$ & $150$ \\
+$D^+$ & $6$ & $5$ \\
+$\Lambda_c$ & $6$ & $5$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Light-hadron parents retain small static topologies; heavy-flavour and quarkonium
+parents use full expansion.
+
+\section{Benchmark panels}
+\label{app:benchmark}
+
+Table~\ref{tab:benchmark-summary} summarizes structural comparison checks
+(masses, topology, facility access).
+The primary branching artifact is Table~\ref{tab:branching-comparison} in
+Section~\ref{sec:results}, backed by $502$ open-channel readout rows in
+\texttt{data/hep\_decay\_benchmark.json}.
+Reference values follow PDG 2024 \cite{pdg2024} and published facility kinematics
+\cite{belle2002,cms2018}; they never enter prediction formulas.
+
+\begin{table}[ht]
+\centering
+\caption{Structural comparison checks (declared tolerances).}
+\label{tab:benchmark-summary}
+\begin{tabular}{@{}lr@{}}
+\toprule
+Panel & Cases \\
+\midrule
+Mass & 17 \\
+Kinematics & 3 \\
+Decay topology ($Q$, openness, daughters, sums) & 37 \\
+Half-life (log envelope) & 4 \\
+Environment & 4 \\
+Production access & 7 \\
+Production rate ordering & 4 \\
+Multichannel minima & 4 \\
+Branching diagnostics & 18 \\
+Open-channel readout (diagnostic) & 502 \\
+\midrule
+\textbf{Structural total} & \textbf{80} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Mass tolerances default to $8\%$ relative or $15\,\mathrm{MeV}$ absolute; proton
+and neutron use tighter bands.
+Branching tolerances are channel-specific (absolute or relative as declared).
+Half-life panel uses $\log_{10}|\mathrm{pred}/\mathrm{ref}|\le 2$ envelopes.
+
+\section{Reproducibility}
+\label{app:repro}
+
+Predictions, comparison rows, and pass/fail status export from the HQIV-LEAN
+repository.
+A short reproducibility index is maintained at
+\texttt{papers/hep\_decay\_readout/scripts/README.md}.
+Entry points include the HEP decay readout mirror, multichannel expansion,
+production readout, uncertainty propagation, benchmark discharge, and unified
+decay-calculator CLI.
+Strict benchmark refresh and Lean build commands are documented there.
+Comparison inputs live in \texttt{data/hep\_decay\_observations.json}; outputs in
+\texttt{data/hep\_decay\_benchmark.json}.
+
+\bibliographystyle{amsplain}
+\bibliography{../references}
+
+\end{document}

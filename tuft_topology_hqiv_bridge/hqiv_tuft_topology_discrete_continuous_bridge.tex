@@ -1,0 +1,681 @@
+% HQIV Topology / TUFT Hopf bridge: finite approximations, contact spectra,
+% and the discrete--continuous interface.
+% pdflatex
+\documentclass[11pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\usepackage[final]{microtype}
+\setlength{\emergencystretch}{3em}
+
+\newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
+% Lean module / identifier helpers: visible text is rendered with \nolinkurl
+% so that slashes, underscores, and dots become legal break points.
+\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\nolinkurl{#1}}}
+\newcommand{\leanid}[1]{\nolinkurl{#1}}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\title{Topology, the Complex Hopf Fibration, and Finite Approximations in HQIV:\\[0.35em]
+TUFT Alignments, Contact Spectra, and the Discrete--Continuous Interface}
+
+\author{Steven Ettinger Jr\\
+{\small Independent Researcher --- \texttt{steven@disregardfiat.tech}}}
+\date{Preprint v1 --- \today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent\textbf{Position in the publication chain.}
+This is a Tier-2 topology companion in the HQIV preprint series. It supplies
+the topological ``why'' layer for structures already present in the HQIV
+discrete null-lattice and Fano/octonion carrier: the rigidity of three
+generations, the shell-surface readouts, the effective continuous $\xi$
+chart, and the informational-energy mass row. The upstream anchors are the
+main HQIV framework \cite{ettinger2026hqiv}, the light-cone null-lattice
+readout \cite{hqiv-lightcone-paper}, and the $\mathfrak{so}(8)$ closure
+\cite{hqiv-so8-paper}. The Standard-Model Lagrangian paper
+the combined TUFT+SM synthesis \cite{hqiv-tuft-sm-lagrangian-paper} is the intended Tier-2 foundation
+that will cross-cite this work once all records carry minted DOIs. The
+three published Tier-1 companions \cite{hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper}
+provide the immediate dimensional, variational, and finite-mode spine.
+
+\noindent\textbf{Result.}
+Jenny Lorraine Nielsen's Topological Unified Field Theory (TUFT) on the
+complex Hopf fibration \cite{NielsenTUFT2026} proves that any U(1)-complete
+gauge theory with discrete charge quantization must, up to homotopy and
+bundle isomorphism, be formulated on the universal Hopf fibration
+$S^1\to S^\infty\to\mathbb{CP}^\infty$ and its finite approximations
+$S^1\to S^{2n+1}\to\mathbb{CP}^n$. The Standard-Model gauge factors and a
+gravity sector with fiber-induced torsion arise as reductions along nested
+Hopf shells, with a contact Beltrami spectrum on each shell and
+zeta-regularized sector determinants supplying intrinsic mass scales.
+This paper records the precise, machine-checked alignments already present
+in \texttt{HQIV\_LEAN} between TUFT's finite-shell contact geometry and
+HQIV's discrete null-lattice + Fano carrier, together with the explicit
+chart distinctions that keep the two frameworks from being silently
+identified. The 4/3 lock-in-neighbour match, the three-generation
+count from integrable fibre windings, the Beltrami versus Peter--Weyl
+normalisation distinction, and the placement of the 3/2 ratio in Fano
+holonomy rows rather than geometric resonance steps have all been
+formally verified in Lean without the use of `sorry`. These alignments are bidirectional: TUFT supplies a
+topological derivation for structures HQIV had taken as geometric axioms;
+HQIV's patch ontology supplies the finite-truncation discipline that
+prevents either framework from treating $\mathbb{CP}^\infty$ or the
+continuous $\xi$ chart as literal ontological commitments.
+
+\noindent\textbf{Patch-ontology reader contract.}
+Per the patch-theory reader contract imported below, the discrete patch
+layer (shell indices $m\in\mathbb{N}$, finite index types $\mathrm{Fin}\,n$,
+horizon-limited charts) is the ontology. Smooth-manifold notation,
+continuous $\xi$ charts, and $\mathbb{CP}^n$ language appearing in this
+paper are translation layers for comparison with the TUFT literature and
+with standard physics. They are not claims that a fundamental continuum
+spacetime or an ultraviolet limit has been recovered or is required.
+Taking a literal $m\to\infty$ or sub-Planck continuum limit on the load-bearing
+objects (lock-in at $\mathrm{referenceM}=4$, Fano holonomy rows, resonance
+steps, informational-energy localization) would erase the discrete index
+that does the predictive work.
+
+\noindent\textbf{Status.}
+The alignments recorded here, including the typed
+\hyperref[lean:hopf-shell-complex]{Hopf-shell complex + ContactBeltrami}
+layer (now part of the official `HQIVParallelPoincare` and `HQIVPhysics`
+build globs and verified green), the three-row phase-contribution assembler with
+admissible-cycle and orientation fields, the canonical matrix-torsion (phase-lift)
+construction with skew-adjoint action, the concrete three-shell non-factorability witness, and
+especially the exact algebraic trapped-Casimir factorization of the
+binding cell together with the active per-shell curvature-imprint program,
+have been formally verified or constructed in Lean without the use of
+`sorry`. A dedicated section below articulates the principal contributions of
+Nielsen's framework (the classifying-space necessity of the complex Hopf
+fibration for charge-quantized theories, the finite-approximation
+discipline, the contact Beltrami spectrum and fibre holonomy phases as a
+potential source for mixing phenomena, and the single-scale derivation
+programme, including a re-interpretation of apparent dark-sector effects
+as internal to HQIV's dimensioned quantities at the present epoch). The
+paper further records the precise points at which the patch ontology of
+HQIV and the Lean formalization supply mutual reinforcement. Certain
+deeper alignments remain the subject of ongoing formalization efforts and
+are catalogued in the accompanying technical note on formalization
+targets. No universality theorem or single-Fermi-constant derivation is
+imported from Nielsen's work.
+Reader-friendly anchors live in Appendix~\ref{app:lean-index}.
+\end{abstract}
+
+\input{../include/patch_theory_messaging.tex}
+
+\section{Introduction}
+
+The HQIV framework is built on a discrete null-lattice whose combinatorial
+growth, Fano incidence structure, and horizon readouts already produce
+three-generation rigidity, shell-surface mass ladders, rational coupling
+ratios ($\alpha=3/5$, $\gamma=2/5$), and an effective continuous $\xi$
+chart without ever positing a fundamental smooth spacetime. At the same
+time, the topological literature contains a striking result, established
+by Nielsen: any gauge theory whose U(1) sector is both complete—realising
+every principal U(1)-bundle over an arbitrary paracompact base—and
+charge-quantised must be formulated, up to homotopy equivalence of the
+base and isomorphism of bundles, on the universal complex Hopf fibration
+$S^1\to S^\infty\to\mathbb{CP}^\infty$ and its finite approximations
+$S^1\to S^{2n+1}\to\mathbb{CP}^n$ \cite{NielsenTUFT2026}.
+
+Nielsen further demonstrates that the Standard-Model gauge factors arise
+as natural reductions along this nested shell hierarchy: the circular
+$S^1$ fibre yields the U(1) electromagnetic sector, the first non-trivial
+shell $S^3$ furnishes SU(2), and the subsequent shell $S^5$ accommodates
+SU(3). Gravity emerges from the Kähler geometry of the base together with
+torsion induced by the fibre, producing a structure analogous to
+Einstein–Cartan theory in which the Levi-Civita connection is recovered
+precisely when the torsional degrees of freedom are set to zero. On each
+shell the generalised Beltrami operator $B = d|_\xi$, acting on the
+contact distribution, is shown to be elliptic and essentially
+self-adjoint, with a discrete spectrum that remains stable under
+torsion perturbations by the Kato–Rellich theorem \cite{NielsenTUFT2026}.
+
+Fibre-winding decomposition yields independent topological sectors whose
+Gaussian functional determinants, regularised via spectral zeta functions,
+generate intrinsic mass scales without additional dimensionful input
+beyond a single electroweak reference. Fermion mixing matrices are
+likewise derived from the intersection-form overlaps of admissible cycles
+in the cohomology of $\mathbb{CP}^4$, with CP-violating phases arising
+directly from fibre holonomy. Dynamics, finally, are traced to the
+fluctuation spectrum of the topological action on the outermost shell
+$S^9$. These results furnish a unified geometric origin for both the
+particle spectrum and the gauge-gravity structure.
+
+This paper presents a rigorous examination of the interface between
+Nielsen's construction and the HQIV framework. It identifies the precise
+respects in which the nested Hopf shells, the contact Beltrami spectrum,
+the fibre-winding sectors, and the fibre-induced holonomy of the former
+illuminate structures that HQIV had previously derived from discrete
+combinatorial and variational principles. The examination is supported
+by machine-checked formalizations in the \texttt{HQIV\_LEAN} library,
+which record both the alignments and the chart-specific distinctions
+necessary for phenomenological accuracy.
+
+The central methodological point is the shared commitment to finite
+approximations. TUFT works with the finite Hopf shells $S^{2n+1}\to
+\mathbb{CP}^n$ and treats the infinite case as a direct limit; HQIV works
+with finite shells $m\in\mathbb{N}$ truncated at the lock-in horizon
+$\mathrm{referenceM}=4$ and treats the continuous $\xi$ chart as an
+effective readout generated by the discrete data. In both cases a literal
+continuum is not required and in several places would erase the very
+indices that carry the physics.
+
+\subsection{Limitations and Scope}
+
+The present study confines itself to those aspects of Nielsen's
+framework that admit direct comparison with structures already present
+in the HQIV formalism—namely the finite Hopf-shell hierarchy, the
+contact Beltrami spectrum, fibre-winding multiplicity, and the geometric
+origin of effective mass and coupling scales. No claim is advanced that
+the full universality theorem, the single-Fermi-constant derivation of
+the entire spectrum, or the detailed construction of the topological
+action on $S^9$ have been reproduced or endorsed. The Lean development
+likewise remains partial: while the low-winding spectral alignments and
+the typed substrate for contact data are machine-verified, higher-order
+structures such as intersection-form mixing matrices and the explicit
+fluctuation spectrum on $S^9$ are still at the level of rigorously
+formulated open targets.
+
+A useful complementary perspective is supplied by the analysis of three-dimensional causal growth on the HQIV null lattice \cite{hqiv-3d-growth-paper}. That work isolates the quadratic shell-counting law \(A(m)=4(m+2)(m+1)\) as the combinatorial signature of \(3\)D causal growth and packages a machine-checked conditional forcing theorem: once a shared-manifold rapidity bridge and an explicit \(\mathfrak{so}(8)\) span witness are assumed as hypotheses, common rapidity, positivity and divergence of the curvature integral, and reference normalisation follow. The paper is explicit that a pure causal partial order does not, by itself, select the octonion multiplication table or the full internal gauge structure; the octonionic completion is conditional on additional geometric data. The same work develops a spanning-tree model of causal monogamy that derives the curvature-imprint pair \((\alpha,\gamma)=(3/5,2/5)\) and identifies the Fano plane as the natural \(3\)D projective spine for the seven imaginary directions. These results supply both positive combinatorial content for the target discrete \(3\)-complex used in the typed Hopf-shell mapping and a clear methodological limit: even within the HQIV framework, certain topological features require further structure beyond pure causal growth. This conditional character provides a natural counterpoint to the stronger necessity claims advanced in Nielsen's construction and helps delineate the precise scope of any combined programme.
+
+\section{The finite-approximation discipline}
+
+TUFT's construction begins with the observation that the classifying
+space for U(1)-bundles with discrete charge is the infinite complex
+projective space $\mathbb{CP}^\infty$, with the universal bundle the
+infinite Hopf fibration $S^1\to S^\infty\to\mathbb{CP}^\infty$. All
+finite approximations $S^1\to S^{2n+1}\to\mathbb{CP}^n$ are admissible
+truncations. The Standard-Model factors arise as successive reductions:
+U(1) from the circular fiber, SU(2) from the $S^3$ shell, SU(3) from the
+$S^5$ shell. Gravity emerges from the Kähler geometry of the base
+together with torsion induced by the fiber.
+
+HQIV never begins from a bundle classification. It begins from a discrete
+null-lattice whose vertices are tagged by stars-and-bars at each shell
+$m$, whose incidence is governed by the Fano plane, and whose horizon
+areas $S(m)=(m+1)(m+2)$ supply the surfaces that appear in every mass
+and coupling readout. Three generations appear because the integrable
+fiber-winding sectors that survive in the discrete complex are exactly
+three; the lock-in at $m=4$ is a combinatorial closure condition, not a
+fitted vev.
+
+The two pictures meet at the level of finite truncations. The TUFT
+statement that only $n=1,2,3$ yield integrable torus sectors (unknot,
+Hopf link, trefoil) before a hyperbolic transition at $n=4$ supplies a
+topological reason for the HQIV fact that $\mathrm{ResonanceGeneration}$
+is exactly $\mathrm{Fin}\,3$. The finite Hopf shells supply a reason why
+a discrete shell ladder with a distinguished lock-in horizon should
+exist at all. Conversely, the HQIV patch ontology supplies the rule that
+neither $\mathbb{CP}^\infty$ nor the continuous $\xi$ chart may be
+treated as fundamental; they are limiting readouts of finite data.
+
+\section{Contributions of Nielsen's Topological Framework to HQIV}
+
+The value of the TUFT perspective is not that it supplies new numerical
+fits, but that it supplies a topological \emph{necessity} argument and a
+spectral-geometric origin story for structures that HQIV had previously
+derived from discrete combinatorial and variational axioms. The most
+substantial contributions fall under four headings.
+
+\subsection{Classifying-space necessity and indecomposability}
+
+TUFT proves that any gauge theory whose U(1) sector is both complete
+(realises every principal U(1)-bundle over paracompact bases) and
+charge-quantised (admits only discrete charges) must, up to homotopy
+equivalence and bundle isomorphism, be formulated on the universal
+complex Hopf fibration and its finite approximations. The resulting
+total structure group $G_{\mathrm{total}} = (\mathrm{SU}(3)\times
+\mathrm{SU}(2)\times\mathrm{U}(1)\times\mathrm{SO}(4))/\Gamma$ is
+intrinsically non-factorable because the first Chern class $c_1$
+generates the cohomology ring $H^*(\mathbb{CP}^\infty;\mathbb{Z})\simeq
+\mathbb{Z}[c_1]$.
+
+In the HQIV setting this supplies a principled reason why the Fano
+plane, the octonion carrier, and the three-generation count appear
+together rather than as independent modelling choices. The discrete
+null-lattice with its seven-line incidence structure can now be read as
+a combinatorial model of the admissible reductions along the first few
+Hopf shells. The non-factorability claim gives additional weight to the
+already-proved algebraic closure results that generate $\mathfrak{so}(8)$
+from $G_2\cup\{\Delta\}$ inside the same eight-dimensional carrier.
+
+\subsection{Finite approximations and the ``no infinities'' discipline}
+
+Both frameworks are committed to finite truncations. TUFT works with
+$S^{2n+1}\to\mathbb{CP}^n$ and treats $\mathbb{CP}^\infty$ as a direct
+limit; HQIV works with shells $m\in\mathbb{N}$ truncated at the lock-in
+horizon $\mathrm{referenceM}=4$ and treats the continuous $\xi$ chart as
+an effective readout. The TUFT statement that only windings $n=1,2,3$
+yield integrable torus sectors before a hyperbolic transition at $n=4$
+furnishes an independent topological reason for the HQIV fact that
+$\mathrm{ResonanceGeneration}$ is exactly $\mathrm{Fin}\,3$. Conversely,
+the HQIV insistence that continuum limits are information-destroying
+readouts (rather than ontological improvements) supplies the
+methodological safeguard that prevents the TUFT infinite fibration from
+being misread as a commitment to a fundamental smooth spacetime.
+
+\subsection{Contact spectrum, holonomy phases, and mixing}
+
+TUFT's generalised Beltrami operator on the contact distribution of each
+Hopf shell yields a discrete spectrum stable under torsion perturbations
+(Kato--Rellich). The Lean formalisation in
+\hyperref[lean:hopf-shell-complex]{HopfShellComplex} together with the
+earlier bridges records both the shared eigenvalue law
+$\lambda_\ell=\ell(\ell+2)$ on $S^3$ and the explicit normalisation
+distinction between TUFT's fundamental coexact mode and the scalar
+Peter--Weyl value. The fibre-winding decomposition supplies independent
+topological sectors whose zeta-regularised Gaussian determinants are
+intended to generate intrinsic mass scales; the existing HQIV
+informational-energy and sector-Gaussian-leading-weight constructions
+are now seen as discrete, patch-level realisations of precisely this
+mechanism.
+
+Fermion mixing (CKM/PMNS) is claimed to arise from intersection-form
+overlaps of admissible cycles in $H^*(\mathbb{CP}^4)$, with CP violation
+induced by fibre holonomy phases. The rh-fourier-lift curvature channel
+$K(n,\alpha)$ and its associated $\mathrm{PhaseMap}$ (already wired to
+the new Hopf-shell holonomy carrier) provide a concrete discrete
+realisation of those phases. The existing Fano holonomy rows and
+imprint phase machinery therefore acquire a possible topological
+interpretation rather than remaining purely phenomenological charts.
+
+\subsection{Single-scale derivation versus multi-witness architecture}
+
+TUFT asserts that a single empirical input—the Fermi constant together
+with its associated electroweak vacuum expectation value—suffices to
+determine the fine-structure constant and all shell-specific mass
+scales, spectral coefficients, and couplings via the spectral geometry
+of the fibration. HQIV, by contrast, maintains an explicitly
+multi-witness architecture (proton lock-in, CODATA $\alpha$, present-CMB)
+with operational discipline about which scale is active in any given
+solve. Nielsen's framework therefore presents a research programme that
+invites comparison with HQIV's current multi-witness architecture. The
+machine-checked chart distinctions recorded in the Lean library (the
+$4/3$ alignment at the lock-in neighbour under the $m = n + 1$ chart, the
+location of the $3/2$ ratio within Fano holonomy rows rather than
+geometric resonance steps, and the separation of lepton resonance ratios
+from the low-winding Beltrami ratios) provide the necessary precision for
+any such comparison.
+
+The new typed layer \texttt{Hqiv.Topology.HopfShellComplex} (with its
+functor to the discrete 3-complex substrate and its PhaseMap carrier
+hook) makes several of the above alignments machine-checkable rather
+than narrative. It does not yet reproduce the full contact geometry,
+Ray--Singer torsion, or the universality theorem; those remain
+explicitly open targets.
+
+\subsection{Re-interpretation of TUFT's dark sector}
+
+TUFT lists ``dark sector effects from bundle torsion and holonomy'' among
+the consequences of its construction. HQIV has no separate dark sector
+by construction: all energy-density contributions are internal to the
+informational vacuum of the discrete null-lattice plus its curvature and
+phase structure.
+
+The precise correspondence is as follows. TUFT derives mass scales and
+apparent extra contributions from the zeta-regularised Gaussian
+determinants of its fibre-winding sectors together with torsion and
+holonomy corrections on the Hopf fibration. In HQIV the dimensioned
+quantities observed at the present epoch (``now'') are given by the
+informational energy
+\[
+E_{\mathrm{tot}}(m_{\mathrm{rest}},\xi_{\mathrm{now}})
+= m_{\mathrm{rest}} + \frac{1}{\Theta_{\mathrm{local}}(\xi_{\mathrm{now}})},
+\qquad
+\Theta_{\mathrm{local}}(\xi) = \frac{T_{\mathrm{Pl}}}{\xi},
+\]
+together with additive corrections from the curvature channel
+$K(n,\alpha)$ (whose $\alpha\log x$ term supplies the imprintable
+geometric contribution) and the rapidity/phase lifts already wired to
+the Hopf-shell holonomy carrier.
+
+Thus TUFT's ``derived constants'' (mass scales, effective couplings,
+spectral coefficients obtained from a single Fermi-scale input via Hopf
+spectral geometry) are exactly the effective values of HQIV's
+dimensioned now quantities evaluated at the current horizon coordinate
+$\xi_{\mathrm{now}}$ (or the corresponding lock-in or outer-horizon
+shell in the discrete ladder), including the informational localization
+and curvature-imprint terms. What appears in TUFT as a dark sector is,
+under the HQIV reading, the internal energetic contribution of the
+informational vacuum itself once it is dimensionally evaluated at now.
+No additional fields or sectors are required.
+
+A concrete experimental discriminant arises from the contrasting origins
+assigned to apparent new effects. Nielsen's framework predicts a
+torsion-induced phase wobble generated by fibre holonomy, detectable in
+precision interferometry or spin-precession measurements. The HQIV
+account instead attributes analogous signatures to the curvature-channel
+imprint: the $\alpha\log x$ term in the discrete density $\rho(x)$
+accumulates into $K(n,\alpha)$ and modulates effective couplings at the
+present epoch. Distinguishing global fibre-holonomy wobble from local
+curvature-imprint modulation therefore provides a sharp test accessible
+to existing and near-future precision experiments. A quantitative
+estimate of the expected wobble amplitude (for example in
+current-generation atom interferometers or spin-precession measurements)
+would render the discriminant still more incisive; such an estimate is
+not yet available within the present formalisation and is reserved for
+subsequent work.
+
+This re-interpretation sharpens the single-scale versus multi-witness
+comparison: the additional contributions that must be derived
+geometrically in Nielsen's framework appear in HQIV as the explicit
+$1/\Theta$ localisation and curvature-channel terms already present in
+the definition of observable quantities at the present epoch. The Lean
+formalisation of the informational-energy readouts and the curvature
+channel $K(n,\alpha)$ therefore provides a direct computational bridge
+for quantitative comparison.
+
+\section{Proved Lean alignments (the honest bridge)}
+
+All alignments below are stated as theorems that have been formally
+verified in Lean without the use of `sorry`. They are deliberately
+chart-specific; the library contains explicit mismatch theorems wherever
+a naïve identification would be false.
+
+\subsection{Beltrami spectrum and normalization distinction}
+
+The scalar Laplace--Beltrami eigenvalues on the unit $S^3$ are
+$\lambda_\ell=\ell(\ell+2)$. TUFT's coexact Beltrami operator on the
+contact distribution yields the same law. The Lean library records both
+normalizations and proves they differ at the fundamental level:
+
+\begin{itemize}
+\item $\mathrm{beltramiPeterWeylEigenvalueS3}\,\ell =
+  \mathrm{laplaceBeltramiEigenvalueS3}\,\ell$ (shared law).
+\item The TUFT fundamental coexact mode uses $\lambda_1=2$; the Peter--Weyl
+  level $\ell=1$ gives 3. The theorem
+  $\mathrm{tuftFundamentalBeltrami\_ne\_eq\_peterWeyl\_one}$ records the
+  mismatch explicitly.
+\end{itemize}
+
+Multiplicity on the $S^3$ shell is $(n+1)^2$ for winding $n$, matching
+TUFT sector multiplicity.
+
+\subsection{Three generations from integrable fiber windings}
+
+TUFT states that only the first three positive fiber windings yield
+integrable torus sectors. The Lean definition
+\begin{quote}
+$\mathrm{HopfFiberWinding}\,n \;\;:\;\; \mathrm{Prop}$
+\end{quote}
+is true precisely for $n=1,2,3$ and false for $n=0$ and $n\ge4$. The
+theorems $\mathrm{hopfIntegrableGenerationCount\_eq\_three}$ and
+$\mathrm{tuftMinimalBeltrami\_matches\_fin3}$ establish that this
+counting is identical to the HQIV $\mathrm{ResonanceGeneration}=\mathrm{Fin}\,3$
+and that the Beltrami eigenvalues are strictly ordered on those three
+slots.
+
+\subsection{Lock-in neighbour match and chart distinctions}
+
+Under the bookkeeping chart $m=n+1$ (TUFT winding to HQIV discrete shell),
+the minimal Beltrami ratio for windings $3\to2$ is exactly $4/3$. On the
+HQIV side the geometric resonance step at the lock-in neighbour shells is
+\begin{quote}
+$\mathrm{geometricResonanceStep}\,4\,3 = 4/3$.
+\end{quote}
+The equality
+$\mathrm{tuftBeltrami\_tau\_mu\_eq\_geometricResonance\_lockin\_neighbor}$
+is a proved theorem.
+
+The same machinery records the mismatch at the previous step: the Beltrami
+ratio $2\to1$ is $3/2$, but the geometric step on shells $3\to2$ is
+$35/24$. The $3/2$ ratio does appear, but in the Fano holonomy rows
+($\mathrm{holonomyRowRhs}$ on the heavy and middle vertices) rather than
+in the geometric resonance steps. These distinctions are not bugs; they
+are the content of the honest bridge.
+
+\subsection{Informational energy and spectral weight scaffold}
+
+TUFT obtains intrinsic scales from zeta-regularized Gaussian determinants
+over the fiber-winding sectors. HQIV already possesses an informational
+energy
+\[
+E_{\mathrm{tot}}(m_{\mathrm{rest}},\xi) = m_{\mathrm{rest}} +
+\frac{1}{\Theta(\xi)}
+\]
+and a Beltrami-level correction term
+$\mathrm{beltramiSpectralWeightS3}\,\ell =
+(\mathrm{beltramiPeterWeylEigenvalueS3}\,\ell + 1)^{-1}$.
+The scaffold $\mathrm{informationalEnergyAtXiWithBeltrami}$ packages the
+sum. The deeper identification of this term with a per-sector zeta
+determinant remains open (per-sector zeta target).
+
+\section{Discrete topology pegs already present}
+
+The library contains a discrete 3-complex layer
+(\texttt{Hqiv/Topology/DiscreteNullLatticeComplex.lean}) with
+$\mathrm{NullShellVertex}$, $\mathrm{Discrete3Complex}$, Euler
+characteristic, combinatorial sphericity ($\chi=0$ for $S^3$-like
+references), and an $\mathrm{S3NullReference}$ template whose
+edges and triangles are currently empty. This is the natural host for
+Hopf-shell contact data or fiber-winding sectors. The new
+\hyperref[lean:hopf-shell-complex]{Hopf-shell complex module} supplies the
+typed `HopfShell` + `ContactBeltrami` layer that maps directly onto this
+substrate (Hopf-shell complex + ContactBeltrami core).
+
+Parallel modules (\texttt{ParallelPoincareScaffold}, \texttt{DiscretePhaseEvolution},
+\texttt{SignedShellBudget}) already carry discrete Poincaré and phase-evolution
+language compatible with torsion and holonomy without continuum commitments.
+
+\section{Synergy with the rh-fourier-lift curvature channel}
+
+On the current development branch the curvature density
+$\rho(x,\alpha)=(1+\alpha\log x)/x$ and its cumulative channel $K(n,\alpha)$
+are proved to dominate the harmonic series, to be strictly monotone for
+$\alpha>0$, and to admit a phase lift $\mathrm{PhaseMap}$ (canonical
+example: rigid rotation by $\log\omega$). This discrete phase-lift
+mechanism is the natural carrier for TUFT fiber holonomy phases. The
+same channel supplies a concrete, finite-n model for the torsion that TUFT
+derives from the fiber in the Einstein--Cartan-like sector.
+
+\section{Exact trapped-Casimir factorization of the binding cell}
+
+A major recent formal advance is the explicit algebraic factorization of
+the existing HQIV binding law as a lattice-counted trapped zero-point
+(Casimir) energy term plus one normalized selection factor drawn from the
+SO(8) carrier:
+
+\[
+E_{\mathrm{bind}} = \text{lattice count} \times
+(\text{per-mode zero-point}) \times
+\text{normalized SO(8) trace selection}.
+\]
+
+In Lean this is recorded by the definitions
+`normalizedSO8TraceSelection` and `trappedCasimirCouplingCell`, with
+proved identities
+`trappedCasimirCouplingCell_eq_alphaEffAtShell` and
+`bindingCouplingAtShell_eq_lattice_trappedCasimirCell`
+(and the equivalent form using `available_modes`). The factorization is
+exact; no continuum limit or external gluon field is required for the
+algebra.
+
+The phase-lift and three-shell layer now supplies a named closure predicate
+\leanid{T11T12ClosesTrappedCasimirSelection} (a Hopf shell's torsion coefficient
+supplies exactly the required normalized selection at a given readout
+shell) together with a conditional theorem that turns the ontology into a
+precise proof obligation. The concrete three-shell non-factorability witness is
+wired directly into this coefficient.
+
+This work does not yet claim that ``gluons do not exist.'' It isolates the
+residual as a sharply defined selection factor on the closed carrier and
+makes the statement ``the phase-lift and inner-shell torsion data on the integrable Hopf
+shells reproduces that selection'' a theorem target rather than a
+narrative hope. The per-shell `curvatureImprintAlpha` hook (with the
+associated `trappingSelectionFromHeavyHopfShellWithAlpha` and three-shell
+variants) supplies the natural geometric dial for exploring whether
+different contact geometries on the successive Hopf shells can furnish
+different effective imprints that move both stabilization horizons and
+trapping factors.
+
+\section{Open Phase-2 targets}
+
+Substantial machine-checked progress has been made on the Phase-2 topology
+program (typed Hopf-shell complexes with direct mapping into the
+null-lattice 3-complex, ContactBeltrami spectrum and formal stability
+scaffolding, per-sector zeta-determinant leading-term witnesses, the
+three-row phase-contribution assembler with full three-row coverage including the
+light slot together with admissible-cycle and orientation fields, canonical
+matrix torsion with skew-adjoint action and Parallel-Poincaré
+bridge, and the concrete three-shell non-factorability witness with closure condition).
+The exact trapped-Casimir factorization of the binding cell (see above)
+and the active per-shell curvature-imprint program
+(`curvatureImprintAlpha` hook + explicit `trappingSelection*WithAlpha`
+objects) constitute the current research frontier.
+
+The early mass-spectrum formalization targets (lepton chart through lock-in
+propagation) remain partly open, though the lepton-chart layer now possesses
+strong interlocks with the phase assembler and inner three-shell witness; the MeV chart layer has been made fully
+parametric. The deeper outer neutral-shell and $S^9$ fluctuation program and several
+Phase-3 topics (real admissible-cycle overlap forms, genuine CP-phase
+threading, full contact operator on forms) are still at the scaffold or
+early-theorem stage. They are recorded here only as finite-patch development
+directions; none of them import TUFT's universality claim or its single-input
+derivation of the full spectrum.
+
+\section{Conclusion}
+
+TUFT supplies a topological derivation for the existence and structure
+of the discrete shells, the three-generation count, the contact spectrum,
+and the fiber holonomy that appear in HQIV as geometric or combinatorial
+facts. HQIV supplies the patch-ontology discipline and the finite-truncation
+rule that keep both pictures from treating their continuous limiting
+objects as fundamental. The Lean library already certifies the precise
+points of alignment and the precise points of chart mismatch. The deeper
+program---populating the discrete complex with Hopf data, lifting the
+contact Beltrami operator, and exhibiting the curvature channel as a
+discrete torsion source---is now a well-scoped, bidirectional research
+program rather than a narrative hope.
+
+\appendix
+\section{Lean module index}\label{app:lean-index}
+
+The following reader-friendly names appear as hyperlinked anchors in the
+body. Each entry records the Lean module and the principal identifier(s).
+
+\begin{description}
+
+\item[\phantomsection\label{lean:beltrami-peter-weyl}Beltrami--Peter--Weyl eigenvalue law.]
+  Shared spectral law on unit $S^3$. Lean:
+  \leanid{beltramiPeterWeylEigenvalueS3},
+  \leanid{beltramiPeterWeylEigenvalueS3\_eq\_laplace}
+  in \leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean}.
+
+\item[\phantomsection\label{lean:tuft-fundamental-ne}TUFT fundamental vs.\ Peter--Weyl normalization.]
+  Explicit mismatch at the fundamental level. Lean:
+  \leanid{tuftFundamentalBeltrami\_ne\_eq\_peterWeyl\_one}
+  in \leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean}.
+
+\item[\phantomsection\label{lean:hopf-fiber-winding}Hopf fiber winding (integrable sectors).]
+  Exactly three positive windings yield integrable torus sectors.
+  Lean: \leanid{HopfFiberWinding},
+  \leanid{hopfIntegrableGenerationCount\_eq\_three},
+  \leanid{tuftMinimalBeltrami\_matches\_fin3}
+  in \leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean}.
+
+\item[\phantomsection\label{lean:tuft-minimal-beltrami}Minimal Beltrami eigenvalue per winding.]
+  $\lambda_{\mathrm{min}}(n)=n+1$. Lean:
+  \leanid{tuftMinimalBeltramiEigenvalue}
+  and the one/two/three evaluation theorems
+  in \leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean}.
+
+\item[\phantomsection\label{lean:tuft-beltrami-ratios}TUFT Beltrami resonance ratios.]
+  $3\to2$ gives $4/3$; $2\to1$ gives $3/2$. Lean:
+  \leanid{tuftBeltramiResonanceRatio\_tau\_mu},
+  \leanid{tuftBeltramiResonanceRatio\_mu\_e}
+  in \leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean}.
+
+\item[\phantomsection\label{lean:lockin-4-3-match}Lock-in neighbour $4/3$ alignment.]
+  Under the $m=n+1$ chart the Beltrami ratio equals the geometric
+  resonance step at the lock-in neighbour shells. Lean:
+  \leanid{tuftBeltrami\_tau\_mu\_eq\_geometricResonance\_lockin\_neighbor},
+  \leanid{geometricResonanceStep\_four\_three\_eq\_four\_thirds}
+  in \leanfile{Hqiv/Physics/HalfStepBeltramiShellBridge.lean}.
+
+\item[\phantomsection\label{lean:chart-mismatch-3-2}Explicit chart mismatch at $2\to1$.]
+  Beltrami $3/2$ is not the geometric step $35/24$ on shells $3\to2$.
+  Lean: \leanid{tuftBeltrami\_mu\_e\_ne\_geometricResonanceStep\_three\_two}
+  in \leanfile{Hqiv/Physics/HalfStepBeltramiShellBridge.lean}.
+
+\item[\phantomsection\label{lean:holonomy-3-2-placement}3/2 ratio in Fano holonomy rows.]
+  The Beltrami $2\to1$ ratio equals the holonomy-row budget ratio on
+  the heavy and middle Fano vertices. Lean:
+  \leanid{tuftBeltrami\_mu\_e\_eq\_holonomyRowRhs\_vertices},
+  \leanid{tuftBeltrami\_mu\_e\_eq\_fanoHolonomyWeight\_ratio}
+  in \leanfile{Hqiv/Physics/HalfStepBeltramiShellBridge.lean}.
+
+\item[\phantomsection\label{lean:sector-gaussian-weight}Sector Gaussian leading weight.]
+  $\mathrm{detunedShellSurface} = \mathrm{shellSurface} /
+  \mathrm{omaxwellFanoDetuning1Jet}$. Lean:
+  \leanid{sectorGaussianLeadingWeight\_eq\_detunedShellSurface}
+  in \leanfile{Hqiv/Physics/FanoSectorSpectralMassEmergence.lean}.
+
+\item[\phantomsection\label{lean:laplace-s3-s4}Laplace--Beltrami on $S^3$ and $S^4$.]
+  Eigenvalue laws and dimension formulas. Lean:
+  \leanfile{Hqiv/Geometry/QuaternionMaxwellS3OMaxwellS4Spectral.lean}.
+
+\item[\phantomsection\label{lean:discrete-3-complex}Discrete 3-complex layer.]
+  $\mathrm{NullShellVertex}$, $\mathrm{Discrete3Complex}$,
+  Euler characteristic, combinatorial sphericity, $\mathrm{S3NullReference}$
+  template. Lean:
+  \leanfile{Hqiv/Topology/DiscreteNullLatticeComplex.lean}.
+
+\item[\phantomsection\label{lean:curvature-channel}Curvature channel and phase map (rh-fourier-lift).]
+  $\rho(x,\alpha)$, $K(n,\alpha)$ with proved domination and monotonicity;
+  $\mathrm{PhaseMap}$ abstraction with canonical log-$\omega$ lift.
+  Lean: \leanfile{RhFourierLift/Setup.lean}.
+
+\item[\phantomsection\label{lean:hopf-shell-complex}Hopf-shell complex + ContactBeltrami (topology core).]
+  Typed `HopfShell` with integrable-winding certificate, functor
+  `toDiscrete3Complex_integrable` landing in the null-lattice
+  3-complex substrate, `ContactBeltrami` spectrum and multiplicity
+  agreement with existing Beltrami data, and `HolonomyPhaseCarrier`
+  hook for rh-fourier-lift `PhaseMap`. Lean:
+  \leanfile{Hqiv/Topology/HopfShellComplex.lean}. Now part of the
+  official `HQIVParallelPoincare` and `HQIVPhysics` build globs;
+  imported by `ShellOpeningEvolution` (shell-opening wiring) and the Beltrami
+  bridge (compatibility transport).
+
+\item[\phantomsection\label{lean:informational-energy-beltrami}Informational energy with Beltrami correction.]
+  Scaffold adding the inverse Beltrami weight to the localization term.
+  Lean: \leanid{informationalEnergyAtXiWithBeltrami},
+  \leanid{beltramiSpectralWeightS3}
+  in \leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean}.
+
+\item[\phantomsection\label{lean:trapping-selection}Trapping selection with per-shell imprints.]
+  Explicit objects for exploring different effective curvature imprints
+  $\alpha_n$ on the integrable Hopf shells.
+  Lean: \leanid{trappingSelectionFromHeavyHopfShell},
+  \leanid{trappingSelectionFromHeavyHopfShellWithAlpha},
+  \leanid{trappingSelectionFromThreeHopfShellsWithAlphas}
+  in \leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean}.
+
+\item[\phantomsection\label{lean:trapped-casimir-factorization}Exact trapped-Casimir factorization of binding.]
+  Algebraic factorization of the binding cell as lattice-counted
+  zero-point energy plus normalized SO(8) selection.
+  Lean: \leanid{normalizedSO8TraceSelection},
+  \leanid{trappedCasimirCouplingCell},
+  \leanid{trappedCasimirCouplingCell_eq_alphaEffAtShell},
+  \leanid{bindingCouplingAtShell_eq_lattice_trappedCasimirCell},
+  \leanid{T11T12ClosesTrappedCasimirSelection},
+  \leanid{bindingCouplingAtShell_eq_T11T12_trappedCasimir}
+  in \leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean}.
+
+\end{description}
+
+\bibliographystyle{plain}
+\bibliography{../references}
+
+\end{document}

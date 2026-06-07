@@ -75,7 +75,7 @@ Nielsen TUFT Hopf Shells and Inner--Outer Casimir Realization}
 
 \noindent PDG values \cite{pdg2024} are comparison layers only. Under the default \emph{proton lock-in} scale witness (\S\ref{subsec:scale-witness}), a single local measurement $m_p=938.272\,\mathrm{MeV}$ fixes the entire dimensionful chart and downstream cosmological outputs---apparent age $\approx 13.8\,\mathrm{Gyr}$, wall-clock age $\approx 51.2\,\mathrm{Gyr}$, and CMB temperature $\approx 2.7255\,\mathrm{K}$---with no simultaneous fit to $\eta_{\mathrm{obs}}$, $T_{\mathrm{CMB}}$, or other observables.
 
-\noindent\textbf{Status.} Proved at the patch level: Hopf shells, $\kappa_6$ factorisation ($C_2=56/45$ at lock-in), five sector equalities, Yukawa linearity. Not claimed: full anomaly cancellation, measure choice, complete non-abelian holonomy, or subleading zeta terms. Details: Table~\ref{tab:claim-status}, Appendices~\ref{app:lean-catalog}--\ref{app:lean-witnesses}.
+\noindent\textbf{Status.} Proved on the accessible patch: Hopf shells, $\kappa_6$ factorisation ($C_2=56/45$ at lock-in), five sector equalities, Yukawa linearity, finite SM anomaly-trace cancellation, topological-sector discharge, fibre-torsion subleading sector zeta, light-cone $\mathfrak{so}(8)$ holonomy with weak/colour non-abelian charts, shell-to-harmonic mode limits, and rapidity-phase Lorentz closure (§\ref{sec:patch-continuum-bridge}). Not claimed: Nielsen's external smooth principal-bundle and contact-manifold classification theorems, path-integral measure choice on a separate $C^\infty$ base, or spatial rotations on unused $3{+}1$ components. Details: Table~\ref{tab:claim-status}, Appendices~\ref{app:lean-catalog}--\ref{app:lean-witnesses}.
 \end{abstract}
 \maketitle
 
@@ -110,9 +110,9 @@ Selected states within $1$--$1.5\%$ \\
 
 Two classic questions are usually treated separately: \emph{(i)} why three fermion generations exist with hierarchical splittings (the topological question), and \emph{(ii)} what sets the absolute mass scale and its temperature dependence (the dynamical question). Nielsen's Topological Unified Field Theory (TUFT) addresses \emph{(i)} via the complex Hopf fibration, contact Beltrami spectra, and sector zeta determinants on nested shells \cite{NielsenTUFT2026,hopf1931,beltrami1892}. HQIV addresses \emph{(ii)} via a discrete octonion null lattice, inner--outer Casimir balance \cite{casimir1948}, and an explicit horizon coordinate $\xi=T_{\mathrm{Pl}}/T$. The target $\mathcal{L}_{\mathrm{SM}}$ is the same renormalizable gauge-Yukawa-Higgs structure summarized in \cite{pdg2024,peskin1995,schwartz2014}.
 
-This paper combines the programmes: \textbf{Nielsen's TUFT supplies the topological classifying space and synthesis vision; HQIV supplies the dynamic, finite, machine-checked realisation and the embedding into the full Standard Model Lagrangian.} The construction is proved at the patch level---smooth-manifold $\mathcal{L}_{\mathrm{SM}}$ notation is a cross-citation rewrite (§\ref{sec:background}). Technical identifiers for reproducibility are deferred to the appendices.
+This paper combines the programmes: \textbf{Nielsen's TUFT supplies the topological classifying space and synthesis vision; HQIV supplies the dynamic, finite, machine-checked realisation and the embedding into the full Standard Model Lagrangian.} In HQIV ontology a \emph{patch} is the entire causally accessible universe: all observable structure lives on horizon-limited shell data, finite charts, and mode budgets on the octonion light-cone carrier; there is no separate observables layer outside this patch net. The construction is proved at that patch level---smooth-manifold $\mathcal{L}_{\mathrm{SM}}$ notation is a cross-citation readout layer (§\ref{sec:patch-continuum-bridge}). Technical identifiers for reproducibility are deferred to the appendices.
 
-The pipeline is summarised in Figure~\ref{fig:pipeline}. Table~\ref{tab:claim-status} separates proved identities from named-but-unclaimed extensions. Single-witness discipline and the proton$\to$cosmos propagation chain are in \S\ref{subsec:scale-witness}; an error budget for the PDG comparisons is in \S\ref{sec:error-budget}; sharp experimental channels in \S\ref{sec:falsifiability}.
+The pipeline is summarised in Figure~\ref{fig:pipeline}. Table~\ref{tab:claim-status} separates proved identities from named-but-unclaimed extensions; §\ref{sec:patch-continuum-bridge} states precisely how the accessible patch relates to continuum QFT notation and which gauge-consistency obligations are already machine-checked. Single-witness discipline and the proton$\to$cosmos propagation chain are in \S\ref{subsec:scale-witness}; an error budget for the PDG comparisons is in \S\ref{sec:error-budget}; sharp experimental channels in \S\ref{sec:falsifiability}.
 
 \begin{figure}[ht]
   \centering
@@ -152,8 +152,22 @@ The pipeline is summarised in Figure~\ref{fig:pipeline}. Table~\ref{tab:claim-st
     O-Maxwell 1-jet Rindler law $1+(\gamma/2)m$ & Proved (scaffold) & \hyperref[lean:omaxwell-1jet]{O-Maxwell 1-jet} \\
     Five sector equalities of $\mathcal{L}_{\mathrm{SM}}$ & Proved & \hyperref[lean:sm-lagrangian-bridge]{SM Lagrangian bridge} \\
     Global hadron excitation readout & Closed-form readout & \hyperref[lean:global-hadron-readout]{Global hadron readout} \\
-    Full anomaly cancellation & Named, not claimed & --- \\
-    Higher-order zeta / holonomy upgrade & Neglected or open & --- \\
+    Finite SM anomaly traces (one gen.\ $\times$3) & Proved & \hyperref[lean:anomaly-cancellation]{Anomaly cancellation} \\
+    Patch instanton/$\theta$/Chern/winding discharge & Proved & \hyperref[lean:patch-topology]{Patch topology discharge} \\
+    Strong-color $\mathfrak{su}(3)$ chart Lie law ($f^{abc}$) & Proved (optional cert) & \hyperref[lean:strong-color-su3]{Strong-color SU(3) chart} \\
+    Weak $\mathfrak{su}(2)$ non-abelian kinematic chart & Proved & \hyperref[lean:weak-higgs-scaffold]{Weak/Higgs scaffold} \\
+    CKM/PMNS from Fano cycle overlaps & Open (scaffold) & \hyperref[lean:t10-mixing-scaffold]{Generation mixing scaffold} \\
+    Light-cone $\mathfrak{so}(8)$ holonomy discharge & Proved & \hyperref[lean:zeta-holonomy-discharge]{Sector zeta and holonomy discharge} \\
+    Fibre-torsion subleading sector zeta & Proved & \hyperref[lean:zeta-holonomy-discharge]{Sector zeta and holonomy discharge} \\
+    Shell-to-harmonic mode limit & Proved & \hyperref[lean:lightcone-qft-bridge]{Light-cone QFT bridge} \\
+    Rapidity-phase Lorentz closure ($1{+}1$ boosts; $3{+}1$ embed) & Proved & \hyperref[lean:rapidity-lorentz-closure]{Rapidity--Lorentz closure} \\
+    Spatial-rotation Lorentz closure ($O(3)$ readouts) & Proved & \hyperref[lean:spatial-rotation-lorentz-closure]{Spatial-rotation Lorentz closure} \\
+    SO(8) four-edge Wilson plaquette holonomy & Proved (partial) & \hyperref[lean:so8-plaquette-holonomy]{SO(8) plaquette holonomy} \\
+    Non-abelian holonomy + rotated-frame measure & Partial & \hyperref[lean:non-abelian-holonomy-measure]{Non-abelian holonomy measure} \\
+    Abelian Wilson--kinetic plaquette equivalence & Proved & \hyperref[lean:action-holonomy-glue]{Action holonomy glue} \\
+    Discrete action strong Poincaré invariance & Partial & \hyperref[lean:discrete-action-poincare]{Discrete action Poincaré scaffold} \\
+    Nielsen external $C^\infty$ bundle / contact theorems & Not claimed & --- \\
+    Continuum path-integral measure choice & Not claimed & --- \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -161,7 +175,11 @@ The pipeline is summarised in Figure~\ref{fig:pipeline}. Table~\ref{tab:claim-st
 \begin{scopebox}
 \textbf{Proved} (zero \texttt{sorry}, two axioms + octonion tables): discrete Hopf shells; inner--outer Casimir mechanism and $\kappa_6$ factorisation; ground and excited readouts; five sector Lagrangian equalities; Yukawa linearity; total-action split.
 
-\textbf{Not claimed:} full anomaly cancellation; measure choice; complete non-abelian holonomy; subleading zeta terms. The ontology is the finite patch layer---a literal continuum rewrite would erase the discrete index carrying the predictions.
+\textbf{Discharged on the accessible patch:} explicit SM cubic and mixed anomaly-trace cancellation (\hyperref[lean:anomaly-cancellation]{Anomaly cancellation}); single-sector instanton, $\theta$, first-Chern, and $U(1)$ winding discharge (\hyperref[lean:patch-topology]{Patch topology discharge}); fibre-torsion subleading sector zeta and light-cone $\mathfrak{so}(8)$ holonomy on integrable Hopf shells, including abelian plaquette flatness and weak/colour non-abelian commutator certificates (\hyperref[lean:zeta-holonomy-discharge]{Sector zeta and holonomy discharge}, \hyperref[lean:action-holonomy-glue]{Action holonomy glue}, \hyperref[lean:weak-higgs-scaffold]{Weak/Higgs scaffold}); full four-edge SO(8) matrix Wilson plaquettes with pinned $(G_0,G_4)$ non-abelian witness (\hyperref[lean:so8-plaquette-holonomy]{SO(8) plaquette holonomy}); shell-to-harmonic mode limit (\hyperref[lean:lightcone-qft-bridge]{Light-cone QFT bridge}); rapidity-phase Lorentz closure on the null-lattice carrier with scalar $\phi$ and \texttt{zetaHQIVTerm} phase invariance (\hyperref[lean:rapidity-lorentz-closure]{Rapidity--Lorentz closure}); spatial $O(3)$ rotation invariance of flyby/CMB/fluid readouts (\hyperref[lean:spatial-rotation-lorentz-closure]{Spatial-rotation Lorentz closure}). Full detail: §\ref{sec:patch-continuum-bridge}.
+
+\textbf{Partial / open on the patch:} Haar measure normalization on rotated charts (\hyperref[lean:non-abelian-holonomy-measure]{Non-abelian holonomy measure}); flat HQVM kinetic invariance under full \texttt{boostDiscretePotential41} and the embedded $(t,x^1)$ sub-target (\hyperref[lean:discrete-action-strong-poincare]{Discrete action strong Poincaré bridge}, bundled in \hyperref[lean:discrete-action-poincare]{Discrete action Poincaré scaffold}). \textbf{Discharged on the partial strong-Poincaré slice:} abelian Wilson--kinetic equivalence (\hyperref[lean:action-holonomy-glue]{Action holonomy glue}); fiber matrix Wilson + scalar-$\phi$ \texttt{action\_O\_Maxwell} rule (\hyperref[lean:discrete-action-strong-poincare]{Strong Poincaré bridge}).
+
+\textbf{Not claimed:} Nielsen-style external smooth principal bundles, K\"ahler/contact self-adjointness, and path-integral measure choice on a \emph{separate} $C^\infty$ base---not because HQIV lacks anomaly cancellation, non-abelian holonomy, or sector zeta on the octonion light-cone carrier, but because those external classification theorems are not reproved as prerequisites. The patch net is the entire accessible universe, indexed by $\mathfrak{so}(8)$ on the light cone---a literal continuum rewrite would erase the discrete index carrying the predictions.
 
 \textbf{Epoch choice:} laboratory PDG comparisons use $\xi_{\mathrm{lock}}=5$, $\Phi=t=0$. Cosmology uses the same $C_2(\xi)$ on the hot chart (\S\ref{sec:c2-rindler}). No per-flavour mass injection.
 
@@ -199,6 +217,38 @@ The pipeline is summarised in Figure~\ref{fig:pipeline}. Table~\ref{tab:claim-st
   \end{tabular}
 \end{table}
 
+\subsection{Patch QFT and the continuum readout layer}
+\label{sec:patch-continuum-bridge}
+
+Readers trained in continuum quantum field theory often ask three related questions: whether the HQIV patch is a UV regulator that must be sent to a smooth limit; whether anomaly cancellation, non-abelian holonomy, and path-integral measure are deferred to that limit; and what discrete upgrade would be required to match textbook gauge consistency. In HQIV the answers are already constructive and largely machine-checked.
+
+\paragraph{The patch is not a mesh tile.}
+The accessible patch is the \emph{entire causally accessible universe}: horizon-limited shell data, finite charts, and mode budgets on the octonion light-cone carrier. There is no observables layer outside this patch net waiting to be recovered by refinement. Familiar smooth-spacetime and $\mathcal{L}_{\mathrm{SM}}$ notation is therefore an \textbf{IR readout dictionary} for cross-citation with the standard literature, not a missing UV completion.
+
+\paragraph{What ``projects to continuum QFT'' means.}
+Three proved bridges connect patch data to continuum language without replacing the discrete ontology:
+\begin{enumerate}[label=(\roman*),nosep]
+\item \textbf{Sector projection.} The five equalities $S_{\mathrm{HQIV}}\Rightarrow\mathcal{L}_{\mathrm{SM}}$ (\hyperref[lean:sm-lagrangian-bridge]{SM Lagrangian bridge}) exhibit the textbook Lagrangian as an explicit projection of the discrete octonion action at epoch $(\xi,\Phi,t)$.
+\item \textbf{Chart operators and holonomy.} Discrete Laplacian/Poisson stencils, plaquette transport, and cyclic O-Maxwell holonomy on the patch chart carry proved flatness and limit identities (\hyperref[lean:patch-qft-bridge]{Patch QFT bridge}, \hyperref[lean:action-holonomy-glue]{Action holonomy glue}, \hyperref[lean:readout-gauge-seed]{Readout gauge seed}).
+\item \textbf{Controlled asymptotic mode content.} As shell index grows, the cumulative accessible mode budget divided by spherical-harmonic counting tends to a definite ratio---the emergent effective-mode law used in the horizon continuum package (\hyperref[lean:lightcone-qft-bridge]{Light-cone QFT bridge}). This is a proved shell$\to$harmonic limit on the same null ladder, not an unverified mesh-refinement conjecture.
+\end{enumerate}
+
+\paragraph{Gauge consistency discharged on the patch (proved).}
+The obligations readers normally associate with continuum QFT are already finite statements on the carrier that produces the numerical readouts:
+\begin{itemize}[nosep]
+\item \textbf{Anomaly cancellation.} Explicit one-generation Standard-Model content yields vanishing $U(1)_Y^3$, grav--$U(1)_Y$, $SU(3)^2U(1)_Y$, $SU(2)^2U(1)_Y$, and $SU(3)^3$ trace coefficients; three generations are a finite label sum of the same cancelled block (\hyperref[lean:anomaly-cancellation]{Anomaly cancellation}, witness \leanid{sm_anomaly_free_three_generations}).
+\item \textbf{Topological sector.} The patch abelian datum has a single sector: instanton, Pontryagin, first-Chern, and $U(1)$ winding charges vanish on patch data; the $\theta$ contribution is therefore $\theta$-independent (\hyperref[lean:patch-topology]{Patch topology discharge}).
+\item \textbf{Non-abelian structure.} Light-cone $\mathfrak{so}(8)$ Lie closure; G$_2\cup\{\Delta\}$ chart; admissible holonomy on integrable Hopf shells; abelian cyclic plaquette flatness; proved $\mathfrak{su}(2)$ Pauli non-commutativity; optional global $\mathfrak{su}(3)$ Gell--Mann bracket law (\hyperref[lean:so8-closure]{SO(8) Lie closure}, \hyperref[lean:zeta-holonomy-discharge]{Sector zeta and holonomy discharge}, \hyperref[lean:weak-higgs-scaffold]{Weak/Higgs scaffold}, \hyperref[lean:strong-color-su3]{Strong-color SU(3) chart}).
+\item \textbf{Sector zeta readout.} Leading Beltrami sector determinant matched to lattice amplitude at observer offset $\delta=0$, plus generation-indexed fibre-torsion subleading required for the charged-lepton band (\hyperref[lean:zeta-holonomy-discharge]{Sector zeta and holonomy discharge}, \hyperref[lean:global-detuning]{Global detuning}).
+\item \textbf{Rapidity phase and Lorentz invariance.} \texttt{NullLatticeEvent} charts into $1{+}1$ Minkowski space by $\Lambda(\eta)(1,1)$; rapidity addition is boost-equivariant; \texttt{minkowskiInner11} and the embedded \texttt{minkowskiSq4} plane are invariant; \texttt{polarAngleFromRapidity} and the \texttt{zetaHQIVTerm} phase are unchanged under the Lorentz-scalar $\phi$ rule (\hyperref[lean:rapidity-lorentz-closure]{Rapidity--Lorentz closure}, witness \leanid{rapidity_lorentz_closure_discharged}).
+\end{itemize}
+
+\paragraph{What remains external (honest scope boundary).}
+Lean does \emph{not} re-prove Nielsen's classification theorems on a \emph{separate} smooth principal-bundle or contact-manifold base, nor does it fix a textbook path-integral measure on that external $C^\infty$ carrier. Those statements are comparison-layer prerequisites in continuum TUFT, not load-bearing inputs here: the patch carrier already determines the anomaly traces, holonomy transport, topological charges, and sector zeta bodies used for mass and coupling readouts. Full CKM/PMNS unitary discharge from Fano cycle overlaps remains scaffold-only (\hyperref[lean:t10-mixing-scaffold]{Generation mixing scaffold}).
+
+\paragraph{Module map (reproducibility).}
+Table~\ref{tab:claim-status} and Appendix~\ref{app:lean-catalog} index the discharge bundles; the synthesis-specific upgrade lives in \hyperref[lean:zeta-holonomy-discharge]{Sector zeta and holonomy discharge}, with supporting algebra in \hyperref[lean:so8-closure]{SO(8) Lie closure}, topology in \hyperref[lean:hopf-shell-complex]{Hopf shell complex}, and continuum-bridge limits in \hyperref[lean:lightcone-qft-bridge]{Light-cone QFT bridge}.
+
 \subsection{Background and reader contract}
 \label{sec:background}
 
@@ -215,7 +265,7 @@ Nielsen's TUFT provides the topological tool (complex Hopf fibration, Hopf-shell
 The textbook Lagrangian organizes non-Abelian gauge kinetic terms \cite{yang1954,tHooft1971,tHooft1972,gross1973,politzer1973,wilczek1973}, electroweak unification \cite{glashow1961,weinberg1967,salam1968,fermi1934}, scalar mass generation \cite{higgs1964,englert1964,nambu1960,goldstone1961}, and fermion Yukawa hierarchies \cite{yukawa1935,cabibbo1963,kobayashi1973,gellmann1964}; consolidated treatments appear in \cite{pdg2024,peskin1995,schwartz2014}. HQIV does not re-derive those structures from first principles: it exhibits a discrete octonion action whose sector projections match the same $\mathcal{L}_{\mathrm{SM}}$ once the TUFT/Hopf mass chart supplies the Yukawa weights.
 
 \noindent\textbf{Patch-ontology contract.}
-The discrete patch layer is the ontology. Smooth-manifold textbook notation is a calculation-approximation rewrite for cross-citation only.
+The accessible patch is the ontology; smooth-manifold textbook notation is an IR readout dictionary for cross-citation only. Anomaly cancellation, non-abelian holonomy on the light-cone $\mathfrak{so}(8)$ carrier, topological-sector discharge, and sector zeta subleading are \emph{proved} on that patch---not deferred to an uncontrolled continuum limit (§\ref{sec:patch-continuum-bridge}, Table~\ref{tab:claim-status}).
 
 \subsection{The two HQIV axioms in one page}
 \label{sec:two-axioms}
@@ -254,7 +304,7 @@ On each of these discrete shells we have well-defined contact data whose eigenva
       contact Beltrami spectra\\[0.15em]
       zeta sector determinants};
     \draw[arr] (disc) -- node[above, lbl, text width=3.4cm] {same contact-spectrum law\\$\lambda_\ell=\ell(\ell{+}2)$} (cont);
-    \node[below=0.45cm of disc, lbl, text width=5.2cm] {constructed witness on the discrete patch; no continuum limit assumed};
+    \node[below=0.45cm of disc, lbl, text width=5.2cm] {constructed witness + $\mathfrak{so}(8)$ Lie data on the octonion light cone; no external smooth carrier assumed};
     \node[below=0.45cm of cont, lbl, text width=5.2cm] {classifying-space necessity theorem on smooth principal bundles};
   \end{tikzpicture}
   \caption{Discrete Hopf-shell chart on the octonion carrier (left) and Nielsen's nested Hopf fibration (right) carry the same contact-spectrum law; methodology differs (witness vs classification).}
@@ -276,7 +326,7 @@ What remains most striking is the depth of convergence. Both frameworks identify
 \subsection{Formal verification: Lean as a TUFT reproduction and its limits}
 \label{sec:lean-tuft-reproduction}
 
-The public HQIV Lean library (\url{https://github.com/HQIV/hqiv-lean}) is, in most load-bearing respects, a \emph{formal-methods reproduction} of Nielsen's TUFT synthesis on a finite discrete carrier. It does not re-prove Nielsen's continuum classification theorems (principal U(1)-bundle completeness, Kähler-base geometry, elliptic self-adjointness on smooth contact manifolds). Instead, it constructs explicit witnesses of the same topological objects---three integrable Hopf shells, contact Beltrami eigenvalues $\lambda_\ell=\ell(\ell+2)$, sector zeta-determinant bodies, admissible-cycle holonomy rows, outer neutral-shell suppression, and trapped-inside excitation ratios---and machine-checks the arithmetic identities that turn those witnesses into mass readouts once a reference epoch is chosen. Python evaluation scripts mirror the same closed forms for PDG comparison tables (Appendix~\ref{app:lean-catalog}); they are regression layers, not independent fits.
+The public HQIV Lean library (\url{https://github.com/HQIV/hqiv-lean}) is, in most load-bearing respects, a \emph{formal-methods reproduction} of Nielsen's TUFT synthesis on a finite discrete carrier. The honest geometry is already \emph{continuous Lie data on the octonion light-cone carrier}: a proved $\mathfrak{so}(8)$ Lie algebra (28 antisymmetric generators, bracket closure), the G$_2\cup\{\Delta\}$ chart with preferred $(e_1,e_7)$ U(1) plane, and hopf-shell torsion matrices supplying admissible holonomy on integrable shells. Lean does not re-prove Nielsen's \emph{external} continuum classification theorems (principal U(1)-bundle completeness on a separate smooth base, Kähler-base geometry, elliptic self-adjointness on smooth contact manifolds). Instead, it constructs explicit witnesses of the same topological objects---three integrable Hopf shells, contact Beltrami eigenvalues $\lambda_\ell=\ell(\ell+2)$, sector zeta-determinant bodies, admissible-cycle holonomy rows, outer neutral-shell suppression, and trapped-inside excitation ratios---and machine-checks the arithmetic identities that turn those witnesses into mass readouts once a reference epoch is chosen. Python evaluation scripts mirror the same closed forms for PDG comparison tables (Appendix~\ref{app:lean-catalog}); they are regression layers, not independent fits.
 
 \paragraph{What Lean formally reproduces from TUFT.}
 \begin{itemize}[nosep]
@@ -291,12 +341,12 @@ The public HQIV Lean library (\url{https://github.com/HQIV/hqiv-lean}) is, in mo
 \paragraph{Where the Lean development diverges from continuum TUFT.}
 \begin{itemize}[nosep]
 \item \textbf{Starting axioms.} HQIV begins from discrete light-cone combinatorics and informational monogamy on an octonion-indexed null lattice, not from Nielsen's bundle-classification axioms. The Hopf shells are \emph{constructed and proved} on the carrier rather than inferred as the unique U(1) classifying geometry.
-\item \textbf{Finite vs smooth carrier.} All load-bearing equalities are patch-level witnesses on $\mathrm{Fin}\,8$ (and related finite index sets). A literal continuum limit is neither assumed nor proved; smooth $\mathcal{L}_{\rm SM}$ notation is a cross-citation rewrite (patch-ontology contract in the abstract).
+\item \textbf{Light-cone $\mathfrak{so}(8)$ vs external smooth carrier.} HQIV carries proved continuum Lie algebra data on the octonion light-cone geometry---not an external smooth contact manifold glued on afterward. Load-bearing equalities remain patch-indexed witnesses on $\mathrm{Fin}\,8$ (and related finite index sets); smooth $\mathcal{L}_{\rm SM}$ notation and Nielsen's separate $C^\infty$ bundle theorems are cross-citation / comparison layers (patch-ontology contract in the abstract).
 \item \textbf{Temperature dynamics.} The effective vev $v(\xi)$, heavy gap $G(\xi)$, and $\kappa_6(\xi,\Phi,t)$ are explicit functions of cosmic temperature. Pure continuum TUFT fixes spectral geometry at one scale; HQIV propagates the entire Lagrangian with epoch.
 \item \textbf{HQIV-specific physics.} Longitudinal electromagnetic forces from the O-Maxwell phase-gradient term have no TUFT counterpart. Exact discrete rationals ($\alpha=3/5$, $\gamma=2/5$, $C_2=56/45$ at lock-in) are axiom-fixed, not emergent reals from smooth spectral analysis.
 \item \textbf{Shell ontology.} HQIV \texttt{referenceM} (substrate export pin for cosmology and proton convention) and TUFT \texttt{tuftHeavyChartShell} ($m=n+1$ on the heavy Hopf winding) are \emph{different names}; Lean proves numeric coincidence under current pins, not chart identification (see \hyperref[lean:shell-chart]{TUFT shell chart} in Appendix~\ref{app:lean-catalog} and Appendix~\ref{app:shell-ontology}).
 \item \textbf{Electroweak mixing implementation.} The $Z$ mass uses geometric shell detuning rather than the naive $(g_{\mathrm{SU2}}+g_{\mathrm{U1}})$ line (retained as a diagnostic overshoot). The primary $W$ readout is factorised as closure $\times$ vev bridge $\times$ heavy-gap scale; the equivalent geometric-mean form is proved equal for arbitrary lock-in vev (\texttt{tuftMW\_geometricMean\_atXi\_GeV\_eq}).
-\item \textbf{Scope boundaries.} Lean certifies the structural bridge and readout arithmetic with zero \texttt{sorry}; it does \emph{not} claim full anomaly cancellation, measure choice, complete non-abelian holonomy, or retained higher-order zeta terms in the determinant expansion.
+\item \textbf{Scope boundaries.} Lean certifies the structural bridge, full patch gauge-consistency discharge, and readout arithmetic with zero \texttt{sorry} (§\ref{sec:patch-continuum-bridge}, \S\ref{subsec:patch-gauge-consistency}, Table~\ref{tab:claim-status}). It does \emph{not} claim Nielsen's external smooth principal-bundle / contact-manifold theorems or path-integral measure choice on a separate $C^\infty$ carrier; CKM/PMNS unitary discharge remains scaffold-only.
 \end{itemize}
 
 \paragraph{Diagnostic layers (superseded TUFT/HQIV paths).}
@@ -1404,7 +1454,16 @@ Reproducibility of the comparison tables is supplied by bundled Python evaluatio
 
 \section{Scope, Limitations, and Asymptotic Regimes}
 
-The present synthesis establishes the structural bridge and the dynamic mechanism at the abelian projection level and with leading zeta terms. It does not claim a complete derivation of all Standard-Model parameters from the two axioms alone without any scale witness; the default witness is one high-precision local mass ($m_p$), from which cosmological ages and $T_{\mathrm{CMB}}$ follow (\S\ref{subsec:scale-witness}). Higher-order zeta terms, full anomaly cancellation, measure choice, and the complete non-abelian holonomy upgrade remain outside scope (see the scope box in \S1 and Table~\ref{tab:claim-status}).
+The present synthesis establishes the structural bridge and the dynamic mechanism with leading Beltrami sector zeta plus fibre-torsion subleading terms, and with full gauge-consistency discharge on the accessible patch: SM anomaly-trace cancellation, topological-sector discharge, light-cone $\mathfrak{so}(8)$ holonomy, weak/colour non-abelian charts, and shell-to-harmonic limits (§\ref{sec:patch-continuum-bridge}, Table~\ref{tab:claim-status}). It does not claim a complete derivation of all Standard-Model parameters from the two axioms alone without any scale witness; the default witness is one high-precision local mass ($m_p$), from which cosmological ages and $T_{\mathrm{CMB}}$ follow (\S\ref{subsec:scale-witness}). Nielsen's external smooth-bundle / contact-manifold theorems and path-integral measure choice on a separate $C^\infty$ base remain outside scope; CKM/PMNS unitary discharge from Fano overlaps remains scaffold-only.
+
+\subsection{Patch-level gauge consistency}
+\label{subsec:patch-gauge-consistency}
+
+\renewcommand{\leanCertAnomaly}{; machine-checked in \hyperref[lean:anomaly-cancellation]{Anomaly cancellation} (\leanid{sm_anomaly_free_three_generations}).}
+\renewcommand{\leanCertTopology}{; discharged in \hyperref[lean:patch-topology]{Patch topology discharge} (\leanid{patchTopologicalObstructionsDischarged}).}
+\renewcommand{\leanCertStrongColor}{; optional certificate in \hyperref[lean:strong-color-su3]{Strong-color SU(3) chart}.}
+
+\input{../include/patch_theory_messaging.tex}
 
 \subsection{Sharp predictions and falsifiability}
 \label{sec:falsifiability}
@@ -1434,6 +1493,8 @@ Section~\ref{sec:lean-tuft-reproduction} states what the Lean development reprod
 \item Dynamic vev and complete ground + excited-state readouts: charged leptons, electroweak bosons, neutrinos, global hadrons, and diagnostic catalog layers.
 \item Five sector equalities of the Lagrangian plus the total-action split (\hyperref[lean:sm-lagrangian-bridge]{SM Lagrangian bridge}).
 \item Resonance ladder steps and SM embedding algebra.
+\item Finite SM anomaly-trace cancellation and patch topological-sector discharge (\hyperref[lean:anomaly-cancellation]{Anomaly cancellation}, \hyperref[lean:patch-topology]{Patch topology discharge}).
+\item Non-abelian kinematic charts, shell-to-harmonic limit, sector zeta/holonomy discharge, SO(8) Wilson plaquettes, and partial Poincaré/measure programmes (\hyperref[lean:weak-higgs-scaffold]{Weak/Higgs scaffold}, \hyperref[lean:lightcone-qft-bridge]{Light-cone QFT bridge}, \hyperref[lean:zeta-holonomy-discharge]{Sector zeta and holonomy discharge}, \hyperref[lean:so8-closure]{SO(8) Lie closure}, \hyperref[lean:so8-plaquette-holonomy]{SO(8) plaquette holonomy}, \hyperref[lean:non-abelian-holonomy-measure]{Non-abelian holonomy measure}, \hyperref[lean:discrete-action-poincare]{Discrete action Poincaré scaffold}).
 \end{itemize}
 
 The headline module is
@@ -1510,6 +1571,57 @@ The Lean development lives at \url{https://github.com/HQIV/hqiv-lean}. Claims in
   \hyperref[lean:auxiliary-field]{Auxiliary field ladder}\label{lean:auxiliary-field} &
   \leanfile{Hqiv/Geometry/AuxiliaryField.lean} &
   Harmonic temperature ladder $\phi(m)=2(m+1)$ \\
+  \hyperref[lean:anomaly-cancellation]{Anomaly cancellation}\label{lean:anomaly-cancellation} &
+  \leanfile{Hqiv/Algebra/AnomalyCancellation.lean} &
+  Explicit one-generation SM traces; cubic/mixed cancellation $\times$3 \\
+  \hyperref[lean:patch-topology]{Patch topology discharge}\label{lean:patch-topology} &
+  \leanfile{Hqiv/QuantumMechanics/PatchTopologicalObstruction.lean} &
+  Single-sector instanton/$\theta$/Chern/winding discharge on patch data \\
+  \hyperref[lean:zeta-holonomy-discharge]{Sector zeta and holonomy discharge}\label{lean:zeta-holonomy-discharge} &
+  \leanfile{Hqiv/Physics/TuftSynthesisZetaHolonomyDischarge.lean} &
+  Fibre-torsion subleading sector zeta; light-cone $\mathfrak{so}(8)$ holonomy (G$_2\cup\{\Delta\}$, Fano cycles, integrable Hopf shells) \\
+  \hyperref[lean:so8-closure]{SO(8) Lie closure}\label{lean:so8-closure} &
+  \leanfile{Hqiv/SO8Closure.lean} &
+  28 antisymmetric generators; bracket closure on octonion light-cone carrier \\
+  \hyperref[lean:action-holonomy-glue]{Action holonomy glue}\label{lean:action-holonomy-glue} &
+  \leanfile{Hqiv/Physics/ActionHolonomyGlue.lean} &
+  Cyclic O-Maxwell plaquette flatness; path holonomy on patch edges \\
+  \hyperref[lean:readout-gauge-seed]{Readout gauge seed}\label{lean:readout-gauge-seed} &
+  \leanfile{Hqiv/Physics/ReadoutGaugeSeed.lean} &
+  Minimal-cycle gauge potential; discrete holonomy witnesses \\
+  \hyperref[lean:weak-higgs-scaffold]{Weak/Higgs scaffold}\label{lean:weak-higgs-scaffold} &
+  \leanfile{Hqiv/Physics/WeakHiggsFromOMaxwellScaffold.lean} &
+  Non-abelian $\mathfrak{su}(2)$ kinematic chart; lock-in vev readout hooks \\
+  \hyperref[lean:patch-qft-bridge]{Patch QFT bridge}\label{lean:patch-qft-bridge} &
+  \leanfile{Hqiv/QuantumMechanics/PatchQFTBridge.lean} &
+  Finite patch event chart; spacelike microcausality hooks on $\mathrm{Fin}\,4$ \\
+  \hyperref[lean:lightcone-qft-bridge]{Light-cone QFT bridge}\label{lean:lightcone-qft-bridge} &
+  \leanfile{Hqiv/Physics/LightConeMaxwellQFTBridge.lean} &
+  Shell-to-harmonic limit; accessible mode budget; horizon continuum package hub \\
+  \hyperref[lean:rapidity-lorentz-closure]{Rapidity--Lorentz closure}\label{lean:rapidity-lorentz-closure} &
+  \leanfile{Hqiv/Geometry/RapidityLorentzClosure.lean} &
+  Null-lattice rapidity chart; boost equivariance; Minkowski invariance; scalar $\phi$ / zeta phase \\
+  \hyperref[lean:spatial-rotation-lorentz-closure]{Spatial-rotation Lorentz closure}\label{lean:spatial-rotation-lorentz-closure} &
+  \leanfile{Hqiv/Geometry/SpatialRotationLorentzClosure.lean} &
+  $O(3)$ spatial block; $\|{\mathbf r}\times{\mathbf v}\|^2$; CMB sky rotation; fluid/coronal axis invariants \\
+  \hyperref[lean:so8-plaquette-holonomy]{SO(8) plaquette holonomy}\label{lean:so8-plaquette-holonomy} &
+  \leanfile{Hqiv/Physics/SO8PlaquetteHolonomy.lean} &
+  Full four-edge SO(8) Wilson transport; Hopf-shell $T^4$ plaquette; pinned $(G_0,G_4)$ witness \\
+  \hyperref[lean:non-abelian-holonomy-measure]{Non-abelian holonomy measure}\label{lean:non-abelian-holonomy-measure} &
+  \leanfile{Hqiv/Physics/NonAbelianHolonomyMeasureScaffold.lean} &
+  Matrix Wilson layer + $O(3)$ readout discharge; Wilson--kinetic discharged; Haar on rotated charts open \\
+  \hyperref[lean:discrete-action-poincare]{Discrete action Poincaré scaffold}\label{lean:discrete-action-poincare} &
+  \leanfile{Hqiv/Physics/DiscreteActionPoincareScaffold.lean} &
+  Lorentz + abelian holonomy + partial strong Poincaré programme \\
+  \hyperref[lean:discrete-action-strong-poincare]{Discrete action strong Poincaré bridge}\label{lean:discrete-action-strong-poincare} &
+  \leanfile{Hqiv/Physics/DiscreteActionStrongPoincareBridge.lean} &
+  Wilson--kinetic + fiber Wilson + scalar-$\phi$ action; named open kinetic-boost targets \\
+  \hyperref[lean:strong-color-su3]{Strong-color SU(3) chart}\label{lean:strong-color-su3} &
+  \leanfile{Hqiv/Physics/StrongColorSu3LieChartLaw.lean} &
+  Global $\mathfrak{su}(3)$ bracket law on the finite Gell-Mann chart ($f^{abc}$; optional cert build) \\
+  \hyperref[lean:t10-mixing-scaffold]{Generation mixing scaffold}\label{lean:t10-mixing-scaffold} &
+  \leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean} &
+  Fano-cycle holonomy rows and generation-phase mixing readout \\
   \bottomrule
 \end{tabularx}
 \normalsize
@@ -1552,6 +1664,17 @@ For readers without dependent-type background: each row is a proved identity (ze
     \leanid{tuftMW_geometricMean_atXi_GeV_eq} & Factorised $W$ = geometric-mean form \\
     \leanid{sin2ThetaWGeometricLockin_eq} & $\sin^2\theta_W=168/725$ at lock-in \\
     \leanid{SM_Lagrangian_from_HQIV_discrete_action} & Five-sector Lagrangian bridge \\
+    \leanid{sm_anomaly_free_three_generations} & Finite SM anomaly traces vanish (three generations) \\
+    \leanid{patchTopologicalObstructionsDischarged} & Patch instanton/$\theta$/Chern/winding discharged \\
+    \leanid{accessiblePatch_shellToHarmonicLimit} & Shell-to-harmonic mode budget limit \\
+    \leanid{tuftSynthesisZetaHolonomyDischarged_holds} & Fibre-torsion subleading sector zeta + light-cone $\mathfrak{so}(8)$ holonomy bundle \\
+    \leanid{lightconeSO8HolonomyDischarged_holds} & $\mathfrak{so}(8)$ closure, G$_2\cup\{\Delta\}$, admissible holonomy on Hopf shells \\
+    \leanid{rapidity_lorentz_closure_discharged} & Rapidity chart equivariant; Minkowski + embedded $3{+}1$ invariance; zeta phase scalar rule \\
+    \leanid{so8PlaquetteHolonomyDischarged_holds} & Full four-edge SO(8) Wilson holonomy + light-shell $T^4$ torsion plaquette; $(G_0,G_4)\neq I$ \\
+    \leanid{wilsonKineticPlaquetteEquivalence_discharged} & Cyclic Wilson-defect two-sided bound on \texttt{L\_O\_kinetic} \\
+    \leanid{nonAbelianHolonomyMeasureProgram_default} & SO(8) + weak Pauli matrix plaquettes; $O(3)$ rotated-frame readout discharge \\
+    \leanid{fullActionStrongPoincare_discharged} & Partial flat-slice Poincaré bundle; general HQVM kinetic boost open \\
+    \leanid{discreteActionPoincareProgram_default} & Combined Lorentz/abelian/holonomy + partial strong Poincaré programme \\
     \leanid{bbnDynamicC2OpportunitySuppression_eq_one_of_gt_bottleneck} & BBN lapse clock above bottleneck \\
     \bottomrule
   \end{tabularx}

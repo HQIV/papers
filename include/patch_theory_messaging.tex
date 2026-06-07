@@ -1,15 +1,89 @@
-% Shared reader contract: patch QFT + discrete numerics.
-% From papers/*.tex:     \input{include/patch_theory_messaging.tex}
-% From papers/paper/*.tex: \input{../include/patch_theory_messaging.tex}
+% Shared paper-facing statement: patch QFT + discrete numerics + gauge consistency.
+% From papers/*.tex:     \input{../include/patch_theory_messaging.tex}
+% Papers with a Lean module index may define \leanCertAnomaly, \leanCertTopology,
+% and \leanCertStrongColor before this include; otherwise they default to empty.
 
-\paragraph{Patch QFT and discrete numerics (reader contract).}
-HQIV (Horizon-Quantized Informational Vacuum) is formulated as a \emph{patch theory}: quantum fields, actions, and physical readouts are attached to discrete patches---shell indices $m\in\mathbb{N}$, finite spacetime index types (e.g.\ $\mathrm{Fin}\,4$), and horizon-limited charts---rather than to a hypothetical fundamental smooth spacetime obtained as a mesh-refinement or ultraviolet limit.
-Accordingly, when this text refers to ``QFT,'' it means \emph{patch QFT}: patching rules, finite measurement ledgers, and variational identities on the discrete spine; it is not the claim that the theory is \emph{defined} by recovering ordinary continuum quantum field theory through such a limit.
-The numbers that admit the sharpest statements---mass and coupling ladders, curvature ratios, shell thermodynamics, and rational witnesses in \texttt{HQIV\_LEAN}---are objects of \emph{discrete mathematics} on $\mathbb{N}$ (combinatorial growth, cumulative simplex ledgers) together with the ordered field $\mathbb{R}$ as used in the proof assistant for analysis, bounds, and phenomenological display.
-Smooth-manifold or continuum field notation, when it appears, is a \emph{translation layer} for comparison with standard physics literature; it does not supersede the discrete definitions.
+\providecommand{\leanCertAnomaly}{}
+\providecommand{\leanCertTopology}{}
+\providecommand{\leanCertStrongColor}{}
+\providecommand{\leanfile}[1]{\nolinkurl{#1}}
+\providecommand{\leanid}[1]{\nolinkurl{#1}}
 
-\paragraph{A continuum is not required, and in places would destroy these results.}
-The discrete patch layer is \emph{not} a numerical approximation to a more fundamental continuum theory awaiting future construction; it is the ontology.  Where the literature treats ``the continuum limit'' as the goal, HQIV treats it as a \emph{calculation approximation} for comparison with standard formulas.  The continuum form is an optional convenience for comparison; the proved discrete statement is what carries the physics.  In several load-bearing places---the curvature imprint $\delta_E(m)$ at shell $m$, the harmonic ladder masses $m_\tau\to m_\mu\to m_e$, the lock-in vev $v=\sqrt{\eta_{\rm paper}\,\Omega_k(m_{\rm lockin};m_{\rm lockin})}$, the proton anchor at $m=\mathrm{referenceM}=4$, the baryon-asymmetry $\eta\propto 6^7\sqrt{3}/(m+1)$, and the rational coefficients $\alpha=3/5$, $\gamma=2/5$, $\alpha_{\rm GUT}=1/42$---taking a literal $m\to\infty$ or sub-Planck continuum limit would \emph{erase} the discrete index that is doing the predictive work.  Continuum forms of these objects are therefore not preferred refinements; they are degenerate, information-losing readouts of the same patch data.
+\paragraph{Patch QFT.}
+The quantum field theory used here is the HQIV \emph{patch QFT}: fields, actions,
+charges, amplitudes, and readouts live on finite horizon patches labelled by shell
+indices $m\in\mathbb{N}$, finite spacetime index types such as $\mathrm{Fin}\,4$,
+and discrete carrier charts.  Each patch is the \emph{entire accessible universe} in
+theory terms---the full causally accessible patch net, not a mesh tile waiting for a
+fundamental continuum limit.  This is the operative QFT of the model.  Its empirical content is
+the finite-patch calculation itself: mass and coupling ladders, curvature ratios,
+shell thermodynamics, anomaly traces, branching ledgers, and rational witnesses
+are computed on the patch carrier and then compared with laboratory observables.
+Continuum notation, when used, is a dictionary for readers trained in smooth
+field theory; it is not the definition of the theory.
 
-\paragraph{An exception: $\mathfrak{so}(8)$ as a de-facto continuum algebra from a discrete construction.}
-Principled exception to the discrete-only stance: the closed Lie algebra $\mathfrak{so}(8) \supseteq G_2\cup\{\Delta\}$ generated from the Fano octonion left-multiplication table and the phase-lift generator $\Delta\in(\mathrm{e}_1,\mathrm{e}_7)$.  Although $\mathfrak{so}(8)$ is a continuous (28-dimensional real) Lie algebra, it is built here entirely from \emph{discrete} ingredients (the seven imaginary octonion units, a finite Fano table, and one $\pi/2$ rotation), and its closure to 28 dimensions is a finite linear-algebra certificate (see the \texttt{Hqiv.SO8Closure} / \texttt{Hqiv.SO8ClosureInterface} stack).  The Lie-group structure is therefore a \emph{de-facto continuum algebra obtained from a discrete construction}: continuous in parameter space, but with no continuum spacetime, no continuum measure, and no UV limit attached.  When this manuscript or its companions write $\exp(t\,\Delta)\in\mathrm{SO}(8)$ or treat $\mathfrak{so}(8)$ rotations as smooth, those are statements internal to a finite-dimensional Lie group whose generators are certified by discrete data; they are \emph{not} a continuum-spacetime commitment and do not require a continuum-QFT scaffolding.
+\paragraph{Gauge and topology on the patch carrier.}
+The patch QFT has no hidden continuum gauge sector whose consistency must be
+assumed.  The relevant gauge and topological statements are finite statements on
+the same carrier that produces the numerical readouts:
+\begin{itemize}[nosep]
+\item \textbf{Anomaly cancellation.} For one Standard-Model generation
+($Q_L$, $u^c$, $d^c$, $L$, $e^c$, $\nu^c$), the patch trace identities give
+zero $U(1)_Y^3$, gravitational--$U(1)_Y$, $SU(3)_c^2U(1)_Y$,
+$SU(2)_L^2U(1)_Y$, and $SU(3)_c^3$ anomaly coefficients; the $SU(2)_L^3$
+coefficient vanishes because the weak doublet slot is pseudoreal.  Three
+generations are a finite $\mathrm{Fin}\,3$ label sum of the same cancelled
+one-generation block, not a fitted multiplicity\leanCertAnomaly.
+\item \textbf{Topological sector.} The patch abelian gauge datum has a single
+topological sector.  Instanton number, Pontryagin number, first Chern number, and
+$U(1)$ winding number vanish identically on patch data; the $\theta$ contribution
+is therefore $\theta$-independent; and abelian commutator obstructions vanish\leanCertTopology.
+\item \textbf{Non-abelian charts and holonomy.} Light-cone $\mathfrak{so}(8)$ Lie
+closure, G$_2\cup\{\Delta\}$ data, admissible holonomy on integrable Hopf shells,
+cyclic plaquette flatness, and weak/colour commutator certificates are discharged on
+the octonion carrier (see the sector zeta and holonomy discharge bundle in the Lean
+catalog).  **Matrix Wilson layer:** full four-edge SO(8) generator transport and
+Hopf-shell $T^4$ torsion plaquettes with pinned non-abelian witness
+(\leanfile{Hqiv/Physics/SO8PlaquetteHolonomy.lean},
+witness \leanid{so8PlaquetteHolonomyDischarged_holds}).  **Wilson--kinetic equivalence**
+(\leanfile{Hqiv/Physics/ActionHolonomyGlue.lean},
+witness \leanid{wilsonKineticPlaquetteEquivalence_discharged}).  **Partial / open:** Haar
+measure on rotated charts
+(\leanfile{Hqiv/Physics/NonAbelianHolonomyMeasureScaffold.lean}); general flat HQVM kinetic
+boost and full strong-interacting discrete-action Poincaré
+(\leanfile{Hqiv/Physics/DiscreteActionStrongPoincareBridge.lean},
+\leanfile{Hqiv/Physics/DiscreteActionPoincareScaffold.lean}).  Where the optional
+strong-colour certificate is invoked, the global Gell-Mann bracket law is proved on
+the finite $\mathfrak{su}(3)$ chart\leanCertStrongColor.
+\item \textbf{Rapidity phase and Lorentz invariance.} The null-lattice carrier
+$\texttt{NullLatticeEvent}$ charts into $1{+}1$ Minkowski space by the classical
+rapidity parametrization $\Lambda(\eta)(1,1)$; rapidity addition on the carrier is
+equivariant under $\mathrm{boostMatrix11}$, the Minkowski pairing is bilinearly
+invariant, and the polar-angle / \texttt{zetaHQIVTerm} phase is unchanged when
+$\phi$ transforms as a Lorentz scalar.  The honest $3{+}1$ extension preserves
+\texttt{minkowskiSq4} on the embedded $(t,x^1,0,0)$ plane.
+\item \textbf{Spatial rotations and directional readouts.} Orthogonal $O(3)$
+rotations on $\mathrm{Fin}\,3$ spatial vectors preserve Euclidean inner products,
+$\|{\mathbf r}\times{\mathbf v}\|^2$, axis-projection fractions, and the spatial
+block of \texttt{minkowskiSq4} when time is fixed
+(\leanfile{Hqiv/Geometry/SpatialRotationLorentzClosure.lean},
+witness \leanid{spatial_rotation_lorentz_closure_discharged}).  Applied discharge:
+CMB sky rotation shifts the Stokes angle additively while preserving
+$\cos^2+\sin^2=1$; O-Maxwell fluid sources rotate covariantly with gradients;
+coronal axis projections are joint rotation invariants.  Full patch Lorentz on the
+flat chart is the rapidity bundle plus this spatial bundle
+(witness \leanid{full_lorentz_closure_discharged}).  Continuum interacting QFT /
+Wightman theorems are not claimed.
+\end{itemize}
+
+\paragraph{External continuum theorems not required.}
+Several textbook continuum constructions are \emph{not} load-bearing prerequisites
+because the patch carrier already fixes the traces, holonomy transport, topological
+charges, and sector zeta bodies used for predictions: BPST instanton classification
+on a separate smooth four-manifold, Nielsen-style principal-bundle completeness on
+an external $C^\infty$ base, and path-integral measure choice on that base.  HQIV
+does not claim to re-prove those external theorems; it proves the finite patch
+statements that supply the same consistency checks for the readout pipeline.  This
+is why familiar QFT language can appear in the comparison layer while the
+predictions remain patch-level statements with fewer adjustable inputs than a
+continuum effective fit.

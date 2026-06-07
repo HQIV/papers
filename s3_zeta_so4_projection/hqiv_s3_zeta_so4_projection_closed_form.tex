@@ -1,0 +1,523 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,booktabs}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\usepackage[final]{microtype}
+\setlength{\emergencystretch}{3em}
+\usepackage{url}
+\urlstyle{same}
+
+\newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
+\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\path{#1}}}
+\newcommand{\leanid}[1]{\path{#1}}
+
+\title[S$^3$ / SO(4) $\zeta(s)$ Projection]
+{$\zeta(s)$ as an SO(4) Projection to the Complex Plane:\\
+Harmonic--$\Delta$ Closure, Quaternion Axis Readout, and Regional Closed Forms}
+
+\author{Steven Ettinger Jr}
+\address{Independent Researcher}
+\email{steven@disregardfiat.tech}
+\date{Draft --- Lean formal note (2026-06)}
+
+\newtheorem{definition}{Definition}[section]
+\newtheorem{proposition}[definition]{Proposition}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{remark}[definition]{Remark}
+\newtheorem{corollary}[definition]{Corollary}
+
+\begin{document}
+\begin{abstract}
+\noindent\textbf{Position.}
+This note synthesises the machine-checked S$^3$ / Riemann story spine in the
+public HQIV Lean library \cite{hqiv-lean}.  It sits on the closure record
+\cite{hqiv-so8-paper} (harmonic divergence $\Rightarrow$ phase lift $\Delta$,
+$\langle\mathfrak{so}(3),\Delta_4\rangle_{\mathrm{Lie}}=\mathfrak{so}(4)$),
+the octonion light-cone carrier \cite{hqiv-lightcone-paper}, and the TUFT+SM
+synthesis \cite{hqiv-tuft-sm-lagrangian-paper}.  It is \emph{not} a phenomenology
+paper; it is a formal packaging of $\zeta(s)$ as a projection geometry.
+
+\noindent\textbf{Main geometric claim.}
+The functional-equation pair $(\sigma,1-\sigma)$ is rotated at $45^\circ$ in a
+quaternionic two-plane.  The diagonal slot is fixed at $1/\sqrt2$ (even / $i$
+carrier); the equator slot $(2\sigma-1)/\sqrt2$ is the odd sin--cos carrier.
+Classical $\zeta(s)$ is then a \emph{regional} closed form on $\mathbb{C}$:
+Dirichlet / Euler on $\Re s>1$, a sin--cos--$\Gamma$--$\pi$ functional-equation
+assembly on the open strip, Bernoulli values at negative integers, and
+$\pi$-sector Bernoulli closed forms at even positives.
+
+\noindent\textbf{Projection trichotomy.}
+At even integers $s=2k$ the angle $\pi s/2=k\pi$ kills the sine (j--k) slot
+($\sin=0$, $\cos=(-1)^k$): even $\zeta$-values are pure $\pi$-powers.
+At odd integers the cosine slot vanishes and sine carries the residue (no
+elementary closed form for $\zeta(3)$, $\zeta(5)$, \ldots).
+On the fractional open strip both slots are nonzero: the rotation ratio
+$\tan(\pi s/2)$ is the projection readout.
+
+\noindent\textbf{Reading the ``weird'' closed form.}
+The open-strip formula displays $\Gamma(1-s)$ poles and sin/cos zeros that look
+singular.  In the HQIV packaging these are not pathologies: negative-even trivial
+zeros are discharged from the nontrivial-zero slot; $\Gamma$ poles are the
+even-sector continuation markers; together they force the \emph{meaningful}
+zero-locus question onto the real critical line $\Re s=\tfrac12$---the only
+place the equator projection $(2\sigma-1)/\sqrt2$ vanishes pointwise.
+
+\noindent\textbf{Status.}
+Every algebraic / Mathlib link in the harmonic--prime--$\zeta$ chain and every
+45$^\circ$ projection identity cited here is sorry-free in
+\texttt{lake build HQIVStory}.  Unconditional \emph{Riemann Hypothesis} is
+\emph{not} claimed: the capstone predicate
+\texttt{InteriorAssemblyNonzeroAtNontrivialZerosOffLine} remains the single
+honest analytic gap (Appendix~\ref{app:status}).
+\end{abstract}
+\maketitle
+
+\input{../include/patch_theory_messaging.tex}
+
+\section{Introduction}\label{sec:intro}
+
+The Riemann zeta function is usually introduced as a Dirichlet series and then
+analytically continued.  In the HQIV S$^3$ story the same object is instead a
+\emph{projection readout}: the functional equation is a reflection symmetry
+$\sigma\leftrightarrow 1-\sigma$, the $45^\circ$ twiddle separates a fixed
+diagonal channel from a free equator channel, and the divergent harmonic backbone
+of the closure paper forces a nonzero phase-lift connector $\Delta$ that closes
+$\mathfrak{so}(3)+\Delta$ to $\mathfrak{so}(4)$ on the four-dimensional
+quaternion carrier.
+
+This note records what is already proved in Lean:
+\begin{enumerate}[label=(\roman*),nosep]
+\item the harmonic--$\Delta$--SO(4) closure bridge;
+\item the harmonic $\Rightarrow$ prime Euler product $\Rightarrow$ $\zeta$
+      $\Rightarrow$ $\Lambda=-\zeta'/\zeta$ pipeline for $\Re s>1$;
+\item regional closed forms for $\zeta(s)$ matching Mathlib;
+\item j/k axis rotation cancellation at even $\pi$-multiples and rotation ratios
+      on odd / fractional slots;
+\item discharge lemmas excluding nontrivial zeros from half-planes and negative
+      integer slots;
+\item a factorization $\zeta(s)=h(s)\cdot(2\sigma-1)/\sqrt2$ on the open strip
+      off $\sigma=\tfrac12$, with $h=\texttt{interiorStripH}$.
+\end{enumerate}
+The remaining RH step is \emph{not} continuation; it is proving that the assembly
+$h$ does not vanish at nontrivial zeros off the line---equivalently, upgrading
+orbit cancellation (functional-equation pairs) to pointwise cancellation at
+actual $\zeta$ zeros.
+
+\section{Harmonic divergence forces $\Delta$ and SO(4)}\label{sec:harmonic-delta}
+
+The closure spine \cite{hqiv-so8-paper} proves a uniform lower bound
+\[
+  H_n := \sum_{m=0}^{n-1}\frac{1}{m+1}
+  \;\le\;
+  K(n) := \sum_{m=0}^{n-1}\underbrace{\frac{1}{m+1}\bigl(1+\alpha\log(m+1)\bigr)}_{\text{shell density}},
+  \qquad \alpha=\tfrac35,
+\]
+with $K$ strictly increasing (\leanfile{Hqiv/Story/S3ClosureDeltaLiftBridge.lean},
+\leanfile{Hqiv/Geometry/OctonionicLightCone.lean}).
+The decomposition
+\[
+  K(n)=H_n+\alpha\sum_{m=0}^{n-1}\frac{\log(m+1)}{m+1}
+\]
+is the exact curvature-integral split
+(\leanid{curvature\_integral\_eq\_harmonic\_plus\_alpha\_log}).
+
+$\Delta$ is \emph{not} identical to $H_n$, but it is forced because the
+normalized channel $\Omega=K/K_*$ diverges.  On the toy four-dimensional
+carrier the Lie span of $\mathfrak{so}(3)$ together with the connector
+$\Delta_4=J_{14}$ generates full $\mathfrak{so}(4)$
+(\leanid{so3\_delta\_lifts\_to\_so4}).
+
+\subsection{Third harmonic orbit and the $1+\alpha/3$ projection}
+
+The third partial sum $H_3=1+\tfrac12+\tfrac13$ is the first shell carrying an
+explicit $1/3$ harmonic term.  Against the HQIV imprint $\alpha=3/5$ the
+projection multiplier
+\[
+  1+\frac{\alpha}{3}=1+\frac15=\frac65=1.2
+\]
+is proved exactly (\leanfile{Hqiv/Story/S3HarmonicDeltaEvenOrbit.lean},
+\leanid{so4HarmonicThirdProjection\_eq\_one\_point\_two}).
+On the eight-dimensional shell the unit $7$-sphere area proxy is $\pi^4/3$;
+halving at the $45^\circ$ equator gives $\pi^4/6$
+(\leanid{so4EquatorHalfArea\_eq\_pi\_four\_sixths}), parallel to the even
+Bernoulli slot $\zeta(2)=\pi^2/6$ at $\pi^2$ power.
+
+\section{Forty-five degree projection}\label{sec:45-proj}
+
+\begin{definition}[Functional-equation pair and $45^\circ$ slots]
+For $\sigma\in\mathbb{R}$ define the pair $(\sigma,1-\sigma)$ and the
+rotated coordinates
+\begin{align*}
+  \texttt{rot45Diag}(\sigma,1-\sigma) &= \frac{\sigma+(1-\sigma)}{\sqrt2}=\frac1{\sqrt2},\\
+  \texttt{rot45Free}(\sigma,1-\sigma) &= \frac{\sigma-(1-\sigma)}{\sqrt2}=\frac{2\sigma-1}{\sqrt2}.
+\end{align*}
+At $\theta=\pi/4$ one has $\cos\theta=\sin\theta=\sqrt2/2$ (not $\pi$); $\pi$
+enters through the functional-equation angle $\pi s/2$ below.
+\end{definition}
+
+\begin{theorem}[Critical line as equator]\label{thm:critical-line}
+The free coordinate vanishes iff $\sigma=\tfrac12$:
+\[
+  \texttt{rot45Free}(\sigma,1-\sigma)=0
+  \quad\Longleftrightarrow\quad
+  \sigma=\tfrac12.
+\]
+A nonzero twiddle shift $\pi/4+\delta$ with $\sin\delta\neq0$ moves the
+vanishing locus off $\sigma=\tfrac12$
+(\leanfile{Hqiv/Story/S3RotationRigidity.lean}).
+\end{theorem}
+
+The complex lift of the equator readout is the \textbf{SO(4) critical factor}
+\[
+  \texttt{so4CriticalFactor}(s)=\frac{2\sigma-1}{\sqrt2},
+  \qquad s=\sigma+i t,
+\]
+which vanishes exactly on $\Re s=\tfrac12$
+(\leanfile{Hqiv/Story/S3ZetaClosedForm.lean}).
+
+\section{Quaternion axis projection}\label{sec:quaternion}
+
+On the unit imaginary quaternion shell $S^3\subset\mathbb{H}$ the six axis poles
+$\pm i,\pm j,\pm k$ project to $\pm1/\sqrt2$ on single axes and cancel as
+antipodal orbit pairs (\leanfile{Hqiv/Story/S3SixPolesResidual.lean},
+\leanfile{Hqiv/Story/S3PrimeAxisCancellation.lean}).
+
+\begin{definition}[j/k slots in the FE channel]
+Define the sine and cosine projection slots
+\[
+  \mathcal{S}(s)=\sin\frac{\pi s}{2},
+  \qquad
+  \mathcal{C}(s)=\cos\frac{\pi s}{2}.
+\]
+These are the j/k rotation content in the functional-equation odd channel;
+$\mathcal{C}$ is packaged as \texttt{zetaSinCosFactor} in Lean.
+\end{definition}
+
+\begin{theorem}[Even $\pi$-multiples: j/k cancellation]\label{thm:even-cancel}
+For $k\in\mathbb{N}$ at $s=2k$:
+\[
+  \mathcal{S}(2k)=\sin(k\pi)=0,
+  \qquad
+  \mathcal{C}(2k)=\cos(k\pi)=(-1)^k.
+\]
+\end{theorem}
+
+\begin{theorem}[Odd integers: cosine cancels]\label{thm:odd-pure-sin}
+For $k\in\mathbb{N}$ at $s=2k+1$:
+\[
+  \mathcal{C}(2k+1)=0,
+  \qquad
+  \mathcal{S}(2k+1)=(-1)^k.
+\]
+\end{theorem}
+
+\begin{theorem}[Fractional strip: rotation ratio]\label{thm:frac-ratio}
+For $0<\Re s<1$ with $\mathcal{C}(s)\neq0$,
+\[
+  \frac{\mathcal{S}(s)}{\mathcal{C}(s)}=\tan\frac{\pi s}{2}.
+\]
+At $\sigma=\tfrac12$ both slots equal $\sqrt2/2$ and the ratio is $1$
+(\leanid{zetaAxisRotationRatio\_at\_half}).
+\end{theorem}
+
+Theorems~\ref{thm:even-cancel}--\ref{thm:frac-ratio} are proved in
+\leanfile{Hqiv/Story/S3ZetaAxisRotationProjection.lean}.
+They explain why \textbf{even} $\zeta$-values admit $\pi$-sector closed forms
+while \textbf{odd} positive integers (e.g.\ $\zeta(3)$) occupy the Ap\'ery /
+plastic continuation slot with no elementary closed form in Mathlib.
+
+\section{Regional closed form for $\zeta(s)$}\label{sec:closed-form}
+
+Table~\ref{tab:regional} collects the proved regional packaging.  Every row is
+machine-checked against Mathlib in \leanfile{Hqiv/Story/S3ZetaClosedForm.lean}
+and \leanfile{Hqiv/Story/S3SO4ZetaProjectionClosedForm.lean}.
+
+\begin{table}[h]
+\centering
+\caption{Regional SO(4) channel packaging for $\zeta(s)$ (all rows proved).}
+\label{tab:regional}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Region & Channel & Closed form \\
+\midrule
+$\Re s>1$ & even / Dirichlet & $\displaystyle\sum_{n\ge0}(n+1)^{-s}$ \\
+$0<\Re s<1$ & odd / sin--cos--$\Gamma$ & FE assembly (\texttt{oddStripChannel}) \\
+$s=2k$, $k\ge1$ & even $\pi$-sector & $\displaystyle(-1)^{k+1}\frac{2^{2k-1}\pi^{2k}B_{2k}}{(2k)!}$ \\
+$s=-k$ & Bernoulli & $\displaystyle-\frac{B'_{k+1}}{k+1}$ \\
+odd $s\ge3$ & odd continuation & no elementary closed form \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Right half-plane}
+
+\begin{theorem}[Shell / Dirichlet sum]
+For $\Re s>1$,
+\[
+  \zeta(s)=\sum_{n=0}^{\infty}(n+1)^{-s},
+\]
+the HQIV shell ladder with shift $(n+1)$
+(\leanid{riemannZeta\_dirichlet\_closed\_form}).
+\end{theorem}
+
+This is the even harmonic--Euler sector: the harmonic--prime--$\zeta$ path proves
+the prime product and $\Lambda=-\zeta'/\zeta$ on the same region
+(\leanfile{Hqiv/Story/S3HarmonicPrimeZetaPath.lean}).
+
+\subsection{Open critical strip}
+
+\begin{theorem}[Functional-equation closed form]\label{thm:fe-strip}
+For $0<\Re s<1$,
+\begin{equation}\label{eq:fe-strip}
+  \zeta(s)
+  =2\,(2\pi)^{-(1-s)}\,
+  \Gamma(1-s)\,
+  \cos\frac{\pi(1-s)}{2}\,
+  \zeta(1-s).
+\end{equation}
+\end{theorem}
+
+Equation~\eqref{eq:fe-strip} is Mathlib's \texttt{riemannZeta\_one\_sub}, repackaged
+as \texttt{oddStripChannel} $=\zeta(s)$ on the strip
+(\leanfile{Hqiv/Story/S3SO4InteriorWitness.lean}).
+
+\subsection{Even positive integers}
+
+\begin{theorem}[$\pi$-sector values]
+For $k\ge1$,
+\[
+  \zeta(2k)=(-1)^{k+1}\frac{2^{2k-1}\pi^{2k}B_{2k}}{(2k)!}.
+\]
+In particular $\zeta(2)=\pi^2/6$ and $\zeta(4)=\pi^4/90$.
+\end{theorem}
+
+At these points $\mathcal{S}(2k)=0$: the j/k rotation has completed full
+$\pi$-turns and only the even $\pi$-sector residue remains---consistent with
+Theorem~\ref{thm:even-cancel}.
+
+\subsection{Negative integers}
+
+\begin{theorem}[Bernoulli slot]
+For $k\in\mathbb{N}$,
+\[
+  \zeta(-k)=-\frac{B'_{k+1}}{k+1}.
+\]
+\end{theorem}
+
+\subsection{Master projection packaging}
+
+\begin{definition}
+\texttt{zetaSO4Projected}$(s):=\zeta(s)$ with the regional characterisations of
+Table~\ref{tab:regional} as proved corollaries.
+\end{definition}
+
+Off the critical line on the open strip,
+\[
+  \zeta(s)=\texttt{so4EquatorProject}(s)\cdot\texttt{interiorStripH}(s),
+  \qquad
+  \texttt{so4EquatorProject}(s)=\frac{2\sigma-1}{\sqrt2},
+\]
+when $0<\sigma<1$ and $\sigma\neq\tfrac12$
+(\leanid{zetaSO4Projected\_eq\_sin\_cos\_channel\_off\_line}).
+
+\section{Why the closed form looks weird---and why the answer is on the real line}\label{sec:real-line}
+
+The strip formula~\eqref{eq:fe-strip} exposes three features that appear
+singular when read naively:
+\begin{enumerate}[label=(\alph*),nosep]
+\item $\Gamma(1-s)$ has poles at $s=1,2,3,\ldots$;
+\item $\cos(\pi(1-s)/2)$ has zeros at odd integers;
+\item negative-even \emph{trivial} zeros of $\zeta$ sit at $s=-2,-4,\ldots$
+\end{enumerate}
+
+The HQIV discharge chain treats these as \textbf{regional bookkeeping}, not as
+contradictions:
+\begin{itemize}[nosep]
+\item \textbf{Negative-even trivial zeros} are the only negative-integer zeros;
+      nontrivial zeros cannot occupy negative integer slots
+      (\leanfile{Hqiv/Story/S3FESlotDischarge.lean},
+      \leanid{nontrivial\_zero\_fe\_slot}).
+\item \textbf{Open strip} points avoid $\Re s>1$ and $\Re s<0$ by Mathlib
+      nonvanishing and FE reflection
+      (\leanfile{Hqiv/Story/S3DeltaOrbitOffStrip.lean}).
+\item \textbf{$\Gamma$ poles} on the strip are paired with cos zeros in the
+      standard FE; they mark the even-sector continuation, not a complex off-line
+      zero locus.
+\end{itemize}
+
+\begin{remark}[Geometric reading]
+The ``infinity'' from $\Gamma$ and the ``zero'' from negative-even slots are
+two faces of the same projection geometry: they clear the plane of spurious
+complex-axis candidates and leave the \emph{pointwise} equator condition
+$\texttt{rot45Free}=0\Leftrightarrow\sigma=\tfrac12$ as the only balanced
+imaginary readout (\leanfile{Hqiv/Story/S3OrbitVsPointwiseGap.lean}).
+Orbit pairs $\{\sigma,1-\sigma\}$ always cancel in sum; RH asks that actual
+$\zeta$ zeros satisfy the stronger pointwise condition---literally
+$\texttt{AllNontrivialZerosOnLine}\Leftrightarrow\texttt{RiemannHypothesis}$.
+\end{remark}
+
+\section{Explicit \texorpdfstring{$h(s)$}{h(s)} on the strip}\label{sec:explicit-h}
+
+On the open strip with $\sigma\neq\tfrac12$ the assembly collapses to the
+explicit quotient (Lean:
+\leanfile{Hqiv/Story/S3InteriorStripHClosedForm.lean}):
+\begin{equation}\label{eq:h-explicit}
+  h(s)
+  =\frac{\zeta(s)}{\texttt{so4CriticalFactor}(s)}
+  =\frac{\zeta(s)\,\sqrt2}{\,2\sigma-1\,}.
+\end{equation}
+Substituting the functional-equation assembly~\eqref{eq:fe-strip} before the
+quotient gives the full closed form with $\Gamma(1-s)$ and
+$\cos(\pi(1-s)/2)$ in the numerator
+(\leanid{interiorStripH\_fe\_closed\_form}): the ``weird'' regional singularities
+are then \emph{visible in $h$ itself}, not hidden inside $\zeta$ alone.
+
+\begin{theorem}[Reflection symmetry of the critical factor]
+For all $s\in\mathbb{C}$,
+\[
+  \texttt{so4CriticalFactor}(1-s)=-\texttt{so4CriticalFactor}(s),
+\]
+because the readout depends only on $\sigma$ and swaps as $\sigma\leftrightarrow1-\sigma$
+(\leanid{so4CriticalFactor\_one\_sub}).
+\end{theorem}
+
+\begin{proposition}[Reflection product seed (pathway A)]
+For $0<\sigma<1$, $\sigma\neq\tfrac12$,
+\[
+  h(s)\,h(1-s)
+  =-\frac{\zeta(s)\,\zeta(1-s)}{\texttt{so4CriticalFactor}(s)^2}.
+\]
+\end{proposition}
+
+Multiplying $h$ by the equator factor recovers $\zeta$ on the strip
+(\leanid{completedInteriorFromH\_eq\_zeta\_on\_strip}); the capstone predicate
+\texttt{InteriorStripHNonvanishingCapstone} is \textbf{logically equivalent} to
+\texttt{RiemannHypothesis}
+(\leanid{interior\_capstone\_iff\_RiemannHypothesis})---not a weaker statement.
+
+\section{Interior factorization and RH status}\label{sec:rh-status}
+
+On $0<\Re s<1$, $\sigma\neq\tfrac12$, define
+\[
+  h(s):=\texttt{interiorStripH}(s)=\frac{\zeta(s)}{\texttt{so4CriticalFactor}(s)}.
+\]
+Then $\zeta(s)=h(s)\cdot(2\sigma-1)/\sqrt2$ off the line
+(\leanfile{Hqiv/Story/S3SO4InteriorWitness.lean}).
+
+\begin{definition}[RH capstone predicate]
+\texttt{InteriorAssemblyNonzeroAtNontrivialZerosOffLine} $h$ asserts:
+if $\zeta(s)=0$ for a nontrivial zero with $\sigma\neq\tfrac12$, then $h(s)\neq0$.
+\end{definition}
+
+\begin{theorem}[Conditional RH]
+If the capstone predicate holds for \texttt{interiorStripH}, then
+\texttt{RiemannHypothesis} follows
+(\leanid{RiemannHypothesis\_of\_SO4\_interior\_witness}).
+\end{theorem}
+
+\begin{remark}[Honesty]
+The factorization identity is proved; the capstone is \emph{not}.  Global
+factorization on the entire strip including $\sigma=\tfrac12$ is false because
+$\zeta(\tfrac12+it)$ is generally nonzero while the critical factor vanishes.
+The quotient witness $h=\zeta/\texttt{so4CriticalFactor}$ proves algebra on
+off-line points only; it does not by itself discharge the capstone.
+\end{remark}
+
+The even channel \texttt{evenStripChannel} is presently degenerate on the strip
+because the odd FE channel already carries the full $\zeta$; the physical even
+content is the harmonic--$\Delta$ multiplier $1+\alpha/3$ and the $\pi^4/3$
+sphere orbit (\leanfile{Hqiv/Story/S3HarmonicDeltaEvenOrbit.lean}).  A
+non-degenerate even/odd split is the remaining analytic packaging target.
+
+\section{Pathways toward an unconditional proof}\label{sec:pathways}
+
+The analysis below matches the claim-status table: the capstone is RH-hard.
+Plausible extensions that exploit \emph{this} framework (not imported from
+external regularization claims) include:
+\begin{enumerate}[label=\textbf{\Alph*.},nosep]
+\item \textbf{Completed $h$.}  Use~\eqref{eq:h-explicit} and
+      \texttt{so4CriticalFactor}$(1-s)=-$ \texttt{so4CriticalFactor}$(s)$ to
+      build a candidate entire/completed interior function; check whether
+      reflection forces off-line zeros to contradict discharge lemmas.
+\item \textbf{Zero-free re-expression.}  Rewrite $h$ as a manifestly nonzero
+      Dirichlet/Euler or harmonic-weighted integral on $\sigma\neq\tfrac12$.
+\item \textbf{SO(4)/patch obstruction.}  Relate an off-line zero to a nonzero
+      holonomy or commutator on the octonion carrier, contradicting proved
+      $\mathfrak{so}(8)$ closure.
+\item \textbf{Classical tools in channel language.}  Phragm\'en--Lindel\"of on
+      vertical lines $\sigma\neq\tfrac12$ using the $\tan(\pi s/2)$ ratio;
+      explicit-formula with separated sin/cos slots.
+\item \textbf{Non-degenerate even split.}  Promote the harmonic--$\Delta$
+      multiplier into \texttt{evenStripChannel} so $h$ is a genuine even/odd
+      assembly rather than a pure quotient.
+\end{enumerate}
+
+\section{Lean module index}\label{sec:lean-index}
+
+Build target: \texttt{lake build HQIVStory}.  Core modules (import order in
+\leanfile{HQIVStory.lean}):
+\begin{itemize}[nosep]
+\item \leanfile{Hqiv/Story/S3ClosureDeltaLiftBridge.lean} --- harmonic $H_n\le K(n)$, SO(4) lift;
+\item \leanfile{Hqiv/Story/S3HarmonicPrimeZetaPath.lean} --- harmonic $\Rightarrow$ primes $\Rightarrow\zeta\Rightarrow\Lambda$;
+\item \leanfile{Hqiv/Story/S3FortyFiveProjection.lean} --- $45^\circ$ diagonal / equator;
+\item \leanfile{Hqiv/Story/S3RotationRigidity.lean} --- projection line, twiddle rigidity;
+\item \leanfile{Hqiv/Story/S3ZetaClosedForm.lean} --- regional closed forms, factorization predicate;
+\item \leanfile{Hqiv/Story/S3SO4ZetaProjectionClosedForm.lean} --- $\pi^4/6$ sphere slot, master packaging;
+\item \leanfile{Hqiv/Story/S3HarmonicDeltaEvenOrbit.lean} --- $1+\alpha/3=6/5$ orbit;
+\item \leanfile{Hqiv/Story/S3ZetaAxisRotationProjection.lean} --- j/k cancellation and ratios;
+\item \leanfile{Hqiv/Story/S3SO4InteriorWitness.lean} --- even/odd channels, \texttt{interiorStripH};
+\item \leanfile{Hqiv/Story/S3FESlotDischarge.lean} --- negative-integer slot discharge;
+\item \leanfile{Hqiv/Story/S3DeltaOrbitOffStrip.lean} --- off-strip confinement;
+\item \leanfile{Hqiv/Story/S3OrbitVsPointwiseGap.lean} --- orbit vs pointwise RH gap;
+\item \leanfile{Hqiv/Story/S3RHDischarge.lean} --- discharge packaging;
+\item \leanfile{Hqiv/Story/S3InteriorStripHClosedForm.lean} --- explicit $h(s)$,
+      reflection symmetry, capstone $\Leftrightarrow$ RH.
+\end{itemize}
+
+\appendix
+\section{Claim status table}\label{app:status}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}p{0.52\linewidth}cc@{}}
+\toprule
+Claim & Lean & RH-hard \\
+\midrule
+$H_n\le K(n)$, $K$ strictly increasing & yes & no \\
+$\langle\mathfrak{so}(3),\Delta_4\rangle=\mathfrak{so}(4)$ & yes & no \\
+Shell sum $=\zeta(s)$ for $\Re s>1$ & yes & no \\
+Prime Euler product $=\zeta(s)$ & yes & no \\
+FE strip closed form~\eqref{eq:fe-strip} & yes & no \\
+Bernoulli / even-$\pi$ regional values & yes & no \\
+Even $s=2k$: $\mathcal{S}(s)=0$, $\mathcal{C}(s)=(-1)^k$ & yes & no \\
+Odd $s=2k+1$: $\mathcal{C}(s)=0$ & yes & no \\
+$1+\alpha/3=6/5$ harmonic-third projection & yes & no \\
+Nontrivial zeros $\notin$ negative integers & yes & no \\
+Nontrivial zeros in open strip $0<\Re s<1$ & yes & no \\
+$\zeta=h\cdot(2\sigma-1)/\sqrt2$ off $\sigma=\tfrac12$ & yes & no \\
+\texttt{interiorStripH}$\neq0$ at nontrivial zeros off line & no & yes \\
+Unconditional \texttt{RiemannHypothesis} & no & yes \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Notation}\label{app:notation}
+
+\begin{tabular}{@{}ll@{}}
+$\alpha$ & HQIV imprint $3/5$ (\leanid{alpha\_eq\_3\_5}) \\
+$H_n$ & harmonic partial sum (\texttt{harmonicPartialSum}) \\
+$K(n)$ & curvature integral (\texttt{curvature\_integral}) \\
+$\texttt{so4CriticalFactor}(s)$ & $(2\sigma-1)/\sqrt2$ \\
+$\texttt{oddStripChannel}$ & FE assembly~\eqref{eq:fe-strip} \\
+$\texttt{interiorStripH}$ & $(\texttt{even}+\texttt{odd})/\texttt{so4CriticalFactor}$ \\
+$\mathcal{S},\mathcal{C}$ & $\sin(\pi s/2)$, $\cos(\pi s/2)$ \\
+\end{tabular}
+
+\bibliographystyle{amsplain}
+\bibliography{../references}
+
+\end{document}

@@ -8,12 +8,18 @@ These scripts live at the repository root and export the witness JSON cited in t
 | --- | --- | --- |
 | `../../scripts/hqiv_bbn_abundances.py` | Partition readout, epoch sweep, `data/bbn_witnesses.json` | Default run writes witness bundle |
 | `../../scripts/hqiv_bbn_epoch_network.py` | Epoch cooling network integration (400-step scaffold) | Feeds integrated $Y_p$ witnesses in Lean |
+| `../../scripts/hqiv_dynamic_bulk_bbn.py` | Per-shell $\Omega_b$, dynamic BBN with $B_{\mathrm{curv}}$ + dynamic $C_2$ | `data/dynamic_bulk_bbn_v2.json` |
+| `../../scripts/hqiv_integrator_lean_audit.py` | Lean-name ↔ Python integrator audit for paper tables | `data/integrator_lean_audit.json` |
+| `../../scripts/test_hqiv_dynamic_c2_bbn.py` | Unit tests for $C_2$ ladder mirrors | `unittest` |
 
 Run from the repository root:
 
 ```bash
 python3 scripts/hqiv_bbn_abundances.py
 python3 scripts/hqiv_bbn_epoch_network.py
+python3 scripts/hqiv_dynamic_bulk_bbn.py
+python3 scripts/hqiv_integrator_lean_audit.py
+python3 -m unittest scripts.test_hqiv_dynamic_c2_bbn
 ```
 
 ## Inputs

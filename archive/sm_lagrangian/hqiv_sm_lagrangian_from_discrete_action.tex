@@ -1,0 +1,955 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,booktabs}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\usepackage[final]{microtype}
+\setlength{\emergencystretch}{3em}
+
+\newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
+\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\nolinkurl{#1}}}
+\newcommand{\leanid}[1]{\nolinkurl{#1}}
+
+\title[SM Lagrangian from HQIV Discrete Action]{Building the Standard Model Lagrangian from\\
+the HQIV Discrete Action: A Sector-by-Sector Lean Bridge}
+
+\author{Steven Ettinger Jr}
+\address{Independent Researcher}
+\email{steven@disregardfiat.tech}
+\date{Preprint draft --- \today}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\begin{document}
+
+\begin{abstract}
+\noindent\textbf{Position in the publication chain.}
+This is the first paper of the Tier-2 Standard-Model layer (\#5 in the
+publication sequence). Tier~0 fixes the framework
+\cite{ettinger2026hqiv,hqiv-lightcone-paper,hqiv-so8-paper}; all four
+Tier~1 companions
+\cite{hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper,hqiv-thermo-arrow-paper}
+are published on Zenodo. The present note is the natural variational sequel:
+every sector of the textbook Standard-Model Lagrangian
+$\mathcal{L}_{\rm SM}$ is identified with projections of the HQIV
+\emph{discrete} octonion action already proved upstream. The dynamic
+TUFT/Hopf mass chart that supplies Yukawa weights at a chosen now slice
+is the immediate Tier-2 companion
+\cite{hqiv-tuft-dynamic-mass-spectrum-paper} (pre-DOI at this paper's
+publication; sequence-strict deposit follows).
+
+\noindent\textbf{Result.}
+The page-long $\mathcal{L}_{\rm SM}$ is not assumed. In
+machine-checked Lean (zero \texttt{sorry}), we prove a
+constructive sector-by-sector bridge: gauge kinetics from the
+abelian octonion kinetic density split by the force-sector map;
+fermion minimal coupling from the triality-summed source slot;
+Higgs kinetic and potential from the octonion-scalar norm evaluated
+on the dynamic vacuum expectation value; Yukawa weights from the
+TUFT/Hopf mass chart at the chosen now slice (structural slot proved
+here; phenomenological readout in the companion). The headline theorem
+packages all five sector equalities simultaneously. The topological
+suppression in the electroweak mass chart factorises as
+$\kappa_6(\xi,\Phi,t)=\eta_{\mathrm{local}}(\xi)\,\gamma\,C_2(\xi,\Phi,t)$:
+homogeneous matter fraction $\eta_{\mathrm{local}}=\eta_{\mathrm{paper}}$
+(same-epoch curvature budget $B_{\mathrm{curv}}=1$ through recombination),
+overlap $\gamma=2/5$, and second-order lapse
+concentration $C_2$ from $\delta$-corrected Rindler detuning at the
+readout point (proved $C_2=56/45$ at $\xi_{\mathrm{lock}}$ with
+$\Phi=t=0$). Because the effective vev and $\kappa_6$ are explicit
+functions of the selected now slice---via inner--outer Casimir balance,
+the curvature primitive, and HQVM lapse data---the entire Lagrangian at
+any epoch is determined geometrically once that slice is chosen. There
+are no remaining free parameters in the conventional sense: no fitted
+Yukawa matrix, no tuned $C_2$, and no simultaneous PDG mass solve. The
+combinatorial lattice fixes $\alpha=3/5$, $\gamma=2/5$,
+$\alpha_{\rm GUT}=1/42$; the only operational choice is a consistent
+``now'' slice $(\xi,\Phi,t)$ on the temperature ladder. PDG centrals
+and CODATA couplings are comparison layers only. Reader-friendly Lean
+anchors are in Appendix~\ref{app:lean-index}.
+
+\noindent\textbf{Patch-ontology reader contract.}
+Per the patch-theory reader contract below, the discrete patch
+layer is the ontology. Smooth-manifold textbook notation for
+$\mathcal{L}_{\rm SM}$ is a calculation-approximation rewrite
+for cross-citation only---not a foundational target, not a
+mesh-refinement programme, and not required for validity of the
+discrete bridge. At the load-bearing steps (shell index $m$,
+resonance ladder, $\kappa_6$ factorisation, and the rationals above) a
+literal continuum rewrite would erase the discrete index doing the
+predictive work.
+
+\noindent\textbf{Status.}
+What is proved: the five sector equalities, the total-action
+split, and Yukawa linearity over flavours, all under the
+dynamic inner--outer Casimir scale. The theory now carries
+zero free parameters beyond the discrete lattice data; the
+only operational choice is the identification of a consistent
+``now'' slice on the temperature ladder. What is named explicitly
+and \emph{not} claimed: anomaly cancellation, measure choice,
+and the full non-abelian holonomy upgrade (scaffolded upstream
+but not closed here).
+\end{abstract}
+\maketitle
+
+\input{../include/patch_theory_messaging.tex}
+
+\section{Scope and claim discipline}
+\label{sec:scope}
+
+\subsection{No free parameters; only now-slice selection}
+
+With the inner--outer Casimir dynamics on the same Hopf-shell carrier
+and the curvature primitive along the physical-temperature ladder
+in place, the construction contains no free parameters in the
+conventional sense. The combinatorial data of the lattice fix
+the dimensionless rationals $\alpha=3/5$, $\gamma=2/5$ and
+$\alpha_{\rm GUT}=1/42$ once and for all. The only operational
+choice in any given solve or phenomenological export is the
+selection of a consistent ``now'' slice on the temperature ladder.
+Once that slice is identified, the dynamic scale determines the
+effective vacuum expectation value at that epoch, the resonance
+ladder supplies the Yukawa weights, and the sector projections of
+the discrete octonion action yield the full Lagrangian. Different
+choices of now slice generate different effective spectra and
+couplings; the geometry supplies the explicit temperature evolution
+that relates them. The proton lock-in at $\mathrm{referenceM}=4$
+remains a natural calibration point for the hadronic sector, but
+it is no longer required for the leptonic or gauge sectors.
+
+\subsection{Mass-scale closure: local matter fraction and lapse concentration}
+\label{subsec:kappa6}
+
+The TUFT/Hopf bridge of \cite{hqiv-tuft-dynamic-mass-spectrum-paper} supplies
+the electroweak mass chart
+$\Lambda_{\mathrm{Hopf}}(\xi)=\sqrt{2\pi}\,v(\xi)\,\kappa_6(\xi,\Phi,t)$.
+The former fitted slot $C_2\approx 1.135$ is replaced in Lean by a derived
+readout (zero \texttt{sorry} in
+\leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean}):
+\begin{equation}
+\label{eq:kappa6-factorisation}
+\kappa_6(\xi,\Phi,t)
+= \eta_{\mathrm{local}}(\xi)\,\gamma_{\mathrm{HQIV}}\,C_2(\xi,\Phi,t),
+\qquad
+\eta_{\mathrm{local}}(\xi)
+= \eta_{\mathrm{paper}}\,B_{\mathrm{curv}}(\xi),
+\qquad
+B_{\mathrm{curv}}(\xi)=1
+\quad\text{(homogeneous era through recombination).}
+\end{equation}
+The cumulative chart ratio $\Omega_k(\xi)/\Omega_k(\xi_{\mathrm{lock}})$ compares
+epochs to lock-in; it is \emph{not} the same-epoch local/global budget.
+While local and global curvature coincide (through recombination and the
+lock-in chart), $B_{\mathrm{curv}}=1$ and $\eta_{\mathrm{local}}=\eta_{\mathrm{paper}}$
+(\hyperref[lean:eta-local-shell]{homogeneous matter fraction}).
+The partial-horizon readout $\eta(n;N)=\eta_{\mathrm{paper}}\cdot\Omega_k(n;N)$
+remains the baryogenesis witness for shell-$n$ vs horizon-$N$ comparisons only.
+The overlap $\gamma_{\mathrm{HQIV}}=2/5$ is the proved horizon-split
+coefficient (\hyperref[lean:gamma-25]{horizon-split $\gamma$ identity}).
+The second-order factor is \emph{lapse concentration} at the readout
+point:
+\begin{equation}
+\label{eq:C2-lapse}
+C_2(\xi,\Phi,t)
+= \frac{1+\gamma}{2}\,
+\frac{\texttt{rindlerDenWithDelta}\bigl(\lambda\,\mathrm{obs}(\xi,\Phi,t),\,\mathrm{referenceM}\bigr)}
+{\texttt{rindlerDenShared}(\mathrm{referenceM})},
+\end{equation}
+with $\lambda=c_{\mathrm{rindler}}=\gamma/2$ and
+$\mathrm{obs}(\xi,\Phi,t)=\Theta_{\mathrm{local}}(\xi)\,(1+\gamma)+(N-1)$
+for $N=\texttt{HQVM\_lapse}(\Phi,\varphi(\xi),t)$.
+This packages the same $\delta$-corrected detuning observable used in
+\cite{hqiv-oct-action-paper} and the global-detuning module: matter
+curvature is corrected \emph{locally} by $\Omega_k(\xi)$; observer
+concentration enters through $C_2$, not through a hidden Yukawa fit.
+
+At lock-in ($\xi_{\mathrm{lock}}=5$, $\Phi=t=0$, $\mathrm{referenceM}=4$)
+Lean proves $C_2=56/45$ (\hyperref[lean:C2-lockin]{lock-in lapse concentration}).
+The pre-closure regression constant $1.135136\ldots$ is retained only as
+\texttt{tuftHopfKappa6SecondOrderCorrectionLegacy} for chart comparison.
+The physical $\kappa_6$ used by neutrino and lepton readouts is
+\texttt{tuftHopfKappa6AtXi} $\xi\,\Phi\,t$; at lock-in it is
+\texttt{tuftHopfKappa6} (\hyperref[lean:kappa6-at-xi]{$\kappa_6$ at horizon}).
+\textbf{BBN calibrates dynamic $C_2$:} on the hot chart,
+$\kappa_6(\xi)=\eta_{\mathrm{paper}}\,B_{\mathrm{curv}}(\xi)\,\gamma\,C_2(\xi)$
+grows with $\xi=T_{\mathrm{Pl}}/T$; the MeV cooling network
+(\cite{hqiv-baryogenesis-paper,hqiv-bbn-paper}) applies
+$T_{\mathrm{bn}}=\gamma w_{\mathrm{strong}} T_{\mathrm{freeze}}(\eta)$ and
+$w_{C_2}(T)=\gamma w_{\mathrm{strong}} Q_D^{\mathrm{eff}}(T)/Q_{np}$ in
+$(\kappa_{6,\mathrm{ref}}/\kappa_6)^{w_{C_2}}$---the lapse reaction clock, not a
+raw $\kappa_6$ multiplier.
+
+For the SM Lagrangian assembly, the lock-in vev
+(\hyperref[lean:lockin-vev]{lock-in vev}) remains the weak-sector scalar
+anchor $\sqrt{\eta_{\mathrm{paper}}}$ when $\Omega_k=1$ at lock-in, while
+charged-lepton masses at epoch $\xi$ follow the dynamic vev/TUFT chart of
+\cite{hqiv-tuft-dynamic-mass-spectrum-paper}. The five sector equalities of
+Theorem~\ref{thm:headline} are unchanged; what changes is that the mass
+\emph{normalization} feeding $\mathcal{L}_Y$ is no longer a separate fit
+layer once $(\xi,\Phi,t)$ is fixed.
+
+\subsection{Predecessor: discrete O--Maxwell action}
+
+\cite{hqiv-oct-action-paper} packages the discrete octonion-indexed gauge
+potential $A^a{}_\mu$ (channels $a\in\mathrm{Fin}\,8$, spacetime indices
+$\mu,\nu\in\mathrm{Fin}\,4$), field strength
+$F^a{}_{\mu\nu}(A)=A^a{}_\nu - A^a{}_\mu$ (the
+\hyperref[lean:F-from-A]{field-strength constructor}), the kinetic density
+$L_O^{\rm kin}(A)$ (the
+\hyperref[lean:LO-kin]{octonion kinetic density}), the source interaction
+$L_O^{\rm src}(J_{\rm src},A)$ (the
+\hyperref[lean:LO-src]{octonion source coupling}), and the $\phi$-coupling
+slot $L_O^\phi(A,\phi_{\rm val})$ (the
+\hyperref[lean:LO-phi]{scalar $\phi$-coupling slot}) into the single
+Lagrangian density (the
+\hyperref[lean:LO-maxwell]{general O-Maxwell Lagrangian density})
+\[
+\mathcal{L}_O[J_{\rm src}](A,\phi_{\rm val})
+= L_O^{\rm kin}(A) + 4\pi\,L_O^{\rm src}(J_{\rm src},A)
++ L_O^\phi(A,\phi_{\rm val}).
+\]
+The gravitational constraint scalar $S_{\rm HQVM\,grav}$ (the
+\hyperref[lean:SHQVM-grav]{HQVM gravitational constraint}) vanishes iff the
+HQVM Friedmann equation holds (the
+\hyperref[lean:friedmann-iff]{Friedmann equivalence theorem}). The total cell
+(the \hyperref[lean:action-total]{HQIV total action}) is
+$\mathcal{L}_O+S_{\rm HQVM\,grav}$. \cite{hqiv-tuft-dynamic-mass-spectrum-paper} adds the
+charged-lepton resonance ladder (the
+\hyperref[lean:resonance-steps]{two resonance steps}), the $\tau$-Planck
+anchor (the \hyperref[lean:m-tau-pl]{tau Planck mass}), and the
+generation-level mass functional (the
+\hyperref[lean:sm-mass-label]{geometric SM mass functional}) that ties an SM
+flavour label to a Planck-unit rest mass with no PDG input.
+\cite{hqiv-so8-paper} and the
+\hyperref[lean:sm-embedding]{SM embedding module} fix the
+$\mathrm{SU}(2)_L$ and hypercharge generators inside the certified
+$G_2\cup\{\Delta\}\Rightarrow\mathfrak{so}(8)$ closure, exhaust the
+standard branching rules on $8_s$, and certify the three triality irreps
+that we read as generation labels.
+
+\subsection{What this paper adds}
+\label{subsec:adds}
+
+The new Lean module is the
+\hyperref[lean:sm-lagrangian-module]{Standard-Model Lagrangian bridge}
+(zero \texttt{sorry}, builds clean under \texttt{lake build}); its principal
+contributions are:
+
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Sector splitting of the abelian octonion kinetic}
+  (Sect.~\ref{sec:gauge}): the
+  \hyperref[lean:LO-kinetic-split]{three-sector kinetic split} writes
+  $L_O^{\rm kin}=L_{O,{\rm EM}}^{\rm kin}+L_{O,{\rm Weak}}^{\rm kin}+L_{O,{\rm Strong}}^{\rm kin}$
+  under the explicit force-sector assignment (the
+  \hyperref[lean:O-to-sector]{force-sector map}) from the
+  \hyperref[lean:forces]{Forces module}; sector aggregates project to
+  the textbook $B$, $W$, $G$ kinetic blocks; the SM gauge total equals
+  $L_O^{\rm kin}$ exactly (the
+  \hyperref[lean:gauge-eq-kin]{gauge--kinetic equality}).
+\item \textbf{Triality-summed fermion coupling} (Sect.~\ref{sec:fermion}):
+  per-generation fermion currents on the $8_s$ carrier are summed by two
+  applications of the proved $J$-linearity (the
+  \hyperref[lean:J-add]{source-coupling additivity lemma}); the
+  \hyperref[lean:three-gen]{three-generation equality} packages the result.
+\item \textbf{Higgs as the octonion scalar} (Sect.~\ref{sec:higgs}):
+  the Higgs kinetic block is the per-direction sum of the
+  \hyperref[lean:scalar-norm]{octonion scalar norm}; the
+  symmetry-breaking potential is the existing
+  \hyperref[lean:higgs-pot]{Higgs potential} with
+  $\lambda\mapsto\lambda_{\rm eff}$ (the
+  \hyperref[lean:lambda-eff]{effective quartic}) and
+  $v\mapsto\texttt{lockinVev}$ (the
+  \hyperref[lean:lockin-vev]{lock-in vev}), expanded to the textbook
+  quartic form (the
+  \hyperref[lean:higgs-expanded]{expanded Higgs potential identity}).
+\item \textbf{Mass-scale closure} (Sect.~\ref{subsec:kappa6}):
+  $\kappa_6(\xi,\Phi,t)=\eta_{\mathrm{local}}(\xi)\,\gamma\,C_2(\xi,\Phi,t)$
+  with local $\eta$, proved lapse concentration at lock-in, and
+  \hyperref[lean:kappa6-factorisation]{$\kappa_6$ factorisation witness}.
+\item \textbf{Yukawa from the TUFT mass chart} (Sect.~\ref{sec:yukawa}):
+  $y_f := \sqrt{2}\,m_f(\xi)/v(\xi)$ with $m_f$ from the Hopf/Beltrami
+  scalar at the now slice; the identity $y_f v / \sqrt{2}=m_f$ is proved
+  (the \hyperref[lean:yukawa-mass]{Yukawa--mass identity}).
+\item \textbf{Assembled SM Lagrangian} (Sect.~\ref{sec:assembly}):
+  the \hyperref[lean:SM-record]{SM Lagrangian record} and its
+  \hyperref[lean:SM-fromHQIV]{from-HQIV constructor} package the five
+  sector pieces; the headline theorem (the
+  \hyperref[lean:headline]{SM-from-HQIV discrete-action theorem})
+  certifies the five sector equalities simultaneously; the total-action
+  equality (the
+  \hyperref[lean:total-split]{total-action split theorem}) exhibits the
+  SM gauge $+$ fermion $+$ $\phi$-coupling $+$ Friedmann split of the HQIV
+  total cell when $J_{\rm src}=\sum_{\rm gen} J(\rm gen)$.
+\item \textbf{Parameter witness} (Sect.~\ref{sec:parameters}):
+  the \hyperref[lean:param-witness]{parameter witness} certifies
+  $\alpha=3/5$, $\gamma=2/5$, $\alpha_{\rm GUT}=1/42$; the
+  $\kappa_6$ factorisation replaces every former fitted second-order
+  slot---not a simultaneous PDG fit set.
+\end{itemize}
+
+\subsection{What is and isn't proved}
+\label{subsec:not-claimed}
+
+This module is a \emph{structural bridge}, not a re-derivation of textbook
+field equations:
+
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Proved (Lean).} The five sector equalities of the
+  \hyperref[lean:headline]{SM-from-HQIV discrete-action theorem}; the
+  total-action split of the
+  \hyperref[lean:total-split]{total-action split theorem}; the
+  \hyperref[lean:param-witness]{parameter witness}; linearity of the
+  Yukawa sum (the \hyperref[lean:yukawa-sum]{Yukawa sum identity}).
+\item \textbf{Black-box ingredients.} The HQIV kinetic, source,
+  $\phi$-coupling, and gravitational pieces, together with the Higgs
+  potential, lock-in vev, geometric mass functional, effective quartic,
+  and force-sector map, are imported from upstream modules; all
+  \texttt{sm\_*\_from\_HQIV} theorems are tautological equalities.
+  Any smooth-manifold translation is a comparison layer only. Load-bearing
+  predictions of \cite{hqiv-oct-action-paper} live on the discrete spine.
+\item \textbf{Symbolic kinetic terms.} Fermion and Higgs kinetic shadows
+  remain on $\Phi:\mathrm{Fin}\,8\to\mathbb{R}$; no BRST quantisation here.
+\item \textbf{Non-abelian holonomy.} Per-sector kinetic uses abelian
+  $F^a{}_{\mu\nu}=A^a{}_\nu-A^a{}_\mu$; the weak commutator scaffold is
+  upstream and not closed in this module.
+\item \textbf{Single witness, no PDG fit.} Yukawa weights come from the
+  resonance ladder and $\tau$-Planck anchor on the discrete spine; the Higgs
+  vev is the lock-in $v$ above. Under the default proton lock-in witness of
+  \cite{hqiv-tuft-dynamic-mass-spectrum-paper,hqiv-kirchhoff-paper}, PDG masses are
+  comparison targets, not simultaneous solve anchors.
+\end{itemize}
+
+\section{Sector projection of the gauge kinetic block}
+\label{sec:gauge}
+
+The HQIV abelian octonion kinetic density (the
+\hyperref[lean:LO-kin]{octonion kinetic density} of
+\cite{hqiv-oct-action-paper}),
+\[
+L_O^{\rm kin}(A)
+= -\tfrac14\,\sum_{a\in\mathrm{Fin}\,8}\,\sum_{\mu,\nu\in\mathrm{Fin}\,4}
+\tfrac{(F^a{}_{\mu\nu}(A))^2}{2},
+\]
+splits into three sector pieces. The force-sector assignment is the
+$O$-component map $\mathrm{forceSector}(a)$ with
+$\mathrm{forceSector}(0)=\mathrm{EM}$,
+$\mathrm{forceSector}(a)=\mathrm{Weak}$ for $a\in\{1,2,3\}$, and
+$\mathrm{forceSector}(a)=\mathrm{Strong}$ for $a\in\{4,5,6,7\}$ (the
+\hyperref[lean:O-to-sector]{force-sector map}), fixed in the
+\hyperref[lean:forces]{Forces module}; component~$0$ in the quaternionic
+subalgebra reduces to classic Maxwell (the
+\hyperref[lean:O-zero-EM]{zeroth-component is EM lemma}), the three
+remaining quaternionic components carry the weak-like sector, and the four
+octonion-extension components carry the colour-like sector.
+
+\begin{definition}[Sector projections of $L_O^{\rm kin}$]
+\label{def:LSM-kin}
+For $s\in\{\text{EM},\text{Weak},\text{Strong}\}$ and a potential $A$,
+\[
+L^{\rm kin}_{O,s}(A)
+:= -\tfrac14\,\sum_{a\in\mathrm{Fin}\,8} \chi_s(a)\,
+\sum_{\mu,\nu\in\mathrm{Fin}\,4}\tfrac{(F^a{}_{\mu\nu}(A))^2}{2},
+\]
+where $\chi_s(a)=1$ if $\mathrm{forceSector}(a)=s$ and zero otherwise (the
+\hyperref[lean:LO-kin-sector]{sector-projected kinetic density}). Aggregating:
+\[
+\mathcal{L}_B(A) := L^{\rm kin}_{O,{\rm EM}}(A),\qquad
+\mathcal{L}_W(A) := L^{\rm kin}_{O,{\rm Weak}}(A),\qquad
+\mathcal{L}_G(A) := L^{\rm kin}_{O,{\rm Strong}}(A)
+\]
+(the \hyperref[lean:LSM-B-kin]{hypercharge kinetic},
+\hyperref[lean:LSM-W-kin]{weak kinetic}, and
+\hyperref[lean:LSM-G-kin]{strong kinetic} aggregates).
+\end{definition}
+
+\begin{theorem}[Three-sector splitting, Lean]
+\label{thm:sector-split}
+For every $A$,
+\[
+L_O^{\rm kin}(A)
+= L^{\rm kin}_{O,{\rm EM}}(A) + L^{\rm kin}_{O,{\rm Weak}}(A) + L^{\rm kin}_{O,{\rm Strong}}(A) .
+\]
+This is the \hyperref[lean:LO-kinetic-split]{three-sector kinetic split}.
+\end{theorem}
+
+\begin{proof}[Sketch (Lean tactic translation)]
+For each octonion channel $a\in\mathrm{Fin}\,8$, exactly one of the three
+indicator functions $\chi_{\rm EM}(a), \chi_{\rm Weak}(a), \chi_{\rm Strong}(a)$
+is one and the other two vanish (case split on $\mathrm{forceSector}(a)$).
+Summing the channel-wise identity over $a$ and applying $-\tfrac14\cdot$
+yields the claim. Lean discharges the finite case split with
+\texttt{cases}~$+$~\texttt{simp} and the global sum with
+\texttt{Finset.sum\_add\_distrib}.
+\end{proof}
+
+\begin{corollary}[SM gauge kinetic equals HQIV octonion kinetic]
+\label{cor:gauge-aggregate}
+$\mathcal{L}_B(A)+\mathcal{L}_W(A)+\mathcal{L}_G(A)=L_O^{\rm kin}(A)$
+(the \hyperref[lean:gauge-eq-kin]{gauge--kinetic equality}).
+\end{corollary}
+
+\paragraph{Reading.}
+The textbook SM gauge kinetic block
+$\mathcal{L}_{\rm gauge}=-\tfrac14(B_{\mu\nu}B^{\mu\nu}+W^I_{\mu\nu}W^{I\mu\nu}
++G^a_{\mu\nu}G^{a\mu\nu})$ is the sector-projected aggregate of the single
+HQIV object $L_O^{\rm kin}$ when the force-sector map is the identification
+fixed by the algebra (colour-preferred axis and hypercharge block of the
+\hyperref[lean:sm-embedding]{SM embedding module}). No new coupling, no new
+field strength: the gauge-kinetic page of $\mathcal{L}_{\rm SM}$ is one
+discrete object with a sector partition.
+
+\section{Fermion sector: minimal coupling and three generations}
+\label{sec:fermion}
+
+The textbook block $i\bar\psi\gamma^\mu D_\mu\psi$ summed over one chiral
+SM generation is supported on the 8-dimensional left-handed $8_s$ carrier of
+the \hyperref[lean:sm-embedding]{SM embedding module}, plus 8 right-handed
+components in $8_c$ (see the branching rule on $8_s$ documented there).
+At the abelian level needed for the present bridge, the Dirac bilinear is
+encoded as a current $J:\mathrm{Fin}\,8\to\mathrm{Fin}\,4\to\mathbb{R}$ on
+the 8s carrier, and the minimal coupling reads off the proved $J\cdot A$ slot
+$L_O^{\rm src}$.
+
+\begin{definition}[Per-generation minimal coupling]
+\label{def:fermion-coupling}
+For a triality generation label $\mathrm{gen}\in\texttt{So8RepIndex}$ and a
+generation current $J_{\rm gen}$,
+\[
+L_{\rm fermion}^{\rm SM}(\mathrm{gen}, J_{\rm gen}, A) := L_O^{\rm src}(J_{\rm gen},A)
+\]
+(the \hyperref[lean:fermion-minimal]{per-generation minimal coupling}).
+The three SM generations correspond to the three Spin(8) irreps
+$8_v, 8_{s^+}, 8_{s^-}$ counted by the
+\hyperref[lean:three-gen-reps]{three-generations-from-triality theorem}
+($\mathrm{card}\,\texttt{So8RepIndex}=3$).
+\end{definition}
+
+\begin{theorem}[Triality-summed fermion coupling, Lean]
+\label{thm:three-generations}
+For any triality-indexed family of currents $J:\texttt{So8RepIndex}\to(\mathrm{Fin}\,8\to\mathrm{Fin}\,4\to\mathbb{R})$,
+\[
+\sum_{\mathrm{gen}\in\{8_v,8_{s^+},8_{s^-}\}} L_{\rm fermion}^{\rm SM}(\mathrm{gen},J(\mathrm{gen}),A)
+= L_O^{\rm src}\!\left(\sum_{\rm gen} J(\rm gen),\;A\right).
+\]
+This is the \hyperref[lean:three-gen]{three-generation equality}; its proof
+is two applications of the
+\hyperref[lean:J-add]{source-coupling additivity lemma}
+(Lemma~3.1 of \cite{hqiv-oct-action-paper}).
+\end{theorem}
+
+\begin{remark}[$8_v$, $8_{s^+}$, $8_{s^-}$ vs.\ generation labelling]
+The \hyperref[lean:sm-gr]{SM--GR unification module} assigns generation
+$1\to 8_v$, generation $2\to 8_{s^+}$, generation $3\to 8_{s^-}$ via the
+\hyperref[lean:sm-gen-index]{generation index map}; this is a
+representation-counting fact, not a mass theorem. The mass hierarchy itself
+is read off the \hyperref[lean:lepton-resonance]{charged-lepton resonance
+module} via the \hyperref[lean:resonance-product]{resonance-product factor}
+(Section~\ref{sec:yukawa} below).
+\end{remark}
+
+\paragraph{Reading.}
+The textbook fermion sector
+$\mathcal{L}_{\rm fermion}=\sum_{\rm gen}i\bar\psi_{\rm gen}\gamma^\mu D_\mu\psi_{\rm gen}$
+is, at the bookkeeping level relevant to the discrete action, the abelian
+source coupling for the sum of the three triality-indexed currents on
+the $8_s$ carrier. The covariant derivative $D_\mu$ encodes the same gauge
+connection $A$ that supplies the sector kinetic block of
+Section~\ref{sec:gauge}; no additional gauge structure is needed.
+
+\section{Higgs sector: octonion scalar, vev, and quartic}
+\label{sec:higgs}
+
+The HQIV scalar lives on the same $\mathrm{Fin}\,8\to\mathbb{R}$ carrier as
+the gauge potential (the \hyperref[lean:weak-higgs]{weak/Higgs scaffold});
+the Higgs kinetic shadow of the textbook $(D_\mu\Phi)^\dagger(D^\mu\Phi)$ is
+read off the \hyperref[lean:scalar-norm]{octonion scalar norm}, summed over
+spacetime directions; the symmetry-breaking potential is the
+\hyperref[lean:higgs-pot]{Higgs potential} at the calibrated
+\hyperref[lean:lockin-vev]{lock-in vev}.
+
+\begin{definition}[Higgs sector projection]
+\label{def:higgs}
+For a per-direction scalar slot $\Phi_{\rm dir}:\mathrm{Fin}\,4\to(\mathrm{Fin}\,8\to\mathbb{R})$,
+\[
+\mathcal{L}_{\rm Higgs}^{\rm kin}(\Phi_{\rm dir})
+:= \sum_{\mu\in\mathrm{Fin}\,4}\,\mathrm{scalarNormSq}(\Phi_{\rm dir}(\mu))
+\]
+(the \hyperref[lean:LSM-Higgs-kin]{SM Higgs kinetic shadow}). For a scalar
+configuration $\Phi$,
+\[
+\mathcal{L}_{\rm Higgs}^{\rm pot}(\Phi)
+:= \texttt{higgsPotential}(\lambda_{\rm eff},\,\texttt{lockinVev},\,\Phi)
+= \lambda_{\rm eff}\bigl(|\Phi|^2 - \texttt{lockinVev}^2\bigr)^2
+\]
+(the \hyperref[lean:LSM-Higgs-pot]{SM Higgs potential shadow}), with
+$\lambda_{\rm eff}$ from the \hyperref[lean:sm-gr]{SM--GR unification module}
+and the lock-in vev from the weak/Higgs scaffold,
+\[
+\texttt{lockinVev}
+:= \sqrt{\eta_{\rm paper}\,\Omega_k(m_{\rm lockin};m_{\rm lockin})}.
+\]
+\end{definition}
+
+\begin{theorem}[Textbook expanded form, Lean]
+\label{thm:higgs-expanded}
+\[
+\mathcal{L}_{\rm Higgs}^{\rm pot}(\Phi)
+= \lambda_{\rm eff}\,|\Phi|^4
+- 2\lambda_{\rm eff}\,\texttt{lockinVev}^2\,|\Phi|^2
++ \lambda_{\rm eff}\,\texttt{lockinVev}^4 .
+\]
+This is the \hyperref[lean:higgs-expanded]{expanded Higgs potential identity}
+(proved by \texttt{unfold} plus \texttt{ring}).
+\end{theorem}
+
+\begin{remark}[Lock-in calibration of the vev]
+\label{rem:lockin}
+The calibration $\texttt{lockinVev}^2=\eta_{\rm paper}$ when
+$\Omega_k(m_{\rm lockin};m_{\rm lockin})=1$ is the
+\hyperref[lean:lockin-vev-sq]{lock-in vev squared identity}; the curvature
+ratio at lock-in is the
+\hyperref[lean:omega-k-lockin]{lock-in $\Omega_k$ calibration}. The lock-in
+vev is therefore \emph{not} a fitted constant: it is the square root of the
+proved baryogenesis $\eta$-anchor, packaged once and reused unchanged in the
+Higgs sector.
+\end{remark}
+
+\paragraph{Reading.}
+The textbook Higgs page becomes, in HQIV notation, the diagonal scalar-norm
+sum (kinetic) plus the expanded Higgs potential with
+$(\lambda,v^2)=(\lambda_{\rm eff},\eta_{\rm paper})$. The constant
+$\lambda_{\rm eff}\,v^4$ is a global vacuum offset that does not enter
+equations of motion.
+
+\section{Yukawa sector from the resonance ladder}
+\label{sec:yukawa}
+
+The Yukawa block of $\mathcal{L}_{\rm SM}$ is
+$\mathcal{L}_Y=-\sum_f y_f\,\bar f\Phi f + \text{h.c.}$. In HQIV the Yukawa
+coupling for each SM flavour is the textbook combination $y_f=\sqrt{2}\,
+m_f(\xi)/v(\xi)$ at the selected now slice, with
+$v(\xi)=\texttt{tuftVevAtXi}(\xi)$ from the dynamic Casimir chart and
+$m_f(\xi)$ from the TUFT Hopf/Beltrami scalar
+(\cite{hqiv-tuft-dynamic-mass-spectrum-paper},
+\hyperref[lean:tuft-lepton-mass]{TUFT lepton mass at $\xi$}).
+At lock-in the archived geometric ladder in
+\texttt{papers/archive/lean\_to\_mass\_spectrum/} remains available as a
+diagnostic, but the physical chart uses $\Lambda_{\mathrm{Hopf}}=\sqrt{2\pi}\,v\,\kappa_6(\xi,\Phi,t)$
+with $\kappa_6$ from \eqref{eq:kappa6-factorisation}---not a separate
+Yukawa fit.
+
+\begin{definition}[SM Yukawa coupling]
+\label{def:yukawa}
+For an SM flavour label $\ell\in\texttt{SMMassLabel}$ (the
+\hyperref[lean:sm-mass-label-type]{SM mass-label type}),
+\[
+y_{\rm SM}(\ell)
+:= \frac{\sqrt{2}\;m_\ell^{\mathrm{geom}}}{\texttt{lockinVev}}
+\]
+(the \hyperref[lean:y-SM]{SM Yukawa coupling}). For a symbolic Dirac bilinear
+$B:\texttt{SMMassLabel}\to\mathbb{R}$,
+\[
+\mathcal{L}^{\rm SM}_{\rm Yukawa}(\ell, B)
+:= -\,y_{\rm SM}(\ell)\;B(\ell)
+\]
+(the \hyperref[lean:L-SM-Yukawa]{per-flavour Yukawa term}); the all-flavour
+aggregate is the list sum over twelve SM flavours (the
+\hyperref[lean:all-flavours]{all-flavours list}, length certified by the
+\hyperref[lean:all-flavours-len]{all-flavours length lemma}).
+\end{definition}
+
+\begin{theorem}[Yukawa identity, Lean]
+\label{thm:yukawa-identity}
+For every SM flavour $\ell$ and every $v=\texttt{lockinVev}\neq 0$,
+\[
+\frac{y_{\rm SM}(\ell)\;v}{\sqrt{2}} = m_\ell^{\mathrm{geom}}
+= m_\tau^{\rm Pl}\;/\;\mathrm{resonanceProduct}(\mathrm{genIndex}(\ell)).
+\]
+This is the pair comprising the
+\hyperref[lean:yukawa-mass]{Yukawa--mass identity} and the
+\hyperref[lean:yukawa-resonance]{Yukawa resonance witness}.
+\end{theorem}
+
+\begin{theorem}[Yukawa linearity over flavours, Lean]
+\label{thm:yukawa-sum}
+For any flavour list $L$ and bilinear assignment $B$,
+\[
+\sum_{\ell\in L} \mathcal{L}^{\rm SM}_{\rm Yukawa}(\ell, B(\ell))
+= -\,\sum_{\ell\in L} y_{\rm SM}(\ell)\,B(\ell) .
+\]
+This is the \hyperref[lean:yukawa-sum]{Yukawa sum identity}.
+\end{theorem}
+
+\begin{remark}[No fitted Yukawa matrix]
+\label{rem:no-fits}
+The textbook SM stores $\mathcal{O}(20)$ real Yukawa and mixing parameters
+fitted from experiment. In HQIV these collapse to: three lattice rationals,
+one now slice $(\xi,\Phi,t)$, and the proved factorisation
+\eqref{eq:kappa6-factorisation}--\eqref{eq:C2-lapse}. Laboratory masses
+enter only as comparison targets. The baryogenesis anchor
+$\eta_{\mathrm{paper}}$ is the same surplus wired into
+$\eta_{\mathrm{local}}(\xi)$ and into \texttt{lockinVev}; the dynamic
+bulk integrator (\texttt{scripts/hqiv\_dynamic\_bulk\_bbn.py}) propagates
+$\eta_{\mathrm{local}}$ shell-by-shell and reports emergent lock-in without
+re-fitting $\eta$ at each step.
+\end{remark}
+
+\paragraph{Reading.}
+The textbook Yukawa ``page'' $-y_e\bar L\Phi e_R - y_u\bar Q\tilde\Phi u_R
+- y_d\bar Q\Phi d_R + \text{h.c.}$ (three generations) becomes, in HQIV
+notation, a list-sum over twelve flavours each weighted by
+$\sqrt{2}\,m_\tau^{\rm Pl}/(\texttt{lockinVev}\cdot\mathrm{resonanceProduct})$.
+\emph{Three} numbers ($m_\tau^{\rm Pl}$, $k_{\tau\mu}$, $k_{\mu e}$) fix the
+entire Yukawa sector.
+
+\section{Assembled SM Lagrangian and headline theorems}
+\label{sec:assembly}
+
+\begin{definition}[SM Lagrangian record (Lean)]
+\label{def:SM-record}
+The \hyperref[lean:SM-record]{SM Lagrangian record} carries five real-valued fields
+$(\mathcal{L}_{\rm gauge},\mathcal{L}_{\rm fermion},
+\mathcal{L}_{\rm Higgs}^{\rm kin},\mathcal{L}_{\rm Higgs}^{\rm pot},
+\mathcal{L}_Y)$. The total is
+\[
+\mathcal{L}_{\rm SM}^{\rm total}
+:= \mathcal{L}_{\rm gauge} + \mathcal{L}_{\rm fermion}
++ \mathcal{L}_{\rm Higgs}^{\rm kin} - \mathcal{L}_{\rm Higgs}^{\rm pot}
++ \mathcal{L}_Y
+\]
+(the \hyperref[lean:SM-total]{SM Lagrangian total}).
+\end{definition}
+
+\begin{definition}[SM Lagrangian from HQIV (Lean)]
+\label{def:SM-fromHQIV}
+Given an HQIV gauge potential $A$, a triality-indexed current family $J$,
+an octonion scalar $\Phi$, a per-direction scalar slot $\Phi_{\rm dir}$, and
+a flavour bilinear assignment $B$, the
+\hyperref[lean:SM-fromHQIV]{from-HQIV constructor} sets
+\[
+\mathcal{L}_{\rm gauge} = L_O^{\rm kin}(A),\quad
+\mathcal{L}_{\rm fermion} = \sum_{\rm gen}L_O^{\rm src}(J(\rm gen),A),
+\]
+\[
+\mathcal{L}_{\rm Higgs}^{\rm kin} = \sum_\mu \mathrm{scalarNormSq}(\Phi_{\rm dir}(\mu)),\quad
+\mathcal{L}_{\rm Higgs}^{\rm pot} = \texttt{higgsPotential}(\lambda_{\rm eff},\texttt{lockinVev},\Phi),
+\]
+\[
+\mathcal{L}_Y = \!\!\sum_{\ell\in\texttt{all\_SM\_flavours}}\!\! \mathcal{L}^{\rm SM}_{\rm Yukawa}(\ell, B(\ell)) .
+\]
+\end{definition}
+
+\begin{theorem}[Headline: SM Lagrangian = HQIV discrete action]
+\label{thm:headline}
+For every $(A, J, \Phi, \Phi_{\rm dir}, B)$, writing $L$ for the from-HQIV
+record at those arguments,
+\begin{enumerate}[leftmargin=2em]
+\item $\mathcal{L}_{\rm gauge}(L) = L_O^{\rm kin}(A)$;
+\item $\mathcal{L}_{\rm fermion}(L) = L_O^{\rm src}\!\left(J_{\rm SM}^{\rm tot}(J),A\right)$,
+where $J_{\rm SM}^{\rm tot}$ is the \hyperref[lean:J-SM-total]{triality-summed SM current};
+\item $\mathcal{L}_{\rm Higgs}^{\rm kin}(L)
+= \sum_\mu \mathrm{scalarNormSq}(\Phi_{\rm dir}(\mu))$;
+\item $\mathcal{L}_{\rm Higgs}^{\rm pot}(L)
+= \texttt{higgsPotential}(\lambda_{\rm eff},\texttt{lockinVev},\Phi)$;
+\item $\mathcal{L}_Y(L)$ is the twelve-flavour Yukawa sum with weights
+$\sqrt{2}\,m_\ell^{\mathrm{geom}}/\texttt{lockinVev}$.
+\end{enumerate}
+This is the \hyperref[lean:headline]{SM-from-HQIV discrete-action theorem}.
+\end{theorem}
+
+\begin{theorem}[Total HQIV action split, Lean]
+\label{thm:total-split-lean}
+With $J_{\rm SM}^{\rm tot}(J)$ as in Theorem~\ref{thm:headline},
+\begin{multline*}
+\mathcal{S}_{\mathrm{HQIV}}^{\mathrm{total}}\bigl(J_{\rm SM}^{\rm tot}(J),A,\phi_{\rm val},\rho_m,\rho_r\bigr)
+\\
+= \biggl(L_O^{\rm kin}(A)
++ 4\pi\sum_{\rm gen} L_O^{\rm src}(J({\rm gen}),A)
++ L_O^\phi(A,\phi_{\rm val})\biggr) + S_{\rm HQVM\,grav}(\phi_{\rm val},\rho_m,\rho_r).
+\end{multline*}
+This is the \hyperref[lean:total-split]{total-action split theorem}; its
+proof uses two invocations of the source-coupling additivity lemma, then
+\texttt{ring} on the residue.
+\end{theorem}
+
+\paragraph{Reading.}
+Theorem~\ref{thm:total-split-lean} exposes the dictionary
+\[
+\boxed{\;
+\mathcal{S}_{\rm HQIV}
+= \mathcal{L}_{\rm gauge}^{\rm SM}
++ \frac{1}{4\pi}\mathcal{L}_{\rm fermion}^{\rm SM}
++ \mathcal{L}_{\rm Higgs\;cross}^{\rm SM}
++ S_{\rm HQVM\,grav}
+\;}
+\]
+between the page-long SM Lagrangian and the HQIV total cell. The
+$1/(4\pi)$ factor is the discrete normalization from the Maxwell-source
+convention of the \hyperref[lean:LO-maxwell]{general O-Maxwell Lagrangian};
+the Higgs-cross label captures the $\phi$-coupling remnant once $\Phi$ is
+collapsed to the lattice scalar at the electroweak shell (shell index $5$ in
+the SM--GR module).
+
+\section{Parameter accounting and witnesses}
+\label{sec:parameters}
+
+The full from-HQIV construction consumes the following \emph{derived}
+discrete inputs. None is a simultaneous PDG fit; laboratory comparison uses
+the proton lock-in witness discipline of
+\cite{hqiv-tuft-dynamic-mass-spectrum-paper,hqiv-kirchhoff-paper}.
+
+\begin{table}[ht]
+\caption{Inputs to the HQIV-derived SM Lagrangian after the $\kappa_6$
+closure. None is a simultaneous PDG fit; the only operational choice is the
+now slice $(\xi,\Phi,t)$.}
+\label{tab:SM-parameters}
+\centering
+\footnotesize
+\begin{tabular}{@{}p{3.6cm}p{5.2cm}p{4.6cm}@{}}
+\toprule
+Slot & HQIV source & Appendix link \\
+\midrule
+$\alpha=3/5$ & Lattice stars-and-bars &
+  \hyperref[lean:alpha-35]{lattice $\alpha$ identity} \\
+$\gamma=2/5$ & Horizon split $1-\alpha$ &
+  \hyperref[lean:gamma-25]{horizon-split $\gamma$ identity} \\
+$\alpha_{\rm GUT}=1/42$ & Cube $\times$ octonion channels &
+  \hyperref[lean:alpha-gut]{GUT coupling identity} \\
+$\eta_{\mathrm{local}}(\xi)$ & $\eta_{\mathrm{paper}}\,B_{\mathrm{curv}}(\xi)$, $B_{\mathrm{curv}}=1$ &
+  \hyperref[lean:eta-local-shell]{homogeneous matter fraction} \\
+$C_2(\xi,\Phi,t)$ & Lapse concentration \eqref{eq:C2-lapse} &
+  \hyperref[lean:C2-lockin]{lock-in $C_2=56/45$} \\
+$\kappa_6$ & $\eta_{\mathrm{local}}\,\gamma\,C_2$ &
+  \hyperref[lean:kappa6-factorisation]{factorisation} \\
+$v(\xi)$, $m_f(\xi)$ & Dynamic Casimir + TUFT scalar &
+  \hyperref[lean:tuft-lepton-mass]{TUFT masses at $\xi$} \\
+$\lambda_{\rm eff}$ & EW-shell quartic &
+  \hyperref[lean:lambda-eff]{effective quartic} \\
+\texttt{lockinVev} & $\sqrt{\eta_{\mathrm{paper}}}$ at $\Omega_k=1$ &
+  \hyperref[lean:lockin-vev]{lock-in vev} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{theorem}[Parameter witness, Lean]
+\label{thm:param-witness}
+$\alpha=3/5$, $\gamma_{\rm HQIV}=2/5$, $\alpha_{\rm GUT}=1/42$
+simultaneously. This is the \hyperref[lean:param-witness]{parameter witness},
+discharged by the three rational identities listed in the table.
+\end{theorem}
+
+\begin{theorem}[Yukawa resonance witness, Lean]
+\label{thm:yukawa-resonance-witness}
+For every SM flavour $\ell$, when $\texttt{lockinVev}\neq 0$,
+\[
+\frac{y_{\rm SM}(\ell)\,\texttt{lockinVev}}{\sqrt{2}}
+= m_\tau^{\rm Pl}\;/\;\mathrm{resonanceProduct}(\mathrm{genIndex}(\ell)).
+\]
+This is the \hyperref[lean:yukawa-resonance]{Yukawa resonance witness}.
+\end{theorem}
+
+\begin{remark}[Comparison with textbook parameter count]
+\label{rem:param-count}
+The textbook SM has $\mathcal{O}(20)$ fitted real parameters. The HQIV
+bridge compresses them to: three proved lattice rationals, one now slice
+$(\xi,\Phi,t)$, and the derived $\kappa_6$ factorisation. Gauge couplings
+trace to $\alpha_{\rm GUT}$ and the $\phi$-correction of
+\cite{hqiv-oct-action-paper}; charged-fermion masses trace to the TUFT chart;
+$(\mu^2,\lambda)$ trace to $(\eta_{\mathrm{paper}},\lambda_{\rm eff})$ at
+lock-in. The dynamic baryogenesis integrator recovers
+$\eta_{\mathrm{paper}}$ at lock-in to $\sim 1\%$ on the $\Omega_b$ path
+without injecting a separate $\eta$ knob per shell.
+\end{remark}
+
+\section{Outlook: what comes next}
+\label{sec:outlook}
+
+The structural bridge of Theorem~\ref{thm:headline} is exact at the
+bookkeeping level. To translate it to textbook smooth-manifold notation (a
+calculation-approximation layer for comparison with
+\cite{peskin1995,schwartz2014}, \emph{not} a foundational completion of HQIV),
+three Tier-III tasks remain (ordering consistent with
+\cite{hqiv-oct-action-paper}):
+
+\begin{enumerate}[leftmargin=2em]
+\item \textbf{Variational fermion sector.} Promote the symbolic current to a
+  typed Dirac bilinear on the Cl$(0,6)$ spinor carrier already present in the
+  library; the abelian source coupling of Section~\ref{sec:fermion} becomes
+  the textbook minimal coupling.
+\item \textbf{Non-abelian gauge kinetic.} Replace abelian $F^a{}_{\mu\nu}$ in
+  the weak and strong sectors by the non-abelian weak field-strength scaffold
+  and the $\mathrm{SU}(3)_c$ chart Lie law; the reduction theorem upstream
+  guarantees collapse to the abelian core when the commutator vanishes.
+\item \textbf{Higgs covariant derivative.} Wire full gauge connection data into
+  the fermion and Higgs slots; verify the kinetic shadow reduces to the
+  scalar-norm sum in the abelian limit.
+\end{enumerate}
+
+None of these tasks requires new physics input. The discrete constants,
+$\kappa_6$ factorisation, dynamic vev, and mass chart are already proved;
+smooth-manifold form is a translation layer only---not a continuum-completion
+programme.
+
+\section*{Acknowledgments}
+AI-assisted drafting and repository tooling were used during manuscript
+preparation. Formal claims refer to the HQIV-LEAN library \cite{hqiv-lean};
+the headline module builds clean under \texttt{lake build}
+\texttt{Hqiv.Physics.StandardModelLagrangianFromDiscreteAction}.
+
+\appendix
+\section{Lean module index}
+\label{app:lean-index}
+
+The Lean development lives at \url{https://github.com/HQIV/hqiv-lean}
+\cite{hqiv-lean}. Reader-friendly anchors in the body link here.
+
+\begingroup
+\sloppy
+\setlength{\emergencystretch}{4em}
+\begin{description}[leftmargin=0em,style=nextline]
+\item[\phantomsection\label{lean:sm-lagrangian-module}\textbf{Standard-Model Lagrangian bridge.}]
+  Headline module: five sector equalities and parameter witness.
+  \leanfile{Hqiv/Physics/StandardModelLagrangianFromDiscreteAction.lean}.
+\item[\phantomsection\label{lean:action}\textbf{O-Maxwell action module.}]
+  Discrete gauge action upstream. \leanfile{Hqiv/Physics/Action.lean}.
+\item[\phantomsection\label{lean:F-from-A}\textbf{Field-strength constructor.}]
+  $F^a{}_{\mu\nu}(A)=A^a{}_\nu-A^a{}_\mu$. \leanid{F\_from\_A}.
+\item[\phantomsection\label{lean:LO-kin}\textbf{Octonion kinetic density.}]
+  $L_O^{\rm kin}$. \leanid{L\_O\_kinetic}.
+\item[\phantomsection\label{lean:LO-src}\textbf{Octonion source coupling.}]
+  $L_O^{\rm src}$. \leanid{L\_O\_source\_general}.
+\item[\phantomsection\label{lean:LO-phi}\textbf{Scalar $\phi$-coupling slot.}]
+  \leanid{L\_O\_phi\_coupling}.
+\item[\phantomsection\label{lean:LO-maxwell}\textbf{General O-Maxwell Lagrangian.}]
+  \leanid{L\_O\_Maxwell\_general}.
+\item[\phantomsection\label{lean:SHQVM-grav}\textbf{HQVM gravitational constraint.}]
+  \leanid{S\_HQVM\_grav}.
+\item[\phantomsection\label{lean:friedmann-iff}\textbf{Friedmann equivalence.}]
+  \leanid{S\_HQVM\_grav\_zero\_iff\_Friedmann}.
+\item[\phantomsection\label{lean:action-total}\textbf{HQIV total action.}]
+  \leanid{action\_total\_general}.
+\item[\phantomsection\label{lean:forces}\textbf{Forces module.}]
+  \leanfile{Hqiv/Physics/Forces.lean}.
+\item[\phantomsection\label{lean:O-to-sector}\textbf{Force-sector map.}]
+  \leanid{O\_component\_to\_sector}.
+\item[\phantomsection\label{lean:O-zero-EM}\textbf{Zeroth component is EM.}]
+  \leanid{O\_component\_zero\_is\_EM}.
+\item[\phantomsection\label{lean:LO-kin-sector}\textbf{Sector-projected kinetic.}]
+  \leanid{L\_O\_kinetic\_sector}.
+\item[\phantomsection\label{lean:LO-kinetic-split}\textbf{Three-sector kinetic split.}]
+  \leanid{L\_O\_kinetic\_eq\_sum\_of\_sector\_pieces}.
+\item[\phantomsection\label{lean:LSM-B-kin}\textbf{Hypercharge kinetic aggregate.}]
+  \leanid{L\_SM\_B\_kinetic}.
+\item[\phantomsection\label{lean:LSM-W-kin}\textbf{Weak kinetic aggregate.}]
+  \leanid{L\_SM\_W\_kinetic}.
+\item[\phantomsection\label{lean:LSM-G-kin}\textbf{Strong kinetic aggregate.}]
+  \leanid{L\_SM\_G\_kinetic}.
+\item[\phantomsection\label{lean:gauge-eq-kin}\textbf{Gauge--kinetic equality.}]
+  \leanid{L\_SM\_gauge\_kinetic\_eq\_L\_O\_kinetic}.
+\item[\phantomsection\label{lean:sm-embedding}\textbf{SM embedding module.}]
+  \leanfile{Hqiv/Algebra/SMEmbedding.lean}.
+\item[\phantomsection\label{lean:fermion-minimal}\textbf{Per-generation minimal coupling.}]
+  \leanid{L\_SM\_fermion\_minimal\_coupling}.
+\item[\phantomsection\label{lean:three-gen-reps}\textbf{Three generations from triality.}]
+  \leanid{three\_generations\_from\_triality\_reps}.
+\item[\phantomsection\label{lean:three-gen}\textbf{Three-generation equality.}]
+  \leanid{L\_SM\_three\_generations\_eq\_total\_source}.
+\item[\phantomsection\label{lean:J-add}\textbf{Source-coupling additivity.}]
+  \leanid{L\_O\_source\_general\_add\_J}.
+\item[\phantomsection\label{lean:sm-gr}\textbf{SM--GR unification module.}]
+  \leanfile{Hqiv/Physics/SM\_GR\_Unification.lean}.
+\item[\phantomsection\label{lean:sm-gen-index}\textbf{Generation index map.}]
+  \leanid{smGenerationIndex}.
+\item[\phantomsection\label{lean:lepton-resonance}\textbf{Charged-lepton resonance.}]
+  \leanfile{Hqiv/Physics/ChargedLeptonResonance.lean}.
+\item[\phantomsection\label{lean:resonance-product}\textbf{Resonance-product factor.}]
+  \leanid{resonanceProduct}.
+\item[\phantomsection\label{lean:weak-higgs}\textbf{Weak/Higgs scaffold.}]
+  \leanfile{Hqiv/Physics/WeakHiggsFromOMaxwellScaffold.lean}.
+\item[\phantomsection\label{lean:scalar-norm}\textbf{Octonion scalar norm.}]
+  \leanid{scalarNormSq}.
+\item[\phantomsection\label{lean:higgs-pot}\textbf{Higgs potential.}]
+  \leanid{higgsPotential}.
+\item[\phantomsection\label{lean:lockin-vev}\textbf{Lock-in vev.}]
+  \leanid{lockinVev}.
+\item[\phantomsection\label{lean:lambda-eff}\textbf{Effective quartic.}]
+  \leanid{lambda\_eff}.
+\item[\phantomsection\label{lean:LSM-Higgs-kin}\textbf{SM Higgs kinetic shadow.}]
+  \leanid{L\_SM\_Higgs\_kinetic}.
+\item[\phantomsection\label{lean:LSM-Higgs-pot}\textbf{SM Higgs potential shadow.}]
+  \leanid{L\_SM\_Higgs\_potential}.
+\item[\phantomsection\label{lean:higgs-expanded}\textbf{Expanded Higgs potential.}]
+  \leanid{L\_SM\_Higgs\_potential\_expanded}.
+\item[\phantomsection\label{lean:lockin-vev-sq}\textbf{Lock-in vev squared.}]
+  \leanid{lockinVev\_sq\_eq\_eta\_paper}.
+\item[\phantomsection\label{lean:omega-k-lockin}\textbf{Lock-in $\Omega_k$ calibration.}]
+  \leanid{omega\_k\_lockin\_calibration}.
+\item[\phantomsection\label{lean:sm-mass-label}\textbf{Geometric SM mass functional.}]
+  \leanid{smMassFromGeometryLabel}.
+\item[\phantomsection\label{lean:sm-mass-label-type}\textbf{SM mass-label type.}]
+  \leanid{SMMassLabel}.
+\item[\phantomsection\label{lean:resonance-steps}\textbf{Two resonance steps.}]
+  \leanid{resonance\_k\_tau\_mu}, \leanid{resonance\_k\_mu\_e}.
+\item[\phantomsection\label{lean:m-tau-pl}\textbf{Tau Planck mass.}]
+  \leanid{m\_tau\_Pl}.
+\item[\phantomsection\label{lean:y-SM}\textbf{SM Yukawa coupling.}]
+  \leanid{y\_SM}.
+\item[\phantomsection\label{lean:L-SM-Yukawa}\textbf{Per-flavour Yukawa term.}]
+  \leanid{L\_SM\_Yukawa\_flavour}.
+\item[\phantomsection\label{lean:all-flavours}\textbf{All-flavours list.}]
+  \leanid{all\_SM\_flavours}.
+\item[\phantomsection\label{lean:all-flavours-len}\textbf{All-flavours length.}]
+  \leanid{all\_SM\_flavours\_length}.
+\item[\phantomsection\label{lean:yukawa-mass}\textbf{Yukawa--mass identity.}]
+  \leanid{y\_SM\_times\_v\_over\_sqrt2\_eq\_mass}.
+\item[\phantomsection\label{lean:yukawa-resonance}\textbf{Yukawa resonance witness.}]
+  \leanid{SM\_Lagrangian\_yukawa\_resonance\_witness}.
+\item[\phantomsection\label{lean:yukawa-sum}\textbf{Yukawa sum identity.}]
+  \leanid{L\_SM\_Yukawa\_sum\_eq\_sum}.
+\item[\phantomsection\label{lean:SM-record}\textbf{SM Lagrangian record.}]
+  \leanid{SM\_Lagrangian}.
+\item[\phantomsection\label{lean:SM-fromHQIV}\textbf{From-HQIV constructor.}]
+  \leanid{SM\_Lagrangian.fromHQIV}.
+\item[\phantomsection\label{lean:SM-total}\textbf{SM Lagrangian total.}]
+  \leanid{SM\_Lagrangian.total}.
+\item[\phantomsection\label{lean:headline}\textbf{SM-from-HQIV discrete-action theorem.}]
+  \leanid{SM\_Lagrangian\_from\_HQIV\_discrete\_action}.
+\item[\phantomsection\label{lean:J-SM-total}\textbf{Triality-summed SM current.}]
+  \leanid{J\_SM\_total}.
+\item[\phantomsection\label{lean:total-split}\textbf{Total-action split theorem.}]
+  \leanid{HQIV\_total\_action\_eq\_SM\_gauge\_fermion\_plus\_phi\_coupling\_plus\_grav}.
+\item[\phantomsection\label{lean:param-witness}\textbf{Parameter witness.}]
+  \leanid{SM\_Lagrangian\_parameter\_witness}.
+\item[\phantomsection\label{lean:alpha-35}\textbf{Lattice $\alpha$ identity.}]
+  \leanid{alpha\_eq\_3\_5}.
+\item[\phantomsection\label{lean:gamma-25}\textbf{Horizon-split $\gamma$ identity.}]
+  \leanid{gamma\_eq\_2\_5}.
+\item[\phantomsection\label{lean:alpha-gut}\textbf{GUT coupling identity.}]
+  \leanid{alpha\_GUT\_eq\_1\_42}.
+\item[\phantomsection\label{lean:proton-lockin}\textbf{Proton lock-in scale-witness.}]
+  \leanid{ScaleWitness.proton\_lockin} in
+  \leanfile{Hqiv/Physics/ScaleWitness.lean}.
+\item[\phantomsection\label{lean:kappa6-factorisation}\textbf{$\kappa_6$ factorisation.}]
+  \leanid{tuftHopfKappa6\_eq\_matter\_fraction\_gamma\_lapse\_concentration}
+  in \leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean}.
+\item[\phantomsection\label{lean:eta-local-shell}\textbf{Local matter fraction on shells.}]
+  \leanid{tuftMatterFractionAtXi\_eq\_eta\_partial\_on\_shell}.
+\item[\phantomsection\label{lean:C2-lockin}\textbf{Lock-in lapse concentration.}]
+  \leanid{tuftLapseConcentrationAtXi\_lockin\_zero}.
+\item[\phantomsection\label{lean:kappa6-at-xi}\textbf{$\kappa_6$ at horizon.}]
+  \leanid{tuftHopfKappa6AtXi}, \leanid{tuftHopfKappa6}.
+\item[\phantomsection\label{lean:tuft-lepton-mass}\textbf{TUFT lepton mass at $\xi$.}]
+  \leanid{tuftLeptonMassFromVevAtXi\_MeV}.
+\end{description}
+\endgroup
+
+\bibliographystyle{plain}
+\bibliography{../references}
+
+\end{document}

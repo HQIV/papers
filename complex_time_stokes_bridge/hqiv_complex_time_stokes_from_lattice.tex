@@ -1,0 +1,521 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\usepackage[final]{microtype}
+\setlength{\emergencystretch}{3em}
+
+\newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
+\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\nolinkurl{#1}}}
+\newcommand{\leanid}[1]{\nolinkurl{#1}}
+
+\title[Complex time and Stokes from the HQIV lattice]{Complex Time, Lapse, and Stokes Semigroup Factors from the HQIV Null Lattice:\\
+A Wick Bridge to Nielsen's Complex-Time Navier--Stokes Program}
+
+\author{Steven Ettinger Jr}
+\address{Independent Researcher}
+\email{steven@disregardfiat.tech}
+\date{Preprint v1 --- \today}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{hypothesis}[theorem]{Hypothesis bundle (Tier~III)}
+
+\begin{document}
+
+\begin{abstract}
+\noindent\textbf{Position.}
+There is no prior HQIV publication that derives complexified temporal structure from the null
+lattice and compares it to Jenny Lorraine Nielsen's complex-time Navier--Stokes program
+\cite{NielsenSemitaNS2026,NielsenTUFT2026}.
+The thermodynamics companion \cite{hqiv-thermo-arrow-paper} records discrete dissipation signs on a
+$C_3$ heat graph but explicitly disclaims 3D Navier--Stokes.
+The TUFT bridge \cite{hqiv-tuft-bridge-paper} imports Hopf/Beltrami spectral language for mass
+generation, not holomorphic Leray solutions.
+This note closes the gap at the \emph{algebraic} level: it derives HQIV's time-angle / lapse /
+rapidity-phase stack from lattice data already present in Tier~1, proves a single-mode Wick
+identification with a Stokes semigroup factor, and states precisely what would be required for
+full equivalence with Nielsen--Semita's solution \cite{NielsenSemitaNS2026}.
+
+\noindent\textbf{Result (Tier~I, machine-checked).}
+On shell index $m$, auxiliary field $\phi$, and coordinate time $t$,
+\begin{enumerate}[label=(\roman*),leftmargin=2em]
+\item the HQVM lapse $N=1+\Phi+\phi t$ is the real horizon term plus Newtonian potential;
+\item complex time $t_{\mathbb C}=t+i\,\phi t$ splits real clock from time angle;
+\item lattice phase $\exp\bigl(i\,\theta(m)\bigr)$ with
+  $\theta=\phi t\,\delta\theta'(m)$ is the \emph{star/conjugate} partner of the Stokes factor
+  $\exp(-\nu k(m)^2\, t_{\mathbb C})$ on the imaginary-time ray
+  $t_{\mathbb C}=i\,\theta/(\nu k(m)^2)$;
+\item for real $t>0$, that Stokes factor has norm strictly below unity (semigroup damping).
+\end{enumerate}
+These items are packaged in \leanfile{Hqiv/Physics/ComplexTimeStokesWickBridge.lean}.
+
+\noindent\textbf{Honest scope.}
+This paper does \textbf{not} claim global smoothness, Millennium Option~A/C, or that HQIV
+``solves'' classical Navier--Stokes regularity---HQIV's ontology requires the \emph{discrete null
+lattice} to arrive at numbers, and both TUFT and HQIV treat finite Hopf shells as fundamental.
+It \textbf{does} prove (Tier~I) that the HQIV lapse-modified fluid PDE reduces to the TUFT
+Beltrami--NS form on chart-mapped modes, and that complex-time Stokes factors are Wick-conjugate
+partners of lattice phase data.
+\end{abstract}
+
+\maketitle
+
+\input{../include/patch_theory_messaging.tex}
+
+\section{Introduction}
+\label{sec:intro}
+
+\subsection{What existed before this note}
+
+The HQIV paper series already contains the ingredients of a complex-time story, scattered across
+several companions:
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Null lattice and $\phi(m)$:} the growth and action papers
+  \cite{hqiv-3d-growth-paper,hqiv-oct-action-paper} fix shell scalars and variational closure;
+\item \textbf{Time angle in the lapse:} \leanfile{Hqiv/Geometry/HQVMetric.lean} defines
+  $\delta\theta'_{\mathrm{time}}=\phi t$ as the horizon contribution to the ADM lapse;
+\item \textbf{Rapidity phase in the zeta layer:} \leanfile{Hqiv/Physics/OctonionicZeta.lean} and
+  \leanfile{Hqiv/Physics/RapidityZetaPhaseBridge.lean} identify the zeta exponent with
+  $i\,\mathrm{polarAngleFromRapidity}(\phi,t,m)$;
+\item \textbf{Effective fluid closure:} \leanfile{Hqiv/Physics/HQIVFluidClosureScaffold.lean} and
+  \leanfile{Hqiv/Physics/HQIVTurbulenceSimulatorScaffold.lean} package lapse-modified momentum with
+  eddy viscosity driven by $|\dot\delta\theta'|$;
+\item \textbf{Hopf/Beltrami mining:} \cite{hqiv-tuft-bridge-paper} aligns TUFT contact spectra with
+  HQIV shell readouts \cite{NielsenTUFT2026}.
+\end{itemize}
+None of these manuscripts, however, states the complex-time/Stokes bridge as a single derived chain,
+nor compares it to Nielsen's standalone Navier--Stokes work
+\cite{NielsenSemitaNS2026,NielsenBeltramiComplexTime2026}.
+
+\subsection{What Nielsen--Semita claim (external benchmark)}
+
+Nielsen and Semita \cite{NielsenSemitaNS2026} develop 3D incompressible Navier--Stokes on
+$\mathbb R^3$ using the Hopf fibration $S^1\to S^3\to\mathbb{CP}^1$ as an analytic tool.
+Their program has two temporal channels:
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Real time:} spectral irreducibility of fiber modes $\{m^2\}$ and base modes
+  $\{k(k+1)\}$ drives a finite-time cascade (Option~C in Fefferman's formulation);
+\item \textbf{Complex time} with $\Re t>0$: Stokes semigroup damping
+  $\exp(-\nu|k|^2 t)$ suppresses the cascade and yields global holomorphic regularity (partial
+  Option~A), with real-time smoothness recovered away from an exceptional set on the real axis.
+\end{itemize}
+Related work by Nielsen on Beltrami Navier--Stokes in complex time
+\cite{NielsenBeltramiComplexTime2026} sits in the same research line.
+
+\subsection{What this paper adds}
+
+We derive HQIV's temporal structure from the lattice upward, prove the Wick bridge in Lean, and
+show \emph{functional PDE identity} with TUFT/Beltrami Navier--Stokes on finite Hopf modes---without
+claiming continuum global smoothness.
+
+\section{Lattice derivation of time angle and phase}
+\label{sec:lattice}
+
+\subsection{Shell temperature and auxiliary field}
+
+On the HQIV temperature ladder \cite{hqiv-thermo-arrow-paper,hqiv-kirchhoff-paper},
+\begin{equation}
+  T(m)=\frac{1}{m+1},\qquad \phi(m)=\frac{2}{T(m)}=2(m+1).
+  \label{eq:phi-ladder}
+\end{equation}
+The auxiliary scalar $\phi$ is not a fitted transport coefficient: it is fixed by shell
+combinatorics shared with O--Maxwell and HQVM sectors \cite{hqiv-oct-action-paper}.
+
+\subsection{Time angle as lapse horizon term}
+
+\begin{definition}[HQVM time angle]
+\label{def:time-angle}
+For shell-level $\phi>0$ and coordinate time $t\in\mathbb R$,
+\begin{equation}
+  \delta\theta'_{\mathrm{time}}(\phi,t):=\phi\,t.
+  \label{eq:time-angle}
+\end{equation}
+The ADM lapse imposed by the informational-energy axiom is
+\begin{equation}
+  N(\Phi,\phi,t)=1+\Phi+\delta\theta'_{\mathrm{time}}(\phi,t),
+  \label{eq:lapse}
+\end{equation}
+with Newtonian potential $\Phi$.
+\end{definition}
+
+\begin{proposition}[Lapse decomposition (proved)]
+\label{prop:lapse-decomp}
+$N(\Phi,\phi,t)=1+\Phi+\mathrm{timeAngle}(\phi,t)$, and
+$\mathrm{timeAngle}(\phi,0)=0$.
+\end{proposition}
+
+The module \leanfile{Hqiv/Geometry/HQVMetric.lean} proves monotonicity
+$\partial_t\,\mathrm{timeAngle}=\phi>0$ and the first-period identity
+$\mathrm{timeAngle}(\phi,2\pi/\phi)=2\pi$: time angle is read mod $2\pi$ as horizon phase
+accumulation, not as an extra fitted parameter.
+
+\subsection{Tipping angle and polar angle on shells}
+
+The Maxwell tipping channel defines, for electric-energy proxy $E'$,
+\begin{equation}
+  \delta\theta'(E')=\arctan(E')\cdot\frac{\pi}{2}.
+  \label{eq:delta-theta-prime}
+\end{equation}
+On shell index $m$, the \emph{polar angle} used in the zeta layer is
+\begin{equation}
+  \theta(m):=\mathrm{polarAngleFromRapidity}(\phi,t,m)
+  =\phi\,t\,\delta\theta'(m).
+  \label{eq:polar-angle}
+\end{equation}
+The bridge \leanfile{Hqiv/Physics/RapidityZetaPhaseBridge.lean} proves
+\begin{equation}
+  i\,\phi t\,\delta\theta'(m)
+  = i\,\theta(m)
+\end{equation}
+as an exponent in $\mathbb C$, i.e.\ the zeta phase factor and the polar scaffold are the same
+object.
+
+\subsection{Complexified lattice time}
+
+\begin{definition}[HQIV complex time (formal split)]
+\label{def:complex-time}
+\begin{equation}
+  t_{\mathbb C}(\phi,t):=t+i\,\mathrm{timeAngle}(\phi,t)=t+i\,\phi t.
+  \label{eq:hqiv-complex-time}
+\end{equation}
+\end{definition}
+
+\begin{proposition}[Real and imaginary parts (proved)]
+\label{prop:complex-parts}
+$\Re t_{\mathbb C}=t$ and $\Im t_{\mathbb C}=\phi t$.
+Moreover $\Im t_{\mathbb C}+1+\Phi=N(\Phi,\phi,t)$.
+\end{proposition}
+
+Thus HQIV already carries a complex-time \emph{coordinate}: real part = coordinate clock; imaginary
+part = time angle entering the lapse.
+
+\subsection{Rapidity-modulated zeta phase}
+
+The shell term in the HQIV lattice zeta \cite{hqiv-oct-action-paper} includes
+\begin{equation}
+  \mathcal Z_m(\delta,\phi,t,s)
+  =\mathrm{eff}(\delta,m)^{-s}\,
+   \exp\!\bigl(i\,\phi t\,\delta\theta'(m)\bigr).
+  \label{eq:zeta-term}
+\end{equation}
+The phase factor is unit modulus: it is oscillatory data on the discrete shell line, not dissipative
+by itself.
+
+\section{Effective fluid closure from the same scalars}
+\label{sec:fluid}
+
+The modified fluid scaffold \cite{hqiv-oct-action-paper} reuses $\phi$, $\Theta_{\mathrm{local}}$,
+and $\dot\delta\theta'$:
+\begin{align}
+  f(a_{\mathrm{loc}},\phi) &= \frac{a_{\mathrm{loc}}}{a_{\mathrm{loc}}+\phi/6},
+  \label{eq:inertia}\\
+  \mathbf g_{\mathrm{vac}} &= -\frac{\gamma}{6}\nabla(\phi\,\dot\delta\theta'),
+  \label{eq:vacuum}\\
+  \nu_{\mathrm{eddy}} &= \gamma\,\Theta_{\mathrm{local}}\,|\dot\delta\theta'|\,\ell_{\mathrm{coh}}^2\,C.
+  \label{eq:eddy}
+\end{align}
+Lapse-modified momentum (DNS/RANS scaffold) multiplies inertia by $N$ from
+\eqref{eq:lapse} \cite{hqiv-oct-action-paper}.
+
+\begin{remark}[Two dissipation channels]
+The \emph{phase} channel \eqref{eq:zeta-term} is oscillatory ($|\exp(i\theta)|=1$).
+The \emph{eddy-viscosity} channel \eqref{eq:eddy} is dissipative in real time through
+$|\dot\delta\theta'|$.
+Nielsen's complex-time regularity uses semigroup \emph{decay} on $\Re t>0$; HQIV routes analogous
+dissipation through \eqref{eq:eddy}, not through the zeta phase.
+\end{remark}
+
+\section{Single-mode Stokes factor and the Wick bridge}
+\label{sec:wick}
+
+\subsection{Stokes semigroup factor}
+
+\begin{definition}[Mode Stokes factor]
+For viscosity $\nu>0$, mode eigenvalue $k^2>0$, and complex time $t_{\mathbb C}\in\mathbb C$,
+\begin{equation}
+  S_\nu(k^2,t_{\mathbb C}):=\exp\!\bigl(-\nu k^2 t_{\mathbb C}\bigr).
+  \label{eq:stokes-factor}
+\end{equation}
+On the real axis with $t>0$, $|S_\nu(k^2,t)|<1$: strict damping.
+\end{definition}
+
+This is the local building block of Nielsen's complex-time Stokes semigroup analysis
+\cite{NielsenSemitaNS2026}.
+
+\subsection{HQIV phase factor}
+
+\begin{definition}[HQIV shell phase factor]
+For real angle $\theta$,
+\begin{equation}
+  P(\theta):=\exp(i\theta).
+\end{equation}
+On shell $m$, $P(\theta(m))$ is the zeta phase in \eqref{eq:zeta-term}.
+\end{definition}
+
+\subsection{Main Wick theorem (proved)}
+
+\begin{theorem}[Wick bridge / conjugate identification]
+\label{thm:wick}
+Fix $\nu k^2\neq 0$ and real $\theta$.
+Define imaginary Stokes time
+\begin{equation}
+  t_{\mathbb C}=\frac{i\,\theta}{\nu k^2}.
+  \label{eq:imag-stokes-time}
+\end{equation}
+Then
+\begin{equation}
+  S_\nu(k^2,t_{\mathbb C})=\overline{P(\theta)}=\star P(\theta),
+  \label{eq:wick-main}
+\end{equation}
+where $\star$ is complex conjugation.
+Equivalently, $P(\theta)=\star S_\nu(k^2,t_{\mathbb C})$.
+\end{theorem}
+
+\begin{proof}
+Machine-checked as \leanid{stokesModeFactor_imaginaryTime_eq_hqivPhaseFactor_star} and
+\leanid{hqivShellPhaseFactor_eq_stokes_star} in
+\leanfile{Hqiv/Physics/ComplexTimeStokesWickBridge.lean}.
+\end{proof}
+
+\begin{corollary}[Shell specialization]
+\label{cor:shell}
+For each shell $m$ with $\theta(m)=\phi t\,\delta\theta'(m)$ and mode scale $k(m)^2>0$,
+\begin{equation}
+  \exp\!\bigl(i\,\phi t\,\delta\theta'(m)\bigr)
+  =\star\,\exp\!\Bigl(-\nu k(m)^2\cdot\frac{i\,\theta(m)}{\nu k(m)^2}\Bigr).
+\end{equation}
+\end{corollary}
+
+\begin{theorem}[Real-axis damping (proved)]
+\label{thm:damp}
+If $\nu,k^2,t>0$ are real, then $\|S_\nu(k^2,t)\|<1$.
+\end{theorem}
+
+\begin{proof}
+\leanid{stokesModeFactor_pos_real_lt_one} in
+\leanfile{Hqiv/Physics/ComplexTimeStokesWickBridge.lean}.
+\end{proof}
+
+\section{Functional PDE identity with TUFT Beltrami--NS}
+\label{sec:pde-functional}
+
+\subsection{Shared finite-mode ontology}
+
+Both programs reject a literal continuum as fundamental:
+\begin{itemize}[leftmargin=2em]
+\item \textbf{TUFT} \cite{NielsenTUFT2026}: finite Hopf shells $S^1\to S^{2n+1}\to\mathbb{CP}^n$,
+  contact Beltrami spectrum, zeta-regularized sector data;
+\item \textbf{HQIV}: discrete null-lattice shells $m\in\mathbb{N}$, lock-in horizon
+  $\mathrm{referenceM}=4$, temperature ladder $T(m)=1/(m+1)$.
+\end{itemize}
+Numbers (masses, viscosities, mode budgets) are \emph{lattice/shell readouts}. Global smoothness of
+classical 3D NS is therefore \textbf{not} the equivalence target; \textbf{operator-form coincidence}
+on matched modes is.
+
+\subsection{TUFT Beltrami--NS momentum form}
+
+On a Beltrami field ($\nabla\times\mathbf u=\lambda\mathbf u$), Nielsen's incompressible NS
+reduces to the schematic pointwise balance (continuum chart, no existence claim)
+\begin{equation}
+  \rho\bigl(\partial_t\mathbf u+(\mathbf u\cdot\nabla)\mathbf u\bigr)
+  =-\nabla p+\nu_{\mathrm{tot}}\,\Delta\mathbf u+\mathbf f,
+  \label{eq:tuft-beltrami-ns}
+\end{equation}
+with mode diffusivity tied to Hopf eigenvalues: fiber chart $\{m^2\}$, base chart $\{k(k+1)\}$, and
+TUFT minimal coexact ladder $\lambda_{\min}(n)=n+1$ on winding sectors $n=1,2,3$
+\cite{NielsenTUFT2026,hqiv-tuft-bridge-paper}.
+
+\subsection{HQIV lapse-modified form and the classical limit}
+
+HQIV's simulator axiom packages the modified balance \cite{hqiv-oct-action-paper}
+\begin{equation}
+  N\,\rho f\Bigl(\partial_t\mathbf u+(\mathbf u\cdot\nabla)\mathbf u\Bigr)
+  =-\nabla p+\nu_{\mathrm{tot}}\,\Delta\mathbf u+\mathbf g_{\mathrm{vac}}+\mathbf f,
+  \label{eq:hqiv-lapse-rans}
+\end{equation}
+with $N=1+\Phi+\phi t$, inertia $f(a_{\mathrm{loc}},\phi)$, vacuum source
+$\mathbf g_{\mathrm{vac}}=-(\gamma/6)\nabla(\phi\,\dot\delta\theta')$, and
+$\nu_{\mathrm{tot}}=\nu_{\mathrm{mol}}+\nu_{\mathrm{eddy}}$ as in \S\ref{sec:fluid}.
+
+\begin{theorem}[Functional PDE identity at the Beltrami classical limit (proved)]
+\label{thm:pde-functional}
+When $N=1$, $f=1$, $\mathbf g_{\mathrm{vac}}=0$, and $\nu_{\mathrm{tot}}$ is matched, the HQIV
+residual \eqref{eq:hqiv-lapse-rans} equals the TUFT Beltrami--NS residual \eqref{eq:tuft-beltrami-ns}
+term-by-term.
+\end{theorem}
+
+\begin{proof}
+Machine-checked as \leanid{tuftBeltramiNS_residual_eq_hqiv_classical_limit} and
+\leanid{tuftBeltramiNS_component_iff_hqiv_classical_limit} in
+\leanfile{Hqiv/Physics/TUFTBeltramiHQIVPDEBridge.lean}.
+\end{proof}
+
+Away from this limit, HQIV's lapse, inertia, and vacuum channels are \emph{extra physics} from the
+null lattice; they collapse to TUFT's Beltrami--NS template when the chart is Beltrami-aligned and
+gradients vanish.
+
+\subsection{Mode eigenvalue chart and three-generation bundle}
+
+\begin{center}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Chart} & \textbf{TUFT / Nielsen NS} & \textbf{HQIV anchor (proved)} \\
+\midrule
+Fiber squares & $m^2$ & \leanid{tuftHopfFiberModeEigenvalueSq} \\
+Base ladder & $k(k+1)$ & \leanid{tuftHopfBaseModeEigenvalueSq} \\
+Minimal coexact & $\lambda_{\min}(n)=n+1$ & \leanid{tuftMinimalBeltramiEigenvalue} \\
+Base at $k=1$ & $2$ & \leanid{tuftHopfBaseModeEigenvalueSq_eq_minimal_at_one} \\
+Three windings & $n=1,2,3$ integrable & \leanid{hopfGeneration\_*\_has_pde_equivalence} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Each integrable winding carries a \leanid{TUFTBeltramiHQIVPDEFunctionalEquivalence} record:
+matched $\lambda_{\min}$, Wick-conjugate shell phase, and real-axis Stokes damping---no smoothness.
+
+\section{Alignment with Nielsen--Semita: operators, not regularity}
+\label{sec:nielsen}
+
+\subsection{Structural alignment (provable now)}
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Channel} & \textbf{Nielsen--Semita / TUFT} & \textbf{HQIV (this note)} \\
+\midrule
+Ontology & Finite Hopf shells & Discrete null-lattice shells \\
+Complex time & $t\in\mathbb C$, semigroup on $\Re t>0$ & $t_{\mathbb C}=t+i\phi t$ from lapse \\
+Oscillatory phase & Holomorphic extension data & $P(\theta)=\exp(i\phi t\,\delta\theta')$ \\
+Semigroup damping & $\exp(-\nu|k|^2 t)$ on $\Re t>0$ & Thm.~\ref{thm:damp} on real axis \\
+Imaginary-time partner & Stokes semigroup & Thm.~\ref{thm:wick} (conjugate) \\
+Momentum PDE & Beltrami--NS \eqref{eq:tuft-beltrami-ns} & Lapse-RANS \eqref{eq:hqiv-lapse-rans}; Thm.~\ref{thm:pde-functional} \\
+Dissipation slot & Viscosity suppresses cascade & $\nu_{\mathrm{eddy}}\propto|\dot\delta\theta'|$ \\
+Hopf spectra & Fiber $\{m^2\}$, base $\{k(k+1)\}$ & Beltrami/Hopf mining \cite{hqiv-tuft-bridge-paper} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{What we deliberately do not equate}
+
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Global smoothness / Millennium:} Nielsen's Option~A/C regularity claims are external
+  benchmark statements; HQIV does not reproduce them and does not need them for lattice readouts.
+\item \textbf{Literal eigenvalue equality:} $m^2\neq n+1$ in general; chart maps are recorded in Lean,
+  not forced (see \leanid{tuftFundamentalBeltrami_ne_eq_peterWeyl_one} in the TUFT bridge).
+\item \textbf{Full holomorphic Leray lift:} extending Thm.~\ref{thm:pde-functional} from pointwise
+  residuals to global holomorphic solutions remains Tier~III.
+\end{itemize}
+
+\subsection{Legacy Tier~III bundle (holomorphic extension only)}
+
+\begin{hypothesis}[Tier~III: holomorphic extension beyond lattice modes]
+\label{hyp:full-coinc}
+If one wishes to compare with Nielsen's \emph{complex-time regularity} program specifically, the
+remaining items are:
+\begin{enumerate}[label=(H\arabic*),leftmargin=2em]
+\item holomorphic Leray semigroup on a stated domain;
+\item Option~A/C Millennium consequences on $\mathbb R^3$.
+\end{enumerate}
+These are \textbf{not} required for HQIV--TUFT functional PDE identity on finite shells.
+\end{hypothesis}
+
+\subsection{Correct statement of equivalence}
+
+\begin{proposition}[Provable equivalence (single-mode Wick)]\label{prop:provable-eq}
+For fixed $(\nu,k^2,\theta)$ with $\nu k^2\neq 0$, HQIV's shell phase factor and Nielsen's Stokes
+semigroup factor are \textbf{Wick-conjugate partners} on the imaginary-time ray
+\eqref{eq:imag-stokes-time}.
+They are not identical as complex numbers unless $\theta\in\{0,\pi\}$.
+\end{proposition}
+
+\begin{proposition}[Structural equivalence (dissipation channel)]
+When $\dot\Theta$ is identified with $\delta\theta'(E')$ in the fluid chart, HQIV eddy viscosity
+\eqref{eq:eddy} is proportional to $|\dot\Theta|$, providing a real-time dissipation slot
+analogous to Nielsen's $\Re t>0$ damping, but \textbf{not} yet proved equal to a Navier--Stokes
+viscosity coefficient.
+\end{proposition}
+
+\section{Derivation diagram}
+\label{sec:diagram}
+
+\begin{center}
+\fbox{\parbox{0.92\linewidth}{
+\textbf{Lattice spine (Tier~I definitions).}
+Shell index $m$ $\to$ $T(m)$, $\phi(m)=2(m+1)$
+$\to$ time angle $\phi t$ $\to$ lapse $N=1+\Phi+\phi t$
+$\to$ polar angle $\theta(m)=\phi t\,\delta\theta'(m)$
+$\to$ zeta phase $\exp(i\theta(m))$.
+
+\vspace{0.5em}
+\textbf{Wick bridge (Tier~I theorem).}
+$\exp(i\theta)=\star\exp(-\nu k^2\cdot i\theta/(\nu k^2))$ on each mode.
+
+\vspace{0.5em}
+\textbf{Nielsen benchmark (external).}
+Hopf decomposition $\to$ incommensurate ladders $\to$ complex-time semigroup on $\Re t>0$.
+
+\vspace{0.5em}
+\textbf{Open (Tier~III).}
+Identify $k(m)^2$ with Hopf fiber/base spectra; lift single-mode Wick to full NS.
+}}
+\end{center}
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+This note supplies the missing HQIV manuscript for complex time: a lattice-first derivation of
+time angle, lapse, and rapidity phase; machine-checked Wick and PDE-functional bridges to TUFT
+Beltrami--NS; and an explicit refusal to conflate lattice physics with Millennium smoothness.
+
+\textbf{Proved:} conjugate identification \eqref{eq:wick-main}; real-axis damping; lapse/time-angle
+split \eqref{eq:hqiv-complex-time}; TUFT Beltrami--NS residual = HQIV RANS residual at the classical
+limit (Thm.~\ref{thm:pde-functional}); three-generation
+\leanid{TUFTBeltramiHQIVPDEFunctionalEquivalence} bundles.
+
+\textbf{Not proved / not claimed:} global smoothness; identity of full holomorphic Leray solutions;
+Millennium Option~A/C as stated in \cite{NielsenSemitaNS2026}.
+
+Recommended next Lean milestones:
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item extend Thm.~\ref{thm:pde-functional} with nonzero lapse as a \emph{chart correction}, not a
+  separate PDE class;
+\item connect \leanid{HQIVFirstPrinciplesNSBridge} to \leanid{TUFTBeltramiHQIVPDEFunctionalEquivalence};
+\item Peter--Weyl chart \leanid{beltramiPeterWeylEigenvalueS3} for base-mode $k(k+1)$ ladder.
+\end{enumerate}
+
+\section*{Lean module map}
+
+\begin{center}
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+Paper object & Lean anchor \\
+\midrule
+$\mathrm{timeAngle}(\phi,t)=\phi t$ & \leanid{HQVMetric.timeAngle} \\
+$N=1+\Phi+\phi t$ & \leanid{HQVM_lapse} \\
+$\theta(m)=\phi t\,\delta\theta'(m)$ & \leanid{polarAngleFromRapidity} \\
+Zeta phase $=\exp(i\theta)$ & \leanid{zetaHQIVTerm_phase_arg_eq_polarAngleFromRapidity} \\
+$t_{\mathbb C}=t+i\phi t$ & \leanid{hqivComplexTime} \\
+Stokes factor & \leanid{stokesModeFactor} \\
+Wick bridge & \leanid{stokesModeFactor_imaginaryTime_eq_hqivPhaseFactor_star} \\
+Real damping & \leanid{stokesModeFactor_pos_real_lt_one} \\
+Eddy viscosity slot & \leanid{hqivEddyViscosity_HQIV_of_delta_theta_prime} \\
+PDE functional identity & \leanid{tuftBeltramiNS_residual_eq_hqiv_classical_limit} \\
+Three-generation bundle & \leanid{TUFTBeltramiHQIVPDEFunctionalEquivalence} \\
+Tier~III holomorphic only & \leanid{ComplexTimeStokesHQIVCoincidence} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\bibliographystyle{amsplain}
+\bibliography{../references}
+
+\end{document}

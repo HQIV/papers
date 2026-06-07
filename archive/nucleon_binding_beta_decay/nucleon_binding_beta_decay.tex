@@ -1,0 +1,461 @@
+% SUPERSEDED — canonical Tier-2 source:
+%   papers/nucleon_binding/hqiv_nucleon_binding_from_composite_trace.tex
+%   (title: Binding Energy and the Weak Force from HQIV Composite-Trace Weights)
+% Geometric nucleon binding and beta decay (HQIV) — historical working copy
+% Self-contained mathematical narrative; machine-checked audit pointers in Appendix A only.
+
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xurl}
+\newcommand{\repo}{\url{https://github.com/disregardfiat/hqiv-lean}}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{enumitem}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\theoremstyle{plain}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\theoremstyle{definition}
+\newtheorem{axiom}[theorem]{Axiom}
+
+\title{Geometric Origin of Nucleon Binding\\and a Programme for Beta Decay in HQIV\\{\large\scshape (working copy)}}
+\author{Steven Ettinger Jr}
+\date{Working copy v3 --- \today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We develop a self-contained geometric account of nucleon binding within the Horizon-Quantized Information Vacuum (HQIV) framework, built on a $3$D discrete null lattice with an octonionic eightfold mode count.
+Cumulative simplex counting yields a shell-wise curvature-imprint ratio identically equal to $\alpha=3/5$; the informational monogamy complement is then $\gamma=1-\alpha=2/5$.
+We record the synchronous-comoving lapse $N=1+\Phi+\phi t$ (natural units), the identification of the horizon auxiliary $\phi$ across the emergent gauge sector and an effective Friedmann coupling $G_{\mathrm{eff}}(\phi)=\phi^{\alpha}$, and a concrete \emph{divisor} prescription that renormalizes nucleon meta-harmonic masses on the lock-in shell when $N>1$.
+Elementary inequalities show the lapse-corrected readout is strictly below the uncorrected mass in that regime.
+Beta decay is proposed as a curvature-balance transition coupled to \emph{skew} time-phase alignment on the octonionic carrier; explicit lifetimes and a full nuclear potential are not derived here.
+We close with a short comparison to Standard Model parameter counts and with an appendix that maps each major claim to an independent machine-checked certificate in a public repository---an audit layer that does not substitute for the in-text arguments.
+
+\paragraph{Update (v2).} Numerical witnesses are maintained in the canonical Tier-2 note
+\texttt{hqiv\_nucleon\_binding\_from\_composite\_trace.tex} (Computational Witnesses box
+and \S\ref{sec:phenomenology} there). This file is a superseded working copy.
+\end{abstract}
+
+\section{Discrete null lattice and the imprint identities}
+
+\subsection{Mode counts}
+
+Fix a non-negative shell index $m$.
+The positive quadrant slice $\{(x,y,z)\in\mathbb{Z}_{\ge 0}^3 : x+y+z=m\}$ has $\binom{m+2}{2}$ integer points (stars-and-bars).
+Following HQIV's octonionic carrier bookkeeping, attach a factor of eight to obtain the \emph{available} horizon modes at shell $m$,
+\begin{equation}\label{eq:Am}
+  A(m) \;=\; 8\binom{m+2}{2} \;=\; 4(m+1)(m+2)\,.
+\end{equation}
+Write $N_{\mathrm{simp}}(m):=(m+1)(m+2)$ for the \emph{stars-and-bars numerator} attached to shell $m$ in the HQIV convention (equal to twice a binomial coefficient, $2\binom{m+2}{2}$, if one insists on the classical $\binom{m+2}{2}$ point count).
+The cumulative count up to $n$ is
+\begin{equation}\label{eq:Cn}
+  C(n) \;:=\; \sum_{m=0}^{n} N_{\mathrm{simp}}(m)\,.
+\end{equation}
+
+\begin{lemma}[Cubic cumulant / hockey-stick]\label{lem:hockey}
+For every $n\in\mathbb{N}$,
+\[
+  3\,C(n) = (n+1)(n+2)(n+3)\,.
+\]
+Equivalently $C(n)=\dfrac{(n+1)(n+2)(n+3)}{3}$.
+\end{lemma}
+
+\begin{proof}
+Induction on $n$.
+For $n=0$, $C(0)=N_{\mathrm{simp}}(0)=2$ and $(0+1)(0+2)(0+3)=6=3C(0)$.
+Assume $3C(n)=(n+1)(n+2)(n+3)$.
+By definition $C(n+1)=C(n)+N_{\mathrm{simp}}(n+1)$ with $N_{\mathrm{simp}}(n+1)=(n+2)(n+3)$.
+Thus
+\begin{align*}
+  3C(n+1) &= 3C(n)+3(n+2)(n+3) \\
+  &= (n+1)(n+2)(n+3)+3(n+2)(n+3) \\
+  &= (n+2)(n+3)\bigl((n+1)+3\bigr) \\
+  &= (n+2)(n+3)(n+4)\,,
+\end{align*}
+which is the desired identity with $n$ replaced by $n+1$.
+\end{proof}
+
+\begin{definition}[Curvature-imprint ratio]\label{def:ratio}
+For $n\in\mathbb{N}$ define
+\[
+  r(n) \;:=\; \frac{(n+1)(n+2)(n+3)}{5\,C(n)}\,.
+\]
+\end{definition}
+
+\begin{theorem}[Forced imprint exponent]\label{thm:alpha}
+For every $n\in\mathbb{N}$, $r(n)=3/5$.
+Define $\alpha:=3/5$ and $\gamma:=1-\alpha=2/5$.
+\end{theorem}
+
+\begin{proof}
+By Lemma~\ref{lem:hockey}, $(n+1)(n+2)(n+3)=3C(n)$, hence $r(n)=3C(n)/(5C(n))=3/5$ because $C(n)>0$ for all $n$.
+\end{proof}
+
+\begin{remark}
+The rational $\alpha=3/5$ is therefore not a tunable exponent within this discrete normalization: it is the unique value of the ratio~\eqref{def:ratio} once~\eqref{eq:Cn} is adopted.
+The companion $\gamma=2/5$ is the unique affine complement on the unit split $\alpha+\gamma=1$.
+\end{remark}
+
+\subsection{Temperature ladder and auxiliary field}
+
+\begin{definition}[Shell temperature and auxiliary $\phi$]\label{def:phi}
+Set $T(m):=1/(m+1)$ in natural units and $S(m):=(m+1)(m+2)$.
+The HQIV homogeneous auxiliary field at shell $m$ is
+\[
+  \phi(m) \;:=\; \frac{2}{T(m)} \;=\; 2(m+1)\,.
+\]
+\end{definition}
+
+\subsection{Electroweak scale witnesses (algebraic)}
+
+The geometric vacuum expectation used in the HQIV electroweak package is assembled from the lock-in shell index $m_{\mathrm{lockin}}$, the ladder $T$, the surface factor $S$, and the monogamy complement $(1+\gamma)$; we do not reproduce the full triality-normalized coupling algebra in this note.
+Specializing the closed rational outputs recorded in the development gives the numerical identities
+\begin{equation}\label{eq:MW}
+  M_W^{\mathrm{derived}}=\frac{392}{5}\,,\qquad
+  m_H^{\mathrm{derived}}=\frac{588}{5}
+\end{equation}
+in the same mass units used for those lemmas, together with a companion neutral-boson relation tying $M_Z^{\mathrm{derived}}$ to $M_W^{\mathrm{derived}}$ and $\gamma$.
+
+\section{Three naturals, one real, and skew time-phase alignment}
+
+\subsection{Synthesis theorem (quoted package)}
+
+Under the \emph{exact} quadratic shell law $A(m)=4(m+1)(m+2)$, transverse null-mode counting is modeled by three independent nonnegative integers $(x,y,z)\in\mathbb{N}_0^3$ with $x+y+z=m$ (the ``three naturals''), while causal height along maximal chains supplies an ordered timelike axis modeled by a single copy of $\mathbb{R}$ (the ``one real'').
+The Fano-plane / octonion internal structure is then tied to the projective geometry of $\mathbb{F}_2^3$, and the imprint pair $(\alpha,\gamma)=(3/5,2/5)$ is the $d=3$ row of the standard HQIV unit-split family.
+A fully self-contained statement and proof sketch of this \textbf{Three Natural + one Real} package appears in the companion HQIV manuscript on $3$D causal growth and octonionic gauge (Theorem ``Three Natural + one Real under the HQIV shell hypothesis'' there); the present note uses only the counting input~\eqref{eq:Am} and Theorem~\ref{thm:alpha}.
+
+\subsection{Jobs of $\phi$ and $N$, and a fourth skew job}
+
+Already in the HQVM chart one assigns three roles to the auxiliary field $\phi$ and the lapse $N=1+\Phi+\phi t$ (with $c=1$): \emph{(i)}~temperature / shell ladder ($T(m)=1/(m+1)$, $\phi(m)=2(m+1)$); \emph{(ii)}~hypercharge-like $\mathrm{U}(1)$ phase data via the octonionic scalar slot and the distinguished phase-lift generator $\Delta\in\mathfrak{so}(8)$ acting on $\mathbb{R}^8$; \emph{(iii)}~superposition bookkeeping on the $\mathbb{R}^8$ carrier.
+We now add a fourth, explicitly \emph{geometric} role: \textbf{skew alignment} of the internal phase with the real timelike axis selected by the lapse.
+
+The generator $\Delta$ is antisymmetric (skew-adjoint) in the $(e_1,e_7)$ plane in the standard octonion matrix model; octonion multiplication supplies non-associativity and a natural associator $3$-form that can be read as an algebraic ``skew'' coupling between the three transverse null directions and the ordered time axis.
+The proposal is that nuclear binding and decay channels are selected not only by energy and charge, but by whether a given resonance product can \emph{close} curvature and \emph{realign} this skew factor inside a deep potential well.
+
+\begin{axiom}[Skew time-phase alignment]\label{ax:skew}
+Fix a skew-adjoint endomorphism $\Delta\in\mathfrak{so}(8)$ representing the phase-lift direction on $\mathbb{R}^8\cong\mathbb{O}$.
+Let $s(t)>0$ denote the positive scalar factor assembled from the horizon auxiliary and lapse readout along the comoving slice (reducing to $\phi\,t$ in the homogeneous sector up to normalization choices), and let $\theta:\mathbb{R}\to\mathbb{R}$ be an angular coordinate.
+The internal time-phase factor is modeled by
+\begin{equation}\label{eq:skew-phase}
+  \Psi(t) \;:=\; s(t)\,\exp\!\bigl(\theta(t)\,\Delta\bigr)\,\in\,\mathbb{R}_{>0}\times \mathrm{SO}(8)\,,
+\end{equation}
+with $\dot{\theta}$ proportional to the cumulative lapse increment along the chosen comoving observer in normalized units.
+\end{axiom}
+
+\begin{remark}[Status]
+Equation~\eqref{eq:skew-phase} packages skew alignment as a modeling axiom on the
+$\mathrm{SO}(8)$ carrier. What is \emph{proved} in Lean: shell identities
+(Theorem~\ref{thm:alpha}); skew-adjointness of the concrete $\Delta$ matrix
+(\texttt{phaseLiftDelta\_antisymm}); ledger separation (strong overlap vs weak $\beta$,
+\texttt{NeutronDecayWidthLedger}); bottle/beam method structure
+(\texttt{temperature\_ppm\_insufficient\_for\_bottle\_beam\_split},
+\texttt{beam\_apparent\_tau\_gt\_bottle\_apparent\_tau}). Variational wiring of
+\eqref{eq:skew-phase} into nuclear wells remains a quantitative extension of
+\texttt{TrapWeakBridgeDecoherenceSlot}.
+\end{remark}
+
+\section{Lapse, gravity coupling, and nucleon divisor readouts}
+
+\subsection{Synchronous lapse and shared $\phi$}
+
+\begin{definition}[ADM lapse in the HQVM chart]\label{def:lapse}
+Let $\Phi$ be the Newtonian potential, $\phi$ the horizon auxiliary, and $t$ coordinate time (natural units, $c=1$).
+Define the lapse
+\begin{equation}\label{eq:lapse}
+  N(\Phi,\phi,t) \;:=\; 1+\Phi+\phi\,t\,.
+\end{equation}
+\end{definition}
+
+\begin{definition}[Effective gravitational coupling]\label{def:Geff}
+For $\phi\ge 0$ set $G_{\mathrm{eff}}(\phi):=\phi^{\alpha}$ with $\alpha=3/5$ from Theorem~\ref{thm:alpha}.
+\end{definition}
+
+\begin{remark}[Compatibility package]
+The HQIV construction posits that the \emph{same} real scalar $\phi$ enters the lapse time-angle term $\phi t$, an emergent O-type Maxwell sector, and the Friedmann-side coupling $G_{\mathrm{eff}}$.
+The precise variational derivation of Einstein equations from matter is \emph{not} claimed here; what is used below is the algebraic synchronization of symbols across sectors.
+\end{remark}
+
+\subsection{Lock-in shell and binding readout}
+
+\begin{definition}[Lock-in index]
+$m_{\mathrm{lockin}}\in\mathbb{N}$ denotes the discrete shell at which QCD-scale structure is aligned with horizon lock-in in the HQIV ladder.
+It is treated as a fixed structural index in the same sense as a renormalization scale in ordinary field theory: downstream masses are \emph{evaluated} there, not solved for from~\eqref{eq:Am} alone.
+\end{definition}
+
+Let $B_{\star}>0$ denote the shared binding energy (in mass units) extracted from the composite-trace functional at $m_{\mathrm{lockin}}$.
+Let $M_u,M_d>0$ be dressed constituent masses for the light quarks in the same units, assembled into proton and neutron \emph{constituent} totals
+\[
+  M_p^{\mathrm{const}} := 2M_u+M_d\,,\qquad M_n^{\mathrm{const}} := M_u+2M_d\,.
+\]
+Define the \emph{raw} meta-harmonic nucleon masses by subtraction of the shared binding,
+\begin{equation}\label{eq:rawmass}
+  M_p^{\mathrm{raw}} := M_p^{\mathrm{const}}-B_{\star}\,,\qquad
+  M_n^{\mathrm{raw}} := M_n^{\mathrm{const}}-B_{\star}\,.
+\end{equation}
+
+On the lock-in shell set $\phi_{\star}:=\phi(m_{\mathrm{lockin}})$ and define the restricted lapse $N_{\star}(\Phi,t):=N(\Phi,\phi_{\star},t)$.
+
+\begin{proposition}[Lapse divisor correction]\label{prop:divisor}
+Define corrected masses by
+\[
+  M_p^{\mathrm{corr}}(\Phi,t):=\frac{M_p^{\mathrm{raw}}}{N_{\star}(\Phi,t)}\,,\qquad
+  M_n^{\mathrm{corr}}(\Phi,t):=\frac{M_n^{\mathrm{raw}}}{N_{\star}(\Phi,t)}\,.
+\]
+If $N_{\star}(\Phi,t)>0$, the prescriptions are well-defined.
+\end{proposition}
+
+\begin{proof}
+Immediate from~\eqref{eq:lapse} and division on $\mathbb{R}$.
+\end{proof}
+
+\begin{lemma}[Positivity of $\phi_{\star}$]\label{lem:phipos}
+For every shell index $m$, $\phi(m)>0$.
+In particular $\phi_{\star}>0$.
+\end{lemma}
+
+\begin{proof}
+By Definition~\ref{def:phi}, $\phi(m)=2(m+1)>0$.
+\end{proof}
+
+\begin{proposition}[Weak-field forward-time regime]\label{prop:Npos}
+If $1+\Phi>0$, $\phi=\phi_{\star}$, and $t\ge 0$, then $N(\Phi,\phi,t)>0$.
+If in addition $\Phi\ge 0$ and $t>0$, then $N(\Phi,\phi,t)>1$.
+\end{proposition}
+
+\begin{proof}
+From~\eqref{eq:lapse}, $N=1+\Phi+\phi t\ge 1+\Phi>0$ when $t\ge 0$ and $\phi>0$ (Lemma~\ref{lem:phipos}).
+If $\Phi\ge 0$ and $t>0$, then $\phi t>0$ and hence $N>1+\Phi\ge 1$, in fact $N>1$ because $\phi t>0$.
+\end{proof}
+
+\begin{corollary}[Mass readout strictly decreases when $N>1$]\label{cor:mono}
+If $M_p^{\mathrm{raw}}>0$ and $N_{\star}(\Phi,t)>1$, then $M_p^{\mathrm{corr}}(\Phi,t)<M_p^{\mathrm{raw}}$.
+The same statement holds with $M_n$ in place of $M_p$.
+\end{corollary}
+
+\begin{proof}
+For $N>1$ and $M>0$, $M/N<M$ is equivalent to $M<MN$, i.e.\ to $1<N$ after cancelling $M$.
+\end{proof}
+
+\subsection{Isospin splitting (model input vs.\ data)}
+
+The HQIV nucleon package separates a fixed hypercharge sign contribution (normalized to a $1\,\mathrm{MeV}$ bookkeeping gap in the formal witness) from a residual mass difference driven by the dressed light-quark average and detuning dress terms.
+The observed neutron--proton mass difference $\approx 1.293\,\mathrm{MeV}$ is quoted only as a phenomenological benchmark: matching it quantitatively is not asserted in this working copy.
+
+\begin{remark}[PDG gap]
+Current meta-harmonic nucleon outputs in the computational pipeline sit several percent above PDG masses; closing that gap is stated as an open strong-sector and dressing problem, not as a defect of Theorem~\ref{thm:alpha}.
+\end{remark}
+
+\section{A programme for beta decay}
+
+\begin{conjecture}[Curvature and skew: $\beta$ transitions]\label{conj:beta}
+Outside compact nuclear environments, a free neutron occupies a branch of the curvature ledger with sub-lock-in normalized curvature ($\Omega_k$-type ratios below unity relative to the calibration shell) and with \textbf{skew misalignment} of the internal phase~\eqref{eq:skew-phase} relative to the real timelike axis.
+Embedding in a nuclear potential well together with lapse reinforcement is conjectured to supply both sufficient \emph{depth} and a triality-compatible \emph{skew realignment}, closing curvature only for resonance products whose Spin$(8)$ triality channel matches the local skew configuration (charge and magnetic moment are partial selectors; skew completes the orientation).
+Conversely, proton-rich configurations whose wells \emph{overshoot} in skew-depth are conjectured to reopen the imbalance and relax via $\beta^{+}$ or electron-capture channels---the inverse geometric channel to neutron stabilization.
+\end{conjecture}
+
+\begin{remark}[Scope]
+Conjecture~\ref{conj:beta} is deliberately schematic: no Fermi theory, no $W$ propagator,
+and no partial width is derived \emph{in this conjecture}. That is not an ad hoc omission:
+the electroweak sector and $G_F$ width slot are discharged upstream in
+\cite{hqiv-tuft-sm-lagrangian-paper}. The role of the weak sector in HQIV is represented
+by structural reductions of an octonionic weak--Higgs scaffold onto an abelian
+Maxwell-type backbone, together with triality bookkeeping that enforces a neutral
+CP-tilt average and a constructive spin--statistics package compatible with
+horizon-limited continuum scaffolds.
+Because $\Delta$ acts on the full $\mathbb{R}^8$ carrier, the neutron's nonzero magnetic moment participates in skew/triality selection even though the neutron is electrically neutral at the $\mathrm{U}(1)$ hypercharge level.
+\end{remark}
+
+\section{Computed witnesses on the discrete spine}
+\label{sec:witnesses}
+
+Conjecture~\ref{conj:beta} is schematic; the repository nonetheless exports \emph{witness readouts} that fix numerical slots on the same $(\alpha,\gamma)$ ladder without MS\=bar current-quark inputs or fitted half-lives.
+The following is a summary of the current pipeline (reproducer commands in Appendix~\ref{app:audit}).
+
+\subsection{Two-ledger $\beta$ width prescription}
+
+Mass readouts use symmetric cluster binding $B_{\mathrm{cluster}}/A$ on the composite trace at lock-in.
+\emph{Width} readouts use a separate interior valence well: for $A=1$ the free neutron sees the full exterior weak channel; for $A>1$ the interior ledger is shielded by bonded closure.
+Naive use of $B_{\mathrm{cluster}}/A$ in the width slot over-suppressed tritium; the interior well restores $\beta^-$ width agreement to reference order without a tritium-specific fit.
+
+\subsection{Free neutron and light panel}
+
+At laboratory temperature $300\,\mathrm{K}$ with the electroweak $G_F$ slot from the dynamic $\beta$ chart, the integrated clock time is
+\[
+  \tau_n \approx 880\,\mathrm{s},
+  \qquad
+  \Gamma_{\beta^-} = \ln 2 / \tau_n \approx 7.9\times 10^{-4}\,\mathrm{s}^{-1},
+\]
+consistent with bottle/beam central values ($878$--$888\,\mathrm{s}$ spread quoted as comparison only).
+Light-isotope masses from the same network land at mean $\approx 0.12\%$ relative to tabulated comparison entries; tritium half-life matches reference after the two-ledger width rule.
+
+\subsection{Molecular embedding (tritium gas and water)}
+
+Laboratory tritium is rarely a bare nucleus.
+The bond-state network supplies an \emph{outside} contact sum for molecules containing the decaying centre; this folds through the same outside $G_{\mathrm{eff}}$ modulator as the gravity stack.
+$\mathrm{T_2}$ gas at $300\,\mathrm{K}$ adds $\mathcal{O}(10\,\mathrm{ppm})$ to the tritium half-life---the same \emph{kind} of shift as galactic-scale gravity on $\tau_n$ ($\sim 0.15\,\mathrm{ppm}$ for the full Earth--Sun--Galaxy stack), confirming that outside geometry is a small perturbation on free-neutron decay in the lab but not identically zero.
+
+\subsection{Bottle versus beam (magnetic trap curvature)}
+
+The $\sim 1.2\%$ split is real; HQIV does not fit method knobs to $878\,\mathrm{s}$ /
+$888\,\mathrm{s}$. The \textbf{primary bottle lever} is UCN trap magnetic field $B$:
+$\rho_{\mathrm{mag}}(B)=\mathrm{clamp}(B/B_{\mathrm{ref}})$ books curvature on the weak
+Fano/Hopf bridge ($f=1+\gamma\rho_{\mathrm{mag}}\,\mathrm{weakBridgeShape}$), not the neV
+Zeeman energy. Lean proves: Ledger III for both methods; $\tau_{\mathrm{beam}}>\tau_{\mathrm{bottle}}$
+at representative $B_{\mathrm{bottle}}=2.5\,\mathrm{T}$, $B_{\mathrm{beam}}=0$;
+temperature-only outside support is $\sim 10^3\,\mathrm{ppm}$ (sub-leading). Open:
+facility $B$ maps and wall-loss channels beyond the structural $f(B)$ slot.
+
+\section{Outside temperature, gravity, and local neutrino opacity}
+\label{sec:outside}
+
+\subsection{Outside release at $T(\xi)$}
+
+Nucleon own-binding and outside caustics are modulated by an outside release factor evaluated at $T(\xi)=T_{\mathrm{Pl}}/\xi$.
+At lock-in the modulator normalises to unity; at BBN-relevant $\xi$ the outside support weakens to $\approx 0.785$---percent-level coupling to light-element abundances (lithium problem regime), distinct from the sub-ppm laboratory neutron clock.
+
+\subsection{Gravity stack}
+
+A dimensionless gravity-stack factor $\varepsilon_g$ (Earth, Sun, Galaxy layers from the flyby scaffold) enters the outside $G_{\mathrm{eff}}$ modulator on free branches.
+At $300\,\mathrm{K}$ the full stack shifts $\tau_n$ by $\sim 0.15\,\mathrm{ppm}$: measurable in principle, blind at current bottle precision.
+
+\subsection{Local curvature neutrino opacity}
+
+On the free-neutron branch the weak width carries a multiplicative catalysis from local curvature neutrino opacity:
+\[
+  \sigma_{\nu,\mathrm{eff}} \approx (140\,\mathrm{MeV})^4\, B_{\mathrm{curv}}\, f_g \quad\text{(barn scale, OOM witness)},
+  \qquad
+  \delta_w \approx 7.3\% \text{ at lock-in with } \pm\gamma/5 \text{ envelope}.
+\]
+Bonded clusters ($A>1$) shield interior decays; the opacity slot is active primarily on free and weakly embedded branches.
+The BBN integrator exports \texttt{local\_curvature\_neutrino\_width} on the same spine.
+
+\section{Condensed-phase curvature outside the nuclear well}
+\label{sec:phase-outside}
+
+The outside-contact primitive used for molecular embedding extends to \emph{bulk} condensed matter without Avogadro-scale atom counting.
+Inputs are molecular specs (formula weight, covalent lengths and angles, intermolecular $\xi$, cohesive energies).
+\textbf{Allotropes are derived}, not chosen from a static crystal-name table.
+
+\subsection{HQIV chem \& materials lab (\texttt{hqiv\_lab})}
+
+The \texttt{hqiv\_lab} package implements:
+\begin{enumerate}[leftmargin=2em]
+\item VSEPR motif inference (e.g.\ tetrahedral H-bond for $\mathrm{H_2O}$);
+\item packing templates (Ih, Ic, fcc, amorphous, \ldots);
+\item unit cell $(a,b,c,Z)$ from contact distance $\sim 2 r_{\mathrm{bond}}(1+\alpha)$;
+\item ranking at $(T,P)$ on the thermodynamic spine.
+\end{enumerate}
+CLI: \texttt{hqiv-lab H2O}. Lean structural mirror:
+\texttt{Hqiv/QuantumChemistry/PhaseAllotropeDerivation.lean}.
+
+\subsection{Curvature density and melt}
+
+Mass density $\rho_{\mathrm{mass}} = ZM/(N_A V_{\mathrm{cell}})$ and
+\[
+  \rho_{\mathrm{curv}} = \mathrm{clamp}_{[0,1]}\!\left(\frac{\rho_{\mathrm{mass}}}{\rho_{\mathrm{liquid,ref}}}\right)
+\]
+feed the homogeneous second-order budget
+$B_{\mathrm{hom}}(\xi,\rho)=1+\rho_{\mathrm{curv}}(B_{\mathrm{curv}}(\xi)-1)$.
+For derived $\mathrm{H_2O}$ ice Ih at $273\,\mathrm{K}$, $1\,\mathrm{atm}$:
+\begin{center}
+\begin{tabular}{@{}lr@{}}
+\toprule
+Quantity & Witness \\
+\midrule
+Preferred allotrope & Ih ($\succ$ Ic $\succ$ amorphous) \\
+$\rho_{\mathrm{mass}}$ & $\approx 0.85\,\mathrm{g\,cm^{-3}}$ \\
+Cell $(a,c)$ & $\approx (5.61,\,5.18)\,\text{\AA}$, $Z=4$ \\
+$\rho_{\mathrm{curv}}$ & $\approx 0.85$ \\
+$T_{\mathrm{sl}}$ (bulk) & $\approx 272\,\mathrm{K}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+Numbers follow bond geometry and $\alpha=3/5$ opening; they are not fitted to NIST hexagonal cell constants ($a\approx 4.515\,\text{\AA}$, $\rho\approx 0.92\,\mathrm{g\,cm^{-3}}$), which may serve as optional calibration witnesses only.
+
+\subsection{Material response on the same spine}
+
+Once $\rho_{\mathrm{curv}}$ and allotrope orientation are fixed, downstream readouts include refractive index $n$ (Clausius--Mossotti from binding-softness polarizability), thermal conductivity $k_{\mathrm{th}}$, molar heat capacity $C_{p,\mathrm{mol}}$, latent heat $L_{\mathrm{fusion}}$ (structural slot), liquid viscosity $\eta$ (Eyring barrier from $E_{\mathrm{melt}}$), and ice-Ih birefringence $\Delta n$ from hexagonal $c/a$ split.
+Witness at $273\,\mathrm{K}$ for derived Ih: $n\approx 1.24$, $C_{p,\mathrm{mol}}\approx 119\,\mathrm{J\,mol^{-1}\,K^{-1}}$, $k_{\mathrm{th}}\approx 1.2\,\mathrm{W\,m^{-1}\,K^{-1}}$, $\Delta n\approx 4\times 10^{-4}$; liquid water $n\approx 1.33$, $C_{p,\mathrm{mol}}\approx 74\,\mathrm{J\,mol^{-1}\,K^{-1}}$.
+Absolute $L_{\mathrm{fusion}}$ vs.\ tabulated $333\,\mathrm{kJ\,mol^{-1}}$ is \emph{not} claimed---only the structural melt slot is wired.
+
+\section{Large-scale signatures}
+
+\begin{remark}[Low multipoles]
+If the lapse-selected time slicing couples coherently to the longest-wavelength modes of the background, one expects modified low-$\ell$ statistics in polarization and temperature (sometimes colloquially summarized as ``axis-of-evil''-type alignments).
+Any such prediction must eventually pass through a full Einstein--Boltzmann transport implementation; that layer is not part of the present note.
+
+Separately, a purely algebraic \emph{theory hook} relates a birefringence angle defined from $(\alpha,m_{\mathrm{lockin}})$ to a redshift factor $(1+z)=(m_{\mathrm{lockin}}+1)^{\alpha}$ at a chosen normalization $\kappa_{\beta}=1$.
+This identity is a consistency display, not a claim that the cosmic birefringence angle has been measured to equal that value.
+\end{remark}
+
+\section{Comparison to the Standard Model}
+
+The electroweak sector of the Standard Model introduces an independent non-abelian weak gauge structure and, in textbook counts, on the order of twenty-six freely fitted parameters.
+The HQIV presentation here reduces a portion of that freedom to discrete counting, a single imprint exponent forced by Lemma~\ref{lem:hockey}, and explicit structural pins (lock-in index, quark-sector anchors) whose remaining arbitrariness is acknowledged rather than hidden.
+
+\section*{Acknowledgements}
+The author acknowledges AI-assisted drafting and code navigation; mathematical claims in the main text are intended to be verifiable by hand from the definitions given.
+
+\medskip
+\noindent\textit{Further reading (HQIV programme).} \cite{ettinger2026hqiv,brodie2026}
+
+\appendix
+
+\section{Formal audit layer (optional)}
+\label{app:audit}
+
+The repository \repo{} contains a Lean~4 formalization used as an \emph{independent check} of the algebraic claims above: Theorem~\ref{thm:alpha} is the statement \texttt{latticeAlphaRatio\_eq\_alpha} specialized to the definition of $\alpha$; Lemma~\ref{lem:phipos} is \texttt{phi\_of\_shell\_pos}; Proposition~\ref{prop:Npos} re-packages \texttt{HQVM\_lapse\_pos} and \texttt{HQVM\_lapse\_gt\_one}; Corollary~\ref{cor:mono} is \texttt{protonMassFromMetaHarmonics\_lapseCorrected\_lt\_raw\_of\_lapse\_gt\_one}.
+The divisor law Proposition~\ref{prop:divisor} is \texttt{protonMassFromMetaHarmonics\_lapseCorrected\_eq\_raw\_div\_lapse}.
+Skew-adjointness of the concrete phase-lift matrix for $\Delta$ is \texttt{phaseLiftDelta\_antisymm} in \texttt{Hqiv/Algebra/PhaseLiftDelta.lean} (re-exported through the SO$(8)$ / QFT feed modules).
+For patch-local digital evolution, \texttt{Hqiv/QuantumComputing/HamiltonianToGateMapping.lean} formalizes sequential gate schedules with per-tick $\eta_\phi$--CKW certificates (\texttt{SequentialHQIVEvolution}), dense execution \texttt{runSequentialEvolution} (aligned with \texttt{DiscreteSchrodinger}), and an OSHoracle sparse trajectory \texttt{runSparseSequentialOSH}; these layers audit one-step-at-a-time Hamiltonian \emph{proxies} on the discrete cone without changing the shell-counting inputs used above.
+
+\paragraph{Witness modules (Sections~\ref{sec:witnesses}--\ref{sec:phase-outside}).}
+Dynamic $\beta$ chart and stability readouts:
+\texttt{Hqiv/Physics/DynamicBetaIsotope.lean},
+\texttt{Hqiv/Physics/DynamicIsotopeStability.lean}
+(\texttt{betaWidthLedgerQualified}, \texttt{EMTippingQualified}).
+Neutron lifetime methods (bottle/beam):
+\texttt{Hqiv/Physics/NeutronLifetimeMethod.lean}.
+Outside temperature and $G_{\mathrm{eff}}$ support:
+\texttt{Hqiv/Physics/NuclearOutsideTemperatureDynamics.lean}.
+Phase geometry and material response:
+\texttt{Hqiv/QuantumChemistry/PhaseGeometryDensity.lean},
+\texttt{Hqiv/QuantumChemistry/PhaseMaterialResponse.lean},
+\texttt{Hqiv/QuantumChemistry/PhaseAllotropeDerivation.lean}
+(\texttt{motif\_h2o\_has\_ice\_ih\_label}).
+Homogeneous curvature second order:
+\texttt{Hqiv/Physics/HomogeneousCurvatureSecondOrder.lean}.
+
+\paragraph{Python reproducers.}
+From repository root:
+\begin{verbatim}
+python3 scripts/hqiv_isotope_pdg_benchmark.py --qualify-em-tipping
+python3 scripts/hqiv_isotope_stability_halflife.py --A 1 --Z 0 \
+  --qualify-em-tipping --lab-temperature-K 300 --gravity-stack full
+pip install -e . && hqiv-lab H2O
+python3 scripts/hqiv_phase_geometry_density.py H2O
+PYTHONPATH=scripts python3 scripts/test_hqiv_phase_material_response.py
+\end{verbatim}
+Full witness tables and claim map: \texttt{hqiv\_nucleon\_binding\_from\_composite\_trace.tex} (v6).
+
+Axiom~\ref{ax:skew} is \textbf{not} a Lean theorem: it records the modeling target coupling $\Delta$ to the lapse-selected slice.
+No result in this appendix substitutes for the proofs in Sections~1--2: it is an audit trail for readers who wish to replay the certificates mechanically.
+
+\section*{References}
+\bibliographystyle{plain}
+\bibliography{../references}
+
+\end{document}

@@ -1,19 +1,27 @@
-# Reproducer scripts — orbital flyby paper
+# Reproducer scripts — accelerations / galaxy-evolution paper
 
-## SPARC rotation-curve map
+Canonical LaTeX: `hqiv_accelerations_galaxy_evolution.tex`  
+Legacy alias: `hqiv_orbital_flyby_anomaly.tex` (inputs the canonical file).
 
-From the repository root (requires `scripts/data/sparc/` from `scripts/download_sparc_data.sh`):
+## SPARC catalog summary (WHIM + filaments on by default)
+
+From the HQIV_Orbital repository root (requires `scripts/data/sparc/`):
 
 ```bash
-python3 papers/orbital_flyby/scripts/generate_sparc_map.py
+export PYTHONPATH="${PWD}/HQIV_LEAN/scripts:${PWD}"
+python3 HQIV_LEAN/papers/orbital_flyby/scripts/generate_sparc_map.py
 ```
 
 Outputs:
 
-- `papers/orbital_flyby/artifacts/sparc_hqiv_catalog.json` — catalog summary + $R^2$ block
-- `papers/orbital_flyby/figures/sparc_hqiv_map.pdf` — $v_{\rm obs}$ vs $v_{\rm HQIV}$ scatter
+- `papers/orbital_flyby/artifacts/sparc_hqiv_catalog.json` — full 175-galaxy summary
+- Full per-galaxy payload: `HQIV_Orbital/artifacts/sparc_hqiv_whim_filament_v2.json`
 
-Uses the same single-exponent lapse $\varphi(R)=\varphi_{\rm hom}/(1+R/R_d)$ and gas+disk+bulge SPARC components as `scripts/hqiv_sparc_rotation.py` (no halo fit).
+Filament spine setup:
+
+```bash
+bash scripts/download_filament_environment.sh
+```
 
 ## Flyby table
 

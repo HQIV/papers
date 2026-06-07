@@ -79,6 +79,14 @@
   url          = {https://github.com/HQIV/hqiv-lean/tree/main/papers/complex_time_stokes_bridge}
 }
 
+@unpublished{hqiv-s3-zeta-so4-paper,
+  author       = {Ettinger Jr, Steven},
+  title        = {$\zeta(s)$ as an {SO(4)} Projection to the Complex Plane: Harmonic--$\Delta$ Closure, Quaternion Axis Readout, and Regional Closed Forms},
+  year         = {2026},
+  note         = {Lean formal proof note in \texttt{papers/s3\_zeta\_so4\_projection/}; build \texttt{lake build HQIVStory}.},
+  url          = {https://github.com/HQIV/hqiv-lean/tree/main/papers/s3_zeta_so4_projection}
+}
+
 @unpublished{hqiv-tuft-bridge-paper,
   author       = {Ettinger Jr, Steven},
   title        = {Topology, the Complex Hopf Fibration, and Finite Approximations in {HQIV}: {TUFT} Alignments, Contact Spectra, and the Discrete--Continuous Interface},
@@ -264,13 +272,185 @@
 
 @article{goerigk2017gmtkn55,
   author  = {Goerigk, Lars and Hansen, Andreas and Bauer, Christoph and Ehrlich, Stephan and Najibi, Alireza and Grimme, Stefan},
-  title   = {A Look at the Density Functional Theory Zoo with the Advanced GMTKN55 Database for General Main Group Thermochemistry, Kinetics and Noncovalent Interactions},
+  title   = {A Look at the Density Functional Theory Zoo with the Advanced {GMTKN55} Database for General Main Group Thermochemistry, Kinetics and Noncovalent Interactions},
   journal = {Physical Chemistry Chemical Physics},
   year    = {2017},
   volume  = {19},
   number  = {48},
   pages   = {32184--32215},
   doi     = {10.1039/C7CP04913G}
+}
+
+@article{grimme2011d3,
+  author  = {Grimme, Stefan and Antony, Jens and Ehrlich, Stephan and Krieg, Henrik},
+  title   = {A Consistent and Accurate Ab Initio Parametrization of Density Functional Dispersion Correction ({DFT-D}) for the 94 Elements {H-Pu}},
+  journal = {The Journal of Chemical Physics},
+  year    = {2011},
+  volume  = {132},
+  number  = {15},
+  pages   = {154104},
+  doi     = {10.1063/1.3382344},
+  note    = {PBE-D3 dispersion correction used as the periodic-DFT benchmark functional in Table~\ref{tab:condensed-universality}.}
+}
+
+@article{santra2013ice,
+  author  = {Santra, Biswajit and Klime{\v{s}}, Ji{\v{r}}{\'i} and Alf{\`e}, Dario and Michaelides, Angelos and Car, Roberto and Scheffler, Matthias and Tkatchenko, Alexandre and Maurer, Reinhard J. and {\c{S}}tich, Ivan},
+  title   = {On the Accuracy of van der Waals Inclusive Density-Functional Theory Exchange-Correlation Functionals for Ice},
+  journal = {Physical Review B},
+  year    = {2013},
+  volume  = {87},
+  number  = {1},
+  pages   = {014101},
+  doi     = {10.1103/PhysRevB.87.014101},
+  note    = {Ice {Ih} density and lattice benchmarks for vdW-inclusive DFT; PBE-D3 within a few percent of experiment.}
+}
+
+@article{brandenburg2016jctc,
+  author  = {Brandenburg, Jan Gerit and Gruber, Michael and Bannwarth, Christoph and Hansen, Andreas and Grimme, Stefan},
+  title   = {Assessment of Different Quantum Mechanical Methods for the Prediction of Structure and Cohesive Energy of Molecular Crystals},
+  journal = {Journal of Chemical Theory and Computation},
+  year    = {2016},
+  volume  = {12},
+  number  = {9},
+  pages   = {4261--4272},
+  doi     = {10.1021/acs.jctc.6b00304},
+  note    = {{X23/G60/K7} molecular-crystal volume and sublimation benchmarks; PBE-D3 reference geometries for apolar and H-bonded solids.}
+}
+
+@article{gillan2016perspective,
+  author  = {Gillan, Michael J. and Alf{\`e}, Dario and Michaelides, Angelos},
+  title   = {Perspective: How Good Is {DFT} for Water?},
+  journal = {The Journal of Chemical Physics},
+  year    = {2016},
+  volume  = {144},
+  number  = {13},
+  pages   = {130901},
+  doi     = {10.1063/1.4944633},
+  note    = {Static periodic DFT does not yield melting points without AIMD; $T_{\mathrm{sl}}$ DFT column omitted in Table~\ref{tab:condensed-universality}.}
+}
+
+@article{reilly2013mbd,
+  author  = {Reilly, Anthony M. and Tkatchenko, Alexandre},
+  title   = {Understanding the Role of Vibrations, Exact Exchange, and Many-Body Van der Waals Interactions in Molecular Crystals},
+  journal = {Physical Review Letters},
+  year    = {2013},
+  volume  = {111},
+  number  = {5},
+  pages   = {055502},
+  doi     = {10.1103/PhysRevLett.111.055502},
+  note    = {Molecular-crystal polarizability and refractive-index benchmarks from dispersion-inclusive DFT.}
+}
+
+% --- Standard chemistry / condensed-matter references (material-response slots) ---
+
+@misc{nistwebbook_h2o,
+  author       = {{NIST}},
+  title        = {NIST Chemistry WebBook, {SRD} 69: Water ({H$_2$O})},
+  year         = {2026},
+  howpublished = {National Institute of Standards and Technology},
+  url          = {https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Mask=4},
+  urldate      = {2026-06-03},
+  note         = {Thermophysical and structural reference data for liquid water and ice {Ih}; comparison targets for density, $C_p$, and related properties.}
+}
+
+@misc{nistwebbook_ch4,
+  author       = {{NIST}},
+  title        = {NIST Chemistry WebBook, {SRD} 69: Methane ({CH$_4$})},
+  year         = {2026},
+  howpublished = {National Institute of Standards and Technology},
+  url          = {https://webbook.nist.gov/cgi/cbook.cgi?ID=C74828&Mask=4},
+  urldate      = {2026-06-07},
+  note         = {Solid phase I density and thermophysical data for methane ice comparison.}
+}
+
+@misc{nistwebbook_nh3,
+  author       = {{NIST}},
+  title        = {NIST Chemistry WebBook, {SRD} 69: Ammonia ({NH$_3$})},
+  year         = {2026},
+  howpublished = {National Institute of Standards and Technology},
+  url          = {https://webbook.nist.gov/cgi/cbook.cgi?ID=C7664417&Mask=4},
+  urldate      = {2026-06-07},
+  note         = {Solid and liquid ammonia density and phase data.}
+}
+
+@misc{nistwebbook_hf,
+  author       = {{NIST}},
+  title        = {NIST Chemistry WebBook, {SRD} 69: Hydrogen Fluoride ({HF})},
+  year         = {2026},
+  howpublished = {National Institute of Standards and Technology},
+  url          = {https://webbook.nist.gov/cgi/cbook.cgi?ID=C7664393&Mask=4},
+  urldate      = {2026-06-07},
+  note         = {Solid and liquid hydrogen fluoride density and phase data.}
+}
+
+@book{petrenko2002ice,
+  author    = {Petrenko, Victor F. and Whitworth, Robert W.},
+  title     = {Physics of Ice},
+  publisher = {Oxford University Press},
+  year      = {2002},
+  isbn      = {978-0198518945},
+  note      = {Standard reference for ice {Ih} structure, density, birefringence, and thermal properties.}
+}
+
+@article{gillespie1970vsepr,
+  author  = {Gillespie, Ronald J.},
+  title   = {The Electron-Pair Repulsion Model for Molecular Geometry},
+  journal = {Journal of Chemical Education},
+  year    = {1970},
+  volume  = {47},
+  number  = {1},
+  pages   = {18--23},
+  doi     = {10.1021/ed047p18}
+}
+
+@book{hecht2017optics,
+  author    = {Hecht, Eugene},
+  title     = {Optics},
+  edition   = {5th},
+  publisher = {Pearson},
+  year      = {2017},
+  isbn      = {978-0133977226},
+  note      = {Clausius--Mossotti / Lorentz--Lorenz relation between refractive index, dielectric constant, and polarizability.}
+}
+
+@book{ashcroft1976ssp,
+  author    = {Ashcroft, Neil W. and Mermin, N. David},
+  title     = {Solid State Physics},
+  publisher = {Cengage Learning},
+  year      = {1976},
+  isbn      = {978-0030839931},
+  note      = {Phonon transport, Debye/Einstein heat capacity, and standard solid-state response formulae.}
+}
+
+@book{atkins2018pchem,
+  author    = {Atkins, Peter and de Paula, Julio},
+  title     = {Physical Chemistry},
+  edition   = {11th},
+  publisher = {Oxford University Press},
+  year      = {2018},
+  isbn      = {978-0198769866},
+  note      = {Eyring transition-state theory for viscosity; molar heat capacities and standard thermochemistry.}
+}
+
+@article{eyring1936viscosity,
+  author  = {Eyring, Henry},
+  title   = {Viscosity, Plasticity, and Diffusion as Examples of Absolute Reaction Rates},
+  journal = {The Journal of Chemical Physics},
+  year    = {1936},
+  volume  = {4},
+  number  = {4},
+  pages   = {283--291},
+  doi     = {10.1063/1.1749836}
+}
+
+@book{crc2023handbook,
+  editor    = {Rumble, John R.},
+  title     = {{CRC} Handbook of Chemistry and Physics},
+  edition   = {104th},
+  publisher = {CRC Press},
+  year      = {2023},
+  isbn      = {978-1032479853},
+  note      = {Compiled standard values for water/ice density, heat capacity, thermal conductivity, and related bulk properties.}
 }
 
 @inproceedings{grover1996,
@@ -754,12 +934,12 @@
 
 @misc{hqiv-nucleon-binding-paper,
   author       = {Ettinger, Steven Jr},
-  title        = {Nucleon Binding from {HQIV} Composite-Trace Weights: Lock-In Masses, Lapse Readout, and Neutron Stability Scaffold},
+  title        = {Binding Energy and the Weak Force from {HQIV} Composite-Trace Weights: Lock-In Masses, Three Ledgers, and Zero-Knob Half-Lives},
   year         = {2026},
   howpublished = {Preprint, HQIV-LEAN repository (\texttt{papers/nucleon\_binding/})},
-  note         = {In preparation. Tier-2 \#7: $8\times8$ network binding at \texttt{referenceM}; cites \texttt{hqiv-tuft-sm-lagrangian-paper} (DOI 10.5281/zenodo.20517172) and \texttt{hqiv-baryogenesis-paper}; precursor to BBN.},
+  note         = {In preparation. Tier-2 \#7: $8\times8$ composite-trace binding at \texttt{referenceM}; three-ledger $\beta$ tipping (endpoint $Q$, $G_F$ width, valley geometry); outside $T(\xi)$ and gravity stack; free-neutron $\tau$ witness with zero half-life knobs. Cites \texttt{hqiv-tuft-sm-lagrangian-paper} (DOI 10.5281/zenodo.20517172) and \texttt{hqiv-baryogenesis-paper}; precursor to BBN (\texttt{hqiv-bbn-paper}).},
   url          = {https://github.com/HQIV/hqiv-lean/blob/main/papers/nucleon_binding/hqiv_nucleon_binding_from_composite_trace.tex},
-  urldate      = {2026-05-27}
+  urldate      = {2026-06-03}
 }
 
 @misc{hqiv-bbn-paper,
@@ -780,6 +960,16 @@
   note         = {Tier-2 closure note. Cites \texttt{hqiv-tuft-sm-lagrangian-paper} (DOI 10.5281/zenodo.20517172), nucleon binding, and Tier-1 records. Explicit identification of the gluon with the inner trapped-Casimir binding factor; no fundamental gluon fields in the proved discrete action.},
   url          = {https://github.com/HQIV/hqiv-lean/blob/main/papers/gluon_curvature_artifact/hqiv_gluon_as_curvature_artifact.tex},
   urldate      = {2026-05-27}
+}
+
+@misc{hqiv-hep-decay-paper,
+  author       = {Ettinger, Steven Jr},
+  title        = {Heavy-Flavour Decay Chains from {HQIV} Three-Ledger Readout: Discrete Multichannel Rules, Quarkonium Contact, and Branching without Partial-Width Inputs},
+  year         = {2026},
+  howpublished = {Preprint, HQIV-LEAN repository (\texttt{papers/hep\_decay\_readout/})},
+  note         = {Tier-2 decay-calculator extension; cites \texttt{hqiv-tuft-sm-lagrangian-paper} (DOI 10.5281/zenodo.20517172) and \texttt{hqiv-nucleon-binding-paper}. HEP mass panel, programmatic multichannel expansion ($\sim 190$ $J/\psi$, $\sim 222$ $\Upsilon$ channels), hidden-quarkonium EM contact $39/10$, strict benchmark discharge ($87/87$).},
+  url          = {https://github.com/HQIV/hqiv-lean/blob/main/papers/hep_decay_readout/hqiv_hep_decay_readout_from_multichannel.tex},
+  urldate      = {2026-06-05}
 }
 
 @misc{graneau2026,
@@ -1067,6 +1257,64 @@
   doi     = {10.1103/PhysRevLett.32.438}
 }
 
+@article{augustin1974,
+  author  = {Augustin, J. E. and others},
+  title   = {Discovery of a Narrow Resonance in $e^+e^-$ Annihilation},
+  journal = {Physical Review Letters},
+  volume  = {33},
+  pages   = {1406--1408},
+  year    = {1974},
+  doi     = {10.1103/PhysRevLett.33.1406}
+}
+
+@article{herb1977,
+  author  = {Herb, S. W. and others},
+  title   = {Observation of a High-Mass Dimuon Resonance in 400-{GeV} Proton-Nucleus Collisions},
+  journal = {Physical Review Letters},
+  volume  = {39},
+  pages   = {252--255},
+  year    = {1977},
+  doi     = {10.1103/PhysRevLett.39.252}
+}
+
+@misc{zweig1964,
+  author       = {Zweig, George},
+  title        = {An {SU(3)} Model for Strong Interaction Symmetry and its Breaking},
+  year         = {1964},
+  howpublished = {CERN Reports TH-401, TH-412},
+  note         = {Zweig--Iizuka rule for disconnected quark lines}
+}
+
+@article{lipkin1976,
+  author  = {Lipkin, H. J.},
+  title   = {Symmetry and Spectroscopy of Heavy Quarkonia},
+  journal = {Physics Letters B},
+  volume  = {60},
+  pages   = {371--374},
+  year    = {1976},
+  doi     = {10.1016/0370-2693(76)90436-0}
+}
+
+@article{belle2002,
+  author  = {{Belle Collaboration} and others},
+  title   = {The {Belle} Detector},
+  journal = {Nuclear Instruments and Methods in Physics Research A},
+  volume  = {479},
+  pages   = {117--232},
+  year    = {2002},
+  doi     = {10.1016/S0168-9002(01)02062-6}
+}
+
+@article{cms2018,
+  author  = {{CMS Collaboration}},
+  title   = {Measurement of the $B^\pm$ Meson Differential Production Cross Sections Using $B^\pm \to J/\psi K^\pm$ Decays in $pp$ Collisions at $\sqrt{s}=13$ {TeV}},
+  journal = {Physical Review D},
+  volume  = {97},
+  pages   = {092011},
+  year    = {2018},
+  doi     = {10.1103/PhysRevD.97.092011}
+}
+
 @article{casimir1948,
   author  = {Casimir, H. B. G.},
   title   = {On the Attraction Between Two Perfectly Conducting Plates},
@@ -1113,7 +1361,8 @@
   edition   = {3rd},
   publisher = {Wiley},
   year      = {1999},
-  isbn      = {978-0-471-30932-1}
+  isbn      = {978-0-471-30932-1},
+  note      = {Macroscopic dielectric theory; Clausius--Mossotti identity in polarizable media.}
 }
 
 @book{steenrod1951,

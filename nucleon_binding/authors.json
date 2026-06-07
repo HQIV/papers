@@ -1,12 +1,12 @@
 {
-  "paper": "hqiv_nucleon_binding_from_composite_trace",
+  "paper": "nucleon_binding",
   "authors": [
     {
-      "name": "Steven Ettinger Jr",
-      "email": "steven@disregardfiat.tech",
+      "name":        "Steven Ettinger Jr",
+      "email":       "steven@disregardfiat.tech",
       "affiliation": "Independent Researcher",
-      "orcid": "0009-0004-9940-3666",
-      "github": "disregardfiat"
+      "orcid":       "0009-0004-9940-3666",
+      "github":      "disregardfiat"
     }
   ]
 }

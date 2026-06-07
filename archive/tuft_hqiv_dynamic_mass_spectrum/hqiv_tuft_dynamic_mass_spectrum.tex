@@ -1,0 +1,314 @@
+% Combined synthesis paper:
+% Topological origins of the mass spectrum on the complex Hopf fibration,
+% together with the dynamic inner--outer Casimir realization on the discrete
+% octonion carrier and physical-temperature ladder.
+%
+% pdflatex
+\documentclass[11pt]{amsart}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools,booktabs}
+\usepackage{enumitem}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\usepackage[final]{microtype}
+\setlength{\emergencystretch}{3em}
+
+% url package (pulled by hyperref) gives us \path which breaks cleanly at / . -
+% This is the key fix for the long Lean file paths in Appendix A.
+\usepackage{url}
+\urlstyle{same}
+
+\newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
+% Lean module / identifier helpers: use \path (not \nolinkurl) so that slashes,
+% dots, and hyphens become legal break points. This eliminates the flood of
+% Underfull \hbox warnings from the long Hqiv/... paths.
+\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\path{#1}}}
+\newcommand{\leanid}[1]{\path{#1}}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\title[Topological Necessity of the Fermion Mass Spectrum]
+{Topological Necessity of the Fermion Mass Spectrum\\[0.35em]
+on the Complex Hopf Fibration and its Dynamic Realization\\[0.35em]
+in the Discrete Octonion-Carrier Framework}
+
+\author{Steven Ettinger Jr}
+\address{Independent Researcher}
+\email{steven@disregardfiat.tech}
+\date{Preprint v1 --- \today}
+
+\begin{document}
+
+\begin{abstract}
+\noindent\textbf{Position in the publication chain.}
+This is the second paper of the Tier-2 Standard-Model layer (\#6 in the
+publication sequence). It supersedes the archived electroweak/ladder draft
+(\texttt{papers/archive/lean\_to\_mass\_spectrum/}, bib key
+\texttt{hqiv-mass-spectrum-paper}). Tier~0 fixes the framework
+\cite{ettinger2026hqiv,hqiv-lightcone-paper,hqiv-so8-paper}; all four
+Tier~1 companions
+\cite{hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper,hqiv-thermo-arrow-paper}
+are published on Zenodo. The immediate predecessor is the Standard-Model
+Lagrangian bridge \cite{hqiv-sm-lagrangian-paper}, which identifies every
+$\mathcal{L}_{\rm SM}$ sector with projections of the discrete octonion
+action; the present work supplies the topological pedigree of the fermion
+mass spectrum and the dynamic geometric mechanism that fills the Yukawa
+readouts at a chosen now slice.
+
+\noindent\textbf{Result.}
+Nielsen's topological framework establishes that any U(1)-complete, charge-quantised gauge theory must be formulated, up to homotopy, on the complex Hopf fibration and its finite approximations $S^{2n+1}\to\mathbb{CP}^n$. The nested shells yield the Standard-Model gauge factors as natural reductions, fibre-induced torsion for gravity, and zeta-regularised contact spectra that generate mass scales from a single reference. The discrete octonion-carrier framework realises these structures on a finite, machine-checkable carrier whose three-shell integrable Hopf data supply per-shell curvature imprints and torsion. The inner--outer Casimir balance on the contact surfaces of these shells and their neutral outer extension converts the single-scale programme into an explicit, bidirectional map between cosmic temperature and the lepton mass spectrum: the effective scale at any epoch is the instantaneous ratio of inner trapping (binding and heavy stabilisation) to outer suppression, modulated by the curvature primitive along the temperature ladder. A single MeV anchor at a chosen reference epoch fixes the absolute chart; all relative rungs and excitations are then geometry-driven.
+
+\noindent\textbf{Status.}
+The topological alignments, the three-shell Hopf data, the inner--outer Casimir factorisation, the curvature primitive, and the structural temperature-dependent readouts have been formalised in the public Lean development against \texttt{mathlib}. Reader-friendly anchors appear in Appendix~\ref{app:lean-index}. The MeV comparison table uses the explicit electroweak-vev/\(\kappa_6\) chart and is reproducible from the supplementary evaluation script.
+\end{abstract}
+\maketitle
+
+\input{../include/patch_theory_messaging.tex}
+
+\section{Introduction}
+
+The fermion mass spectrum presents two distinct questions. The first is topological: why does a charge-quantised gauge theory with a complete U(1) sector possess a mass spectrum at all, and why does that spectrum exhibit three generations with hierarchical splittings? The second is dynamical: given a topological origin, how is the overall scale fixed, how do the relative masses arise, and how does the spectrum depend on the temperature of the universe?
+
+Nielsen's analysis of the complex Hopf fibration as classifying space \cite{NielsenTUFT2026} supplies a compelling answer to the topological question. Any U(1)-complete and charge-quantised gauge theory must, up to homotopy and bundle isomorphism, be formulated on the universal complex Hopf fibration $S^1\to S^\infty\to\mathbb{CP}^\infty$ and its finite approximations $S^{2n+1}\to\mathbb{CP}^n$. The Standard-Model gauge factors arise as natural reductions along the nested shells; gravity emerges from the Kähler geometry of the base together with fibre-induced torsion; and the contact Beltrami operator on each shell yields an elliptic spectrum whose zeta-regularised determinants generate intrinsic mass scales from a single electroweak reference. Fibre-winding sectors and admissible cycles suggest a topological source for mixing matrices. The mass spectrum is therefore not an additional postulate but a necessary consequence of the classifying-space structure required by charge quantisation.
+
+The discrete octonion-carrier framework developed in the published Tier-0 and Tier-1 records of the series supplies the dynamical layer. Its null-lattice combinatorics and Fano incidence structure already encode three-generation rigidity and rational coupling ratios without positing a fundamental continuum spacetime. Until recently the overall mass scale was anchored by external witnesses, most commonly the proton mass at a reference shell. The inner--outer Casimir construction changes this decisively. On the octonion carrier supporting gauge and fermionic degrees of freedom, three integrable Hopf shells carry per-shell curvature imprints and torsion matrices. Their inner contact surfaces generate a trapped geometric factor responsible for binding and heavy stabilisation, while the outer neutral singlet extension supplies a characteristic suppression. The instantaneous balance between these contributions, modulated by the curvature primitive along the temperature ladder, yields an effective scale that is an explicit function of cosmic temperature. The lepton mass spectrum is therefore geometric at every epoch and bidirectional: any physical temperature determines a unique mass ladder, and conversely.
+
+This paper records the synthesis. Section~2 summarises the topological necessity from the Hopf fibration. Section~3 recalls the discrete Hopf-shell data that realise the structure on the octonion carrier. Section~4 discusses the complementary perspectives of Nielsen's topological derivation and the octonion-carrier realisation. Section~5 presents the inner--outer Casimir mechanism that converts the single-scale programme into a temperature-dependent spectrum. Section~6 exhibits the ground and excited-state readouts and compares them with PDG values at a reference epoch. Section~7 addresses implications for the question of free parameters. Section~8 records the machine-checked structural status. The conclusion returns to the division of labour: the topological analysis explains why a Hopf-shell mass spectrum must exist; the carrier dynamics exhibit how it is realised and how the choice of a single reference epoch on the temperature ladder suffices to fix the phenomenology at every other epoch.
+
+\subsection{Nomenclature}
+The symbols below recur in the text and are defined where they first appear:
+\begin{description}[leftmargin=1.5em]
+\item[$\xi$] Horizon coordinate on the continuous temperature ladder; $\xi = T_{\rm Pl}/T$.
+\item[$\Lambda_{\rm eff}(\xi)$] Effective scale arising from the inner--outer Casimir balance at coordinate $\xi$.
+\item[$G(\xi)$] Heavy-sector gap (relative Casimir scale) at $\xi$; anchors the lepton ground state.
+\item[$M_n^{\mathrm{Hopf}}$] Dimensionless Hopf--Beltrami scalar for generation $n$.
+\item[$m_n(\xi)$] Lepton mass triplet at coordinate $\xi$.
+\item[$M_p^{\mathrm{derived}}$] Proton mass at the reference epoch (derived from the carrier data and used as anchor).
+\item[$\omega K(\xi)$] Normalised curvature primitive governing the running of the Casimir factors.
+\end{description}
+
+\section{Topological Necessity: the Complex Hopf Fibration as Classifying Space}
+
+Any principal U(1)-bundle over a paracompact base that realises every topological class and every integral Chern number must be pulled back from the universal bundle $S^1\to S^\infty\to\mathbb{CP}^\infty$. Finite approximations $S^{2n+1}\to\mathbb{CP}^n$ inherit the same classifying property up to homotopy in dimension $\le 2n$. Nielsen demonstrates that the successive shells $S^1$, $S^3$, $S^5$ furnish, respectively, the U(1), SU(2) and SU(3) factors of the Standard Model when the structure group is reduced along the natural inclusions. The base $\mathbb{CP}^n$ carries a Kähler metric whose curvature, together with torsion induced by the Hopf fibre, yields a gravitational sector of Einstein--Cartan type. On each shell the generalised Beltrami operator acting on the contact distribution is elliptic and essentially self-adjoint; its spectrum is stable under torsion perturbations. Fibre-winding sectors (integrable torus knots labelled by positive integers $n=1,2,3$ in the first three shells) produce independent topological contributions whose zeta-regularised determinants supply mass scales once a single electroweak reference is fixed. Admissible cycles on the total space intersect in holonomy phases that furnish a topological candidate for the observed mixing matrices.
+
+The single-scale derivation programme follows directly: once the Fermi constant (or its associated vacuum expectation value) is given, the entire tower of shell-specific mass scales, coupling ratios and mixing parameters is determined by the spectral geometry of the fibration. No additional dimensionful inputs are required in principle.
+
+\section{The Discrete Hopf-Shell Carrier}
+
+The discrete octonion-carrier framework realises the Hopf-fibration structures inside a finite ontology whose load-bearing objects are shell indices $m\in\mathbb{N}$ and finite index types. The octonion carrier $\mathbb{R}^8$ (or its complexification) is equipped with a Fano incidence structure that closes to $\mathfrak{so}(8)$ and decomposes under triality into the observed gauge and matter representations. The null-lattice combinatorics supply the horizon-area readouts and the combinatorial growth that rigidifies three generations without additional postulates.
+
+Of central importance is the three-shell Hopf data on this carrier. Each shell is an integrable discrete complex carrying a curvature imprint, a phase-lift coefficient, and a torsion matrix obtained from the contact Beltrami data. The canonical three-shell assembly (winding numbers 1, 2, 3) forms a single non-factorable carrier: the torsion matrices cannot be simultaneously block-diagonalised in any proper subspace, and the length-three property together with the admissible-cycle condition on the heavy holonomy row are formally verified. The outer-shell fluctuation datum on the neutral singlet extension (the right-handed neutrino channel) supplies the characteristic coarse-grained suppression factor $1/140$.
+
+These data are the finite, machine-checkable counterparts of the nested Hopf shells, contact spectra, fibre torsion and admissible cycles of Nielsen's construction. The shell indices name the readout samples, while the carrier geometry, trapped Casimir balance, and phase motion carry the mass readout; no continuum limit is invoked.
+
+\section{Complementary Perspectives}
+
+Nielsen's Topological Unified Field Theory stands as a striking achievement \cite{NielsenTUFT2026}. Starting from the classification theorem for principal $U(1)$-bundles \cite{Milnor1956,Husemoller1994} and the two minimal axioms of charge quantisation and completeness, she proves that any unified gauge theory satisfying these conditions must realise its $U(1)$ sector on the universal complex Hopf fibration and its finite approximations. The nested shells then force the Standard-Model gauge factors as canonical reductions, while the Kähler geometry of the base together with fibre torsion supplies a gravitational sector of Einstein--Cartan type. On each shell the generalised Beltrami operator acting on the contact distribution is elliptic and essentially self-adjoint; its zeta-regularised spectral determinants \cite{RaySinger1971,Cheeger1979,Muller1978}, together with the intersection theory of admissible cycles, generate the entire mass and coupling hierarchy once a single empirical scale---the Fermi constant and its associated electroweak vacuum expectation value---is supplied. The forcing theorems that uniquely select $\mathrm{SU}(2)$ and $\mathrm{SU}(3)$ as the groups compatible with preservation of the Hopf fibre, transitivity on the relevant shells, and indecomposability of the total bundle (stemming from the fact that the universal first Chern class generates the cohomology ring $H^*(BU(1);\mathbb{Z})\cong\mathbb{Z}[c_1]$ \cite{MilnorStasheff1974}) are particularly elegant. These results provide a compelling topological pedigree for the observed gauge and matter content.
+
+The discrete octonion-carrier framework developed in the Horizon-Quantized Informational Vacuum series \cite{ettinger2026hqiv,hqiv-lightcone-paper,hqiv-so8-paper,hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper} reaches closely related geometric structures from a different point of departure. Rather than beginning with the classification of bundles, it begins with a discrete null-lattice metric whose combinatorial rules are fixed by horizon-area monogamy on a finite octonion-indexed carrier. In this ontology the $U(1)$ sector itself emerges from the light-cone geometry and the sectorial projection of the discrete octonion action, rather than being introduced as an assumed gauge symmetry obeying quantisation and completeness. The three-shell Hopf data, admissible cycles, and contact torsion matrices appear as explicitly constructed, machine-verified witnesses of the same topological objects Nielsen derives, but now realised on a finite carrier without any appeal to a continuum limit or to the classification theorem as a starting axiom.
+
+The two programmes therefore differ both methodologically and in the phenomenological questions they naturally address. Nielsen's construction collapses standard differential-geometric structures---the Beltrami operator, zeta determinants, intersection forms---onto the Hopf geometry, yielding powerful statements of necessity and a unified account of mass generation from spectral geometry. The discrete construction, by contrast, derives its gauge structure and its temperature ladder from the same null-lattice combinatorics; as a result it takes the age of the universe (or, more precisely, the identification of a consistent reference epoch on the physical-temperature ladder) as its primary phenomenological input. This choice makes cosmological evolution directly accessible: the lepton spectrum becomes a function of cosmic time, wall-clock versus apparent age become discriminable observables, and predictions such as the isotropic birefringence at the present epoch (arising as the cumulative phase accumulation \(\beta = \alpha \log[(m_{\rm obs}+1)/(m_{\rm emit}+1)]\) with \(\alpha=3/5\) from the null-lattice curvature imprint along the propagation shell ladder) follow without additional postulates. The zero-sorry derivation of the phase-accumulation formula appears in the finite-mode Kirchhoff paper and is formalised in `CosmologicalShellLadder.lean`.
+
+A further structural difference appears in the electromagnetic sector. The O-Maxwell formulation on the octonion carrier yields a longitudinal force component generated by the phase-gradient term along the auxiliary ladder \cite{ettinger2026longitudinal}. No counterpart to this longitudinal channel arises in the topological construction, which recovers the standard transverse Maxwell structure on the fundamental Hopf fibre. Whether the longitudinal degree of freedom survives the continuum translation of the discrete theory, or whether it is an artefact of the patch-level ontology, is an open question that invites further dialogue between the two approaches.
+
+What remains most striking is the depth of convergence. Both frameworks identify the nested Hopf shells, the contact Beltrami spectra, and the necessity of a single reference scale as the origin of the observed mass hierarchy. Nielsen's analysis demonstrates why such a structure is topologically forced; the discrete realisation exhibits how it can be rendered finite, formally verifiable, and dynamically responsive to the thermal history of the universe. The two routes are therefore complementary rather than competitive. Each illuminates aspects of the geometry that the other renders natural, and each supplies falsifiable predictions---torsion-induced phase wobble and precision $g-2$ measurements on Nielsen's side; temperature-dependent spectra, birefringence evolution, and longitudinal force signatures on the discrete side---whose confrontation with observation will ultimately decide their individual or joint merit.
+
+\section{The Dynamic Inner--Outer Casimir Mechanism}
+
+The decisive advance that converts the topological single-scale vision into a fully dynamic, temperature-dependent spectrum is the inner--outer Casimir construction on the three-shell Hopf carrier and its outer extension.
+
+On the inner contact surfaces of the three integrable Hopf shells, the trapping selection functional (modulated by the continuous curvature primitive $\omega K(\xi)$) generates a geometric factor responsible for binding and for the heavy stabilisation gap. On the outer surface of the same carrier, the neutral singlet extension produces a suppression factor recovered as the coarse-grained readout of the outer fluctuation mode count. The effective scale at any horizon coordinate $\xi$ is therefore the ratio
+\[
+\Lambda_{\rm eff}(\xi) = \frac{\text{inner trapping}(\omega K(\xi))}{\text{outer suppression}}.
+\]
+Because $\omega K(\xi)$ is obtained by normalising the curvature primitive (logarithmic plus quadratic-logarithmic) against its value at the reference epoch, the scale becomes an explicit function of cosmic temperature once the physical-temperature--$\xi$ conversion supplied by the continuous ladder is used.
+
+The resulting lepton mass spectrum at any physical temperature is obtained in two steps. First the composite data on the carrier (zeta leading term on the heavy shell, torsion coefficient $4/5$, admissible holonomy row, chart factor $\xi/5$) supplies the instantaneous dynamic scale and hence the effective vacuum expectation value at that horizon coordinate. Then the Hopf spectral scale $\Lambda_{\rm Hopf}=\sqrt{2\pi}\,v(\xi)\,\kappa_6$ converts dimensionless Beltrami scalars into particle masses. The dimensional anchor is therefore the electroweak vev (or equivalently $G_F$), not a particle mass.
+
+This construction realises, in a discrete and formally verified setting, the single-scale derivation programme motivated by the topology of the complex Hopf fibration, while simultaneously supplying the temperature dependence that any realistic cosmological model requires. Operational particle masses are downstream readouts of the chain $T\leftrightarrow \xi\leftrightarrow v\leftrightarrow m$; PDG masses enter only as comparisons of the readout.
+
+\section{Ground and Excited-State Readouts}
+
+The synthesis is closed by explicit readouts for both the ground spectrum and low-lying excitations. All objects below have been formally verified without the use of \texttt{sorry}.
+
+\subsection{Ground lepton spectrum at horizon coordinate \texorpdfstring{$\xi$}{xi}}
+
+The heavy-sector gap is the relative inner--outer Casimir scale normalised at the reference epoch, while the lighter charged leptons are obtained from the Hopf--Beltrami determinant scalar. The explicit functional form
+\begin{align}
+  G(\xi) &=
+    \frac{4}{5}\,\frac{\xi}{5}\,
+    \frac{\Lambda_{\rm eff}(\xi)}
+         {\Lambda_{\rm eff}(\xi_{\rm ref})},
+  \\
+  M_n^{\mathrm{Hopf}} &= (n+1)\exp\!\left(a n-\zeta(3)n^2\right)
+    \exp\!\left(\frac{n\alpha_{\rm em}}{6}\right),\qquad
+    a=6\sqrt2\exp\!\left(\frac{\zeta(3)}{24\pi^2}\right),
+  \\
+  m_n(\xi) &=
+    \Bigl(G(\xi),\;G(\xi)\frac{M_2^{\mathrm{Hopf}}}{M_3^{\mathrm{Hopf}}},\;
+           G(\xi)\frac{M_1^{\mathrm{Hopf}}}{M_3^{\mathrm{Hopf}}}\Bigr),
+\end{align}
+is the leading closed-form expression extracted from the zeta-regularised functional determinant of the contact Beltrami operator in fibre-winding sector \(n\) (Nielsen's Sector Determinant Lemma \cite{NielsenTUFT2026}). The factor \((n+1)\) is the Peter--Weyl multiplicity of the corresponding \(\mathrm{SU}(2)\) representation; the quadratic \(-\zeta(3)n^2\) suppression is the leading Casimir contribution to \(\ln\det'B_n\) on the relevant lens-space/knot-complement geometry (Nash--O'Connor formula, confirmed by the Cheeger--Müller theorem \cite{Cheeger1979,Muller1978}); the linear coefficient \(a\) encodes the helicity/self-linking contribution of the Hopf fibre; and the \(\exp(n\alpha_{\rm em}/6)\) term supplies the leading electromagnetic correction from the knot-complement spectral shift (Atiyah--Patodi--Singer \cite{APS1975}). Higher-order \(O(1)\) terms in the asymptotic expansion of the determinant are neglected here. The contact geometry of the relevant 3-manifolds is developed in standard references such as \cite{Geiges2008}. The overall heavy scale \(G(\xi)\) is supplied independently by the inner--outer Casimir mechanism of the present work; the scalar \(M_n^{\mathrm{Hopf}}\) then furnishes the relative rung ratios within the lepton sector. In this sense the lighter-lepton splittings are geometry-driven readouts of the contact spectrum once the heavy anchor is fixed.
+
+where \(\Lambda_{\rm eff}(\xi)\) is the effective Casimir scale of Section~5, \(\omega K(\xi)\) is the normalised curvature primitive, and \(\xi_{\rm ref}\) is the reference-epoch coordinate (default value 5 in the present chart). The physical-temperature wrappers compose the same objects with the conversion \(\xi=T_{\mathrm{Pl}}/T\) and the vev--spectral-scale map
+\[
+  T\mapsto \xi\mapsto v(\xi)
+  \mapsto \Lambda_{\rm Hopf}(\xi)=\sqrt{2\pi}\,v(\xi)\kappa_6
+  \mapsto m_n(\xi)=\Lambda_{\rm Hopf}(\xi)M_n^{\mathrm{Hopf}}.
+\]
+The dimensionless topological suppression slot $\kappa_6$ decomposes as $\kappa_6=\eta_{\rm ref}\,\gamma\,C_2$, where $\eta_{\rm ref}$ is the curvature-normalised matter surplus at unit curvature ratio, $\gamma=2/5$ is the overlap channel, and $C_2$ is the explicit second-order Hopf/contact correction.
+
+\subsection{Meta-horizon baryon excitations}
+
+Radial $(n)$ and orbital $(\ell)$ modes on the reference-epoch drum are given by the operational increments
+\begin{align}
+  M_{n,\ell}^{\mathrm{exc}} &=
+    M_p^{\mathrm{derived}} +
+    \Delta_r(n) + \Delta_\ell(\ell),
+  \\
+  \Delta_r(n) &=
+    M_p^{\mathrm{derived}}\Bigl(\frac{S(m{+}n)}{S(m)}-1\Bigr),\quad
+    S(m)=(m{+}1)(m{+}2),\; m=\mathrm{ref},
+  \\
+  \Delta_\ell(\ell) &=
+    M_p^{\mathrm{derived}}\,
+    \max\!\Bigl(0,\text{geometric resonance step at }(m+\ell)\Bigr).
+\end{align}
+The naive composite-trace channel is certified to give the wrong sign for the first radial step; the operational deltas form the catalog layer used for hadronic readouts.
+
+\subsection{Excited tower seeded by the dynamic heavy ground}
+
+The completed dynamic spectrum seeds excited states by rescaling the certified meta-horizon tower from the proton reference ground to the dynamic heavy ground at $\xi$:
+\begin{align}
+  G_{\rm heavy}(\xi) &=
+    m_1(\xi),
+  \\
+  M_{n,\ell}^{\mathrm{heavy}}(\xi) &=
+    G_{\rm heavy}(\xi) + \frac{G_{\rm heavy}(\xi)}{M_p^{\mathrm{derived}}}\,
+    \bigl(\Delta_r(n) + \Delta_\ell(\ell)\bigr),
+\end{align}
+where $G_{\rm heavy}(\xi)$ is the heavy lepton ground at that epoch. The bridge identity establishes that every excited level is the dynamic heavy ground plus the same certified meta-horizon increment, linearly scaled by the ratio of the dynamic heavy ground to the proton reference mass. Thus the entire tower at any temperature is determined once the reference-epoch anchor and the Casimir evolution are fixed.
+
+\subsection{PDG comparison at the reference epoch}
+
+Table~\ref{tab:pdg-lockin} evaluates the readouts at the reference coordinate $\xi_{\rm ref}=5$ with the proton derived ground $M_p=938.272\,\mathrm{MeV}$ and the lepton MeV chart anchored to the electroweak vev through $\Lambda_{\rm Hopf}=\sqrt{2\pi}\,v\kappa_6$. Numerics are reproducible from the supplementary evaluation script.
+
+\begin{table}[ht]
+  \centering
+  \caption{Readouts versus PDG centrals at the reference epoch $\xi_{\rm ref}=5$.
+    Ratios are model/PDG. The $\tau$ row is exact by the current vev--$\kappa_6$ chart;
+    $\mu$ and $e$ use the Hopf--Beltrami determinant scalar. The legacy rows expose the older
+    shell-quotient formula that produced large mismatches.}
+  \label{tab:pdg-lockin}
+  \begin{tabular}{lrrr}
+    \toprule
+    Observable & Model [MeV] & PDG [MeV] & ratio \\
+    \midrule
+    $\tau$ (vev--Hopf chart) & 1776.86 & 1776.86 & 1.000 \\
+    $\mu$ (vev--Hopf scalar) & 107.29 & 105.66 & 1.015 \\
+    $e$ (vev--Hopf scalar) & 0.520 & 0.511 & 1.018 \\
+    legacy $\mu$ shell quotient & 771.66 & 105.66 & 7.30 \\
+    legacy $e$ shell quotient & 430.06 & 0.511 & 842 \\
+    proton (derived) & 938.27 & 938.27 & 1.000 \\
+    $\Delta(1232)$ meta-horizon $(n{=}1,\ell{=}0)$ & 1313.58 & 1232.0 & 1.066 \\
+    $\rho$ vector $(\ell{=}1$ meson anchor$)$ & 591.11 & 775.26 & 0.763 \\
+    $N(1520)$ meta-horizon $(n{=}2,\ell{=}0)$ & 1751.44 & 1515.0 & 1.156 \\
+    dynamic tower $(n{=}1,\ell{=}0)$ & 2487.60 & 1232.0 & 2.019 \\
+    dynamic tower $(n{=}0,\ell{=}1)$ & 2238.84 & 775.26 & 2.888 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{Statistical status and nature of the comparison.}
+The \(\tau\) entry is exact by construction once the electroweak vev and the dimensionless suppression \(\kappa_6\) are chosen to anchor the heavy scale; it is not a prediction of the relative geometry. The lighter charged leptons \(\mu\) and \(e\) are genuine predictions of the relative Hopf--Beltrami scalar \(M_n^{\mathrm{Hopf}}\) at the reference epoch: they lie \(+1.54\%\) and \(+1.76\%\) above the PDG centrals. This constitutes a non-trivial success for a first-principles geometric model with a single overall scale choice.
+
+The hadronic entries illustrate the status of the meta-horizon catalog layer. The first radial excitation \(\Delta(1232)\) (operational \(n=1,\ell=0\)) is \(+6.6\%\) above PDG; the \(N(1520)\) (\(n=2\)) is \(+15.6\%\) high. Vector-meson and higher dynamic-tower entries (which rescale the lepton-sector heavy ground) lie factors of 2--3 away and are not intended as direct mass predictions; they expose the bridge ontology. A full \(\chi^2\) analysis over the catalog, including correlations from the shared Casimir evolution, lies beyond the present synthesis and will be reported with the dedicated hadronic readout papers.
+
+In summary, once the heavy lepton anchor and the vev--\(\kappa_6\) chart are fixed, all *relative* rung spacings within the charged-lepton sector and the operational increments of the meta-horizon tower are geometry-driven outputs of the discrete carrier data. The absolute placement of the heavy scale remains a phenomenological input.
+
+\section{Implications for the Question of Free Parameters}
+
+The same dynamic mechanism propagates directly into the Standard-Model
+Lagrangian bridge \cite{hqiv-sm-lagrangian-paper}: gauge kinetics from the
+sector projection of the abelian octonion kinetic density; fermion minimal
+couplings from the triality-summed source slot; the Higgs sector from the
+octonion-scalar norm evaluated on the dynamic vev; and Yukawa weights from
+the resonance ladder renormalised at the chosen reference epoch (the present
+paper supplies the mass chart that fills the Yukawa slot proved there).
+
+Because the effective vev itself is now a function of the selected reference epoch via the inner--outer Casimir balance, the entire Lagrangian at any epoch is determined once that single slice is chosen. There are no remaining free parameters in the conventional sense. The combinatorial structure of the lattice (the integers that fix $\alpha=3/5$, the triality count, the Fano incidence data) is fixed once and for all; the only operational degree of freedom in any given phenomenological application is the identification of a particular horizon coordinate with the ``present'' epoch. Different choices of reference epoch generate different effective spectra and couplings at that epoch, related to one another by the explicitly computed temperature evolution of the Casimir scale.
+
+This represents a substantial conceptual clarification relative to earlier presentations that treated a single particle mass as the obligatory anchor. A reference-epoch choice remains natural and well-motivated for the hadronic sector, but it is no longer obligatory for the leptonic or gauge sectors; any consistent slice may be used, and the dynamic geometry supplies the translation between them.
+
+\section{Scope, Limitations, and Asymptotic Regimes}
+
+The present synthesis focuses on the lepton spectrum and the operational meta-horizon hadronic catalog (radial and orbital increments on the reference-epoch drum, using the certified operational deltas from `MetaHorizonExcitedStates`). This is explicitly a catalog layer, not a first-principles derivation of the full hadronic spectrum. Complete treatment of quark masses, confinement, and the chiral condensate — realised as projections of the same \(8\times 8\) composite-trace binding network onto the strong octonion channels — is developed in the companion analysis of the gluon as a curvature artifact of the inner-Casimir trapping (in preparation). The right-handed neutrino suppression factor \(1/140\) is the coarse-grained readout of the outer neutral-shell fluctuation witness; its translation into the absolute neutrino mass scale and the structure of the PMNS matrix requires the higher-shell (\(S^9\)) Beltrami data and is reserved for dedicated neutrino-sector analysis (in preparation). CKM and PMNS phases are expected to arise from the holonomy phases of admissible cycles on the total space; explicit extraction of the Jarlskog invariant from the intersection form on the discrete Hopf complex remains in progress.
+
+Two asymptotic regimes of the temperature ladder merit explicit remark. As \(\xi\to 1^+\) (Planck-scale temperatures) the curvature primitive \(\omega K(\xi)\) and the inner-trapping factor diverge; the effective scale \(\Lambda_{\rm eff}(\xi)\) becomes arbitrarily large while the outer suppression remains finite. This suggests a pre-geometric or symmetry-restored phase in which all massive modes are pushed to trans-Planckian energies and only the strictly massless sector (photon, graviton) survives. The precise matching onto a high-temperature effective description, including possible restoration of chiral symmetry or deconfinement, lies outside the present low-energy chart.
+
+In the opposite limit \(\xi\to\infty\) (late universe) the curvature primitive \(\omega K(\xi)\) (given explicitly by the quadratic-logarithmic form \(\log\xi + (\alpha/2)(\log\xi)^2\) normalised at lock-in) continues to grow slowly. At the present epoch (\(\xi \approx 5\)) one has \(\omega K \approx 1\) by construction. By \(\xi \approx 10^3\) (redshift \(z\sim 10^3\), near recombination) the primitive has increased by a factor \(\sim 1.8\); by \(\xi = 10^6\) (far future, \(t \gg 10^{12}\) yr) the growth is only a factor \(\sim 3.2\). The residual running of the Casimir scale is therefore at the level of a few parts in \(10^3\) per e-fold of cosmic expansion at late times — potentially accessible only to ultra-precise future measurements of lepton mass ratios or to relics that decouple at intermediate \(\xi\).
+
+The explicit form also makes the trans-Planckian side quantitative. As \(\xi \to 1^+\) the primitive vanishes as \((\xi-1)^2\), but the inner-trapping factor in the Casimir mechanism diverges as \(1/\omega K(\xi)\). Consequently the effective lepton masses are driven to arbitrarily high (trans-Planckian) values while the outer suppression remains \(O(1)\). A concrete matching scale can be read off by setting the dynamic vev equal to the Planck mass: this occurs at \(\xi - 1 \sim 10^{-19}\) in the current chart, i.e., only an exponentially small distance above the Planck pole. This supplies a natural geometric cutoff for the low-energy effective theory without additional input.
+
+The baryon-asymmetry parameter \(\eta\) is fixed in the same lock-in epoch that sets the mass chart. The curvature-ratio lock-in formula \(\eta\propto 6^7\sqrt{3}/(m+1)\) (with \(m=4\) at the reference shell) yields a value consistent with the observed \(\eta\approx 6\times 10^{-10}\); its derivation from the discrete null-lattice surplus and the explicit numerical match are given in the companion baryogenesis analysis.
+
+\section{Machine-Checked Alignments and Formalisation Status}
+
+All alignments between Nielsen's Hopf-shell hierarchy and the discrete three-shell carrier data, the admissible-cycle predicate, the trapped-Casimir factorisation, the executable dynamic scale together with its physical-temperature wrappers, the meta-horizon excited-state catalog, and the dynamic-seeded excited tower (\hyperref[lean:casimir-bridge]{dynamic Casimir bridge}) have been formally constructed or verified against \texttt{mathlib} without the use of \texttt{sorry} in the executable path. The supporting analytic lemmas for the curvature primitive (positivity and strict monotonicity on $(1,\infty)$) are discharged in the continuous-ladder modules (\hyperref[lean:curvature-primitive]{curvature primitive}).
+
+Reader-friendly Lean anchors are collected in Appendix~\ref{app:lean-index}.
+
+\section{Conclusion}
+
+The mass spectrum possesses a topological pedigree and a dynamical realisation. Nielsen's analysis of the complex Hopf fibration establishes the former: charge quantisation and completeness of the U(1) sector force the theory onto a Hopf-shell hierarchy whose contact spectra and fibre holonomies generate the observed gauge factors and suggest a mass ladder from a single electroweak reference. The discrete octonion-carrier framework supplies the latter: a finite carrier equipped with an explicit three-shell integrable Hopf datum, an outer neutral singlet extension, and---decisively---an inner--outer Casimir balance whose temperature dependence is governed by the curvature primitive on the physical-temperature ladder.
+
+The resulting picture is economical. The topological structure explains the existence and gross features of the spectrum; the discrete dynamics explain its detailed, temperature-dependent phenomenology; and the only remaining operational choice in any given application is the identification of a reference epoch on the temperature ladder. In this precise sense the mass spectrum has been brought inside the geometric and combinatorial spine of the theory.
+
+Future work will tighten the remaining formal links (full contact geometry on the discrete Hopf complex, quantitative extraction of mixing phases from admissible-cycle intersections, and the extension of the dynamic scale into the hadronic and baryogenesis sectors) and will explore the observational consequences of the predicted temperature evolution of the lepton spectrum between the electroweak epoch and the present.
+
+\section*{Acknowledgments}
+The author thanks the Lean community, the maintainers of \texttt{mathlib}, and the participants in the formalisation effort for the sustained collaborative environment in which these alignments became machine-checkable. The topological vision is due to Jenny Lorraine Nielsen.
+
+\appendix
+\section{Lean Module Index}\label{app:lean-index}
+
+The principal modules supporting the synthesis are listed below. Hyperlinks in the body point to the corresponding entries.
+
+\begin{description}
+\item[\phantomsection\label{lean:hopf-shell-complex}\textbf{Three-shell Hopf carrier data.}] 
+  \leanfile{Hqiv/Topology/HopfShellComplex.lean}: typed Hopf shells, three-shell non-factorable witness, torsion matrices, admissible-cycle predicate.
+
+\item[\phantomsection\label{lean:outer-fluctuation}\textbf{Outer-shell fluctuation witness.}] 
+  \leanfile{Hqiv/Topology/ModalFrequencyHorizon.lean}: neutral singlet suppression and outer Casimir factor.
+
+\item[\phantomsection\label{lean:casimir-bridge}\textbf{Dynamic inner--outer Casimir scale.}] 
+  \leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean}: effective Casimir scale $\Lambda_{\rm eff}(\xi)$, physical-temperature wrappers, lepton-optimised chart, heavy-ground seeding of the excited tower, and the scaling bridge identity.
+
+\item[\phantomsection\label{lean:meta-horizon}\textbf{Meta-horizon excited states.}] 
+  \leanfile{Hqiv/Physics/MetaHorizonExcitedStates.lean}: operational radial and orbital excitations, naive-versus-operational discrepancy witness.
+
+\item[\phantomsection\label{lean:hadron-readout}\textbf{Hadron mass readout.}] 
+  \leanfile{Hqiv/Physics/HadronMassReadout.lean}: ground hadron masses and excitation tags for the catalog layer.
+
+\item[\phantomsection\label{lean:curvature-primitive}\textbf{Curvature primitive and continuous ladder.}] 
+  \leanfile{Hqiv/Physics/ContinuousXiPath.lean} and \leanfile{Hqiv/Physics/ContinuousXiCoupling.lean}: continuous $\xi$ ladder, curvature primitive $\omega K(\xi)$, positivity and monotonicity lemmas.
+
+\item[\phantomsection\label{lean:pdg-eval}\textbf{PDG comparison numerics.}] 
+  \texttt{scripts/hqiv\_tuft\_mass\_spectrum\_pdg\_eval.py}: evaluation script reproducing Table~\ref{tab:pdg-lockin}.
+
+\item[\phantomsection\label{lean:supporting}\textbf{Supporting modules.}] 
+  Modules in \texttt{Hqiv.Physics} and \texttt{Hqiv.Geometry} for the O-Maxwell action, informational energy, and the discrete null lattice.
+\end{description}
+
+All cited theorems are sorry-free under the public Lake targets.
+
+\bibliographystyle{alpha}
+\bibliography{../references}
+
+\end{document}

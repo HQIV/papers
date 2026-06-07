@@ -2,21 +2,29 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb,amsthm,mathtools}
 \usepackage{enumitem}
+\usepackage{booktabs}
 \usepackage{hyperref}
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+% url package (pulled by hyperref) gives us \path which breaks cleanly at / . -
+% This is the key fix for the long Lean file paths in Appendix A.
+\usepackage{url}
+\urlstyle{same}
 \usepackage[final]{microtype}
 \setlength{\emergencystretch}{3em}
 
 \newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
-\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\nolinkurl{#1}}}
-\newcommand{\leanid}[1]{\nolinkurl{#1}}
+% Lean module / identifier helpers: use \path (not \nolinkurl) so that slashes,
+% dots, and hyphens become legal break points. This eliminates the flood of
+% Underfull \hbox warnings from the long Hqiv/... paths.
+\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\path{#1}}}
+\newcommand{\leanid}[1]{\path{#1}}
 
 \title[Thermodynamics and the arrow of time]{Thermodynamics and the Arrow of Time from the HQIV Temperature Ladder:\\
 Finite Blackbody Entropy, Causal Monogamy, and Machine-Checked Dissipation Signs}
 \author{Steven Ettinger Jr}
 \address{Independent Researcher}
 \email{steven@disregardfiat.tech}
-\date{Preprint v1 --- \today}
+\date{Published v1 --- Zenodo \href{https://doi.org/10.5281/zenodo.20478826}{10.5281/zenodo.20478826} (2026-05-31)}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{proposition}[theorem]{Proposition}
@@ -26,45 +34,76 @@ Finite Blackbody Entropy, Causal Monogamy, and Machine-Checked Dissipation Signs
 \begin{document}
 
 \begin{abstract}
-\noindent\textbf{Position in the publication chain.}
-This is the fourth paper in the Tier-1 foundation-extension sequence, immediately after the
-Kirchhoff finite-mode blackbody note \cite{hqiv-kirchhoff-paper}.
-Tier~0 fixes the discrete spine \cite{ettinger2026hqiv,hqiv-lightcone-paper,hqiv-so8-paper};
-the 3D causal-growth, octonionic-action, and Kirchhoff companions
-\cite{hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper}
-supply causal monogamy, the variational layer, and truncated Planck thermodynamics.
-The present note states what Lean \emph{already proves} about thermodynamic laws and
-time-asymmetric readouts on that spine, and what remains interpretive.
+On the shell temperature ladder $T(m)=1/(m+1)$ the library already packages a
+zeroth-law equivalence relation, a first-law finite-window balance for weighted
+ladder redistribution, a second-law dissipation sign on a minimal $C_3$ heat graph
+together with a CFL-bounded explicit-Euler energy witness, and a third-law-style
+eventual cooling below any $\varepsilon>0$. Horizon blackbody modules define
+finite-shell photon number density, pressure $P=U/3$, and entropy density
+$s=(4/3)U/T$ without taking $\omega/T\to\infty$ limits. The \emph{macroscopic arrow}
+is read as the conjunction of (i)~acyclic causal access on the null lattice,
+(ii)~nonnegative discrete entropy production, (iii)~outward shell indexing toward
+lower ladder temperature, and (iv)~opening of under-occupied early shells toward
+the quadratic null-shell budget (Section~\ref{sec:arrow}).
 
-\noindent\textbf{Result.}
-On the shell temperature ladder $T(m)=1/(m+1)$ the library packages a zeroth-law
-equivalence relation, a first-law finite-window balance for weighted ladder redistribution,
-a second-law dissipation sign on a minimal $C_3$ heat graph together with a CFL-bounded
-explicit-Euler energy witness, and a third-law-style eventual cooling below any
-$\varepsilon>0$.
-Horizon blackbody modules define finite-shell photon number density, pressure $P=U/3$,
-and entropy density $s=(4/3)U/T$ without taking $\omega/T\to\infty$ limits.
-The \emph{macroscopic arrow} is read as the conjunction of (i)~acyclic causal access on the
-null lattice, (ii)~nonnegative discrete entropy production, and (iii)~outward shell indexing
-toward lower ladder temperature---not as an extra postulate bolted onto continuum
-statistical mechanics.
+This is the fourth paper in the Tier-1 foundation-extension series. The immediate
+predecessor \cite{hqiv-kirchhoff-paper} supplies the truncated Planck spectrum and
+finite entropy density; the present note records what the same ladder already proves
+about the thermodynamic laws and the discrete arrow, and what remains interpretive.
+Continuum Boltzmann hierarchies and CPT microreversibility appear only as comparison
+vocabulary unless packaged as patch theorems. Proved items are the law-style ladder
+theorems, blackbody entropy positivity, the Kirchhoff detailed-balance bundle, the
+toy heat dissipation sign with Euler monotonicity, and the signed shell-budget ledger
+(the \hyperref[lean:signed-shell-budget]{signed shell budget} entry).
+The Jacobson--Brodie horizon
+accounting for $(\alpha,\gamma)=(3/5,2/5)$ in \cite{hqiv-3d-growth-paper} is cited as
+a coherence check, not a second derivation. Phase~2 opening is machine-checked in
+the \hyperref[lean:shell-opening]{shell opening evolution} module:
+step-wise vertex insertion on vertex-only complexes, strict lex descent on the
+early/total negative budget pair, convergence to the $S3$ null reference from
+deficit-only horizon data, and packaging as a real Lyapunov descent plus
+discrete parallel Poincar\'e hypothesis at the converged equilibrium
+(build target \texttt{HQIVParallelPoincare}).
+The thermodynamic arrow certificate is packaged in the
+\hyperref[lean:thermo-arrow-opening]{thermodynamic arrow bridge}.
+With link deficit identically zero, the real scaffold records shell-0 mismatch only;
+strict real descent holds on shell-0 opening, while the encoded natural-number lex
+measure strictly decreases on every non-equilibrium step.
+Numerical illustrations appear in Appendix~\ref{app:scripts} (\texttt{scripts.zip}).
 
-\noindent\textbf{Patch-ontology reader contract.}
-Thermodynamics here is a discrete-epoch and finite-mode readout programme.
-Continuum Boltzmann hierarchies, ergodic foundations, and CPT microreversibility are
-comparison-layer vocabulary only unless and until they are packaged as patch theorems.
-
-\noindent\textbf{Status.}
-Proved: law-style ladder theorems, blackbody entropy positivity, Kirchhoff
-detailed-balance bundle, toy heat dissipation and Euler monotonicity.
-Coherence reading (not a second independent derivation): Jacobson--Brodie horizon
-accounting for $(\alpha,\gamma)=(3/5,2/5)$ in \cite{hqiv-3d-growth-paper}.
-Programme/scaffold: full parallel-Poincar\'e Lyapunov termination on the 3-complex
-(\hyperref[lean:phase-evolution]{discrete phase evolution}).
 \end{abstract}
 \maketitle
 
 \input{../include/patch_theory_messaging.tex}
+
+\section{Nomenclature}
+\label{sec:nomenclature}
+
+\begin{description}[
+  font=\normalfont,
+  leftmargin=0pt,
+  labelwidth=0pt,
+  itemsep=0.4\baselineskip,
+  parsep=0.1\baselineskip,
+  style=nextline
+]
+  \item[$T(m)$]
+  Shell temperature readout $T(m)=1/(m+1)$ on $m\in\mathbb{N}$; larger $m$ is colder in the HQIV convention (Definition~\ref{def:T-ladder}).
+  \item[$\phi(m)$]
+  Auxiliary scalar $\phi(m)=2(m+1)$ on the temperature ladder, shared with the O--Maxwell and HQVM sectors \cite{hqiv-oct-action-paper}.
+  \item[$\alpha$, $\gamma$]
+  Curvature imprint and monogamy split; $\alpha=3/5$, $\gamma=2/5$, $\alpha+\gamma=1$ \cite{hqiv-3d-growth-paper,hqiv-oct-action-paper}.
+  \item[$C_3$ heat graph]
+  Minimal three-node cycle carrying the proved dissipation sign and explicit-Euler energy witness (Section~\ref{sec:laws}).
+  \item[Arrow readout]
+  Not a fifth law: the conjunction of causal acyclicity, nonnegative discrete dissipation, and outward shell indexing toward lower $T(m)$ (Section~\ref{sec:arrow}).
+  \item[\texttt{deficitOnlyOnHorizon}]
+  On horizon $n$, every shell $m\le n$ satisfies \texttt{shellBudgetMismatch}$\le 0$ (no excess above the quadratic budget).
+  \item[\texttt{IsS3NullReference}]
+  Combinatorial equivalence of a vertex-only complex to \texttt{S3NullReference}\,$n$ at the same horizon (alias of \texttt{IsS3NullVertexTemplate}).
+  \item[\texttt{shellOpeningLexPair}]
+  Lexicographic Lyapunov pair \texttt{(totalEarlyNegativeBudget, totalNegativeBudget)}; encoded as a single $\mathbb{N}$ for termination certificates.
+\end{description}
 
 \section{Scope and claim discipline}
 \label{sec:scope}
@@ -89,11 +128,16 @@ comparison-layer physics?}
   Finite-shell energy density, $P=U/3$, $s=(4/3)U/T$, positivity of $s$ for $T>0$,
   and the Kirchhoff detailed-balance identity at each shell
   (the \hyperref[lean:blackbody-ladder]{horizon blackbody ladder} stack).
-\item \textbf{Arrow packaging (mixed status).}
-  Causal acyclicity and horizon-overlap monogamy are mathematical templates in
-  \cite{hqiv-3d-growth-paper}; discrete heat supplies a proved one-way dissipation sign;
-  discrete phase evolution records Lyapunov \emph{non-increase} hypotheses for forward
-  iteration (proved lemmas where certificates are supplied).
+\item \textbf{Proved in Lean (signed ledger and opening, Phase 1--2).}
+  Early-closed regime, negative budget accounting, step-wise opening with lex descent,
+  and termination at the $S3$ null reference, packaged in the signed shell budget and
+  shell opening entries; the conjunction of ladder laws 0 and 3 with opening convergence
+  in the thermodynamic arrow bridge.
+\item \textbf{Arrow packaging (partial).}
+  Causal acyclicity and horizon-overlap monogamy remain templates in
+  \cite{hqiv-3d-growth-paper}; discrete heat supplies the proved $C_3$ dissipation sign;
+  discrete phase evolution supplies conditional termination whenever a Lyapunov
+  descent certificate is provided.
 \item \textbf{Comparison layer only.}
   Continuum statistical mechanics, ergodicity, and textbook Boltzmann $H$-theorems.
 \item \textbf{Not claimed.}
@@ -122,6 +166,72 @@ Readers seeking the Jacobson-identity thermodynamic derivation of
 $(\alpha_d,\gamma_d)$ should use Appendix~B of \cite{hqiv-3d-growth-paper}; we cite it
 as a \emph{coherence check} on the same imprint--overlap accounting, not as an
 independent second proof of the ladder laws proved here.
+
+\subsection{HQVM lapse and the same $\phi$ slot}
+\label{subsec:hqvm}
+
+The octonionic-action companion \cite{hqiv-oct-action-paper} defines the
+Horizon-Quantized Vacuum Metric (HQVM) lapse
+$N=1+\Phi+\phi t/c$ and identifies the \emph{same} auxiliary $\phi$ with the
+O--Maxwell coupling and the homogeneous Friedmann branch
+(\hyperref[lean:lapse-bridge]{lapse-dragging cross-sector identification} in that paper).
+We do not re-derive HQVM here; the thermodynamic arrow in
+Section~\ref{sec:arrow} only needs the facts that (i)~$\phi$ labels the temperature
+ladder, (ii)~larger shell index means smaller $T(m)$, and (iii)~the wall-clock versus
+apparent-age split documented in \cite{hqiv-kirchhoff-paper} selects a privileged
+``now'' slice without adding a separate entropy functional.
+
+\subsection{Lattice origin of the temperature ladder and the rational split}
+\label{subsec:lattice-origin}
+
+The temperature ladder and the curvature--monogamy split $(\alpha,\gamma)$ are not
+independent inputs; both descend directly from the discrete null-lattice
+construction (octonionic light-cone combinatorics plus unit informational budget)
+developed in the light-cone and causal-growth companions \cite{hqiv-lightcone-paper,hqiv-3d-growth-paper}.
+
+The octonionic left-multiplication table on the Fano plane equips every horizon with
+a finite mode budget whose cumulative count follows from stars-and-bars on the
+3-simplex structure of the null lattice:
+\[
+  \mathcal{N}(m) = (m+2)(m+1),\qquad
+  \sum_{k=0}^{n} \mathcal{N}(k) = \tfrac13(n+1)(n+2)(n+3).
+\]
+In the homogeneous limit the auxiliary scalar $\phi$ that threads the O--Maxwell and
+HQVM sectors is fixed by informational-energy accounting on the universal cutout
+(one quadrant per octonion direction). This produces the exact linear growth
+\[
+  \phi(m) = 2(m+1)
+\]
+in Planck units. The unique identification that renders $\phi$ dimensionless and
+consistent with the radial light-cone coordinate is the inverse-depth temperature
+readout
+\[
+  T(m) := \frac{1}{m+1}
+\]
+(so that $\phi(m) = 2/T(m)$). No continuum fitting or external calibration enters;
+the form is the direct translation of discrete shell depth into an inverse-energy
+label.
+
+The curvature-imprint coefficient $\alpha$ is likewise lattice-forced. The
+hockey-stick identity on the cumulative mode count, normalized by the quadratic
+multiplicity factor appearing in the denominator, yields the constant rational
+\[
+  \alpha = \frac{3}{5}
+\]
+at *every* finite shell $n$ (not merely in the limit). The informational-monogamy
+coefficient required to keep the total overlap budget equal to unity on the null
+lattice is then necessarily the complement
+\[
+  \gamma = 1-\alpha = \frac{2}{5}.
+\]
+The same rational pair is recovered from the Jacobson thermodynamic identity on
+horizons \cite{Jacobson1995,brodie2026}, providing an independent coherence check
+rather than a second derivation.
+
+Consequently the thermodynamic laws and the arrow readouts rest on the same two
+discrete axioms (null-lattice light-cone + unit informational budget) that
+underwrite the rest of the HQIV programme; the numerical values $T(m)=1/(m+1)$ and
+$(\alpha,\gamma)=(3/5,2/5)$ are outputs, not postulates.
 
 \section{The shell temperature ladder and equilibrium}
 \label{sec:ladder}
@@ -187,9 +297,9 @@ continuum density $\mathrm{d}U$ is assumed.
 
 \subsection{Second law as a sign theorem on a toy heat graph}
 
-To avoid hand-waving about dissipation, Lean carries a minimal periodic graph $C_3$ with
-an explicit graph Laplacian $\Delta$ (the \hyperref[lean:toy-heat]{toy discrete heat}
-module). For any state $u$ on the three nodes,
+To avoid hand-waving about dissipation, Lean carries a minimal illustrative patch---the
+three-node cycle $C_3$---with an explicit graph Laplacian $\Delta$ (the
+\hyperref[lean:toy-heat]{toy discrete heat} module). For any state $u$ on the three nodes,
 \[
   \sum_i u_i\,(\Delta u)_i \;=\; -\sum_i (u_i-u_{i+1})^2 \;\le\; 0,
 \]
@@ -212,10 +322,24 @@ This is a \emph{discrete} irreversibility witness: it does not appeal to a conti
 entropy functional whose existence is assumed.
 
 \begin{remark}[Scope of the toy graph]
-The $C_3$ heat model motivates fluid-closure and turbulence scaffolds elsewhere in the
-repository; it is \textbf{not} a claim about 3D Navier--Stokes. Its role here is narrower:
-fix the \emph{sign} of dissipation that the second law must inherit on a patch.
+The $C_3$ model is the smallest nontrivial laboratory in which the second-law sign can
+be exhibited and machine-checked; it is \textbf{not} a claim about 3D Navier--Stokes.
+Its role here is narrower: fix the \emph{sign} of dissipation that the second law must
+inherit on a patch.
 \end{remark}
+
+The algebraic origin of the sign is not special to $C_3$.  For any undirected graph the
+Dirichlet form associated with the combinatorial Laplacian satisfies
+\[
+  u^T \Delta u = -\sum_{\{i,j\}\in E} (u_i - u_j)^2 \;\le\; 0,
+\]
+with equality if and only if $u$ is constant on each connected component.  Consequently
+the entropy-production proxy $\Sigma(u)$ remains nonnegative on an arbitrary finite
+patch (regular or irregular, sparse or dense) whose heat flow is governed by the
+standard graph Laplacian.  Larger or topologically complex patches only modify the
+spectrum of relaxation eigenvalues; the sign of discrete dissipation is unchanged.
+The $C_3$ calculation therefore illustrates a general mechanism rather than a special
+case.
 
 \subsection{Third law as eventual ladder cooling}
 
@@ -257,13 +381,59 @@ Continuum Stefan--Boltzmann or Wien laws may be cited as calculation approximati
 comparison; they are not the proved objects.
 \end{remark}
 
+Table~\ref{tab:blackbody-convergence} (reproduced by the script in Appendix~\ref{app:scripts})
+gives a quantitative view of the approach to the continuum regime.  For fixed temperature
+in natural units the truncated sums $U$ and $s$ are evaluated at increasing infrared
+cutoffs $m_{\mathrm{IR}}$.  The ratios relative to a large-cutoff proxy ($m_{\mathrm{IR}}=5000$)
+rise steadily once many shells become occupied, showing that the discrete ladder sum
+recovers the Stefan--Boltzmann $T^4$ scaling of the continuum theory in the appropriate
+limit (as already derived in the Kirchhoff companion).
+
+\begin{table}[t]
+\centering
+\caption{Finite blackbody readouts versus large-cutoff proxy (natural units, $T=0.05$).}
+\label{tab:blackbody-convergence}
+\begin{tabular}{@{}rrrrr@{}}
+\toprule
+$m_{\mathrm{IR}}$ & $U$ & $s$ & $U/U_{5000}$ & $s/s_{5000}$ \\
+\midrule
+100   & 1708.20 & 45552.0 & 0.000343 & 0.000343 \\
+500   & 48369.5 & $1.289853\times 10^6$ & 0.009707 & 0.009707 \\
+1000  & 196679 & $5.244766\times 10^6$ & 0.039469 & 0.039469 \\
+2000  & 793288 & $2.115435\times 10^7$ & 0.159196 & 0.159196 \\
+5000 (proxy) & $4.983100\times 10^6$ & $1.328827\times 10^8$ & 1.000000 & 1.000000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{The arrow of time}
 \label{sec:arrow}
 
 Textbook thermodynamics often \emph{defines} the arrow of time by the second law while
-leaving the microscopic time-reversal symmetry of Hamiltonian mechanics untouched.
-HQIV reverses the emphasis on the discrete spine: the arrow is a \textbf{readout} of three
-already-audited structures.
+leaving the microscopic time-reversal symmetry of Hamiltonian mechanics (Loschmidt's
+paradox) untouched.  In the HQIV setting the arrow is not introduced by fiat as a fifth
+law or as an auxiliary entropy functional.  It is \textbf{derived} as the conjunction of
+four structures already present in the audited discrete layer:
+
+\begin{enumerate}[leftmargin=2em]
+\item acyclicity of the causal partial order on the null lattice (no influence from a
+  shell's future cone);
+\item nonnegative discrete entropy production on any finite heat patch (the Laplacian
+  Dirichlet form);
+\item monotonic outward shell indexing on the temperature ladder (larger $m$ $\Leftrightarrow$
+  lower $T(m)$);
+\item forced relaxation of early under-occupied shells toward the quadratic null-shell
+  budget via the opening evolution, with a machine-checked Lyapunov descent.
+\end{enumerate}
+
+The conjunction therefore supplies an explicit, ledger-level resolution of the
+information-loss and Loschmidt tensions: the ``missing'' degrees of freedom on early
+closed shells are not lost but recorded as negative budget; causal acyclicity and the
+dissipation sign supply the statistical arrow; the ladder supplies the cosmological
+direction; and the opening flow supplies a constructive, non-equilibrium route from
+deficit-only initial data to the equilibrium reference state.  Nothing in this
+derivation assumes a continuum entropy or CPT micro-reversibility beyond what is
+already encoded in the discrete poset and the Laplacian.
 
 \subsection{Causal direction on the null lattice}
 
@@ -300,18 +470,111 @@ is an additional observer-sector arrow (lapse compression) orthogonal to the lad
 but compatible with it: both select a privileged ``now'' slice without introducing a
 tunable entropy functional.
 
-\subsection{Discrete phase evolution (programme layer)}
+\subsection{Signed shell ledger (Phase 1)}
+\label{sec:signed-ledger}
 
-The parallel-Poincar\'e programme records one-step evolution on a 3-complex with an
-optional ``extinction'' outcome and a Lyapunov functional that must not increase along
-forward steps (the \hyperref[lean:phase-evolution]{discrete phase evolution} module).
-Where a `NatLyapunovDescent` certificate is supplied, iteration terminates---a discrete
-well-foundedness witness for approach to equilibrium on that patch.
+The signed shell ledger (occupied vertices minus quadratic budget) lives in the
+null-lattice complex. Negative values on early shells ($m\le 2$, i.e.\ $\xi\le 7/2$)
+mark \emph{closed / under-occupied} regimes; zero marks open equilibrium at the quadratic
+law. The normalization anchor $\xi=7/2$ and the regime predicates (early-closed,
+negative budget, total negative budget) are packaged in the
+\hyperref[lean:signed-shell-budget]{signed shell budget} entry of the Lean index.
 
-\textbf{Status.} This cluster is load-bearing for the long-term Poincar\'e bridge but is
-not yet bundled as a single umbrella theorem in the sense of the BBN vital readouts.
-We list it here because it is the natural upgrade path from toy $C_3$ heat to
-shell-resolved curvature flow.
+\subsection{Discrete opening evolution (Phase 2)}
+\label{sec:signed-opening}
+
+\textbf{Step and equilibrium.}
+On vertex-only complexes, the opening step inserts one null-shell vertex on the
+smallest active shell carrying negative budget, when any exists; otherwise the step
+is none. The flow (packaged as shell opening evolution) fixes the state at
+equilibrium (total negative budget zero, equivalently the identity step at
+equilibrium).
+
+\begin{theorem}[Strict lex descent and termination]
+\label{thm:opening-lex}
+For every coupling $\alpha>0$, horizon index $n$, and reference \texttt{href} with
+$0<K\,n\,\alpha$, off equilibrium the opening evolution strictly decreases the
+lexicographic pair \texttt{(totalEarlyNegativeBudget, totalNegativeBudget)} on each
+\texttt{some} step; hence \texttt{FlowTerminatesAt} and
+\texttt{totalNegativeBudget}$\,M'=0$ at the reached state.
+\end{theorem}
+
+\begin{proof}
+Machine-checked in the shell opening evolution module (see the Lean index).
+\end{proof}
+
+\begin{theorem}[Deficit-only horizon $\Rightarrow$ \texttt{S3NullReference}]
+\label{thm:opening-s3}
+Let $M_0$ be vertex-only with \texttt{maxVertexShell}\,$M_0=n$ and
+\texttt{deficitOnlyOnHorizon}\,$M_0\,n$. Then there exist $k$ and $M'$ such that
+opening iterates $M_0$ to $M'$ and \texttt{IsS3NullReference}\,$M'\,n$.
+\end{theorem}
+
+\begin{proof}
+The chain is: zero total negative budget at the terminal state; no negative shells
+on the active range; quadratic null-shell growth on the horizon from the deficit-only
+predicate; then the quadratic growth identity implies the $S3$ null reference.
+See the shell opening module in the Lean index.
+\end{proof}
+
+\begin{remark}[Two Lyapunov layers]
+\label{rem:two-lyapunov}
+With link deficit identically zero, the real-valued Lyapunov functional records
+shell-0 mismatch only; it is non-increasing on opening steps but strictly decreases
+only when shell-0 opens. The proved arrow certificate for parallel Poincar\'e uses
+the encoded natural-number lex measure, not unconditional real descent on every
+shell index.
+\end{remark}
+
+\subsection{Thermodynamic and parallel-Poincar\'e packaging}
+\label{sec:opening-package}
+
+\begin{definition}[Thermodynamic arrow certificate]
+\label{def:thermo-arrow}
+A \texttt{ThermodynamicArrowFromShellOpening}\,$n$ packages (i)~a positive
+curvature-channel reference, (ii)~the zeroth-law reflexivity witness on $T(m)$,
+(iii)~third-law eventual cooling, and (iv)~opening convergence to the $S3$ null
+reference for every deficit-only horizon initial state at~$n$.
+\end{definition}
+
+\begin{proposition}[Default witness at $\alpha=1$]
+\label{prop:thermo-arrow-witness}
+For each $n$ and positive reference with $0 < K n \cdot 1$, the structure
+\texttt{thermodynamicArrowFromShellOpening} is inhabited.
+\end{proposition}
+
+\begin{theorem}[Discrete parallel Poincar\'e at the converged horizon]
+\label{thm:opening-pp}
+Under the hypotheses of Theorem~\ref{thm:opening-s3}, there exist $k$, $M'$, and a
+\texttt{DiscreteParallelPoincareHypothesis}~$H$ with $H.\texttt{evo}$ the opening
+evolution, $H.\texttt{data.M}=M'$, and the $S3$ null reference at $H.\texttt{data.M}$.
+\end{theorem}
+
+\begin{proof}
+The packaged witness in the thermodynamic arrow bridge, via the real-descent
+constructor in the parallel Poincar\'e scaffold (see Lean index).
+\end{proof}
+
+\textbf{Template track (reference).}
+Independently, template-pinned evolution at the $S3$ null reference already satisfies
+the discrete parallel Poincar\'e property on the certificate track without opening
+dynamics (see the reference model entry in the Lean index).
+
+\textbf{Physical readout.}
+Negative early shell-budget mismatch is a concentrated low-occupancy ledger state;
+opening is forced insertion toward the quadratic law on a finite horizon---not a negative
+curvature imprint (the curvature-density terms remain positive in the HQIV convention).
+The conjunction of Theorem~\ref{thm:opening-s3} with the $C_3$ dissipation sign and
+Proposition~\ref{prop:third} supplies the discrete arrow readout advertised in the
+abstract: causal direction from upstream growth, thermodynamic direction from
+dissipation, cosmological direction from the ladder, and combinatorial relaxation
+toward the null-shell reference template.  In this sense the four-part conjunction is
+a \emph{derivation} of the arrow from structures already present in the discrete layer,
+not an additional definition; it directly exhibits how information that would be
+``lost'' in a continuum description is retained in the signed budget ledger and how
+microscopic reversibility on individual edges is compatible with macroscopic
+directionality once the global causal poset and the Lyapunov descent are taken into
+account.
 
 \section{How the pieces compose}
 \label{sec:compose}
@@ -326,6 +589,8 @@ Finite Planck sum & $U$, $P$, $s$ on patch & no UV catastrophe \\
 $T(m)=1/(m+1)$ & zeroth law label & $m$ increases $\Rightarrow$ cooler \\
 Causal $\prec$ + overlaps & Jacobson/Brodie coherence & no future influence \\
 $\alpha,\gamma$ split & horizon accounting & fixed monogamy budget \\
+Signed shell-budget mismatch & budget ledger & early opening driver \\
+Shell opening step & mode insertion & Thm.~\ref{thm:opening-s3} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -333,67 +598,178 @@ $\alpha,\gamma$ split & horizon accounting & fixed monogamy budget \\
 \section{Outlook and honest gaps}
 \label{sec:outlook}
 
+A short note on related discrete approaches may be useful for context.  The present
+derivation shares with causal-set theory (Sorkin and collaborators) the use of a
+discrete partial order and a fundamental length scale, but replaces the continuum
+sprinkling measure with an explicit octonionic null-lattice mode budget and supplies
+machine-checked signs for dissipation and Lyapunov descent rather than statistical
+assumptions.  It is closer in spirit to graph-based or finitary approaches to
+thermodynamics (e.g., discrete Laplacian heat flow on irregular networks) than to
+cellular-automaton or 't Hooft-style deterministic hidden-variable models, since the
+arrow here is carried by the combination of a proved causal poset, a non-positive
+Dirichlet form, and an explicit opening evolution rather than by an underlying
+deterministic micro-dynamics.  A fuller comparison lies outside the scope of this
+note.
+
 Natural extensions, stated as programme items rather than hidden assumptions:
 
 \begin{enumerate}[leftmargin=2em]
-\item Shell-resolved heat equation on the full null lattice, not only $C_3$.
-\item A counting entropy $S=\log\Omega_{\mathrm{accessible}}$ from octonionic mode budgets
-  (Pillar~G in the fundamentals derivation plan).
+\item Shell-resolved heat equation on the full null lattice (lifting the $C_3$
+  dissipation sign and Euler witness to the complete adjacency structure of the
+  discrete light-cone); a follow-up note on this programme item is planned.
+\item A counting entropy $S=\log\Omega_{\mathrm{accessible}}$ from octonionic mode budgets on shells.
 \item Package monogamy subadditivity as a single theorem specialised to HQIV readouts
   $K$ and $\mathcal{R}$.
 \item Connect the third-law cooling limit to CMB and BBN epoch witnesses
   \cite{hqiv-bbn-paper} as comparison-layer temperature displays.
+\item \textbf{Big-Bang readout (discrete opening track, proved).}
+  Theorem~\ref{thm:opening-s3} and Theorem~\ref{thm:opening-pp} formalise opening from
+  deficit-only horizon data to the $S3$ null reference and a packaged
+  discrete parallel Poincar\'e hypothesis; continuum singularity or bounce narratives
+  remain comparison-layer vocabulary only.
+\item \textbf{Topology gaps (unchanged).}
+  The $\chi=0$ combinatorial-sphere certificate is obstructed on the vertex-only
+  $S3$ null reference; nontrivial link deficit and shell-resolved real Lyapunov on
+  all indices are not discharged in the opening certificate.
 \end{enumerate}
 
 \appendix
+
 \section{Lean module index}
 \label{app:lean-index}
 
-\begin{description}
-\item[\hypertarget{lean:thermo-laws}{Thermodynamic laws from ladder}]
-  \leanfile{Hqiv/Physics/ThermodynamicLawsFromLadder.lean} ---
-  zeroth--third law packaging;
-  \leanid{zerothLaw\_refl}, \leanid{firstLaw\_tempLadder\_dimShellWeight},
+The Lean development lives in the public slimmed mirror
+\url{https://github.com/HQIV/hqiv-lean} \cite{hqiv-lean}.  All
+theorems cited in the body are sorry-free at the time of
+writing.  Each entry below carries a reader-friendly anchor (used
+by hyperlinks in the body), a one-line description, and clickable
+links to the Lean module and identifiers.
+
+\begingroup
+\sloppy
+\setlength{\emergencystretch}{4em}
+\begin{description}[style=nextline]
+\item[\phantomsection\label{lean:thermo-laws}\textbf{Thermodynamic laws from ladder.}]
+  Zeroth--third law packaging on the temperature ladder (equivalence,
+  finite-window balance, $C_3$ dissipation sign, Euler monotonicity,
+  eventual cooling).
+  Lean: \leanid{zerothLaw\_refl}, \leanid{firstLaw\_tempLadder\_dimShellWeight},
   \leanid{secondLaw\_entropyProduction\_nonneg},
   \leanid{secondLaw\_euler\_step\_energy\_nonincreasing},
-  \leanid{thirdLaw\_eventually\_below}.
-\item[\hypertarget{lean:zeroth-law}{Zeroth law cluster}]
-  \leanid{thermalEquilibrium}, \leanid{zerothLaw\_symm},
-  \leanid{zerothLaw\_trans} in
-  \leanfile{Hqiv/Physics/ThermodynamicLawsFromLadder.lean}.
-\item[\hypertarget{lean:first-law}{First-law finite-window balance}]
-  \leanid{firstLaw\_tempLadder\_dimShellWeight} (imports
-  \leanfile{Hqiv/Physics/DivisionAlgebraZetaScaffold.lean}).
-\item[\hypertarget{lean:toy-heat}{Toy discrete heat}]
-  \leanfile{Hqiv/Physics/ToyDiscreteHeat.lean} ---
-  \leanid{sum\_u\_laplacianCycle3\_eq\_neg\_jump\_sq},
-  \leanid{eulerHeatStep3\_sum\_sq\_le\_sum\_sq\_of\_three\_mul\_dt\_nu\_le\_two}.
-\item[\hypertarget{lean:second-euler}{Second-law Euler monotonicity}]
-  \leanid{secondLaw\_euler\_step\_energy\_nonincreasing} in
-  \leanfile{Hqiv/Physics/ThermodynamicLawsFromLadder.lean}.
-\item[\hypertarget{lean:third-law}{Third-law eventual cooling}]
   \leanid{thirdLaw\_eventually\_below} in
   \leanfile{Hqiv/Physics/ThermodynamicLawsFromLadder.lean}.
-\item[\hypertarget{lean:blackbody-ladder}{Horizon blackbody ladder}]
-  \leanfile{Hqiv/Physics/HorizonBlackbodyLadder.lean} ---
-  \leanid{entropyDensity}, \leanid{entropyDensity\_nonneg},
-  \leanid{T\_times\_entropy\_eq}, Kirchhoff bundle.
-\item[\hypertarget{lean:blackbody-spectrum}{Horizon blackbody spectrum}]
-  \leanfile{Hqiv/Physics/HorizonBlackbodySpectrum.lean} ---
-  finite Planck means; patch ontology in module docstring.
-\item[\hypertarget{lean:kirchhoff-balance}{Kirchhoff detailed-balance bundle}]
+
+\item[\phantomsection\label{lean:zeroth-law}\textbf{Zeroth law cluster.}]
+  \leanid{thermalEquilibrium}, \leanid{zerothLaw\_symm}, \leanid{zerothLaw\_trans}
+  in \leanfile{Hqiv/Physics/ThermodynamicLawsFromLadder.lean}.
+
+\item[\phantomsection\label{lean:first-law}\textbf{First-law finite-window balance.}]
+  \leanid{firstLaw\_tempLadder\_dimShellWeight} (imports
+  \leanfile{Hqiv/Physics/DivisionAlgebraZetaScaffold.lean}).
+
+\item[\phantomsection\label{lean:toy-heat}\textbf{Toy discrete heat on $C_3$.}]
+  Laplacian sign and entropy-production proxy.
+  Lean: \leanid{sum\_u\_laplacianCycle3\_eq\_neg\_jump\_sq},
+  \leanid{eulerHeatStep3\_sum\_sq\_le\_sum\_sq\_of\_three\_mul\_dt\_nu\_le\_two} in
+  \leanfile{Hqiv/Physics/ToyDiscreteHeat.lean}.
+
+\item[\phantomsection\label{lean:second-euler}\textbf{Second-law Euler monotonicity.}]
+  \leanid{secondLaw\_euler\_step\_energy\_nonincreasing} in
+  \leanfile{Hqiv/Physics/ThermodynamicLawsFromLadder.lean}.
+
+\item[\phantomsection\label{lean:third-law}\textbf{Third-law eventual cooling.}]
+  \leanid{thirdLaw\_eventually\_below} in
+  \leanfile{Hqiv/Physics/ThermodynamicLawsFromLadder.lean}.
+
+\item[\phantomsection\label{lean:blackbody-ladder}\textbf{Horizon blackbody ladder readouts.}]
+  Finite-shell $U$, $P=U/3$, $s=(4/3)U/T$, positivity, and Kirchhoff
+  detailed-balance bundle.
+  Lean: \leanid{entropyDensity}, \leanid{entropyDensity\_nonneg},
+  \leanid{T\_times\_entropy\_eq} and the Kirchhoff bundle in
+  \leanfile{Hqiv/Physics/HorizonBlackbodyLadder.lean}.
+
+\item[\phantomsection\label{lean:blackbody-spectrum}\textbf{Horizon blackbody spectrum.}]
+  Finite Planck means and patch ontology.
+  \leanfile{Hqiv/Physics/HorizonBlackbodySpectrum.lean}.
+
+\item[\phantomsection\label{lean:kirchhoff-balance}\textbf{Kirchhoff detailed-balance bundle.}]
   \leanfile{Hqiv/Physics/HorizonBlackbodyLadder.lean} (§4).
-\item[\hypertarget{lean:phase-evolution}{Discrete phase evolution}]
-  \leanfile{Hqiv/Topology/DiscretePhaseEvolution.lean} ---
-  \leanid{DiscreteCurvatureEvolution.lyapunov\_nonincreasing},
-  iteration lemmas.
-\item[\hypertarget{lean:T-def}{Shell temperature}]
-  \leanfile{Hqiv/Geometry/AuxiliaryField.lean} ---
-  \leanid{Hqiv.T}, \leanid{T\_eq}.
-\item[\hypertarget{lean:alpha-gamma}{Forced $\alpha$, $\gamma$}]
-  \leanfile{Hqiv/Geometry/AlphaGammaForcedByLattice.lean} ---
-  \leanid{alpha\_gamma\_forced\_pair}.
+
+\item[\phantomsection\label{lean:phase-evolution}\textbf{Discrete phase evolution scaffold.}]
+  Lyapunov and termination infrastructure (used by opening flow).
+  \leanfile{Hqiv/Topology/DiscretePhaseEvolution.lean}.
+
+\item[\phantomsection\label{lean:signed-shell-budget}\textbf{Signed shell budget (Phase 1).}]
+  Early-closed regime, negative budget, and $S3$ null reference
+  predicates on the null-lattice complex.
+  Lean: \leanid{shellXi}, \leanid{isEarlyClosedShell},
+  \leanid{negativeBudget}, \leanid{totalNegativeBudget} and
+  reference identities in
+  \leanfile{Hqiv/Topology/SignedShellBudget.lean}.
+
+\item[\phantomsection\label{lean:is-s3-null}\textbf{\texttt{IsS3NullReference} bridge.}]
+  Combinatorial null reference and quadratic growth identities.
+  \leanfile{Hqiv/Topology/DiscreteNullLatticeComplex.lean}.
+
+\item[\phantomsection\label{lean:shell-opening}\textbf{Shell opening evolution (Phase 2).}]
+  \texttt{shellOpeningStep}, lex Lyapunov descent, termination at
+  \texttt{IsS3NullReference}, and deficit-only convergence.
+  Lean: \leanid{shellOpeningStep}, \leanid{shellOpeningRealLyapunovDescent},
+  \leanid{shellOpeningStep\_reaches\_S3NullReference},
+  \leanid{deficitOnlyOnHorizon\_of\_shellOpening\_iterate} in
+  \leanfile{Hqiv/Topology/ShellOpeningEvolution.lean}.
+
+\item[\phantomsection\label{lean:parallel-poincare}\textbf{Parallel Poincar\'e scaffold.}]
+  \leanfile{Hqiv/Topology/ParallelPoincareScaffold.lean}.
+
+\item[\phantomsection\label{lean:parallel-poincare-ref}\textbf{Template-pinned reference model.}]
+  \leanfile{Hqiv/Topology/ParallelPoincareReferenceModel.lean}.
+
+\item[\phantomsection\label{lean:hqiv-parallel-poincare}\textbf{Build target \texttt{HQIVParallelPoincare}.}]
+  Aggregates scaffold, reference model, shell opening, and
+  thermodynamic bridge (\texttt{lake build HQIVParallelPoincare}).
+
+\item[\phantomsection\label{lean:thermo-arrow-opening}\textbf{Thermodynamic arrow bridge.}]
+  Packages the full arrow certificate (zeroth+third laws + opening
+  convergence).
+  \leanfile{Hqiv/Physics/ThermodynamicArrowFromShellOpening.lean}.
+
+\item[\phantomsection\label{lean:T-def}\textbf{Shell temperature readout.}]
+  \leanid{Hqiv.T}, \leanid{T\_eq} in
+  \leanfile{Hqiv/Geometry/AuxiliaryField.lean}.
+
+\item[\phantomsection\label{lean:alpha-gamma}\textbf{Forced $\alpha=3/5$, $\gamma=2/5$.}]
+  \leanid{alpha\_gamma\_forced\_pair} in
+  \leanfile{Hqiv/Geometry/AlphaGammaForcedByLattice.lean}.
+
+\item[\phantomsection\label{lean:lapse-bridge}\textbf{Lapse dragging (HQVM / O--Maxwell cross-sector).}]
+  Documented in \cite{hqiv-oct-action-paper}; Lean:
+  \leanid{HQVM\_lapse}, \leanid{same\_phi\_in\_O\_Maxwell\_and\_HQVM} in
+  \leanfile{Hqiv/Geometry/HQVMetric.lean} and
+  \leanfile{Hqiv/Physics/GRFromMaxwell.lean}.
 \end{description}
+\endgroup
+\normalsize
+
+\section{Reproducer scripts}
+\label{app:scripts}
+
+The script \texttt{thermo\_ladder\_and\_c3\_heat.py} in the supplementary
+\texttt{scripts.zip} bundle checks the ladder values $T(m)$, exhibits a
+nonnegative entropy-production proxy on $C_3$, and confirms Euler-step energy
+non-increase under the CFL bound stated in Section~\ref{sec:laws}.  It also
+generates the finite-versus-large-cutoff blackbody comparison data reproduced in
+Table~\ref{tab:blackbody-convergence} (fixed $T=0.05$ in natural units, UV cutoff
+zero).  Running the script with the \texttt{--json} flag emits the full numerical
+record in machine-readable form.  See
+\texttt{papers/thermodynamics\_arrow/scripts/README.md} in the HQIV-LEAN repository
+\cite{hqiv-lean} for the exact reproduction command and licensing.
+
+\section*{Acknowledgments}
+The author thanks the open-science community for the public software stack on which
+the HQIV-LEAN library is built (Lean~4, \texttt{mathlib}, and the Zenodo HQIV
+community archive).\footnote{AI-assisted drafting and repository tooling were used
+during manuscript preparation; formal claims refer to the cited Lean modules.}
 
 \bibliographystyle{plain}
 \bibliography{../references}
