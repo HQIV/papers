@@ -273,5 +273,5 @@ def be7_to_li7_capture_q(
     Q_be: float,
     Q_li: float,
 ) -> float:
-    """Lean `bbnBe7ToLi7CaptureQ`: γ·(4/8)·max(0, Q_Be − Q_Li)."""
-    return bbn.GAMMA_HQIV * bbn.STRONG_CHANNEL_FRACTION * max(0.0, Q_be - Q_li)
+    """Lean `bbnBe7ToLi7CaptureQ`: γ·(4/8)·|Q_Be − Q_Li| (well-depth gap)."""
+    return bbn.GAMMA_HQIV * bbn.STRONG_CHANNEL_FRACTION * abs(Q_be - Q_li)

@@ -48,7 +48,7 @@ cd papers/hep_decay_readout && pdflatex hqiv_hep_decay_readout_from_multichannel
 - Open-flavour topology seeds are unit weighted (`openFlavourTopologySeedWeight = 1`); no relative template priors are bundled.
 - Gap-closure candidates in `spine_gap_closure_terms.json` are exact Lean-spine
   factors, not applied benchmark weights.
-- Upstream mass ladder: `hqiv-tuft-sm-lagrangian-paper` (Zenodo [`10.5281/zenodo.20517172`](https://doi.org/10.5281/zenodo.20517172)).
+- Upstream mass ladder: `hqiv-tuft-sm-lagrangian-paper` (Zenodo [`10.5281/zenodo.20601215`](https://doi.org/10.5281/zenodo.20601215)).
 
 ## Citation
 

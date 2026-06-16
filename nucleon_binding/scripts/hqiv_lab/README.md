@@ -42,8 +42,11 @@ hqiv-lab NH3 --allotropes-only
 ```
 MoleculeSpec (bonds, fragments)
   → MonomerGeometry (VSEPR, motif, n_contacts)
-  → PackingTemplate candidates (Ih, Ic, fcc, …)
-  → PhaseUnitCell (a,b,c,Z) from contact distance
+  → Bravais topology (ice Ih, fcc, chain Z=4, …)
+  → r_nn (intermolecular contact, distinct from covalent bond)
+  → PhaseUnitCell (a,b,c,Z) from r_nn + topology (α, γ only)
+  → Apolar solids: low-T nn scale ``(T/T_ref)^(γ/16)`` on r_nn
+  → Motif melt ladder on κ₆(ρ_κ(n)): tetrahedral = 1, apolar/pyramidal/chain from α, γ
   → rank @ (T,P) via thermodynamic spine
   → material_response (n, k_th, C_p, …)
 ```

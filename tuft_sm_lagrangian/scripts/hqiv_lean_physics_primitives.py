@@ -424,6 +424,42 @@ def bbn_deuteron_binding_q_effective_at_t(
     return 2.0 * bbn_nucleon_trace_binding_effective_at_t(T_MeV, m_shell, c) * bbn.valley_binding_factor(2)
 
 
+def bbn_helium4_binding_q_effective_at_t(
+    T_MeV: float,
+    m_shell: int = REFERENCE_M,
+    c: float = 1.0,
+) -> float:
+    """Lean `bbnHelium4BindingQ_effectiveAtT`."""
+    return 4.0 * bbn_nucleon_trace_binding_effective_at_t(T_MeV, m_shell, c) * bbn.valley_binding_factor(4)
+
+
+def bbn_he3_binding_q_effective_at_t(
+    T_MeV: float,
+    m_shell: int = REFERENCE_M,
+    c: float = 1.0,
+) -> float:
+    """³He effective Q at BBN temperature (valley trace × release factor)."""
+    return 3.0 * bbn_nucleon_trace_binding_effective_at_t(T_MeV, m_shell, c) * bbn.valley_binding_factor(3)
+
+
+def bbn_light_binding_q_effective_at_t(
+    T_MeV: float,
+    m_shell: int = REFERENCE_M,
+    c: float = 1.0,
+) -> tuple[float, float, float]:
+    """
+    D, ⁴He, ³He binding Q at epoch ``T`` via ``bbnBindingReleaseFactor``.
+
+    Mirrors ``dynamicBBNReadoutAtT`` thermal/exponent inputs (curvature-temperature
+    release on the valley composite trace — not raw lock-in network Q).
+    """
+    return (
+        bbn_deuteron_binding_q_effective_at_t(T_MeV, m_shell, c),
+        bbn_helium4_binding_q_effective_at_t(T_MeV, m_shell, c),
+        bbn_he3_binding_q_effective_at_t(T_MeV, m_shell, c),
+    )
+
+
 def bbn_dynamic_c2_lapse_exponent(
     eta: float,
     *,
@@ -491,6 +527,69 @@ def bbn_dynamic_c2_readout_at_T(
             T_MeV, eta=eta, m_nucleon=m_nucleon, m_shell=m_shell
         ),
     }
+
+
+UCN_TRAP_REFERENCE_FIELD_TESLA = 1.0
+REPRESENTATIVE_BOTTLE_TRAP_FIELD_TESLA = 2.5
+REPRESENTATIVE_BEAM_TRAP_FIELD_TESLA = 0.0
+DEFAULT_BETA_WEAK_BRIDGE_SHAPE = 1.0 / 18.0  # Lean `defaultBetaWeakBridge_shape_eq_one_div_eighteen`
+
+
+def trap_magnetic_curvature_fraction(
+    B_tesla: float,
+    B_ref_tesla: float = UCN_TRAP_REFERENCE_FIELD_TESLA,
+) -> float:
+    """Lean `trapMagneticCurvatureFraction`: B maps to ρ_mag ∈ [0,1] (curvature, not Zeeman)."""
+    if B_ref_tesla <= 0.0:
+        return 0.0
+    return max(0.0, min(1.0, B_tesla / B_ref_tesla))
+
+
+def trap_weak_width_factor_from_magnetic(
+    B_tesla: float,
+    B_ref_tesla: float = UCN_TRAP_REFERENCE_FIELD_TESLA,
+) -> float:
+    """Lean `trapWeakWidthFactorFromMagnetic`: Γ_eff = f(B) · Γ₀ on the weak Fano/Hopf bridge."""
+    rho = trap_magnetic_curvature_fraction(B_tesla, B_ref_tesla)
+    return 1.0 + GAMMA * rho * DEFAULT_BETA_WEAK_BRIDGE_SHAPE
+
+
+def saturated_beam_over_bottle_lifetime_ratio() -> float:
+    """Lean `saturatedBeamOverBottleLifetimeRatio` = 46/45."""
+    f_bottle = trap_weak_width_factor_from_magnetic(REPRESENTATIVE_BOTTLE_TRAP_FIELD_TESLA)
+    f_beam = trap_weak_width_factor_from_magnetic(REPRESENTATIVE_BEAM_TRAP_FIELD_TESLA)
+    return f_bottle / f_beam
+
+
+def apparent_beta_half_life_from_method(
+    central_half_life_s: float,
+    local_width_factor: float,
+    outside_support_factor: float = 1.0,
+) -> float:
+    """Lean `apparentBetaHalfLifeFromMethod`: τ_app = τ0 * support / width."""
+    if local_width_factor <= 0.0:
+        return math.inf
+    return central_half_life_s * outside_support_factor / local_width_factor
+
+
+def method_shift_ppm(local_width_factor: float, outside_support_factor: float = 1.0) -> float:
+    """Fractional apparent half-life shift in ppm relative to the central slot."""
+    tau_ratio = apparent_beta_half_life_from_method(1.0, local_width_factor, outside_support_factor)
+    return 1.0e6 * (tau_ratio - 1.0)
+
+
+def collider_beta_method_width_factor(
+    B_tesla: float,
+    reference_tesla: float = 4.0,
+    stream_fraction: float = 0.0,
+) -> float:
+    """Lean `colliderCurvatureWidthFactor` specialized to β-lifetime method comparisons."""
+    if reference_tesla <= 0.0:
+        field_density = 0.0
+    else:
+        field_density = (max(B_tesla, 0.0) / reference_tesla) ** 2
+    stream_density = max(stream_fraction, 0.0) ** 2
+    return 1.0 + GAMMA * DEFAULT_BETA_WEAK_BRIDGE_SHAPE * (field_density + stream_density)
 
 
 def bbn_shell_reaction_opportunity(

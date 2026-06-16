@@ -1,0 +1,239 @@
+\documentclass[11pt,notitlepage]{amsart}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools,booktabs}
+\usepackage{enumitem}
+\usepackage{threeparttable}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue,
+  pdftitle={Compact-Object Crust MHD Equivalence in HQIV},
+  pdfauthor={Steven Ettinger Jr}}
+\usepackage[final]{microtype}
+\setlength{\emergencystretch}{3em}
+
+\newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
+\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\footnotesize\url{#1}}}
+\newcommand{\leanid}[1]{{\footnotesize\path{#1}}}
+\newcommand{\scriptfile}[1]{{\footnotesize\url{scripts/#1}}}
+\newcommand{\datafile}[1]{{\footnotesize\url{data/#1}}}
+
+\title[Crust MHD equivalence]{Compact-Object Crust MHD Equivalence in HQIV:\\
+Resistive Reduction, Geometry-First Multipoles, and Honest Scope}
+\author{Steven Ettinger Jr}
+\address{Independent Researcher}
+\email{steven@disregardfiat.tech}
+\date{Preprint --- \today}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\begin{document}
+
+\begin{abstract}
+\noindent\textbf{Position.}
+Companion to the compact-object witness data bundle
+\cite{hqiv-compact-object-witness-data} and the O-Maxwell fluid chart
+\cite{hqiv-omaxwell-fluid-chart}.
+This note does \textbf{not} propose a rival magnetic theory. It records that
+standard \textbf{resistive and Hall MHD} crust dynamics reduce onto existing HQIV
+slots in \leanfile{Hqiv/Physics/CompactObjectMhdEquivalenceScaffold.lean} with
+explicit coefficient identification, then states where \textbf{geometry-first}
+organization (ε-tipping layers, spin-axis latitude belts, $\tau_{\mathrm{mis}}$
+obliquity) yields predictions that traditional Hall-MHD fits often bolt on afterward.
+
+\noindent\textbf{Reduction (proved naming).}
+Traditional ohmic $E=J/\sigma$ is \leanid{ohmicAxialField}; the classical limit
+\leanid{coronalEffectiveAxialField\_classical\_limit} is machine-checked.
+Resistive induction uses \leanid{inductionResistivityEta}$(\xi,\varepsilon)=
+\gamma\,\mathrm{release}(\xi)\,G_{\mathrm{eff}}(\varepsilon)$ and scalar discharges
+\leanid{steadyInductionFieldLt}, \leanid{inductionGrowthRateFromLt}.
+Turbulent viscosity split \leanid{nuTotal\_eq\_nuMol\_add\_hqivEddy} maps the
+traditional $\tau_{\mathrm{mol}}+\tau_{\mathrm{eddy}}$ bookkeeping.
+
+\noindent\textbf{Geometry-first predictions (witnessed in Python).}
+Layered ε zones, colatitude channels ($\rho_{\mathrm{pol}}$, Coriolis gate),
+$\tau_{\mathrm{mis}}$ m=1 spots, and NICER J0030/J0740 overlays are generated from
+\scriptfile{hqiv\_compact\_object\_mass.py} (\texttt{--surface-multipole-audit},
+\texttt{--paper-dynamics-outline}).
+
+\noindent\textbf{Honest limitations.}
+Proto-neutron-star $\alpha\Omega$ seed fields for magnetar $10^{14}$--$10^{15}\,\mathrm{G}$
+are \textbf{boundary data}, not outputs of the cold-crust witness.
+Full vector Hall-MHD integration over $10^3$--$10^6\,\mathrm{yr}$ and numeric
+$\sigma(T,B)$ calibration remain milestones (\S\ref{sec:limitations}).
+\end{abstract}
+
+\maketitle
+
+\input{../include/patch_theory_messaging.tex}
+
+\section{Introduction and framing}
+\label{sec:intro}
+
+Neutron-star magnetospheres and crusts are modeled in traditional astrophysics as
+\textbf{composite MHD}: inhomogeneous Maxwell equations, conducting fluid momentum,
+and conductivity $\sigma(T,B)$ closures, often extended with Hall drift and crust
+elasticity \cite{hqiv-compact-object-witness-data}.
+HQIV records the same stack at the action level: \textbf{O-Maxwell} $S_O(J,A,\phi)$
+plus \textbf{modified fluid} closure (\leanfile{Hqiv/Physics/HQIVFluidClosureScaffold.lean}).
+
+The claim of this paper is therefore \emph{organizational}, not phenomenological:
+\begin{quote}
+\emph{We have a first-principles way to organize the same physics around
+ε-tipping layers and the spin axis, yielding testable predictions for mass/spin
+dependence and surface multipoles.}
+\end{quote}
+
+\section{Equation-level equivalence}
+\label{sec:equivalence}
+
+Table~\ref{tab:mhd-equivalence} displays standard resistive-MHD equations beside
+HQIV Lean names. Coefficient identification is explicit; vector $\nabla\times$ PDEs
+are \textbf{scalar discharges} on the crust witness chart until the vector milestone
+(\S\ref{sec:limitations}).
+
+\begin{table}[ht]
+\centering
+\caption{Traditional MHD $\leftrightarrow$ HQIV slot reduction (see
+\leanfile{Hqiv/Physics/CompactObjectMhdEquivalenceScaffold.lean}).}
+\label{tab:mhd-equivalence}
+\small
+\begin{tabular}{@{}p{0.42\linewidth}p{0.48\linewidth}@{}}
+\toprule
+Traditional & HQIV slot / coefficient ID \\
+\midrule
+Inhomogeneous Maxwell $\nabla\times F = J$ &
+\leanid{EL\_O\_general} (\leanfile{Hqiv/Physics/Action.lean}) \\
+$E = J/\sigma$ (ohmic) &
+\leanid{ohmicAxialField}; classical limit proved \\
+$\partial_t B \sim \nabla\times(v\times B)-\nabla\times(\eta\nabla\times B)$ &
+\leanid{inductionGrowthRateFromLt}, \leanid{steadyInductionFieldLt} \\
+MHD resistivity $\eta$ &
+$\eta_{\mathrm{HQIV}}(\xi,\varepsilon)=\gamma\,\mathrm{release}(\xi)\,G_{\mathrm{eff}}(\varepsilon)$ \\
+$\rho(\partial_t v + v\cdot\nabla v) = \cdots + (J\times B)/c + \nabla\cdot\tau$ &
+\leanid{hqivFluidInertiaFactor}; Maxwell stress from $S_O$ \\
+$\tau_{\mathrm{mol}}+\tau_{\mathrm{eddy}}$ &
+\leanid{nuTotal\_eq\_nuMol\_add\_hqivEddy} \\
+PNS turbulent $\alpha$ (dynamo driving) &
+\leanid{hqivEddyViscosity} + \leanid{hqivVacuumMomentumSource3} (F2 chart) \\
+Hall $\partial_t B \propto \sigma/(ne)\,\nabla\times((\nabla\times B)\times B)$ &
+\leanid{rapidityNormalized\_frozenFirstIndexJet} (milestone) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{proposition}[Discharged resistive identification]
+\label{prop:eta-id}
+For any environment slots $(\xi,\varepsilon)$, traditional resistivity $\eta$ may be
+identified with \leanid{inductionResistivityEta}$(\xi,\varepsilon)$, which is
+nonnegative (\leanid{inductionResistivityEta\_nonneg}) and equals $\gamma$ at lock-in
+with zero gravity (\leanid{inductionResistivityEta\_lockin\_zero\_gravity}).
+The bundle \leanid{mkCompactObjectMhdEquivalenceDischarged} witnesses the reduction.
+\end{proposition}
+
+\section{Geometry-first structure}
+\label{sec:geometry}
+
+Traditional codes can impose composition layers and offset hotspots by hand.
+HQIV discharges the following from ε-lattice and spin-chart slots:
+
+\begin{enumerate}[nosep]
+\item \textbf{ε-tipping layers.} Nuclear, charmed, and top zones with radii
+$r_{\mathrm{top}}$, $r_{\mathrm{charm}}$ tied to $\varepsilon$; charm retreat on spindown
+(\scriptfile{hqiv\_compact\_object\_mass.py}, \texttt{--spindown-charm-audit}).
+\item \textbf{Spin-axis latitude belts.} Pole channel ($\rho_{\mathrm{pol}}$, axial
+$\nabla\phi$), mid-latitude Coriolis gate $\sin^2\theta|\cos\theta|$, equatorial induction.
+\item \textbf{Unified obliquity.} Misaligning torque
+\leanid{crustMisalignTorqueFromStressDivergence} vs aligning magnetic braking;
+enhanced closure uses lattice-weighted \textbf{B\_align}, charm-ledger boost, and
+minimal crust $J\times B$ (\scriptfile{hqiv\_compact\_object\_mass.py}).
+\item \textbf{Surface multipoles.} Zonal $l=2,l=3$ and $m=1$ from $\tau_{\mathrm{mis}}$
+tilted-dipole modulation (m=1 tilt from enhanced $\alpha_{\mathrm{eq}}$); NICER overlays
+for J0030+0451 and J0740+6620.
+\item \textbf{Environment-aware $\eta$.} Outside temperature with co-spin and CMB Doppler
+boost feeds $\xi$ and hence $\eta(\xi,\varepsilon)$.
+\end{enumerate}
+
+The high-spin / high-mass tail shows a documented transition: moderate
+$\Omega/\Omega_{\mathrm{break}}$ favors Coriolis$\times$shear ($l_2/l_0\sim 1$);
+breakup favors equatorial induction ($l_3/l_0\sim 1$)---see
+\datafile{compact\_object\_witnesses.json} and \texttt{--surface-multipole-audit}.
+
+\section{Differentiating predictions}
+\label{sec:predictions}
+
+\paragraph{Field obliquity vs surface geometry.}
+\textbf{$\alpha_{\mathrm{eq}}$} from slip-torque balance is the misalignment between
+spin and the dipole axis used in aligning torque---not colatitude of a hot spot.
+Catalog dipole $B$ for millisecond pulsars typically yields $\alpha_{\mathrm{eq}}\approx 90^\circ$
+(misaligning-dominated); the canonical witness at $10^{12}\,\mathrm{G}$ gives
+$\alpha_{\mathrm{eq}}\approx 71^\circ$ for a $1.4\,M_\odot$ ms star; breakup favors
+low obliquity ($\sim 11^\circ$). NICER centroid offsets and $m=1$ structure are a
+\textbf{separate} surface-multipole layer (\texttt{tau\_mis\_m1\_gate}).
+
+\begin{itemize}[nosep]
+\item \textbf{Mass/spin $\rightarrow$ multipoles.} $l_2/l_0$, $l_3/l_0$, centroid offset,
+and $m_1$ fraction correlate with $\Omega/\Omega_{\mathrm{break}}$ without per-source
+hotspot offsets.
+\item \textbf{Obliquity regimes.} Enhanced aligning torque:
+\datafile{pulsar\_witness\_comparison.json} (\texttt{alpha\_equilibrium\_aligning\_enhanced\_deg},
+\texttt{alpha\_equilibrium\_canonical\_b\_deg}).
+\item \textbf{High-mass tail.} Charm retreat, pair margin, incremental $B_{\mathrm{charm}}$
+in young massive rotators.
+\item \textbf{$\eta(\xi,\varepsilon)$ calibration.} \texttt{coefficient\_calibration\_witness}
+vs literature $\sigma$ and $\tau_{\mathrm{ohm}}\sim\mu_0\sigma R^2$
+(\texttt{--eta-calibration-audit}).
+\end{itemize}
+
+\section{Coefficient discharge and limitations}
+\label{sec:limitations}
+
+\paragraph{Discharging coefficients (not a weakness).}
+Traditional decades of work fix $\sigma(T,B)$, Hall coefficients, and $\tau_{\mathrm{ohm}}$.
+HQIV fixes the \textbf{algebra} ($\alpha$, $\gamma$, $\varepsilon$, $\xi$) and proposes
+\begin{equation}
+  \eta_{\mathrm{HQIV}}(\xi,\varepsilon)=\gamma\,\mathrm{release}(\xi)\,G_{\mathrm{eff}}(\varepsilon),
+  \qquad
+  E_{\mathrm{Ohm}} = J/\sigma \;\Leftrightarrow\; \text{\leanid{ohmicAxialField}}.
+\end{equation}
+A pre-finalization table compares $\eta_{\mathrm{HQIV}}$ and schematic $\partial B/\partial t$
+against literature crust values; the numeric witness is
+\texttt{coefficient\_calibration\_witness} (\texttt{--eta-calibration-audit}), mapping
+$\tau_{\mathrm{ohm}}\approx\mu_0\sigma R^2$ at stellar radius to the $10^4$--$10^6\,\mathrm{yr}$
+band for $\sigma\in[10^7,10^9]\,\mathrm{S/m}$.
+
+\paragraph{Not claimed.}
+\begin{itemize}[nosep]
+\item Magnetar $10^{14}$--$10^{15}\,\mathrm{G}$ \textbf{generation} from cold-crust induction alone;
+$B_0$ is boundary data (proto-NS dynamo or catalog).
+\item Replacement of mature Hall-MHD crust evolution codes.
+\item Full time-dependent vector multipole evolution without coupling $\partial_t c_\ell$ to
+induction and diffusion.
+\item Numeric Hall-term benchmark until \leanid{rapidityNormalized\_frozenFirstIndexJet}
+is discharged as an explicit vector identity.
+\end{itemize}
+
+\paragraph{Machine-checked honesty ledger.}
+\leanid{CompactObjectMhdProvedReductions}, \leanid{CompactObjectMhdMilestones}, and
+\leanid{CompactObjectMhdNotClaimed} in
+\leanfile{Hqiv/Physics/CompactObjectMhdEquivalenceScaffold.lean} separate proved reductions,
+milestones, and explicit non-claims.
+
+\section{Data and reproducibility}
+
+\begin{itemize}[nosep]
+\item Witness JSON: \datafile{compact\_object\_witnesses.json}
+  (\scriptfile{hqiv\_compact\_object\_mass.py --json}).
+\item Paper bundle: \texttt{--paper-dynamics-outline}, \texttt{--mhd-equivalence-audit},
+  \texttt{--eta-calibration-audit}.
+\item Pulsar overlay: \datafile{pulsar\_witness\_comparison.json}
+  (\scriptfile{hqiv\_pulsar\_witness\_benchmark.py --json}).
+\item Regenerate all: \texttt{papers/compact\_object\_witness/regenerate\_data.sh}.
+\item Lagrangian audit: \scriptfile{hqiv\_lagrangian\_faithfulness\_audit.py --json}.
+\end{itemize}
+
+\bibliographystyle{amsplain}
+\bibliography{../references}
+
+\end{document}

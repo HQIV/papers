@@ -74,7 +74,7 @@ class MaterialsLab:
 
         for tmpl in templates_for_motif(mono.motif):
             if tmpl.label.upper() == allotrope_label.upper():
-                return unit_cell_for_allotrope(spec, tmpl, mono)
+                return unit_cell_for_allotrope(spec, tmpl, mono, temperature_k=temperature_k)
         raise KeyError(f"allotrope {allotrope_label!r} not in derived set for {spec.name}")
 
     def material_response(

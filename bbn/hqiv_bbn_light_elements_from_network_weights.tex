@@ -2,10 +2,17 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb,amsthm,mathtools}
 \usepackage{enumitem}
+\usepackage{booktabs}
 \usepackage{hyperref}
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\usepackage[nameinlink,capitalise]{cleveref}
 \usepackage[final]{microtype}
 \setlength{\emergencystretch}{3em}
+
+\newcommand{\etap}{\ensuremath{\eta_{\mathrm{paper}}}}
+\newcommand{\etaBBN}{\ensuremath{\eta_{\mathrm{BBN}}}}
+\newcommand{\HQIVbox}[1]{%
+  \medskip\noindent\fbox{\begin{minipage}{0.97\linewidth}\small\textbf{HQIV in five sentences.}\ #1\end{minipage}}\medskip}
 
 \newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
 \newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\nolinkurl{#1}}}
@@ -49,10 +56,10 @@ $\eta$ consistency (\hyperref[lean:bbn-full-vital]{full BBN vital readout}).
 Reader-friendly anchors with clickable Lean links are in
 Appendix~\ref{app:lean-index}.
 
-\noindent\textbf{Single absolute anchor (quarantined).}
+\noindent\textbf{Single absolute anchor (strictly isolated).}
 Dimensionful nucleon masses enter only through the proton lock-in witness
-at $\mathrm{referenceM}=4$; lock-in $\eta_{\mathrm{paper}}$ is imported from
-the baryogenesis witness layer, not refit here. Coc et al.\ semi-analytic
+at $\mathrm{referenceM}=4$; lock-in \etap{} is imported from the baryogenesis
+witness layer, not refit here. Coc et al.\ semi-analytic
 fits \cite{coc2015} are labelled \emph{comparison-only} in Lean and are
 never HQIV inputs.
 
@@ -65,14 +72,44 @@ work.
 
 \noindent\textbf{Status.}
 Proved: network vital readout, epoch vital readout, integrated $Y_p$
-witness pack, umbrella \texttt{bbn\_full\_vital\_readout}. Honest
-scaffold: $^7\mathrm{Li}/H$ from the weight ansatz can diverge at mid-epoch
-(JSON witnesses); not claimed as an observational match. Not claimed:
-derivation of $\eta_{\mathrm{paper}}$ from first principles in this note.
+witness pack, umbrella \texttt{bbn\_full\_vital\_readout}, and the
+stoichiometric integrator spine (\hyperref[lean:bbn-stoichiometric]{BBN
+stoichiometric integrator}). Python reproduction at lock-in
+$\eta_{\mathrm{paper}}$ yields $Y_p\approx 0.244$, $D/H\approx
+2.51\times 10^{-5}$ ($z\approx -0.5$ vs.\ Coc \cite{coc2015}), $^3\mathrm{He}/H\approx
+1.01\times 10^{-5}$, and $^7\mathrm{Li}/H\approx 2.54\times 10^{-10}$
+(pre-astrophysical-depletion; $\approx 45\%$ below Coc semi-analytic
+$4.65\times 10^{-10}$ at the same $\eta$; within the Spite-plateau envelope
+$(1.6$--$4.5)\times 10^{-10}$; \texttt{data/bbn\_integrator.json}). Not claimed: derivation of
+\etap{} from first principles in this note.
 \end{abstract}
 \maketitle
 
 \input{../include/patch_theory_messaging.tex}
+
+\HQIVbox{%
+(1)~Cosmology is encoded on a discrete null-shell ladder
+$m(T)=\lfloor T_{\mathrm{Pl}}/T\rfloor-1$, not as a continuum mesh awaiting a
+limit. (2)~Matter and gauge couplings read from an inner--outer Casimir chart
+$\kappa_6(\xi)=\eta_{\mathrm{local}}\,\gamma\,C_2(\xi)$ tied to the Hopf--Beltrami
+mass bridge \cite{hqiv-tuft-sm-lagrangian-paper}. (3)~Nucleon masses and cluster
+binding $Q$ follow the eight-dimensional composite trace with a single proton
+anchor at $\mathrm{referenceM}=4$. (4)~Baryon asymmetry \etap{} is fixed upstream
+by curvature lock-in \cite{hqiv-baryogenesis-paper}, with
+$\etaBBN=\etap$ proved in Lean. (5)~BBN abundances are \emph{weighted network
+readouts} on that ladder---this note certifies what is already theorem-level and
+documents the faithful Python integrator that closes $Y_p$, $D/H$, $^3$He/H, and
+$^7$Li/H at \etap.}
+
+\paragraph{Notation.}
+We write \etap{} for the lock-in baryon-to-photon ratio imported from
+baryogenesis; Lean proves $\etaBBN=\etap$ (no separate BBN fit).
+Deuteron, helium, and lithium binding enter as $Q_D$, $Q_{^4\mathrm{He}}$,
+$Q_{^3\mathrm{He}}$, $Q_{^7\mathrm{Be}}$, $Q_{^7\mathrm{Li}}$ from the
+composite-trace network unless a temperature-dependent release suffix
+$Q^{\mathrm{eff}}(T)$ is explicit. Strong-channel weight
+$w_{\mathrm{strong}}=4/8$ and horizon ratio $\gamma=2/5$ are HQIV constants,
+not BBN fit parameters.
 
 \section{Scope and claim discipline}
 \label{sec:scope}
@@ -191,6 +228,17 @@ Freeze-out internal temperature is defined consistently with neutron--proton
 equilibrium break (the \hyperref[lean:bbn-freezeout-temp]{freeze-out
 temperature identity}).
 
+\begin{remark}[Discrete shells and freeze-out sharpness]
+Because $m(T)$ uses a floor map, the temperature ladder is piecewise constant
+in shell index: a cooling step crosses a shell boundary when $T$ drops below
+$T_{\mathrm{Pl}}/(m+2)$.  Freeze-out is therefore a \emph{shell predicate}
+($\tau_{n\!\leftrightarrow\! p}\sim t_{\mathrm{exp}}$ at the matching shell),
+not a smooth continuum crossover.  The integrator uses log-spaced sub-steps
+inside the BBN window to approximate the cooling history; residual
+$\mathcal{O}(\Delta m)$ artifacts near boundaries are absorbed into the
+documented $D/H$ residual rather than hidden by a continuum transport code.
+\end{remark}
+
 The \hyperref[lean:bbn-epoch-network]{epoch network module} supplies a
 rate scaffold (weak, $np$, $dd$, $^3\mathrm{He}$ branches) and Hubble
 dilution---schematic reaction bookkeeping for integration witnesses, not a
@@ -199,31 +247,123 @@ published PRIMAT clone in Lean.
 \subsection{Dynamic $C_2$ lapse clock (BBN lab)}
 \label{sec:dynamic-c2}
 
-The dynamic bulk integrator
-(\cite{hqiv-baryogenesis-paper}, \texttt{hqiv\_dynamic\_bulk\_bbn.py})
-advances species by a shell reaction opportunity, not by $H(T)$ as an input
-clock.  Matter curvature enters through $B_{\mathrm{curv}}(\xi)$ in the
-$\kappa_6$ matter slot; \textbf{lapse concentration $C_2(\xi)$} is
-applied in the deuterium bottleneck ($T\le\gamma w_{\mathrm{strong}}T_{\mathrm{freeze}}(\eta)$) via
+\paragraph{Physical picture.}
+In standard BBN one often parametrizes departures from freeze-out equilibrium
+via $H(T)$, $\tau_n$, or effective reaction rates.  HQIV instead advances
+species by a \textbf{shell reaction opportunity}
+$\mathcal{O}\propto \Delta\log\xi\times B_{\mathrm{curv}}(\xi)$, where
+$\xi=T_{\mathrm{Pl}}/T$ is the cosmological shell coordinate
+\cite{hqiv-baryogenesis-paper}.  The Hopf--Beltrami mass bridge packages the
+matter slot as $\kappa_6(\xi)=\eta_{\mathrm{local}}\,B_{\mathrm{curv}}(\xi)\,
+\gamma\,C_2(\xi)$ (\leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean}).
+On the hot BBN chart $B_{\mathrm{curv}}$ is nearly flat while lapse
+concentration $C_2(\xi)$ grows with $\xi$; the anchor-normalized ratio
+$\kappa_{6,\mathrm{ref}}/\kappa_6(T)$ therefore acts as a \emph{local lapse
+reaction clock}: it is \textbf{not} a variable speed of light in the metric
+sense, but an effective rescaling of strong-channel opportunity relative to the
+freeze-out anchor temperature $T_{\mathrm{freeze}}(\eta)$.  In Friedmann
+language, HQIV does not import $H(T)$ as the integration clock; the
+dictionary is ``comoving temperature step $\Delta\log T$'' $\leftrightarrow$
+``shell opportunity $\Delta\log\xi$'' modulated by $(\kappa_{6,\mathrm{ref}}/
+\kappa_6)^{w_{C_2}(T)}$ in the deuterium bottleneck.  This is closest to a
+\textbf{temperature-dependent effective rate} in the bottleneck window
+$T\le T_{\mathrm{bn}}(\eta)$, with exponent tied to composite-trace binding
+release rather than a fitted MeV cutoff.
+
+\paragraph{Definitions.}
+For $T\le T_{\mathrm{bn}}(\eta)=\gamma\,w_{\mathrm{strong}}\,T_{\mathrm{freeze}}(\eta)$,
 \[
-T_{\mathrm{bn}}(\eta)=\gamma\,w_{\mathrm{strong}}\,T_{\mathrm{freeze}}(\eta),
-\quad
 w_{C_2}(T)=\gamma\,w_{\mathrm{strong}}\,\frac{Q_D^{\mathrm{eff}}(T)}{Q_{np}},
-\quad
-f_{C_2}=(\kappa_{6,\mathrm{ref}}/\kappa_6)^{w_{C_2}}
+\qquad
+f_{C_2}(T)=\left(\frac{\kappa_{6,\mathrm{ref}}}{\kappa_6(T)}\right)^{w_{C_2}(T)},
+\qquad
+\kappa_6(T)=\etap\,B_{\mathrm{curv}}(\xi(T))\,\gamma\,C_2(\xi(T)).
 \]
-for $T\le T_{\mathrm{bn}}(\eta)$, with $\kappa_6=\eta_{\mathrm{paper}}\,B_{\mathrm{curv}}\,\gamma\,C_2(\xi)$
-and Lean names \leanid{bbnDynamicC2BottleneckT\_MeV},
+Lean names: \leanid{bbnDynamicC2BottleneckT\_MeV},
 \leanid{bbnDynamicC2LapseExponent},
 \leanid{bbnDynamicC2OpportunitySuppression}
 (\leanfile{Hqiv/Physics/DynamicBBNBaryogenesis.lean}).
-At the dynamic-$\eta$ witness ($\eta_{10}\approx 6.2$) this raises $D/H$ from
-$\sim 7.5\times 10^{-6}$ ($B_{\mathrm{curv}}$ only) to
-$\sim 2.4\times 10^{-5}$ while keeping $Y_p$ on the Cooke et al.\ band
-(\texttt{data/integrator\_lean\_audit.json}).
-Multiplying opportunity by raw $\kappa_6$ at low $T$ \emph{lowers} $D/H$;
-the BBN lab identifies the inverse lapse clock as the physical dynamic-$C_2$
-readout.
+Multiplying opportunity by raw $\kappa_6$ at low $T$ \emph{over-suppresses}
+$D/H$; the inverse lapse ratio is the certified dynamic-$C_2$ readout.
+
+The legacy dynamic-bulk integrator (\texttt{hqiv\_dynamic\_bulk\_bbn.py})
+implements this opportunity clock without the synthesis-window stoichiometry of
+\Cref{sec:faithful-integrator}.
+\paragraph{Provider decomposition at \etap.}
+\Cref{tab:provider-decomposition} quantifies how each layer raises $D/H$ toward
+the faithful readout (exported by \texttt{hqiv\_bbn\_paper\_tables.py}).
+Stoichiometric $n\!+\!p\!\to\!D$ capture and the synthesis window
+($1\,\mathrm{MeV}\to T_{\mathrm{bn}}$) dominate ($4.4\times10^{-6}\to
+1.84\times10^{-5}$); coupled inventory with outside-neutron curvature supplies
+the final increment to $2.51\times10^{-5}$ and sets $Y_p$ via the
+post-synthesis $x_n$ survivor.  Turning off $C_2$ lapse alone leaves the
+faithful $D/H$ unchanged at this precision---$f_{C_2}$ is booked primarily on
+the $n\!+\!p$ and $D\!+\!D$ branches inside the bottleneck, not as a separate
+post-hoc multiplier.
+
+\begin{table}[ht]
+\centering
+\caption{Layered $D/H$ providers at $\etap=6.10\times10^{-10}$
+(\texttt{data/bbn\_paper\_tables.json}).}
+\label{tab:provider-decomposition}
+\begin{tabular}{lcc}
+\toprule
+Provider layer & $D/H$ & $Y_p$ \\
+\midrule
+Lock-in $Q_D$ at $T_{\mathrm{freeze}}$ & $\lesssim 10^{-30}$ & --- \\
+Hybrid $Q^{\mathrm{eff}}(T)$, partition window & $4.4\times 10^{-6}$ & $0.258$ \\
++ stoichiometric + $C_2$, full window & $8.1\times 10^{-6}$ & $0.247$ \\
++ synthesis window (uncoupled) & $1.84\times 10^{-5}$ & $0.247$ \\
+Faithful (coupled inventory + curvature) & $2.51\times 10^{-5}$ & $0.244$ \\
+\midrule
+Coc et al.\ comparison \cite{coc2015} & $(2.53\pm0.04)\times10^{-5}$ & $0.244$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Faithful stoichiometric integrator}
+\label{sec:faithful-integrator}
+
+The recommended reproduction path is
+\texttt{scripts/hqiv\_bbn\_integrator.py}, mirrored in Lean by
+\hyperref[lean:bbn-stoichiometric]{BBNStoichiometricIntegrator} and
+\texttt{data/bbn\_integrator.json}.  At $\eta_{\mathrm{paper}}=6.10\times
+10^{-10}$ it couples:
+
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Synthesis-window $D/H$.}
+  Log-weighted integration from $1\,\mathrm{MeV}$ through the $C_2$
+  bottleneck ($T_{\mathrm{bn}}\approx 0.14\,\mathrm{MeV}$), not the full
+  cold tail to $0.01\,\mathrm{MeV}$.  Below the ³He synthesis mid-gate
+  ($T_{\mathrm{peak}}=0.18\,\mathrm{MeV}$, Lean
+  \leanid{bbnHe3SynthesisMidMeV}) the log weights taper linearly
+  $T_{\mathrm{bn}}\!\to\!T_{\mathrm{peak}}$ via
+  \leanid{bbnSynthesisDWindowTailGate}---a thermal-crush tail, not a hard
+  shut-off at mid-MeV.  The numerator adds an explicit
+  $n\!+\!p\!\to\!D$ capture term (\texttt{branch\_np\_to\_d}) and a strong-channel
+  deposition boost $\propto \gamma\,w_{\mathrm{strong}}(1+g_{np}+c_2)$
+  (\leanid{bbnSynthesisStrongDepositionBoost}).
+\item \textbf{Coupled neutron inventory.}
+  Outside-curvature and $\nu$-opacity set $\tau_n(T)$; the same $x_n(T)$
+  ladder scales $n\!+\!p\!\to\!D$ and $D\!+\!D\!\to\!{}^4\mathrm{He}$.
+  $Y_p$ is read from the \emph{post-synthesis} survivor
+  $x_n(T_{\mathrm{low}})$, not the instant freeze-out partition.
+\item \textbf{$^3\mathrm{He}/H$ window.}
+  Dedicated $0.45\!\to\!0.05\,\mathrm{MeV}$ ladder with trimer-width
+  erosion on the strong channel only; a narrower feed gate routes $^3\mathrm{He}$
+  into the $^7\mathrm{Be}$ tail without inflating the $^3\mathrm{He}$ readout.
+\item \textbf{$^7\mathrm{Li}/H$ tail.}
+  $^7\mathrm{Be}$ production and electron capture on
+  $0.25\!\to\!0.05\,\mathrm{MeV}$;   witness $^7\mathrm{Li}/H\approx
+  2.54\times 10^{-10}$ (pre-depletion HQIV readout).
+\end{itemize}
+
+Exported readout: $Y_p\approx 0.244$, $D/H\approx
+2.51\times 10^{-5}$ ($z\approx -0.5$ vs.\ $(2.53\pm 0.04)\times 10^{-5}$),
+$^3\mathrm{He}/H\approx 1.01\times 10^{-5}$, $^7\mathrm{Li}/H\approx
+2.54\times 10^{-10}$ ($\approx 45\%$ below Coc $4.65\times 10^{-10}$).  Curvature relative to bare equilibrium \emph{lowers}
+$Y_p$ by $\sim 3\times 10^{-3}$ while \emph{raising} $D/H$ slightly---the
+intended unified inventory behaviour, not a Y$_p$-only tweak.
 
 \section{Integrated witnesses and Python export}
 \label{sec:integrated}
@@ -232,22 +372,183 @@ The \hyperref[lean:bbn-witness]{BBN witness module} pins numeric exports
 from \texttt{data/bbn\_witnesses.json} (generated by
 \texttt{scripts/hqiv\_bbn\_abundances.py} and
 \texttt{scripts/hqiv\_bbn\_epoch\_network.py}; Appendix~\ref{app:scripts}).
-At the exported lock-in $\eta=6.10\times 10^{-10}$:
+At the exported lock-in $\eta=6.10\times 10^{-10}$ (partition readout in
+\texttt{data/bbn\_witnesses.json}):
 
 \begin{itemize}[leftmargin=2em]
+\item Lock-in cluster $Q$ values from the composite trace:
+  $Q_D\approx 2.34\,\mathrm{MeV}$, $Q_{^4\mathrm{He}}\approx 7.03\,\mathrm{MeV}$,
+  $Q_{^3\mathrm{He}}\approx 4.39\,\mathrm{MeV}$; post-$\alpha$ wells
+  $Q_{^7\mathrm{Be}}\approx 14.9\,\mathrm{MeV}$,
+  $Q_{^7\mathrm{Li}}\approx 14.4\,\mathrm{MeV}$ (⁷Be deeper than ⁷Li).
 \item Integrated window $Y_p\approx 0.247$ lies in the Cooke et al.\ band
   checked in Lean (\hyperref[lean:bbn-yp-band]{freeze-out $Y_p$ band witness}).
 \item Integrated $Y_p$ is within $1\%$ of the freeze-out partition value
   (\hyperref[lean:bbn-yp-near-freeze]{integrated--freeze-out proximity
   witness}).
+\item Faithful stoichiometric integrator at $\eta_{\mathrm{paper}}$:
+  $Y_p\approx 0.244$, $D/H\approx 2.51\times 10^{-5}$,
+  $^3\mathrm{He}/H\approx 1.0\times 10^{-5}$,
+  $^7\mathrm{Li}/H\approx 2.54\times 10^{-10}$
+  (\texttt{data/bbn\_integrator.json}; \S\ref{sec:faithful-integrator}).
+\item Legacy dynamic-bulk row (\texttt{legacy\_dynamic\_bulk\_row} in
+  \texttt{integrator\_lean\_audit.json}): pre-synthesis-window scaffold only;
+  superseded by \texttt{faithful\_bbn\_integrator}.
 \end{itemize}
 
-\textbf{Honesty on lithium.}
-Mid-epoch and window-integrated $^7\mathrm{Li}/H$ from the current weight
-ansatz can be enormous in the JSON export (Boltzmann exponent with a
-scaffold $Q$). The library proves positivity at the epoch readout level, not
-agreement with the observed Li problem. Treat Li channels as
-\emph{scaffold only} until a dedicated nuclear-network upgrade is proved.
+\textbf{Honesty on lithium and deuterium.}
+The faithful integrator exports $^7\mathrm{Li}/H\approx 2.54\times 10^{-10}$
+(pre-astrophysical-depletion) at lock-in $\eta$, $\approx 45\%$ below the Coc
+semi-analytic comparison $4.65\times 10^{-10}$ but inside the broad Spite
+envelope $(1.6$--$4.5)\times 10^{-10}$, without refitting nuclear $Q$ values.
+$D/H$ at
+$\eta_{\mathrm{paper}}$ sits within $\sim 0.5\sigma$ of the Coc anchor once
+the synthesis-window tail gate (\leanid{bbnSynthesisDWindowTailGate}) is
+booked---documented as a structural readout, not a comparison-layer fit.
+Mid-epoch partition witnesses in
+\texttt{bbn\_witnesses.json} can still diverge on Li; treat those as
+epoch-scaffold exports distinct from the stoichiometric integrator.
+
+\section{Relation to standard BBN physics}
+\label{sec:standard-bbn}
+
+\paragraph{Neutron lifetime and weak rates.}
+Laboratory $\tau_n\simeq 879.4\,\mathrm{s}$ enters as a \textbf{reference
+scale} in \hyperref[lean:bbn-outside-neutron]{NuclearOutsideTemperatureDynamics}
+and the Python outside-neutron module; it is \textbf{not refit} at BBN.
+Instead HQIV books a temperature-dependent ratio
+$\tau_n(T)/\tau_{n,\mathrm{lock}}$ from (i)~outside-curvature support on the
+free neutron branch and (ii)~relic-neutrino opacity catalysis on the weak width
+(same stack as nucleon $\beta$ tipping \cite{hqiv-nucleon-binding-paper}).
+At $T_{\mathrm{freeze}}$ the witness exports
+$\tau_n(T)/\tau_{n,\mathrm{lock}}\approx 1.19$ and a weak-width factor
+$\approx 1.07$ (\texttt{data/bbn\_paper\_tables.json}).  This lengthens the
+effective freeze-out epoch slightly and feeds the coupled $x_n(T)$ march that
+sets both $Y_p$ and $D/H$.
+
+\paragraph{Effective neutrino species $N_\nu$.}
+HQIV does not introduce an explicit $N_\nu$ fit parameter in the proof graph.
+The epoch scaffold assumes the Standard Model relativistic neutrino content
+implicitly through the thermal $g_\ast$ bookkeeping used in comparison-layer
+Coc fits \cite{coc2015}.  A future extension would route $N_\nu$ through the
+same relic-$\nu$ opacity slot already present in the outside-neutron module.
+
+\paragraph{Baryon density \etap{} vs.\ Planck/CMB.}
+$\etap=6.10\times10^{-10}$ ($\eta_{10}=6.10$) is the Lean lock-in anchor
+imported from baryogenesis \cite{hqiv-baryogenesis-paper}, matching the
+BBN+$C$MB comparison target $6.10\pm0.06$ recorded there---not a simultaneous
+abundance fit.  The dynamic bulk integrator independently derives
+$\eta_{10}\approx 6.20$ from $\Omega_b$ and curvature closure; the faithful
+BBN readout is evaluated at the proved identity $\etaBBN=\etap$.
+
+\paragraph{The lithium problem.}
+Standard SBBN with unmodified rates typically \emph{overpredicts}
+$^7\mathrm{Li}/H$ by factors $\sim 2$--$3$ relative to the Spite plateau
+once post-BBN destruction is accounted for.  At \etap{} Coc semi-analytics
+\cite{coc2015} give $^7\mathrm{Li}/H\approx 4.65\times10^{-10}$; the HQIV
+faithful witness is $^7\mathrm{Li}/H\approx 2.54\times10^{-10}$
+(pre-astrophysical-depletion), $\approx 45\%$ below that comparison anchor
+but inside the broad $(1.6$--$4.5)\times10^{-10}$ envelope, without
+refitting $Q$.
+\Cref{tab:li7-gates} shows the mechanism: unstratified $^3\mathrm{He}$ routing
+inflates $^7\mathrm{Be}$ production by orders of magnitude; the combination of
+\textbf{trimer-width erosion} on the $^3\mathrm{He}$ readout and a
+\textbf{narrow $^3\mathrm{He}\!\to\!{}^7\mathrm{Be}$ feed gate}
+($0.05$--$0.35\,\mathrm{MeV}$) brings the ladder into band.  Composite-trace
+$Q_{^7\mathrm{Be}}$ sets the Boltzmann weight; $C_2$ lapse affects $D/H$ more
+strongly than $^7\mathrm{Li}$ in the final witness.
+
+\begin{table}[ht]
+\centering
+\caption{$^7\mathrm{Li}/H$ sensitivity to $^3\mathrm{He}$ stratification gates
+at \etap{} (\texttt{bbn\_paper\_tables.json}).}
+\label{tab:li7-gates}
+\begin{tabular}{lcc}
+\toprule
+$^3\mathrm{He}$ stratified & synthesis window & $^7\mathrm{Li}/H$ \\
+\midrule
+off & off & $3.1\times 10^{-7}$ \\
+off & on  & $4.4\times 10^{-10}$ \\
+on  & off & $1.8\times 10^{-9}$ \\
+on  & on  & $2.54\times 10^{-10}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Quantitative validation and uncertainties}
+\label{sec:validation}
+
+\paragraph{$Y_p$ band used in witnesses.}
+Lean \hyperref[lean:bbn-yp-band]{freeze-out $Y_p$ band witness} checks against
+center $0.244\pm0.004$ (Cooke-style helium band; \cite{coc2015}), \textbf{not}
+the wider $0.244$--$0.256$ envelope sometimes quoted from heterogeneous
+datasets.  The faithful integrator readout $Y_p\approx 0.2442$ has
+$z\approx +0.05$ against that witness; the partition freeze-out witness
+$0.2469$ remains inside the same band.
+
+\paragraph{$D/H$ and observational context.}
+The model $D/H\approx 2.51\times10^{-5}$ lies within $\sim 0.5\sigma$ of the Coc
+semi-analytic anchor $(2.53\pm0.04)\times10^{-5}$ and the high-precision
+deuterium measurements of Cooke et al.\ \cite{cooke2014,cooke2018}.  The
+log-weight tail below $T_{\mathrm{peak}}=0.18\,\mathrm{MeV}$ (shared with the
+³He synthesis mid-gate) closes the prior $\sim 6\%$ undershoot that arose from
+treating the synthesis window as a hard floor at $0.15\,\mathrm{MeV}$.  Recent
+``high-$D$'' interstellar sightlines and galactic chemical evolution (GCE)
+depletion corrections remain an active comparison layer: HQIV documents offsets
+at \etap{} rather than tuning $\gamma$, $Q_D$, or $\eta$ to match Coc.  At
+$\eta_{10}=5.8$ the same integrator reaches $D/H\approx 2.79\times10^{-5}$,
+bracketing the Coc value from above.
+
+\paragraph{Sensitivity to HQIV constants.}
+\Cref{tab:sensitivity} summarizes one-at-a-time variations around the proved
+constants $\gamma=2/5$ and $w_{\mathrm{strong}}=4/8$.  $D/H$ scales roughly
+linearly with $\gamma$ and $w_{\mathrm{strong}}$ in the synthesis window;
+$Y_p$ is comparatively stable because it is anchored by the post-synthesis
+$x_n$ march.
+
+\begin{table}[ht]
+\centering
+\caption{Sensitivity of faithful readout to $\gamma$ and $w_{\mathrm{strong}}$
+(one-at-a-time; \texttt{bbn\_paper\_tables.json}).}
+\label{tab:sensitivity}
+\begin{tabular}{lccc}
+\toprule
+Parameter & value & $D/H$ & $Y_p$ \\
+\midrule
+$\gamma$ & $0.36$ & $1.95\times10^{-5}$ & $0.2447$ \\
+         & $0.40$ & $2.51\times10^{-5}$ & $0.2442$ \\
+         & $0.44$ & $3.23\times10^{-5}$ & $0.2437$ \\
+$w_{\mathrm{strong}}$ & $0.45$ & $1.95\times10^{-5}$ & $0.2447$ \\
+                      & $0.50$ & $2.51\times10^{-5}$ & $0.2442$ \\
+                      & $0.55$ & $3.23\times10^{-5}$ & $0.2437$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{$\eta$ sweep vs.\ comparison layer.}
+\Cref{tab:eta-sweep} lists the faithful integrator across
+$\eta_{10}\in[5.8,6.4]$.  Coc semi-analytics \cite{coc2015} are not inputs;
+the table is for external calibration only.
+
+\begin{table}[ht]
+\centering
+\caption{Faithful integrator abundances vs.\ $\eta_{10}$
+(\texttt{bbn\_paper\_tables.json}).}
+\label{tab:eta-sweep}
+\begin{tabular}{ccccc}
+\toprule
+$\eta_{10}$ & $Y_p$ & $D/H$ & $^3\mathrm{He}/H$ & $^7\mathrm{Li}/H$ \\
+\midrule
+$5.8$ & $0.254$ & $2.79\times10^{-5}$ & $1.08\times10^{-5}$ & $2.83\times10^{-10}$ \\
+$5.9$ & $0.251$ & $2.69\times10^{-5}$ & $1.05\times10^{-5}$ & $2.73\times10^{-10}$ \\
+$6.0$ & $0.247$ & $2.60\times10^{-5}$ & $1.03\times10^{-5}$ & $2.63\times10^{-10}$ \\
+$\mathbf{6.1}$ & $\mathbf{0.244}$ & $\mathbf{2.51\times10^{-5}}$ & $\mathbf{1.01\times10^{-5}}$ & $\mathbf{2.54\times10^{-10}}$ \\
+$6.2$ & $0.241$ & $2.43\times10^{-5}$ & $9.9\times10^{-6}$ & $2.45\times10^{-10}$ \\
+$6.3$ & $0.238$ & $2.35\times10^{-5}$ & $9.7\times10^{-6}$ & $2.36\times10^{-10}$ \\
+$6.4$ & $0.235$ & $2.27\times10^{-5}$ & $9.5\times10^{-6}$ & $2.28\times10^{-10}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Comparison layer: Coc et al.\ semi-analytics}
 \label{sec:comparison}
@@ -257,6 +558,8 @@ The \hyperref[lean:bbn-umbrella]{BBN umbrella module} records Coc et al.\
 side-by-side plots. These definitions are explicitly \textbf{not HQIV
 inputs}; they exist so reviewers can see how close the weight readout sits
 to standard BBN phenomenology without contaminating the proof graph.
+Cooke et al.\ deuterium and helium measurements \cite{cooke2014,cooke2018}
+supply independent observational anchors for the same comparison layer.
 
 \section{Umbrella certificate}
 \label{sec:umbrella}
@@ -274,10 +577,11 @@ witnesses are accepted from earlier tiers.
 \item Derivation of $\eta_{\mathrm{paper}}$ from associator phases or
   sphaleron yields (baryogenesis interpretive layer).
 \item Replacement of PRIMAT/MESA with the HQIV rate scaffold.
-\item Full Lean certificate that integrated $D/H$ matches Coc et al.\ without
-  the dynamic-$C_2$ witness (comparison-layer calibration documented in
-  \S\ref{sec:dynamic-c2} and \texttt{integrator\_lean\_audit.json}).
-\item Resolution of the lithium problem without further nuclear-network work.
+\item Full Lean certificate that integrated $D/H$ matches Coc et al.\ within
+  stated uncertainty at every $\eta$ (Python witness is within $\sim 0.5\sigma$
+  at $\eta_{\mathrm{paper}}$; see \S\ref{sec:faithful-integrator}).
+\item Post-BBN Li destruction and galactic chemical evolution (pre-depletion
+  $^7\mathrm{Li}/H$ only).
 \item Any continuum-limit or patch-refinement programme.
 \end{itemize}
 
@@ -288,9 +592,10 @@ readout} at lock-in, lifted to a \emph{cosmological epoch} on the
 temperature--shell ladder, and closed by \emph{integrated abundance witnesses}
 tied to Python exports. The proof graph is sorry-free at the vital-bundle
 level; observational agreement is claimed only where the witness module
-states it ($Y_p$ in the fixed-$\eta$ bundle; $D/H$ additionally in the
-dynamic-$C_2$ integrator audit of \S\ref{sec:dynamic-c2}). Companion
-reproduction is documented in Appendix~\ref{app:scripts}.
+states it ($Y_p$ in the fixed-$\eta$ bundle; light-ion band agreement in the
+faithful stoichiometric witness of \S\ref{sec:faithful-integrator}, including
+$D/H$ within $\sim 0.5\sigma$ of Coc at \etap{}). Companion reproduction is documented in
+Appendix~\ref{app:scripts}.
 
 \section*{Acknowledgments}
 
@@ -371,20 +676,85 @@ noted.
   \leanid{bbnShellReactionOpportunity\_dynamic\_integrator};
   \leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean} ---
   \leanid{tuftLapseConcentrationAtXi}, \leanid{tuftHopfKappa6AtXi}.
+\item[\hypertarget{lean:bbn-stoichiometric}{BBN stoichiometric integrator}]
+  \leanfile{Hqiv/Physics/BBNStoichiometricIntegrator.lean} ---
+  synthesis-window $D/H$ with \leanid{bbnSynthesisDWindowTailGate},
+  \leanid{bbnHe3SynthesisGate}, \leanid{bbnSynthesisStrongDepositionBoost},
+  coupled neutron inventory; Python mirror \texttt{hqiv\_bbn\_integrator.py}.
+\item[\hypertarget{lean:bbn-outside-neutron}{Outside neutron dynamics}]
+  \leanfile{Hqiv/Physics/NuclearOutsideTemperatureDynamics.lean} ---
+  free-neutron $\tau_n(T)$ modulator feeding the faithful integrator.
 \end{description}
+
+\section{Stoichiometric integrator flow}
+\label{app:flow}
+
+Reader-facing pseudocode for \texttt{hqiv\_bbn\_integrator.py} (Lean mirror:
+\hyperref[lean:bbn-stoichiometric]{BBNStoichiometricIntegrator}):
+
+\begin{verbatim}
+INPUT: eta_paper, lock-in Q from composite trace, gamma, w_strong
+BUILD temperature ladder: T = 1 MeV -> T_bn (C2 bottleneck)
+MARCH coupled neutron inventory x_n(T):
+    tau_n(T) from outside curvature + relic-nu weak-width factor
+    beta-decay survival freeze -> T_bn
+FOR each T on ladder (log weights w):
+    tail_gate(T) = bbnSynthesisDWindowTailGate(T)  # unity >= T_peak=0.18 MeV
+    w_eff = w * tail_gate(T)
+    Q_D^eff(T), Q_3^eff(T) from binding release + trimer width
+    f_C2(T) = (kappa6_ref/kappa6(T))^w_C2(T)  if T <= T_bn else 1
+    D/H from stoichiometric branches:
+        n+p->D capture (branch_np_to_d * f_C2)
+        D+D->4He, D photodissociation, D+p->3He (width-suppressed)
+        strong deposition boost ~ gamma * w_strong * (1 + g_np + c2)
+    integrate D/H with sum(D/H(T) * w_eff) / sum(w_eff)
+    3He/H on 0.45 -> 0.05 MeV window (separate ladder)
+    7Be -> 7Li tail on 0.25 -> 0.05 MeV
+OUTPUT Y_p = 2*x_n(T_low)/(1+x_n(T_low))   # post-synthesis survivor
+        D/H, 3He/H, 7Li/H integrated abundances
+\end{verbatim}
+
+\section{Minimal reproduction and sample witness}
+\label{app:minimal-repro}
+
+From the repository root, a single command regenerates the primary witness:
+\begin{verbatim}
+PYTHONPATH=scripts python3 scripts/hqiv_bbn_integrator.py
+\end{verbatim}
+Paper tables (\Cref{tab:provider-decomposition,tab:eta-sweep,tab:sensitivity}):
+\begin{verbatim}
+PYTHONPATH=scripts python3 scripts/hqiv_bbn_paper_tables.py
+\end{verbatim}
+Excerpt from \texttt{data/bbn\_integrator.json} at \etap:
+\begin{verbatim}
+"abundance_readout": {
+  "Y_p": 0.24422,
+  "D_over_H": 2.5119e-05,
+  "He3_over_H": 1.0122e-05,
+  "Li7_over_H": 2.5362e-10,
+  "synthesis_d_T_peak_MeV": 0.18,
+  "x_n_at_T_low": 0.13909,
+  "delta_Y_p_curvature": -0.00269
+}
+\end{verbatim}
 
 \section{Reproducer scripts}
 \label{app:scripts}
 
 From the repository root:
 \begin{verbatim}
+PYTHONPATH=scripts python3 scripts/hqiv_bbn_integrator.py
+PYTHONPATH=scripts python3 scripts/hqiv_bbn_paper_tables.py
 python3 scripts/hqiv_bbn_abundances.py
 python3 scripts/hqiv_bbn_epoch_network.py
 python3 scripts/hqiv_dynamic_bulk_bbn.py
 python3 scripts/hqiv_integrator_lean_audit.py
+python3 -m unittest scripts.test_hqiv_bbn_integrator
 python3 -m unittest scripts.test_hqiv_dynamic_c2_bbn
 \end{verbatim}
-Outputs: \texttt{data/bbn\_witnesses.json},
+Outputs: \texttt{data/bbn\_integrator.json} (primary abundance witness),
+\texttt{data/bbn\_paper\_tables.json},
+\texttt{data/bbn\_witnesses.json},
 \texttt{data/dynamic\_bulk\_bbn\_v2.json},
 \texttt{data/integrator\_lean\_audit.json}. See
 \texttt{papers/bbn/scripts/README.md} for the patch-ontology disclaimer and

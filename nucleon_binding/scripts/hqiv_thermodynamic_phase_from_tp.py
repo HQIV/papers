@@ -61,7 +61,10 @@ class MaterialThermodynamicScales:
     `contact_xi` — Compton-triplet mean ξ for dynamic κ(ξ) cohesive scale.
     `contact_points` — intermolecular contact count for melt/boil divisors.
     `bulk_condensed` — ice-like tetrahedral network (4 H-bonds); uses shell-opening melt scale.
-    `medium_density_fraction` — ρ ∈ [0,1] for κ₆ second-order; default from inter/4 if bulk else 0.
+    `medium_density_fraction` — geometric ρ_curv ∈ [0,1] from unit-cell / liquid reference.
+    `refractive_index_solid` — solid n from θ-derived CM; dresses κ₆ via optical ρ.
+    `intermolecular_motif` — VSEPR network motif for melt ladder divisor.
+    `z_heavy` — heavy-atom Z for linear-chain halogen melt dress.
     """
 
     name: str
@@ -72,6 +75,9 @@ class MaterialThermodynamicScales:
     contact_xi: float = XI_LOCKIN
     bulk_condensed: bool = False
     medium_density_fraction: float | None = None
+    refractive_index_solid: float | None = None
+    intermolecular_motif: str | None = None
+    z_heavy: int = 8
 
 
 @dataclass(frozen=True)
@@ -157,7 +163,17 @@ def material_scales_from_contact_network(
 
 
 def resolved_medium_density_fraction(material: MaterialThermodynamicScales) -> float:
-    """Intermolecular coordination density ρ for medium-specific κ₆ scaling."""
+    """Geometric ρ_curv, optionally dressed by solid n for κ₆ (``phase_curvature_density_fraction``)."""
+    rho_geom = _geometric_medium_density_fraction(material)
+    if material.refractive_index_solid is not None and material.refractive_index_solid > 1.0:
+        import hqiv_phase_geometry_density as pgd
+
+        return pgd.phase_curvature_density_fraction(rho_geom, material.refractive_index_solid)
+    return rho_geom
+
+
+def _geometric_medium_density_fraction(material: MaterialThermodynamicScales) -> float:
+    """Mass-geometry ρ_curv before optical n dress."""
     if material.medium_density_fraction is not None:
         return min(1.0, max(0.0, material.medium_density_fraction))
     if not material.bulk_condensed:
@@ -213,11 +229,18 @@ def material_scales_from_network_name(
     if inter <= 0:
         inter = max(1, cp // 2)
     triplet = (1, 1, 1) if name == "H2" else (4, 3, 1)
+    mw = 16.0
+    try:
+        from hqiv_lab.spec import MoleculeSpec
+
+        mw = MoleculeSpec.from_chart_name(name).molecular_weight_amu
+    except (KeyError, ValueError):
+        pass
     return MaterialThermodynamicScales(
         name=name,
         characteristic_binding_ev=be,
         contact_points=inter,
-        molecular_weight_amu=16.0,
+        molecular_weight_amu=mw,
         intermolecular_contacts=inter,
         contact_xi=lean.xi_from_compton_triplet(triplet),
     )
@@ -254,22 +277,48 @@ def intermolecular_cohesive_ev(material: MaterialThermodynamicScales) -> float:
     return kappa_xi * KAPPA_MELT / (float(inter) * shell_div)
 
 
+def _resolve_motif(material: MaterialThermodynamicScales):
+    from hqiv_lab.coordination import IntermolecularMotif
+
+    if material.intermolecular_motif is None:
+        return IntermolecularMotif.GENERIC
+    try:
+        return IntermolecularMotif(material.intermolecular_motif)
+    except ValueError:
+        return IntermolecularMotif.GENERIC
+
+
+def melt_motif_relative_scale_for_material(material: MaterialThermodynamicScales) -> float:
+    """Motif melt ladder scale relative to tetrahedral ice."""
+    from hqiv_lab.coordination import melt_motif_relative_scale
+
+    return melt_motif_relative_scale(
+        _resolve_motif(material),
+        intermolecular_contact_count(material),
+        z_heavy=material.z_heavy,
+    )
+
+
 def melt_cohesive_ev(material: MaterialThermodynamicScales) -> float:
     """Energy scale for solid→liquid (one shell release on the cohesive ladder)."""
     if material.bulk_condensed:
+        import hqiv_homogeneous_curvature_feedback as hcf
+
         kappa_xi = lean.dynamic_binding_curvature_coupling_at_xi(material.contact_xi)
-        e_base = (
+        e_tetra = (
             kappa_xi
             * KAPPA_MELT
             * lean.PHASE_LIFT_3
             / ((1.0 + ALPHA) ** 3)
         )
-        # Medium-specific κ₆: scale second-order curvature by intermolecular density ρ.
-        fb_scaled = lean.curvature_second_order_scaled_for_medium_density(
+        rho_kappa = resolved_medium_density_fraction(material)
+        fb = hcf.binding_curvature_feedback_second_order_homogeneous(
             material.contact_xi,
-            resolved_medium_density_fraction(material),
+            rho_kappa,
+            coordination_excess=0.0,
         )
-        return e_base * fb_scaled
+        motif_scale = melt_motif_relative_scale_for_material(material)
+        return e_tetra * motif_scale * fb
     return intermolecular_cohesive_ev(material) / (1.0 + ALPHA)
 
 

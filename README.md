@@ -6,7 +6,7 @@ All publications go to the [Zenodo HQIV community](https://zenodo.org/communitie
 
 ## Publication order
 
-The series is published in tiers so that each later paper can cite the earlier ones by their minted DOIs. Tier~0, all four Tier-1 foundation-extension records, and the Tier-2 combined opener (#5) are on Zenodo; remaining Tier-2+ entries are unpublished drafts queued in the order below.
+The series is published in tiers so that each later paper can cite the earlier ones by their minted DOIs. Tier~0, all four Tier-1 foundation-extension records, Tier-2 #5 (TUFT+SM synthesis), and Tier-2 #6 (baryogenesis lock-in) are on Zenodo; remaining Tier-2+ entries are unpublished drafts queued in the order below.
 
 ### Tier 0 — Already published on Zenodo (frozen)
 
@@ -37,7 +37,8 @@ Each paper here is a direct mathematical/variational sequel to `closure` and mus
 
 | # | Folder | Source `.tex` | DOI (version) | Date | Bib key |
 |---|---|---|---|---|---|
-| 5 | `tuft_sm_lagrangian/` | `hqiv_tuft_sm_lagrangian_synthesis.tex` | [`10.5281/zenodo.20517172`](https://doi.org/10.5281/zenodo.20517172) | 2026-06-02 | `hqiv-tuft-sm-lagrangian-paper` |
+| 5 | `tuft_sm_lagrangian/` | `hqiv_tuft_sm_lagrangian_synthesis.tex` | [`10.5281/zenodo.20601215`](https://doi.org/10.5281/zenodo.20601215) | 2026-06-08 | `hqiv-tuft-sm-lagrangian-paper` |
+| 6 | `baryogenesis_lockin/` | `hqiv_baryogenesis_curvature_lockin.tex` | [`10.5281/zenodo.20711255`](https://doi.org/10.5281/zenodo.20711255) | 2026-06-16 | `hqiv-baryogenesis-paper` |
 
 **Patch gauge consistency (2026-06):** the TUFT+SM synthesis records **proved** finite SM anomaly-trace cancellation, topological-sector discharge, fibre-torsion subleading sector zeta, light-cone \(\mathfrak{so}(8)\) holonomy with weak/colour non-abelian charts, **full four-edge SO(8) Wilson plaquettes** (`Hqiv/Physics/SO8PlaquetteHolonomy.lean`), shell-to-harmonic limits, **rapidity-phase Lorentz closure** (`Hqiv/Geometry/RapidityLorentzClosure.lean`), and **spatial-rotation Lorentz closure** for flyby/CMB/fluid directional readouts (`Hqiv/Geometry/SpatialRotationLorentzClosure.lean`). **Partial / open:** Haar measure on rotated charts; general flat HQVM kinetic invariance under `boostDiscretePotential41` (`Hqiv/Physics/DiscreteActionStrongPoincareBridge.lean`); continuum Wightman Poincaré — see `hqiv_tuft_sm_lagrangian_synthesis.tex` and `papers/include/patch_theory_messaging.tex`. **Discharged on partial slice:** Wilson–kinetic equivalence (`ActionHolonomyGlue.wilsonKineticPlaquetteEquivalence_discharged`); `fullActionStrongPoincare_discharged`.
 
@@ -45,9 +46,8 @@ Each paper here is a direct mathematical/variational sequel to `closure` and mus
 
 | # | Folder | Bib key | Role |
 |---|---|---|---|
-| 6 | `baryogenesis_lockin/` | `hqiv-baryogenesis-paper` | Baryon asymmetry as curvature-ratio lock-in. Cites the combined Tier-2 foundation (#5, [`10.5281/zenodo.20517172`](https://doi.org/10.5281/zenodo.20517172)). **Next in Tier-2 queue.** |
-| 7 | `nucleon_binding/` | `hqiv-nucleon-binding-paper` | Binding energy and the weak force: single source `hqiv_nucleon_binding_from_composite_trace.tex` ($8\times8$ composite-trace nucleon masses through $A=4$; three-ledger $\beta$ tipping; lab agreement). |
-| 8 | `bbn/` | `hqiv-bbn-paper` | BBN light elements from network weights + epoch ladder; integrated $Y_p$ witnesses. Consumes lock-in $\eta$ (#6) and nucleon binding (#7). |
+| 7 | `nucleon_binding/` | `hqiv-nucleon-binding-paper` | Binding energy and the weak force: single source `hqiv_nucleon_binding_from_composite_trace.tex` ($8\times8$ composite-trace nucleon masses through $A=4$; three-ledger $\beta$ tipping; lab agreement). Cites #5 and #6. **Next in Tier-2 queue.** |
+| 8 | `bbn/` | `hqiv-bbn-paper` | BBN light elements from network weights + faithful stoichiometric integrator ($Y_p$, $D/H$, $^3$He/H, $^7$Li/H at $\eta_{\mathrm{paper}}$). Consumes lock-in $\eta$ (#6) and nucleon binding (#7). |
 | — | `gluon_curvature_artifact/` | `hqiv-gluon-curvature-note` | Tier-2 closure: the gluon is the curvature artifact of the inner-Casimir trapping on the strong octonion channels; identical in form and scale to the composite-trace binding and the inner trapped-Casimir heavy gap. Cites the combined TUFT+SM synthesis (#5), the nucleon-binding note, and the Tier-1 record. |
 | 9 | `hep_decay_readout/` | `hqiv-hep-decay-paper` | Heavy-flavour three-ledger decay readout: discrete multichannel rules, quarkonium EM contact $39/10$, branching without partial-width inputs; $87/87$ comparison discharge. Extends nucleon-binding $\beta$ tipping. |
 
@@ -57,7 +57,7 @@ Each paper here is a direct mathematical/variational sequel to `closure` and mus
 |---|---|---|
 | `factor_search_formalization/` | `hqiv_factor_search_formalization.tex` | Formal audit note for the factor-search drivers, certificate soundness, and cost scaffolding. |
 | `goldbach_so4_so2_delta/` | `goldbach_so4_so2_delta.tex` | Working Lean-backed reduction note for the `SO(4)` tangent carrier, selected `SO(2)+Δ` Goldbach parity channel, and threshold split into finite verification plus eventual selected-channel positivity. |
-| `s3_zeta_so4_projection/` | `hqiv_s3_zeta_so4_projection_closed_form.tex` | S³ / SO(4) synthesis: harmonic--Δ closure, 45° quaternion projections, regional `ζ(s)` closed forms, j/k rotation cancellation on even π-slots, RH discharge chain (proved packaging + conditional capstone). |
+| `s3_zeta_so4_projection/` | `hqiv_s3_zeta_so4_projection_closed_form.tex` | S³ / SO(4) synthesis: harmonic--Δ closure, 45° quaternion projections, regional `ζ(s)` closed forms, polar decoupling and log edge, sector-zeta vs classical-ζ dictionary, HEP integration bridge (`sec:hep-zeta-bridge`); uses `readout_dictionary_messaging.tex` (not full patch contract). RH = proved equivalences with zero slack, not discharge. |
 
 ### Tier 3 — Applied phenomenology
 
@@ -68,6 +68,12 @@ Each paper here is a direct mathematical/variational sequel to `closure` and mus
 | 12 | `omaxwell_fluid_chart/` | `hqiv-fluid-chart-paper` | F2 fluid-closure chart companion to `Action.lean` / `ModifiedMaxwell.lean`. |
 | 13 | `orbital_flyby/` | `hqiv-flyby-paper` | HQIV acceleration readouts: flybys, SPARC+WHIM disks, filament cross-match, long-term galaxy–filament evolution. |
 | 14 | `complex_time_stokes_bridge/` | `hqiv-complex-time-stokes-paper` | Lattice time angle / lapse / zeta phase; Wick bridge to Stokes factors; **functional PDE identity** with TUFT Beltrami--NS on finite Hopf modes (not Millennium smoothness). |
+
+### Witness data (not Zenodo tier papers)
+
+| Folder | Bib keys | Role |
+|---|---|---|
+| `compact_object_witness/` | `hqiv-compact-object-witness-data`, `hqiv-pulsar-witness-data`, `hqiv-lagrangian-faithfulness-audit`, `atnf_psrcat`, `xao_atnf_pulsar_mirror`, NICER/Shapiro keys | MHD equivalence paper + witness JSON; run `compact_object_witness/regenerate_data.sh`. |
 
 ### Archived (not republished)
 
@@ -89,8 +95,8 @@ When drafting any companion, use these keys when citing earlier work in the chai
 | `octonionic_action/` | `hqiv-oct-action-paper` (Zenodo [`10.5281/zenodo.20416085`](https://doi.org/10.5281/zenodo.20416085), v1 2026-05-27) |
 | `finite_mode_kirchhoff/` | `hqiv-kirchhoff-paper` (Zenodo [`10.5281/zenodo.20416564`](https://doi.org/10.5281/zenodo.20416564), v1 2026-05-27) |
 | `thermodynamics_arrow/` | `hqiv-thermo-arrow-paper` (Zenodo [`10.5281/zenodo.20478826`](https://doi.org/10.5281/zenodo.20478826), v1 2026-05-31) |
-| `tuft_sm_lagrangian/` | `hqiv-tuft-sm-lagrangian-paper` (Zenodo [`10.5281/zenodo.20517172`](https://doi.org/10.5281/zenodo.20517172), v1 2026-06-02) |
-| `baryogenesis_lockin/` | `hqiv-baryogenesis-paper` |
+| `tuft_sm_lagrangian/` | `hqiv-tuft-sm-lagrangian-paper` (Zenodo [`10.5281/zenodo.20601215`](https://doi.org/10.5281/zenodo.20601215), v2 2026-06-08) |
+| `baryogenesis_lockin/` | `hqiv-baryogenesis-paper` (Zenodo [`10.5281/zenodo.20711255`](https://doi.org/10.5281/zenodo.20711255), v1 2026-06-16) |
 | `nucleon_binding/` | `hqiv-nucleon-binding-paper` |
 | `bbn/` | `hqiv-bbn-paper` |
 | `gluon_curvature_artifact/` | `hqiv-gluon-curvature-note` |
@@ -102,6 +108,8 @@ When drafting any companion, use these keys when citing earlier work in the chai
 | `s3_zeta_so4_projection/` | `hqiv-s3-zeta-so4-paper` |
 | Lean library (GitHub) | `hqiv-lean` |
 | Brodie quantised-inertia | `brodie2026` |
+| Compact-object witness data | `hqiv-compact-object-witness-data`, `hqiv-pulsar-witness-data`, `hqiv-lagrangian-faithfulness-audit` |
+| Pulsar catalogs / masses | `atnf_psrcat`, `xao_atnf_pulsar_mirror`, `lorimer2004handbook`, `miller2019_j0030`, `riley2021_j0740`, `rutherford2024_msp_masses`, `freire2012_shapiro`, `antoniadis2013_ns_max`, `crombie2020_j0740` |
 
 **Standard chemistry / material-response references** (used in `nucleon_binding/` condensed-phase slots; not HQIV-specific): `nistwebbook_h2o`, `crc2023handbook`, `petrenko2002ice`, `goerigk2017gmtkn55`, `gillespie1970vsepr`, `hecht2017optics`, `jackson1999`, `ashcroft1976ssp`, `atkins2018pchem`, `eyring1936viscosity`, `grimme2011d3`, `santra2013ice`, `brandenburg2016jctc`, `reilly2013mbd`, `gillan2016perspective`.
 
@@ -109,7 +117,7 @@ When drafting any companion, use these keys when citing earlier work in the chai
 
 ### Current focus — Nucleon binding (`nucleon_binding/`)
 
-Tier-2 #7; cites published TUFT+SM synthesis (`hqiv-tuft-sm-lagrangian-paper`, DOI [`10.5281/zenodo.20517172`](https://doi.org/10.5281/zenodo.20517172)) and the baryogenesis lock-in note.
+Tier-2 #7; cites published TUFT+SM synthesis (`hqiv-tuft-sm-lagrangian-paper`, DOI [`10.5281/zenodo.20601215`](https://doi.org/10.5281/zenodo.20601215)) and published baryogenesis lock-in (`hqiv-baryogenesis-paper`, DOI [`10.5281/zenodo.20711255`](https://doi.org/10.5281/zenodo.20711255)).
 
 - [x] Title and bib key aligned: *Binding Energy and the Weak Force from HQIV Composite-Trace Weights* (`hqiv-nucleon-binding-paper`).
 - [x] Publication-chain abstract matches Tier-2 \#7 (after baryogenesis, before BBN).
@@ -118,7 +126,7 @@ Tier-2 #7; cites published TUFT+SM synthesis (`hqiv-tuft-sm-lagrangian-paper`, D
 - [x] Lean support: `lake build paper_nucleon_binding` in [hqiv-lean](https://github.com/HQIV/hqiv-lean) ([PR #13](https://github.com/HQIV/hqiv-lean/pull/13)).
 - [ ] Reader-first pass on body Lean identifiers (intro + scope improved; appendix index remains canonical).
 - [x] Rebuild PDF locally (`latexmk -pdf hqiv_nucleon_binding_from_composite_trace.tex`; see `nucleon_binding/README.md`).
-- [ ] Deposit on Zenodo after baryogenesis (\#6) is live.
+- [ ] Deposit on Zenodo (nucleon binding is **next** in Tier-2 queue).
 
 ### Queued — Lightcone v3 tightening (`lightcone_to_oshoracle/`)
 
@@ -137,11 +145,11 @@ The DOI is already minted (concept `10.5281/zenodo.19227897`); a tightened v3 wi
 - [x] Tier 1 #2: `octonionic_action/` published on Zenodo ([`10.5281/zenodo.20416085`](https://doi.org/10.5281/zenodo.20416085), 2026-05-27; `scripts.zip` on record).
 - [x] Tier 1 #3: `finite_mode_kirchhoff/` published on Zenodo ([`10.5281/zenodo.20416564`](https://doi.org/10.5281/zenodo.20416564), 2026-05-27; `scripts.zip` on record).
 - [x] Tier 1 #4: `thermodynamics_arrow/` published on Zenodo ([`10.5281/zenodo.20478826`](https://doi.org/10.5281/zenodo.20478826), 2026-05-31; `scripts.zip` on record). **Tier-1 quartet complete.**
-- [x] Tier 2 #5 (combined): `tuft_sm_lagrangian/` published on Zenodo ([`10.5281/zenodo.20517172`](https://doi.org/10.5281/zenodo.20517172), v1 2026-06-02; `scripts.zip` on record). Lean support: [hqiv-lean PR #12](https://github.com/HQIV/hqiv-lean/pull/12) (`paper_tuft_sm_lagrangian` target).
-- [ ] Tier 2 #6: publish `baryogenesis_lockin/` (cites #5 DOI above).
+- [x] Tier 2 #5 (combined): `tuft_sm_lagrangian/` published on Zenodo ([`10.5281/zenodo.20601215`](https://doi.org/10.5281/zenodo.20601215), v2 2026-06-08; `scripts.zip` on record). Lean support: [hqiv-lean PR #12](https://github.com/HQIV/hqiv-lean/pull/12) (`paper_tuft_sm_lagrangian` target).
+- [x] Tier 2 #6: `baryogenesis_lockin/` published on Zenodo ([`10.5281/zenodo.20711255`](https://doi.org/10.5281/zenodo.20711255), v1 2026-06-16; `scripts.zip` on record).
 - [ ] Tier 2 #7: publish `nucleon_binding/` (*Binding Energy and the Weak Force*; cites #5 and #6).
 - [ ] Move `rapidity_so8_closure/` into `archive/`.
-- [ ] Tier 2 remainder: `baryogenesis_lockin/` → `nucleon_binding/` → `bbn/`.
+- [ ] Tier 2 remainder: `nucleon_binding/` → `bbn/`.
 - [x] Tier 3 (start): `longitudinal_em_force/` + `coronal_heating/` (back-to-back).
 - [x] Tier 3: `orbital_flyby/` (SPARC map + Rosetta boundary-channel note).
 - [ ] Tier 3 (remainder): `omaxwell_fluid_chart/`.
@@ -222,7 +230,7 @@ papers/
 | `goldbach_so4_so2_delta/`       | `goldbach_so4_so2_delta.tex`                    | Lean formal proof note |
 | `thermodynamics_arrow/`         | `hqiv_thermodynamics_and_arrow_of_time.tex`         | 1.4 (Zenodo) |
 | `tuft_sm_lagrangian/`           | `hqiv_tuft_sm_lagrangian_synthesis.tex`             | 2.5 (Zenodo) |
-| `baryogenesis_lockin/`          | `hqiv_baryogenesis_curvature_lockin.tex`            | 2.6  |
+| `baryogenesis_lockin/`          | `hqiv_baryogenesis_curvature_lockin.tex`            | 2.6 (Zenodo) |
 | `nucleon_binding/`              | `hqiv_nucleon_binding_from_composite_trace.tex`     | 2.8  |
 | `bbn/`                          | `hqiv_bbn_light_elements_from_network_weights.tex`  | 2.9  |
 | `longitudinal_em_force/`        | `longitudinal_em_force_hqiv.tex`                    | 3.10 |

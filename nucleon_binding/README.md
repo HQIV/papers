@@ -1,36 +1,74 @@
-# Nucleon binding (Tier-2 #7)
+# Nucleon Binding (Tier-2 #7)
 
-**Single source:** `hqiv_nucleon_binding_from_composite_trace.tex`
+**Status:** Preprint v4 (2026-06-08), **next in Tier-2 Zenodo queue**  
+**Bib key:** `hqiv-nucleon-binding-paper`
 
-**Title:** *Binding Energy and the Weak Force from HQIV Composite-Trace Weights: Lock-In Masses, Three Ledgers, and Zero-Knob Half-Lives*
+*Binding Energy and the Weak Force from HQIV Composite-Trace Weights: Lock-In Masses, Three Ledgers, and Zero-Knob Half-Lives*
 
-**Bib key:** `hqiv-nucleon-binding-paper` in `papers/references.bib`
+This note establishes the local-curvature slot equations ($B_{\mathrm{curv}}(\xi)$, three $\beta$ ledgers, slot-wise mass/binding closure, outside-contact primitives) witnessed from nucleon binding through bulk condensed matter. It cites the published TUFT+SM synthesis ([`10.5281/zenodo.20601215`](https://doi.org/10.5281/zenodo.20601215)) and baryogenesis lock-in ([`10.5281/zenodo.20711255`](https://doi.org/10.5281/zenodo.20711255)).
 
-## Build
+**Referee-facing width stack (v4+):** §`sec:width-assembly` assembles Ledger III in one equation (`G_F`, valley exponent $2(A{-}1){+}1$, interior width-well blend, free-branch $B_{\mathrm{curv}}$ catalysis); §`sec:downstream` states cross-paper consistency with baryogenesis and BBN (coupled $\tau_n(T)$, $^7$Li/H).
+
+## Source and build
+
+| Artifact | Path |
+| --- | --- |
+| Main source | `hqiv_nucleon_binding_from_composite_trace.tex` |
+| PDF | `hqiv_nucleon_binding_from_composite_trace.pdf` |
+| Scripts bundle | `scripts.zip` (see `scripts/README.md`, `scripts/MANIFEST.sha256`) |
+| Author metadata | `authors.json` |
+| Bibliography | `../references.bib` |
+
+Build from this folder:
 
 ```bash
 cd papers/nucleon_binding
 latexmk -pdf hqiv_nucleon_binding_from_composite_trace.tex
 ```
 
-Output: `hqiv_nucleon_binding_from_composite_trace.pdf` (27 pages).
-
-## Reproducers
-
-See `scripts/README.md`. Zenodo bundle: `scripts.zip` (self-contained; `MANIFEST.sha256` inside `scripts/`).
-
-Refresh the bundle from repository root:
+Regenerate `scripts.zip` from the repository root:
 
 ```bash
 python3 scripts/bundle_nucleon_binding_scripts.py
 ```
 
-Run witness scripts from the repository root (`HQIV/hqiv-lean`) or from `scripts/` inside the extracted zip.
+## Current witness panel (2026-06-08)
 
-## Lean
+| Panel | Metric | Value |
+| --- | --- | --- |
+| Light isotopes ($A\le 4$) | mean $\|\Delta M\|/M_{\mathrm{ref}}$ | **0.003%** (curvature $G_{\mathrm{eff}}$ spine) |
+| Curvature binding @ lock-in | mean $\|\Delta M\|/M_{\mathrm{ref}}$ ($A\le 4$) | **0.003%** (mass ledger; BBN Q) |
+| $\mathrm{H_2O}$ ice Ih | $\rho_{\mathrm{solid}}$, $T_{\mathrm{sl}}$, $n$ | 0.920 g/cm³, 272.7 K, 1.30 |
+| Condensed panel (4 species) | mean $\|\Delta\rho\|/\rho_{\mathrm{NIST}}$ @ melt $T$ | **0.4%** |
+| BBN @ $\eta_{\mathrm{paper}}$ | $Y_p$, $D/H$, $^7\mathrm{Li}/H$ | 0.244, $2.51\times 10^{-5}$, $2.54\times 10^{-10}$ |
+| Lab outside (mass chart) | gravity + CMB dipole | **~0.28 ppm** on $M_p$ |
 
-Machine-checked modules: `lake build paper_nucleon_binding` in [HQIV/hqiv-lean](https://github.com/HQIV/hqiv-lean).
+Regenerate JSON witnesses:
 
-## Archive
+```bash
+PYTHONPATH=scripts python3 scripts/hqiv_curvature_binding_program.py --json data/curvature_binding_program.json
+PYTHONPATH=scripts python3 scripts/hqiv_binding_energy_program.py --json data/binding_energy_program.json
+PYTHONPATH=scripts python3 scripts/hqiv_bbn_integrator.py --json data/bbn_integrator.json
+PYTHONPATH=scripts python3 scripts/hqiv_bbn_paper_tables.py --json data/bbn_paper_tables.json
+PYTHONPATH=scripts python3 scripts/hqiv_condensed_phase_audit.py
+PYTHONPATH=scripts python3 scripts/hqiv_isotope_pdg_benchmark.py --json data/isotope_pdg_benchmark.json
+PYTHONPATH=scripts python3 scripts/hqiv_nucleon_binding_integrator.py --json data/nucleon_binding_integrator.json
+python3 scripts/bundle_nucleon_binding_scripts.py
+```
 
-The former working copy `nucleon_binding_beta_decay.tex` (geometric binding + β programme draft) was merged into the canonical note and moved to `papers/archive/nucleon_binding_beta_decay/`.
+## Lean verification
+
+Machine-checked content builds under the `paper_nucleon_binding` Lake target in [HQIV/hqiv-lean](https://github.com/HQIV/hqiv-lean) ([PR #13](https://github.com/HQIV/hqiv-lean/pull/13)).
+
+```bash
+lake build paper_nucleon_binding
+```
+
+## Zenodo deposit checklist
+
+- [x] Self-contained `scripts.zip` with entry scripts, `hqiv_lab/`, witness JSON, and `MANIFEST.sha256`
+- [x] PDF metadata (`pdftitle`, `pdfauthor`, `pdfsubject`, `pdfkeywords`)
+- [x] Data & code availability section in the paper (§2, *Data and code availability*)
+- [x] Reader-first Lean/script links in body (appendix module index with hyperlinks)
+- [x] PDF layout pass (no overfull boxes; tables and appendix trimmed)
+- [ ] Deposit on Zenodo (nucleon binding is **next** in Tier-2 queue)

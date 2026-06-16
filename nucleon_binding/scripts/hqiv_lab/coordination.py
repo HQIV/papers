@@ -13,19 +13,12 @@ ensure_scripts_on_path()
 import hqiv_electronic_valence_shells as evs  # noqa: E402
 from fragment_aware_bonded_horizon import BondGeometry, FragmentConfig  # noqa: E402
 
-_ELEMENT_AMU: dict[str, float] = {
-    "H": 1.008,
-    "Li": 6.94,
-    "C": 12.011,
-    "N": 14.007,
-    "O": 15.999,
-    "F": 18.998,
-    "T": 3.016,
-}
-
-
 def element_amu(label: str, z: int) -> float:
-    return _ELEMENT_AMU.get(label, float(z))
+    """Atomic mass from nuclear cluster readout (no periodic-table lookup)."""
+    import hqiv_derived_chemistry as hdc
+
+    _ = label
+    return hdc.derived_atomic_mass_amu(z, z)
 
 
 class IntermolecularMotif(str, Enum):
@@ -76,6 +69,8 @@ def _mean_bond_angle(bonds: tuple[BondGeometry, ...]) -> float:
     angles = [b.bond_angle_rad for b in bonds if b.bond_angle_rad is not None]
     if angles:
         return sum(angles) / len(angles)
+    if len(bonds) == 1:
+        return math.pi
     if len(bonds) == 2:
         return math.radians(104.5)
     if len(bonds) == 3:
@@ -143,3 +138,36 @@ def infer_monomer_geometry(spec: MoleculeSpec) -> MonomerGeometry:
         motif=motif,
         intermolecular_contacts=inter,
     )
+
+
+def melt_motif_relative_scale(
+    motif: IntermolecularMotif,
+    n_inter: int,
+    *,
+    z_heavy: int = 8,
+) -> float:
+    """
+    Motif-specific melt ladder scale relative to tetrahedral ice (= 1).
+
+    HQIV rationals only (α, γ); Python mirror of ``meltMotifRelativeScale`` in Lean.
+    """
+    from hqiv_lab._scripts import ensure_scripts_on_path
+
+    ensure_scripts_on_path()
+    import hqiv_lean_physics_primitives as lean
+
+    g = lean.GAMMA
+    a = lean.ALPHA
+    ref_n = 4
+    n = max(n_inter, 1)
+
+    if motif == IntermolecularMotif.TETRAHEDRAL_HBOND:
+        return 1.0
+    if motif == IntermolecularMotif.PYRAMIDAL_HBOND:
+        return (3.0 / ref_n) * (1.0 - g / 8.0)
+    if motif == IntermolecularMotif.APOLAR_CLOSE_PACK:
+        return (g / a) / math.sqrt(float(n))
+    if motif == IntermolecularMotif.LINEAR_CHAIN:
+        hal = 1.0 + g * (z_heavy / 8.0)
+        return (g / a) / float(n) * hal * (1.0 + g) * (1.0 + g / 16.0)
+    return g / float(n)

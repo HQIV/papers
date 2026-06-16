@@ -56,10 +56,18 @@ class AllotropeCandidate:
         }
 
 
-def liquid_reference_density_g_cm3(spec: MoleculeSpec) -> float:
-    """Liquid comparison scale at melt (species-specific where tabulated)."""
-    refs = {"H2O": 1.0, "CH4": 0.423, "NH3": 0.682, "HF": 1.0}
-    return refs.get(spec.formula_key, 1.0)
+def liquid_reference_density_g_cm3(
+    spec: MoleculeSpec,
+    *,
+    temperature_k: float = 273.15,
+) -> float:
+    """Liquid comparison scale from solid template + motif melt opening."""
+    import hqiv_derived_chemistry as hdc
+
+    return hdc.derived_liquid_reference_density_g_cm3(
+        spec.name,
+        temperature_k=temperature_k,
+    )
 
 
 def _score_candidate(
@@ -89,6 +97,8 @@ def _score_candidate(
         contact_xi=lean.xi_from_compton_triplet(evs.chemistry_compton_triplet(spec.fragments)),
         bulk_condensed=True,
         medium_density_fraction=rho_frac,
+        intermolecular_motif=mono.motif.value,
+        z_heavy=mono.z_heavy,
     )
     t_melt, _ = tptp.characteristic_temperatures_K(mat)
     env = tptp.ThermodynamicEnvironment(temperature_k, pressure_pa)
@@ -97,7 +107,7 @@ def _score_candidate(
     # Prefer solid at low T; penalize density far from liquid scale for H-bonded nets
     solid_bonus = 2.0 if phase.phase == tptp.DerivedPhase.SOLID else 0.0
     density_penalty = abs(rho_g - rho_liq) / max(rho_liq, 1e-6)
-    opening_bonus = lean.PHASE_LIFT_3 if template.label in ("Ih", "Ic") else 1.0
+    opening_bonus = lean.PHASE_LIFT_3 if template.label == "Ih" else 1.0
     melt_proximity = 1.0 / (1.0 + abs(temperature_k - t_melt) / max(t_melt, 1.0))
 
     return (
@@ -120,7 +130,7 @@ def derive_allotropes(
     candidates: list[AllotropeCandidate] = []
 
     for tmpl in templates:
-        cell = unit_cell_for_allotrope(spec, tmpl, mono)
+        cell = unit_cell_for_allotrope(spec, tmpl, mono, temperature_k=temperature_k)
         rho = density_g_cm3(cell)
         rho_liq = liquid_reference_density_g_cm3(spec)
         rho_frac = min(1.0, max(0.0, rho / rho_liq)) if rho_liq > 0 else 0.0

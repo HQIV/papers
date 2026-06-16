@@ -31,11 +31,27 @@ rebuilds `papers/nucleon_binding/scripts.zip`.
 | `hqiv_thermodynamic_phase_from_tp.py` | $(T,P)\rightarrow$ derived phase readout | bulk phase witnesses |
 | `hqiv_phase_material_response.py` | $n$, $k_{\mathrm{th}}$, $C_p$, $\eta$, $\Delta n$ | material-response chart |
 | `hqiv_homogeneous_curvature_feedback.py` | Optional $B_{\mathrm{hom}}+\delta B$ self-consistent demo | chart path |
+| `hqiv_bbn_integrator.py` | Faithful BBN integrator witness | `data/bbn_integrator.json` |
+| `hqiv_bbn_condition_decay.py` | Condition-dependent decay table | companion to integrator |
+| `hqiv_bbn_paper_tables.py` | Paper decomposition / $\eta$ sweep | `data/bbn_paper_tables.json` |
+| `hqiv_integrator_lean_audit.py` | Integrator $\leftrightarrow$ Lean audit | `data/integrator_lean_audit.json` |
 | `test_hqiv_phase_material_response.py` | H$_2$O ice/liquid response unit checks | `unittest` |
 | `hqiv_lab/` | Derived allotropes, unit cells, `hqiv-lab` CLI | install via `pip install -e .` |
 
 Additional `hqiv_*.py` files in this folder are **dependency modules** imported by
 the entry scripts above.
+
+**Witness JSON** (frozen outputs under `data/`):
+
+| File | Source script |
+| --- | --- |
+| `data/isotope_pdg_benchmark.json` | `hqiv_isotope_pdg_benchmark.py` |
+| `data/isotope_stability_halflife.json` | `hqiv_isotope_stability_halflife.py` |
+| `data/dynamic_beta_isotope_chart.json` | `hqiv_dynamic_beta_isotope.py` |
+| `data/nucleon_binding_integrator.json` | `hqiv_nucleon_binding_integrator.py` |
+| `data/bbn_integrator.json` | `hqiv_bbn_integrator.py` |
+| `data/bbn_paper_tables.json` | `hqiv_bbn_paper_tables.py` |
+| `data/integrator_lean_audit.json` | `hqiv_integrator_lean_audit.py` |
 
 ## Quick start (from this directory)
 
@@ -72,7 +88,7 @@ python3 scripts/paper_nucleon_binding_globs.py
 
 - Proton lock-in anchor $938.272\,\mathrm{MeV}$ is a lapse-readout comparison target only.
 - Tabulated isotope masses and reference half-lives appear in witness JSON as comparison rows, not fit inputs.
-- Upstream mass ladder: `hqiv-tuft-sm-lagrangian-paper` (Zenodo [`10.5281/zenodo.20517172`](https://doi.org/10.5281/zenodo.20517172)).
+- Upstream mass ladder: `hqiv-tuft-sm-lagrangian-paper` (Zenodo [`10.5281/zenodo.20601215`](https://doi.org/10.5281/zenodo.20601215)).
 
 ## Citation
 

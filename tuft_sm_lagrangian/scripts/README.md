@@ -20,7 +20,10 @@ same DOI.
 | `hqiv_tuft_global_hadron_readout.py` | Global hadron excitation readout | Mirrors `TuftGlobalHadronReadout.lean`. |
 | `hqiv_scale_witness.py` | Proton-lock-in propagation chain (§scale witness) | Cosmological scale ladder from the reference proton anchor. |
 | `hqiv_lean_physics_primitives.py` | $C_2(\xi)$ epoch table and Figure~2 ($C_2$ vs $\xi$) | Lapse running on the temperature ladder. |
-| `hqiv_dynamic_bulk_bbn.py` | Dynamic BBN lapse clock (§C₂–Rindler) | Opportunity-weighted shell reaction clock at BBN temperatures. |
+| `hqiv_bbn_integrator.py` | Faithful BBN abundances at η_paper (§C₂–Rindler) | Primary witness: `data/bbn_integrator.json`; see `hqiv-bbn-paper`. |
+| `hqiv_bbn_condition_decay.py` | Dynamic BBN opportunity weighting (§C₂–Rindler) | Cited with the integrator for the deuteron-bottleneck clock. |
+| `hqiv_bbn_paper_tables.py` | BBN decomposition / η sweep / sensitivity | `data/bbn_paper_tables.json`. |
+| `hqiv_integrator_lean_audit.py` | Integrator ↔ Lean audit | `data/integrator_lean_audit.json`. |
 
 Additional modules in this folder are **dependency modules** imported by the
 entry scripts above (continuous shell mass, excited states, coupling linear
@@ -52,8 +55,11 @@ python3 hqiv_scale_witness.py
 # C₂(ξ) epoch table (Figure 2 data)
 python3 hqiv_lean_physics_primitives.py
 
-# Dynamic BBN lapse clock
-python3 hqiv_dynamic_bulk_bbn.py
+# Faithful BBN integrator and paper tables
+python3 hqiv_bbn_integrator.py
+python3 hqiv_bbn_paper_tables.py
+python3 hqiv_integrator_lean_audit.py
+python3 hqiv_bbn_condition_decay.py
 ```
 
 All scripts are deterministic and run in well under a minute on a modern laptop.
@@ -78,10 +84,14 @@ ROOT, DEST = 'scripts', 'papers/tuft_sm_lagrangian/scripts'
 ENTRY = [
     'hqiv_tuft_mass_spectrum_pdg_eval.py', 'hqiv_tuft_electroweak_boson_readout.py',
     'hqiv_tuft_global_hadron_readout.py', 'hqiv_scale_witness.py',
-    'hqiv_dynamic_bulk_bbn.py', 'hqiv_lean_physics_primitives.py',
+    'hqiv_lean_physics_primitives.py',
+    'hqiv_bbn_integrator.py', 'hqiv_bbn_condition_decay.py',
+    'hqiv_bbn_paper_tables.py', 'hqiv_integrator_lean_audit.py',
 ]
-def module_to_file(name):
-    return os.path.join(ROOT, name + '.py') if name.startswith(('hqiv_', 'cubic_')) else None
+def local_module(name):
+    base = name.split('.')[0]
+    path = os.path.join(ROOT, base + '.py')
+    return base + '.py' if os.path.isfile(path) else None
 def imports_in(path):
     tree = ast.parse(open(path, encoding='utf-8').read(), filename=path)
     out = []
@@ -99,9 +109,12 @@ while q:
     if not os.path.isfile(path): continue
     seen.add(rel)
     for imp in imports_in(path):
-        dep = module_to_file(imp)
-        if dep: q.append(os.path.basename(dep))
+        dep = local_module(imp)
+        if dep: q.append(dep)
 os.makedirs(DEST, exist_ok=True)
+for name in os.listdir(DEST):
+    if name.endswith('.py') and name not in seen:
+        os.remove(os.path.join(DEST, name))
 for rel in sorted(seen):
     shutil.copy2(os.path.join(ROOT, rel), os.path.join(DEST, rel))
 print('copied', len(seen), 'files')
@@ -129,5 +142,5 @@ interoperability tools for cross-citation and Zenodo reproducibility only.
 ## Citation
 
 When citing the scripts bundle, cite the paper Zenodo record
-[`10.5281/zenodo.20517172`](https://doi.org/10.5281/zenodo.20517172) and this
+[`10.5281/zenodo.20601215`](https://doi.org/10.5281/zenodo.20601215) and this
 supplementary `scripts.zip` file on the same record.

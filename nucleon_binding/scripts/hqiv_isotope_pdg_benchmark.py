@@ -79,6 +79,13 @@ class NeutronLifetimeReference:
     source: str
 
 
+@dataclass(frozen=True)
+class IsotopeMethodTensionCase:
+    label: str
+    central_half_life_seconds: float
+    tension_note: str
+
+
 NEUTRON_LIFETIME_REFERENCES: tuple[NeutronLifetimeReference, ...] = (
     NeutronLifetimeReference(
         "bottle",
@@ -93,6 +100,20 @@ NEUTRON_LIFETIME_REFERENCES: tuple[NeutronLifetimeReference, ...] = (
         300.0,
         0.0,
         "representative beam average (decay-in-flight, negligible trap B)",
+    ),
+)
+
+
+ISOTOPE_METHOD_TENSION_CASES: tuple[IsotopeMethodTensionCase, ...] = (
+    IsotopeMethodTensionCase(
+        "28Al",
+        134.432,
+        "TwinSol-style modern value; historical high-precision outlier is a method/systematics target.",
+    ),
+    IsotopeMethodTensionCase(
+        "71Ge",
+        11.468 * 24.0 * 3600.0,
+        "HPGe remeasurement class; half-life shift cannot explain the Gallium anomaly if method factors are small.",
     ),
 )
 
@@ -198,8 +219,9 @@ def neutron_method_environment_ledger(
     )
     f_bottle = lean.trap_weak_width_factor_from_magnetic(refs["bottle"].trap_magnetic_field_tesla)
     f_beam = lean.trap_weak_width_factor_from_magnetic(refs["beam"].trap_magnetic_field_tesla)
-    magnetic_tau_ratio = f_beam / f_bottle
-    magnetic_ppm = 1.0e6 * (magnetic_tau_ratio - 1.0)
+    magnetic_tau_bottle_over_beam = f_beam / f_bottle
+    magnetic_tau_beam_over_bottle = f_bottle / f_beam
+    magnetic_ppm = 1.0e6 * (magnetic_tau_beam_over_bottle - 1.0)
     rows.append(
         {
             "comparison": "magnetic_trap_bottle_B_vs_beam_B",
@@ -213,11 +235,18 @@ def neutron_method_environment_ledger(
             ),
             "bottle_width_factor": f_bottle,
             "beam_width_factor": f_beam,
-            "ppm_delta_tau_from_width_ratio": magnetic_ppm,
+            "predicted_tau_bottle_over_beam": magnetic_tau_bottle_over_beam,
+            "predicted_tau_beam_over_bottle": magnetic_tau_beam_over_bottle,
+            "predicted_beam_over_bottle_split_ppm": magnetic_ppm,
+            "observed_beam_over_bottle_split_ppm": split_ppm,
+            "observed_fraction_of_saturated_envelope": split_ppm / magnetic_ppm
+            if magnetic_ppm
+            else math.nan,
             "note": (
                 "Primary structural lever: UCN trap B → ρ_mag(B) on weak Fano/Hopf bridge "
                 "(Lean trapWeakWidthFactorFromMagnetic). Beam sees f≈1; bottle at B≥1 T "
-                "books f≈1+γ/18 (~2.2% width dressing at representative 2.5 T)."
+                "books f≈1+γ/18; observed beam/bottle split lies below this saturated "
+                "method envelope."
             ),
         }
     )
@@ -230,6 +259,62 @@ def neutron_method_environment_ledger(
                 "would give t1/2 ~ 1e-22 s, not ~880 s. Bottle and beam both measure "
                 "Ledger-III weak width; the split is trap magnetic curvature + embedding, "
                 "not temperature alone and not instantaneous beta from fermion coupling."
+            ),
+        }
+    )
+    return rows
+
+
+def isotope_method_tension_panel() -> list[dict]:
+    """Method/environment predictions for isotope half-life tension examples."""
+    environments = (
+        ("neutral_lab", 1.0, "No trap/collider curvature width dressing."),
+        (
+            "ucn_trap_saturated",
+            lean.trap_weak_width_factor_from_magnetic(
+                lean.REPRESENTATIVE_BOTTLE_TRAP_FIELD_TESLA
+            ),
+            "Saturated magnetic trap envelope; neutron-bottle scale, not assumed for ordinary samples.",
+        ),
+        (
+            "collider_4T",
+            lean.collider_beta_method_width_factor(4.0, 4.0, 0.0),
+            "4 T collider/reference field with no comoving-stream occupancy.",
+        ),
+        (
+            "collider_4T_stream1",
+            lean.collider_beta_method_width_factor(4.0, 4.0, 1.0),
+            "4 T field plus full comoving stream occupancy.",
+        ),
+    )
+    rows: list[dict] = []
+    for case in ISOTOPE_METHOD_TENSION_CASES:
+        for env_id, width_factor, note in environments:
+            tau = lean.apparent_beta_half_life_from_method(
+                case.central_half_life_seconds,
+                width_factor,
+            )
+            rows.append(
+                {
+                    "isotope": case.label,
+                    "environment": env_id,
+                    "central_half_life_seconds": case.central_half_life_seconds,
+                    "local_width_factor": width_factor,
+                    "predicted_apparent_half_life_seconds": tau,
+                    "method_shift_ppm": lean.method_shift_ppm(width_factor),
+                    "method_shift_percent": 100.0 * (tau / case.central_half_life_seconds - 1.0),
+                    "tension_note": case.tension_note,
+                    "interpretation": note,
+                }
+            )
+    rows.append(
+        {
+            "comparison": "isotope_tension_policy",
+            "note": (
+                "HQIV method curvature predicts percent-level shifts only in strong trap/"
+                "collider environments. If an isotope discrepancy exceeds this envelope "
+                "without such a method environment, it remains an experimental systematic "
+                "or a missing isotope-structure ledger, not a fitted lifetime correction."
             ),
         }
     )
@@ -310,10 +395,28 @@ def neutron_width_ledger_comparison(
     }
 
 
-def environment_for_reference(ref: ReferenceIsotope, *, xi: float) -> pn.NucleonEnvironment:
+def environment_for_reference(
+    ref: ReferenceIsotope,
+    *,
+    xi: float,
+    lab_env: notd.LabOutsideEnvironment | None = None,
+) -> pn.NucleonEnvironment:
+    lab_env = lab_env or notd.LabOutsideEnvironment(
+        lab_temperature_K=ish.CMB_TEMPERATURE_K,
+        reference_temperature_K=ish.CMB_TEMPERATURE_K,
+        gravity_tier="full",
+    )
+    phi = lab_env.combined_phi_epsilon
     if ref.A <= 1:
-        return pn.NucleonEnvironment(shell=notd.REFERENCE_M, xi=xi, bonded=False)
-    return pn.caustic_environment_for_A(ref.A, xi=xi)
+        return pn.NucleonEnvironment(
+            shell=notd.REFERENCE_M,
+            xi=xi,
+            bonded=False,
+            phi_gravity_epsilon=phi,
+        )
+    return pn.curvature_environment_for_A(
+        ref.A, ref.Z, xi=xi, phi_gravity_epsilon=phi
+    )
 
 
 def predicted_mass_for_reference(ref: ReferenceIsotope, *, xi: float) -> float:
@@ -628,12 +731,23 @@ def build_payload(
         for ref in REFERENCE_ISOTOPES
     ]
     abs_mass = [abs(r.mass_error_pct) for r in rows]
+    lab_env = notd.LabOutsideEnvironment(
+        lab_temperature_K=lab_temperature_K,
+        reference_temperature_K=ish.CMB_TEMPERATURE_K,
+        gravity_tier="full",
+    )
+    import hqiv_proton_mass_decomposition as pmd
+
+    lab_audit = notd.lab_outside_decomposition(
+        lab_env, inner_raw_mev=pmd.proton_inner_raw_mev()
+    ).to_dict()
     return {
         "source": "scripts/hqiv_isotope_pdg_benchmark.py",
         "comparison_policy": "reference isotope data used only for benchmark, not for HQIV fit",
         "em_tipping_qualified": qualify_em_tipping,
         "xi": xi,
         "lab_temperature_K": lab_temperature_K,
+        "lab_outside_environment": lab_audit,
         "neutrino_mass_mev": ish.model_electron_neutrino_mass_mev()
         if neutrino_mass_mev is None
         else neutrino_mass_mev,
@@ -654,6 +768,7 @@ def build_payload(
             qualify_em_tipping=qualify_em_tipping,
             neutrino_mass_mev=neutrino_mass_mev,
         ),
+        "isotope_method_tension_panel": isotope_method_tension_panel(),
         "curvature_imprint_control": curvature_imprint_control_panel(
             qualify_em_tipping=qualify_em_tipping,
             xi=xi,
@@ -727,6 +842,12 @@ def print_report(payload: dict) -> None:
             if row.get("comparison"):
                 if "ppm_delta_tau" in row:
                     print(f"  {row['comparison']}: ppm Δτ={row['ppm_delta_tau']:.1f}  ({row['note']})")
+                elif "predicted_beam_over_bottle_split_ppm" in row:
+                    print(
+                        f"  {row['comparison']}: predicted beam/bottle "
+                        f"ppm={row['predicted_beam_over_bottle_split_ppm']:.1f}, "
+                        f"observed ppm={row['observed_beam_over_bottle_split_ppm']:.1f}"
+                    )
                 else:
                     print(f"  {row['comparison']}: {row.get('note', '')}")
             else:
@@ -734,6 +855,17 @@ def print_report(payload: dict) -> None:
                     f"  {row['method']:<6} ref={row['reference_half_life_seconds']:.2f}s "
                     f"pred/ref={row['pred_over_ref']:.3f}  T={row['lab_temperature_K']} K"
                 )
+        print()
+        print("isotope method tension panel")
+        for row in payload.get("isotope_method_tension_panel", []):
+            if row.get("comparison"):
+                print(f"  {row['comparison']}: {row['note']}")
+                continue
+            print(
+                f"  {row['isotope']:<4} {row['environment']:<22} "
+                f"width={row['local_width_factor']:.9f} "
+                f"shift={row['method_shift_percent']:+.4f}%"
+            )
         print()
         print("curvature imprint control (PDG mass + geometric well; comparison layer)")
         for row in payload.get("curvature_imprint_control", []):

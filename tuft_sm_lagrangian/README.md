@@ -1,6 +1,6 @@
 # TUFT + SM Lagrangian Synthesis (Tier-2 Opener)
 
-**Published:** Zenodo v1 — [`10.5281/zenodo.20517172`](https://doi.org/10.5281/zenodo.20517172) (2026-06-02)  
+**Published:** Zenodo v2 — [`10.5281/zenodo.20601215`](https://doi.org/10.5281/zenodo.20601215) (2026-06-08)  
 **Bib key:** `hqiv-tuft-sm-lagrangian-paper`
 
 This directory contains the HQIV paper that realizes Nielsen's TUFT synthesis on the complex Hopf fibration inside the discrete octonion-carrier framework.
@@ -20,7 +20,7 @@ A single now-slice $(\xi, \Phi, t)$ together with the lattice rationals fixed by
 | --- | --- |
 | Main source | `hqiv_tuft_sm_lagrangian_synthesis.tex` |
 | PDF | `hqiv_tuft_sm_lagrangian_synthesis.pdf` |
-| Scripts bundle | `scripts.zip` (37 Python files; see `scripts/README.md`) |
+| Scripts bundle | `scripts.zip` (49 Python files; see `scripts/README.md`) |
 | Author metadata | `authors.json` |
 | Bibliography | `../references.bib` |
 | Shell ontology appendix | `../include/shell_ontology_messaging.tex` |
@@ -56,9 +56,9 @@ lake build paper_tuft_sm_lagrangian
 
 | Field | Value |
 | --- | --- |
-| DOI | [`10.5281/zenodo.20517172`](https://doi.org/10.5281/zenodo.20517172) |
+| DOI | [`10.5281/zenodo.20601215`](https://doi.org/10.5281/zenodo.20601215) |
 | Community | [HQIV](https://zenodo.org/communities/hqiv) |
 | Files on record | PDF, `scripts.zip` |
 | License | CC-BY-4.0 |
 
-Downstream Tier-2 papers (`baryogenesis_lockin/`, `nucleon_binding/`, `bbn/`, `gluon_curvature_artifact/`) cite this record via `\cite{hqiv-tuft-sm-lagrangian-paper}` in `../references.bib`.
+Downstream Tier-2 papers (`nucleon_binding/`, `bbn/`, `gluon_curvature_artifact/`) cite the TUFT+SM record via `\cite{hqiv-tuft-sm-lagrangian-paper}`; baryogenesis lock-in is published at [`10.5281/zenodo.20711255`](https://doi.org/10.5281/zenodo.20711255) (`hqiv-baryogenesis-paper`).

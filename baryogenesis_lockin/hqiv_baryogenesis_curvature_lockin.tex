@@ -1,6 +1,6 @@
 \documentclass[11pt]{amsart}
 \usepackage[margin=1in]{geometry}
-\usepackage{amsmath,amssymb,amsthm,mathtools,booktabs}
+\usepackage{amsmath,amssymb,amsthm,mathtools,booktabs,array,tabularx}
 \usepackage{enumitem}
 \usepackage{hyperref}
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
@@ -8,15 +8,27 @@
 \setlength{\emergencystretch}{3em}
 
 \newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
+\newcommand{\leanrepourl}{https://github.com/HQIV/hqiv-lean}
+\newcommand{\programmeurl}{https://disregardfiat.tech}
+\newcommand{\scriptrepo}{https://github.com/HQIV/hqiv-lean/blob/main/scripts}
 \newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\nolinkurl{#1}}}
+\newcommand{\scriptfile}[1]{\href{\scriptrepo/#1}{\nolinkurl{scripts/#1}}}
 \newcommand{\leanid}[1]{\nolinkurl{#1}}
+\newcommand{\LeanEng}[2]{\hyperref[#1]{#2}}
+\newcommand{\datafile}[1]{\texttt{#1}}
 
-\title[Baryon asymmetry as curvature-ratio lock-in]{Baryon Asymmetry as Curvature-Ratio Lock-In:\\
-Ratio-Level First Principles in the HQIV Lean Library}
+\newenvironment{summarybox}{%
+  \medskip\begin{quote}\small
+}{%
+  \end{quote}\medskip
+}
+
+\title[Curvature-ratio lock-in on the HQIV spine]{Curvature-Ratio Lock-In for Baryon Asymmetry:\\
+Demonstrated on the HQIV Discrete Spine (Lean Formalisation)}
 \author{Steven Ettinger Jr}
 \address{Independent Researcher}
 \email{steven@disregardfiat.tech}
-\date{Preprint v2 --- \today}
+\date{Preprint v3 --- \today}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{proposition}[theorem]{Proposition}
@@ -26,139 +38,290 @@ Ratio-Level First Principles in the HQIV Lean Library}
 \begin{document}
 
 \begin{abstract}
-\noindent\textbf{Position in the publication chain.}
-This is the seventh paper in the HQIV preprint series and the
-third of the Tier-2 Standard-Model layer. Tier~0 fixes the
-framework \cite{ettinger2026hqiv,hqiv-lightcone-paper,hqiv-so8-paper};
-Tier~1 supplies the variational and lattice spine
-\cite{hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper,hqiv-thermo-arrow-paper};
-Tier~2 adds the published Lagrangian bridge and mass-spectrum synthesis
-\cite{hqiv-tuft-sm-lagrangian-paper}. The present
-note states the strongest \emph{ratio-level} baryogenesis theorem
-currently supported by the library: baryon-asymmetry bookkeeping is
-not an independent knob---it is the same partial curvature imprint as
-the growth channel, triality CP-bias scaffolds, and the HQVM
-Friedmann compatibility package.
-
-\noindent\textbf{Result.}
-The formal spine is entirely ratio-level: discrete shell combinatorics
-define a cumulative curvature integral $I(n)$; horizon ratios
-$\Omega_k(n;N)=I(n)/I(N)$ are machine-checked with proved monotonicity
-in $n$ at fixed $N$; the lock-in shell
-$m_{\mathrm{lockin}}=M=\mathrm{referenceM}$ calibrates
-$\Omega_k=1$ at the lock-in horizon; and the baryon-asymmetry readout
-$\eta(n;N)$ is \emph{defined} to share that same normalisation,
-pointwise in $(n,N)$---the input convention the companion BBN note
-\cite{hqiv-bbn-paper} takes at lock-in. Light-element abundances are
-\emph{not} claimed here; that companion documents the BBN Lean stack
-(network readout, epoch ladder, integrated witness).
-Reader-friendly anchors with clickable Lean links are in
-Appendix~\ref{app:lean-index}.
-
-\noindent\textbf{Single absolute anchor (quarantined).}
-The observed-order scale $\eta_{\mathrm{paper}}$ appears in exactly one
-module (the \hyperref[lean:eta-paper]{baryogenesis $\eta$ paper module})
-and is wired only through the witness layer. Ratio laws and lock-in
-calibration are proved without it. Under the proton lock-in witness
-discipline of \cite{hqiv-tuft-sm-lagrangian-paper,hqiv-kirchhoff-paper},
-laboratory $\eta$ is a comparison target, not a simultaneous fit row
-alongside other PDG inputs.
-
-\noindent\textbf{Patch-ontology reader contract.}
-Per the patch-theory reader contract below, the discrete patch layer
-is the ontology. Smooth-manifold transport, washout, and sphaleron
-yield are comparison-layer physics targets---not foundational
-requirements and not a continuum-completion programme.
-
-\noindent\textbf{Dynamic bulk witnesses (v2 addition).}
-A per-shell matter integrator now derives comparison-layer
-$\Omega_b$ and $\eta$ without importing $\eta_{\mathrm{paper}}$ as an
-input. Central readout: $\eta_{10}=6.20$, $Y_p=0.245$, $D/H=2.39\times 10^{-5}$
-from \texttt{data/dynamic\_bulk\_bbn\_v2.json} and
-\texttt{data/integrator\_lean\_audit.json} (witnesses
-\texttt{scripts/hqiv\_dynamic\_bulk\_bbn.py},
-\texttt{scripts/hqiv\_integrator\_lean\_audit.py}). Different legitimate
-stages bracket $\eta_{10}\approx 6.0$--$6.4$: legacy lock-in anchor
-($6.10$), early dynamic-baryogenesis correction ($6.28$), and
-comparison-layer $H_0$ propagation at fixed $\Omega_b$ ($6.04$ at
-$H_0=70$, $6.39$ at $H_0=72\,\mathrm{km\,s^{-1}\,Mpc^{-1}}$). Casimir
-inside/outside balance ($B_{\mathrm{curv}}$) sets the temperature-relative
-vev and comparison-layer $\eta$; bound-state binding release modulates BBN
-$Q$ values; \textbf{dynamic lapse concentration $C_2(\xi)$} calibrates the
-deuterium-bottleneck shell clock
-(\hyperref[lean:bbn-dynamic-C2]{BBN dynamic-$C_2$ pack}). The network
-advances by shell reaction opportunity, not by Hubble rate as an input clock.
-
-\noindent\textbf{Status.}
-Proved in this note: monotonicity of $I$ and $\Omega_k$, lock-in
-calibration, parallel $\eta$ laws, triality tilt averaging, and
-GR/O--Maxwell compatibility. Computed witnesses (not yet full Lean
-certificates): dynamic bulk $\eta$ band and shell-opportunity BBN
-integration (\S\ref{sec:dynamic-bulk}). Companion \cite{hqiv-bbn-paper}:
-BBN umbrella and network/epoch/witness modules consuming lock-in
-$\eta$. Not claimed here: derivation of $\eta_{\mathrm{paper}}$ from
-associator phases, SM chemical potentials, or a unique closed-form
-$\eta$ without comparison-layer inputs.
+This note---the seventh HQIV preprint---is a capability demonstration on
+the shared discrete curvature-ratio spine. Baryon-asymmetry bookkeeping is
+already a theorem-level consequence of the same lock-in calibration,
+monotonicity results, and triality scaffolds used for hadron structure,
+BBN, and other applications in the library. At lock-in shell $m=4$,
+horizon ratios $\Omega_k(n;N)=I(n)/I(N)$ are proved monotone with
+$\Omega_k(M;M)=1$, and the baryon readout $\eta(n;N)$ shares that
+normalisation; a single quarantined anchor $\eta_{\mathrm{paper}}$
+supplies the comparison-layer scale. The primary artefacts are the Lean
+formalisation and the Python reproduction bundle
+(\S\ref{sec:repro}). Programme context, witness panels, and the
+proved/witnessed/deferred split are in \S\ref{sec:intro}; Lean module
+and identifier names are in Appendix~\ref{app:lean-index}.
 \end{abstract}
 \maketitle
 
 \input{../include/patch_theory_messaging.tex}
 
+\section{Introduction}
+\label{sec:intro}
+
+\subsection{Programme context and doorway}
+This note is a \textbf{Tier-2 checkpoint}, not the programme's goal.
+The HQIV objective is a discrete curvature-ratio ledger on the null
+lattice---with sector projections to hadronic binding, electroweak
+synthesis, chemistry, compact objects, and cosmology---not a standalone
+theory of baryogenesis. Baryon-asymmetry bookkeeping is one cosmological
+\emph{application}: it records how the same lock-in calibration,
+$\Omega_k$ monotonicity, and quarantined $\eta_{\mathrm{paper}}$ anchor
+answer a single ledger question at shell $m=4$.
+
+Geometry and ratios live in the core formal modules
+(\LeanEng{lean:lightcone}{octonionic lightcone},
+\LeanEng{lean:baryogenesis-core}{baryogenesis core},
+\LeanEng{lean:baryogenesis-witness}{baryogenesis witness};
+Appendix~\ref{app:lean-index}); $\eta$ bookkeeping is how that spine
+answers one comparison-layer question. Readers should treat this note as
+an on-ramp to the larger corpus, not as an isolated claim about observed
+$\eta$ alone.
+
+\begin{itemize}[leftmargin=2em,nosep]
+\item \textbf{Plain-language tour:} \href{\programmeurl}{disregardfiat.tech}
+  (clickable module anchors).
+\item \textbf{Formal library:} \href{\leanrepourl}{HQIV-LEAN}
+  \cite{hqiv-lean}.
+\item \textbf{Reproduction bundle:} \texttt{scripts.zip} in this folder
+  (\S\ref{sec:repro}).
+\item \textbf{Companion BBN stack:} \cite{hqiv-bbn-paper}.
+\end{itemize}
+
+\subsection{Publication chain}
+Tier~0 fixes the framework
+\cite{ettinger2026hqiv,hqiv-lightcone-paper,hqiv-so8-paper}; Tier~1
+supplies the variational and lattice spine
+\cite{hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper,hqiv-thermo-arrow-paper};
+Tier~2 adds the published Lagrangian bridge
+\cite{hqiv-tuft-sm-lagrangian-paper}. The present note states the
+strongest \emph{ratio-level} baryogenesis theorem currently supported:
+baryogenesis is not an independent knob---it is the same partial
+curvature imprint as the growth channel, triality CP-bias scaffolds, and
+the HQVM Friedmann compatibility package.
+
+The same spine already shows machine-checked readouts across applied
+scales---nucleon binding \cite{hqiv-nucleon-binding-paper}, TUFT+SM
+synthesis \cite{hqiv-tuft-sm-lagrangian-paper}, chemistry and phase
+geometry, compact-object witnesses, and the BBN integrator
+\cite{hqiv-bbn-paper}. This note records how the baryon-asymmetry ratio
+slots into that spine at lock-in.
+
+\subsection{Formal results (summary)}
+Discrete shell combinatorics define a cumulative curvature integral
+$I(n)$; horizon ratios $\Omega_k(n;N)=I(n)/I(N)$ are machine-checked
+with proved monotonicity at fixed $N$; the lock-in shell
+$m_{\mathrm{lockin}}=M=4$ calibrates $\Omega_k=1$ at the lock-in
+horizon; and $\eta(n;N)$ is \emph{defined} to share that same
+normalisation---the convention the companion BBN note
+\cite{hqiv-bbn-paper} takes at lock-in. Light-element abundances are
+\emph{not} claimed here.
+
+\subsection{Quarantined anchor and reader contract}
+The observed-order scale $\eta_{\mathrm{paper}}$ appears in exactly one
+formal module (\LeanEng{lean:eta-paper}{paper $\eta$ anchor module}) and
+is wired only through the witness layer. Ratio laws and lock-in
+calibration are proved without it. Under proton lock-in witness discipline
+\cite{hqiv-tuft-sm-lagrangian-paper,hqiv-kirchhoff-paper}, laboratory
+$\eta$ is a comparison target, not a simultaneous fit row alongside other
+PDG inputs.
+
+Per the patch-theory reader contract below, the discrete patch layer is
+the ontology. Smooth-manifold transport, washout, and sphaleron yield are
+comparison-layer targets---not foundational requirements.
+
+\subsection{Dynamic bulk and BBN witnesses (v3)}
+A per-shell matter integrator derives comparison-layer $\Omega_b$ and
+$\eta$ without importing $\eta_{\mathrm{paper}}$ as an input. Central
+readout: $\eta_{10}=6.20$, $\Omega_b=0.0499$ at lock-in
+(\datafile{data/dynamic\_bulk\_bbn\_v2.json}; \S\ref{sec:repro}). At
+$\eta_{\mathrm{paper}}=6.10\times 10^{-10}$, the faithful stoichiometric
+BBN integrator yields $Y_p=0.244$, $D/H=2.51\times 10^{-5}$,
+$^3\mathrm{He}/H\approx 1.01\times 10^{-5}$, and
+$^7\mathrm{Li}/H\approx 2.54\times 10^{-10}$ (pre-depletion;
+$\approx 45\%$ below Coc semi-analytic $4.65\times 10^{-10}$ at the same
+$\eta$ \cite{coc2015}; $z(D/H)\approx -0.45$). Legitimate $\eta$ stages
+bracket $6.0$--$6.4$ (Tables~\ref{tab:eta-methods}--\ref{tab:bbn-methods}).
+Full abundance certificates remain in \cite{hqiv-bbn-paper}.
+
+\subsection{Proved, witnessed, and deferred}
+\begin{itemize}[leftmargin=2em,nosep]
+\item \textbf{Proved (Lean):} monotonicity of $I$ and $\Omega_k$; lock-in
+  calibration; parallel $\eta$ laws; triality tilt averaging; GR/O--Maxwell
+  compatibility; dynamic-bulk ratio packaging
+  (\LeanEng{lean:dynamic-bulk-vital}{dynamic bulk vital bundle}).
+\item \textbf{Witnessed (Python):} dynamic bulk $\eta_{10}\approx 6.20$,
+  $\Omega_b\approx 0.050$; faithful BBN panel at $\eta_{\mathrm{paper}}$.
+\item \textbf{Deferred:} associator-derived $\eta_{\mathrm{paper}}$; SM
+  washout/sphaleron yield; closed-form $\eta$ without comparison-layer
+  $H_0$, $T_{\mathrm{CMB}}$, or $\Omega_b$.
+\end{itemize}
+
+All numerical tables are regenerated from the standalone Python bundle
+(\S\ref{sec:repro}); no Lean installation is required to verify witnesses.
+
+\section*{Imported spine (at a glance)}
+\label{sec:imported-spine}
+
+This note proves ratio-level baryogenesis bookkeeping on the discrete shell
+ladder. The following inputs are \emph{imported} from earlier Tier-0--2
+records; they are listed here so a reader need not open those manuscripts
+to see what is assumed versus what is derived here. Programme context is
+in \S\ref{sec:intro}.
+
+\begin{summarybox}
+\noindent\textbf{What this paper adds (new relative to upstream Tier-0--2).}
+\begin{itemize}[leftmargin=1.5em,nosep]
+\item Horizon-ratio theorems $\Omega_k(n;N)=I(n)/I(N)$ with strict
+  monotonicity and lock-in calibration $\Omega_k(M;M)=1$.
+\item Parallel $\eta(n;N)$ law sharing the identical normalisation as
+  $\Omega_k$ (\LeanEng{lean:eta-omega-same}{shared-normalisation theorem}).
+\item Triality CP-bias scaffold with proved three-representation averaging
+  (\LeanEng{lean:rapidity-cp-bias}{rapidity CP-bias},
+  Appendix~\ref{app:lean-index}).
+\item Lean packaging of dynamic-bulk colour-singlet fraction, $\Omega_b$
+  channel, and comparison-layer $\eta$ bridge
+  (\LeanEng{lean:dynamic-bulk-vital}{dynamic bulk vital bundle}).
+\item v3 Python witnesses: per-shell $\eta_{10}\approx 6.20$,
+  $\Omega_b\approx 0.050$, and faithful BBN panel at $\eta_{\mathrm{paper}}$
+  (Tables~\ref{tab:eta-methods}--\ref{tab:bbn-methods}).
+\end{itemize}
+\end{summarybox}
+
+\begin{table}[ht]
+\centering
+\caption{Imported quantities from upstream HQIV papers (not refit here).
+Lean file paths: Appendix~\ref{app:lean-index}.}
+\label{tab:imported-spine}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{0.19\linewidth}>{\raggedright\arraybackslash}p{0.28\linewidth}X@{}}
+\toprule
+Quantity & Upstream source & Role in this note \\
+\midrule
+$\alpha=3/5$, $\gamma=2/5$, shell shape $\sigma(m)$ &
+  Tier-0--1: \cite{hqiv-so8-paper,hqiv-3d-growth-paper,hqiv-oct-action-paper} &
+  Curvature imprint ladder; $I(n)$, $\Omega_k$ \\
+$\mathcal{N}_{\mathrm{curv}}=6^7\sqrt{3}$, $\delta_E(m)$ &
+  \cite{hqiv-so8-paper,hqiv-lightcone-paper} &
+  Per-shell imprint; octonion/quaternion contrast \\
+$m_{\mathrm{lockin}}=4$, $\xi_{\mathrm{lock}}=5$ &
+  \cite{hqiv-kirchhoff-paper,hqiv-tuft-sm-lagrangian-paper,hqiv-so8-paper} &
+  Lock-in horizon; $\Omega_k(M;M)=1$. First shell with full
+  $G_2\cup\{\Delta\}\Rightarrow\mathfrak{so}(8)$ sector spine
+  ($N_{\mathrm{new}}(4)=40$; octonionic lightcone module,
+  App.~\ref{app:lean-index}). \\
+$\kappa_6=\eta_{\mathrm{local}}\,\gamma\,C_2(\xi)$, $C_2=56/45$ at lock-in &
+  \cite{hqiv-tuft-sm-lagrangian-paper} &
+  Matter slot; dynamic-$C_2$ BBN clock \\
+Lock-in nuclear $Q$'s ($Q_D$, $Q_{np}$, cluster traces) &
+  \cite{hqiv-nucleon-binding-paper,hqiv-tuft-sm-lagrangian-paper} &
+  Binding-release factor $f_{\mathrm{bind}}(T)$; BBN network \\
+$\eta_{\mathrm{paper}}=6.1\times 10^{-10}$ (quarantined) &
+  Paper $\eta$ anchor module (App.~\ref{app:lean-index}) &
+  Single absolute anchor; parallel to $\Omega_k$ \\
+Comparison $H_0$, $T_{\mathrm{CMB}}$, $\Omega_b$ &
+  \cite{planck2018cosmo,pdg2024} (comparison only) &
+  Late-universe $\eta$ conversion layer \\
+Observed BBN band ($Y_p$, $D/H$; Coc $^7\mathrm{Li}/H\approx 4.65\times 10^{-10}$) &
+  \cite{coc2015} (comparison only) &
+  Audit targets; HQIV faithful $^7\mathrm{Li}/H\approx 2.54\times 10^{-10}$
+  is pre-depletion model output \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{summarybox}
+\noindent\textbf{Derived in this note (not imported).}
+Horizon ratios $\Omega_k(n;N)=I(n)/I(N)$ with strict monotonicity;
+lock-in calibration $\Omega_k(M;M)=1$; parallel $\eta(n;N)$ laws sharing
+the same normalisation; triality CP-bias scaffold; GR/O--Maxwell $(\alpha,\phi)$
+compatibility \cite{hqiv-oct-action-paper}; dynamic-bulk comparison-layer
+$\eta_{10}\approx 6.20$ and $\Omega_b\approx 0.050$ without importing
+$\eta_{\mathrm{paper}}$ (\S\ref{sec:dynamic-bulk}, Table~\ref{tab:eta-methods}).
+\end{summarybox}
+
 \section{Scope and claim discipline}
 \label{sec:scope}
 
-The HQIV programme ties discrete null-shell counting, a curvature imprint
-exponent $\alpha=3/5$ (lattice-coherent with Brodie's horizon
-thermodynamics \cite{brodie2026}), and an eight-dimensional octonionic
-carrier with machine-checked
+The HQIV programme ties discrete null-shell counting, curvature imprint
+exponent $\alpha=3/5$ \cite{brodie2026}, and an eight-dimensional
+octonionic carrier with machine-checked
 $G_2\cup\{\Delta\}\Rightarrow\mathfrak{so}(8)$ data
-\cite{hqiv-so8-paper,hqiv-3d-growth-paper}. The octonionic-action paper
-\cite{hqiv-oct-action-paper} documents how the same $(\alpha,\phi)$ slots
-feed discrete O--Maxwell stationarity and an HQVM Friedmann
-\emph{compatibility} identity; the SM Lagrangian bridge
-\cite{hqiv-tuft-sm-lagrangian-paper} packages the same ledger at sector level.
+\cite{hqiv-so8-paper,hqiv-3d-growth-paper}. See \S\ref{sec:intro} for
+programme position and on-ramps.
+
+\paragraph{Lock-in shell $m=4$ and the $G_2$ sector spine.}
+The lock-in index $M=4$ is not an arbitrary fit row: on
+the discrete null ladder it is the \textbf{first shell that carries enough
+degrees of freedom} to support the full octonion-sector readout used
+downstream. At $m=4$ the library proves $N_{\mathrm{new}}(4)=40$ new
+lattice modes on the carrier
+(\LeanEng{lean:lightcone}{octonionic lightcone module}), while the
+algebraic closure $G_2\cup\{\Delta\}\Rightarrow\mathfrak{so}(8)$ supplies
+fourteen $G_2$ generators plus the phase-lift harmonic $\Delta$ closing to
+the full $28$-dimensional gauge-sector carrier
+\cite{hqiv-so8-paper}. Proton lock-in, $\Omega_k(M;M)=1$, and the
+baryon-asymmetry ratio normalisation are all evaluated at this same row
+($\xi_{\mathrm{lock}}=m+1=5$). Earlier shells are pre-sector or
+pre-closure rungs on the same ladder; later shells extend the chart but do
+not replace the calibration pin.
+
+\paragraph{Baryogenesis as an application.}
+This note is \textbf{not} a standalone theory of baryogenesis; it is one
+checkpoint on a spine that already shows promising results at every applied
+scale exercised in the repository so far---hadronic binding, electroweak
+synthesis, molecular phase geometry, compact-object witnesses, and BBN
+abundance integration. The formal objective remains the discrete
+curvature-ratio ledger and its sector projections; $\eta$ bookkeeping is
+how that ledger answers a cosmological question at lock-in.
 
 This note answers: \textbf{what baryogenesis statement is already a
 theorem, and what is still interpretive physics?} Geometry and ratios
-live in the \hyperref[lean:baryogenesis-core]{baryogenesis core module}
-and the \hyperref[lean:lightcone]{octonionic lightcone module}; the
+live in the \LeanEng{lean:baryogenesis-core}{baryogenesis core module}
+and the \LeanEng{lean:lightcone}{octonionic lightcone module}; the
 $\eta_{\mathrm{paper}}$ anchor is isolated in the
-\hyperref[lean:eta-paper]{baryogenesis $\eta$ paper module} and wired
-only through the \hyperref[lean:baryogenesis-witness]{baryogenesis witness
-module}.
+\LeanEng{lean:eta-paper}{paper $\eta$ anchor module} and wired
+only through the \LeanEng{lean:baryogenesis-witness}{baryogenesis witness
+module} (Appendix~\ref{app:lean-index}).
 
 \begin{enumerate}[leftmargin=2em]
 \item \textbf{Proved in Lean (formal spine).} Shell indices, ladder
   temperatures, combinatorial curvature norm $\mathcal{N}_{\mathrm{curv}}$,
   per-shell imprint $\delta_E(m)$, cumulative integral $I(n)$ with strict
-  monotonicity (the \hyperref[lean:curvature-integral-mono]{curvature-integral
+  monotonicity (\LeanEng{lean:curvature-integral-mono}{curvature-integral
   strict-monotonicity theorem}), horizon ratios $\Omega_k(n;N)$ with
   monotonicity, strict monotonicity, and the bound $\Omega_k\le 1$ for
-  $n\le N$ (the \hyperref[lean:omega-k-mono]{horizon-ratio monotonicity
-  pack}), lock-in calibration $\Omega_k(M;M)=1$ (the
-  \hyperref[lean:omega-k-lockin]{lock-in $\Omega_k$ calibration}), parallel
-  $\eta(n;N)$ with matching monotonicity lemmas (the
-  \hyperref[lean:eta-mono]{$\eta$ monotonicity pack}), and the identity
-  $\eta=\eta_{\mathrm{paper}}\cdot\Omega_k$ at fixed horizon (the
-  \hyperref[lean:eta-omega-same]{shared-normalisation theorem}).
+  $n\le N$ (\LeanEng{lean:omega-k-mono}{horizon-ratio monotonicity
+  pack}), lock-in calibration $\Omega_k(M;M)=1$
+  (\LeanEng{lean:omega-k-lockin}{lock-in $\Omega_k$ calibration}), parallel
+  $\eta(n;N)$ with matching monotonicity lemmas
+  (\LeanEng{lean:eta-mono}{$\eta$ monotonicity pack}), and the identity
+  $\eta=\eta_{\mathrm{paper}}\cdot\Omega_k$ at fixed horizon
+  (\LeanEng{lean:eta-omega-same}{shared-normalisation theorem}).
+\item \textbf{Proved dynamic-bulk packaging (v3).}
+  Colour-singlet projector $f_{\mathrm{color}}=1/3$, baryon channel
+  $(4/8)\cdot(1/3)=1/6$, dimensionless binding-curvature correction linked
+  to MeV cluster binding, dynamic $\eta$ at lock-in with dimensionless
+  feedback, and comparison-layer $\eta$ bridge
+  (\LeanEng{lean:dynamic-bulk-vital}{dynamic bulk vital bundle};
+  Appendix~\ref{app:lean-index}).
 \item \textbf{Proved algebraic packaging.} Triality-sensitive increments
-  from the \hyperref[lean:rapidity-cp-bias]{rapidity CP-bias} in the
-  \hyperref[lean:triality-well]{triality--rapidity-well module}; affine
-  tilt averaging (the \hyperref[lean:triality-tilt-avg]{triality tilt
+  from the \LeanEng{lean:rapidity-cp-bias}{rapidity CP-bias} in the
+  \LeanEng{lean:triality-well}{triality--rapidity-well module}; affine
+  tilt averaging (\LeanEng{lean:triality-tilt-avg}{triality tilt
   average identity}); three-representation averaging back to the rapidity
-  well (the \hyperref[lean:triality-inc-avg]{triality increment average
+  well (\LeanEng{lean:triality-inc-avg}{triality increment average
   identity}).
 \item \textbf{Structural compatibility (not transport).} The
-  \hyperref[lean:gr-from-maxwell]{GR-from-Maxwell module}: shared
+  \LeanEng{lean:gr-from-maxwell}{GR-from-Maxwell module}: shared
   $\phi$, shared $\alpha$, and homogeneous HQVM Friedmann equivalence---a
   compatibility bridge, not a washout-limited yield theorem.
 \item \textbf{Companion: BBN \cite{hqiv-bbn-paper}.}
-  The BBN Lean stack---umbrella certificate, network-from-weights readout,
-  epoch ladder, and integrated witness (Appendix~\ref{app:lean-index},
-  \hyperref[lean:bbn-programme]{BBN programme modules})---is documented in
-  the companion note; it consumes lock-in $\eta$ from this note and is
-  \emph{not} part of this note's proof graph. Coc et al.\ semi-analytic fits
-  in the library are labelled comparison-only, not HQIV inputs.
+  The BBN formal stack---umbrella certificate, network-from-weights readout,
+  epoch ladder, and integrated witness (Appendix~\ref{app:lean-index})---is
+  documented in the companion note; it consumes lock-in $\eta$ from this note
+  and is \emph{not} part of this note's proof graph. Coc et al.\ semi-analytic
+  fits in the library are labelled comparison-only, not HQIV inputs.
 \item \textbf{Yield-level SM physics (not Lean).} Associator/vorticity
   sources, QCD-window maximisation, and sphaleron rates remain narrative
   targets beyond both this note and \cite{hqiv-bbn-paper}. No
@@ -171,42 +334,54 @@ Fix the HQIV discrete shell index $m\in\mathbb{N}$ as in
 \cite{hqiv-so8-paper,hqiv-3d-growth-paper}. The library defines a QCD
 onset shell index $m_{\mathrm{QCD}}$ and a lock-in shell
 \[
-m_{\mathrm{lockin}} \;:=\; m_{\mathrm{QCD}}+\texttt{stepsFromQCDToLockin},
+m_{\mathrm{lockin}} \;:=\; m_{\mathrm{QCD}}+k_{\mathrm{QCD}\to\mathrm{lock}},
 \]
-aligned with $M=\mathrm{referenceM}$ (the same lock-in convention used
+with fixed step count $k_{\mathrm{QCD}\to\mathrm{lock}}$ (Appendix~\ref{app:lean-index}),
+aligned with $M=4$ (the same lock-in convention used
 throughout the formalisation and pinned by the proton lock-in witness in
 \cite{hqiv-tuft-sm-lagrangian-paper,hqiv-kirchhoff-paper}). Temperatures on the
-ladder are $T(m)=1/(m+1)$ in natural units (the
-\hyperref[lean:T-QCD-lockin]{QCD and lock-in temperature closures} in the
+ladder are $T(m)=1/(m+1)$ in natural units
+(\LeanEng{lean:T-QCD-lockin}{QCD and lock-in temperature closures} in the
 baryogenesis core module).
 
 The finite shell set used for discrete bookkeeping is the explicit
-\hyperref[lean:baryogenesis-shells]{baryogenesis shell window} (a
-\texttt{Finset} interval from $m_{\mathrm{QCD}}$ through a few shells after
-lock-in). This is the honest discrete substitute for a continuum ``GeV
+\LeanEng{lean:baryogenesis-shells}{baryogenesis shell window}: a finite
+interval from $m_{\mathrm{QCD}}$ through a few shells after
+lock-in. This is the honest discrete substitute for a continuum ``GeV
 window'': it is \emph{not} proved from washout maximisation in Lean; it is
 the packaged combinatorial stage on which curvature ratios are evaluated.
 
 \section{Curvature imprint, \(\mathcal{N}_{\mathrm{curv}}\), and \(\delta_E\)}
 
+\begin{summarybox}
+\noindent\textbf{Imported from Tier-0--1 (summary).}
+The shell-shape factor $\sigma(m)$ and curvature exponent $\alpha=3/5$ enter
+from the growth trilogy \cite{hqiv-3d-growth-paper,hqiv-so8-paper}; the
+octonionic-action note \cite{hqiv-oct-action-paper} documents the same
+$(\alpha,\phi)$ slots in O--Maxwell stationarity. The combinatorial norm
+$\mathcal{N}_{\mathrm{curv}}$ and per-shell imprint $\delta_E(m)$ are proved
+in the lightcone module---not re-derived here. See
+Table~\ref{tab:imported-spine}.
+\end{summarybox}
+
 Let $\sigma(m)$ denote the shell-shape factor (the
-\hyperref[lean:shell-shape]{shell-shape factor}), built from the same
+\LeanEng{lean:shell-shape}{shell-shape factor}), built from the same
 $\alpha$-weighted logarithmic curvature density used in the growth trilogy.
 The combinatorial curvature norm is the exact real scalar
 $\mathcal{N}_{\mathrm{curv}} = 6^{7}\sqrt{3}$, proved in the lightcone
 module from the structural ``six cube directions, seven imaginary octonion
 directions, half-diagonal $\sqrt{3}$'' bookkeeping (the
-\hyperref[lean:curvature-norm]{curvature-norm structural theorem} and
+\LeanEng{lean:curvature-norm}{curvature-norm structural theorem} and
 related lemmas). The per-shell imprint is
 $\delta_E(m)=\mathcal{N}_{\mathrm{curv}}\cdot\sigma(m)$ (the
-\hyperref[lean:deltaE-QCD]{QCD-shell imprint} specialises at
+\LeanEng{lean:deltaE-QCD}{QCD-shell imprint} specialises at
 $m_{\mathrm{QCD}}$).
 
 \medskip
 \noindent\textbf{Structural rigidity (octonionic vs.\ quaternionic comparison).}
 Lean also proves that a natural quaternionic Maxwell comparison norm
 undershoots the HQIV octonionic norm by a rigid factor $1296$ shellwise
-(the \hyperref[lean:deltaE-1296]{octonion--quaternion imprint ratio
+(the \LeanEng{lean:deltaE-1296}{octonion--quaternion imprint ratio
 theorem}). This supports the narrative that $\mathcal{N}_{\mathrm{curv}}$
 is not an arbitrary normalisation: it is the imprint constant selected by
 the octonionic lift inside the same eight-dimensional carrier used for
@@ -218,12 +393,12 @@ Define the cumulative partial integral
 \[
 I(n) \;:=\; \sum_{m=0}^{n-1} |\sigma(m)|
 \]
-(the \hyperref[lean:curvature-integral]{curvature integral}). For horizons
+(the \LeanEng{lean:curvature-integral}{curvature integral}). For horizons
 $N$ with $I(N)>0$, the library defines
 $\Omega_k(n;N):=I(n)/I(N)$. At the lock-in shell, Lean proves positivity
 $I(m_{\mathrm{lockin}})>0$ and the calibration
 $\Omega_k(m_{\mathrm{lockin}};m_{\mathrm{lockin}})=1$ (the
-\hyperref[lean:omega-k-lockin]{lock-in $\Omega_k$ calibration}). This is
+\LeanEng{lean:omega-k-lockin}{lock-in $\Omega_k$ calibration}). This is
 the precise sense in which ``spatial curvature lock-in'' is a
 \textbf{theorem}: normalisation of the discrete imprint integral at the
 declared reference horizon, not an experimental input.
@@ -232,7 +407,7 @@ declared reference horizon, not an experimental input.
 \label{prop:mono-lockin}
 Assume $I(N)>0$. Then for all $n_1\le n_2$,
 $\Omega_k(n_1;N)\le \Omega_k(n_2;N)$, with strict inequality when
-$n_1<n_2$ (the \hyperref[lean:omega-k-mono]{horizon-ratio monotonicity
+$n_1<n_2$ (the \LeanEng{lean:omega-k-mono}{horizon-ratio monotonicity
 pack}). If additionally $n\le N$, then $\Omega_k(n;N)\le 1$. In
 particular, along shells $n\le m_{\mathrm{lockin}}$ with horizon
 $N=m_{\mathrm{lockin}}$, the ratio $\Omega_k(n;m_{\mathrm{lockin}})$
@@ -248,25 +423,25 @@ PDG-scale baryon asymmetry.
 
 \paragraph{With a single absolute anchor (quarantined).}
 The constant $\eta_{\mathrm{paper}}$ appears \emph{only} in the
-\hyperref[lean:eta-paper]{baryogenesis $\eta$ paper module}. The witness
+\LeanEng{lean:eta-paper}{baryogenesis $\eta$ paper module}. The witness
 module defines $\eta(n;N):=\eta_{\mathrm{paper}}\cdot I(n)/I(N)$ when
 $I(N)>0$ (and a conservative fallback otherwise), and proves the parallel
 identities to the $\Omega_k$ ratio (the
-\hyperref[lean:eta-at-horizon]{horizon $\eta$ readout} and
-\hyperref[lean:eta-self]{self-horizon $\eta$ identity} at $n=N$).
+\LeanEng{lean:eta-at-horizon}{horizon $\eta$ readout} and
+\LeanEng{lean:eta-self}{self-horizon $\eta$ identity} at $n=N$).
 
 The conceptual punchline is already a theorem:
 \[
 \eta(n;N) \;=\; \eta_{\mathrm{paper}}\cdot \Omega_k(n;N)
 \]
-(the \hyperref[lean:eta-omega-same]{shared-normalisation theorem}). At
+(the \LeanEng{lean:eta-omega-same}{shared-normalisation theorem}). At
 fixed horizon, baryogenesis is not a second independent imprint law: it is
 the same partial-integral ratio as $\Omega_k$, scaled by one overall anchor.
 
 \medskip
 \noindent\textbf{Same monotonicity and bounds as $\Omega_k$.}
 Lean also proves $\eta(n_1;N)\le \eta(n_2;N)$ for $n_1\le n_2$ (the
-\hyperref[lean:eta-mono]{$\eta$ monotonicity pack}), and
+\LeanEng{lean:eta-mono}{$\eta$ monotonicity pack}), and
 $\eta(n;N)\le \eta_{\mathrm{paper}}$ whenever $n\le N$. Thus
 $\eta_{\mathrm{paper}}$ is both the absolute scale at lock-in and an
 upper envelope for readouts inside the horizon---a direct consequence of
@@ -293,7 +468,7 @@ feedback, then converted to $\eta$ only at a late comparison layer using
 present-day $H_0$, $T_{\mathrm{CMB}}$, and $\Omega_b$.
 
 \paragraph{Per-shell integrator (v3).}
-The calculator \texttt{scripts/hqiv\_dynamic\_bulk\_bbn.py} evolves
+The dynamic bulk witness (\S\ref{sec:repro}) evolves
 shells $m_{\mathrm{QCD}}\le m\le m_{\mathrm{lock}}$ with emergent
 hadronic lock-in at $m=4$ ($\xi_{\mathrm{lock}}=5$). At each step it
 reads shell shape $\sigma(m)$, inner/outer curvature proxies, the
@@ -320,7 +495,8 @@ suppression $\omega K(\xi)/140$ (not a fixed $1/140$ at all epochs;
 the integer $140$ counts discrete fluctuation modes on the outer
 neutral horizon shell at lock-in, while the amplitude runs with
 $\omega K(\xi)$ like the inner trapped-Casimir factor). The witness
-reports $C=2.18$, $\Omega_b=0.0496$, $\Omega_m=0.298$ at $m=4$.
+reports $C=3.80$, $\Omega_b=0.0499$, $\Omega_m=0.299$ at $m=4$
+(\datafile{dynamic\_bulk\_bbn\_v2.json}, lock-in row).
 
 \paragraph{What ``inside'' and ``outside'' mean (reader-facing).}
 HQIV treats the octonionic carrier as having two competing Casimir-like
@@ -340,11 +516,10 @@ surfaces on the \emph{same} geometric object, not two unrelated constants.
   curvature amplitude is normalized to unity.  Away from lock-in the
   outer suppression is $\omega K(\xi)/140$, parallel to the inner side.
 \end{itemize}
-The overall mass scale and vev factor are the ratio inner/outer.  In the
-Lean library this outside construction is filed under an internal label
-\texttt{outerShellNeutrinoFluctuationWitness}; it is \emph{not} a
-standard physics abbreviation and should be read as ``outer neutral-shell
-fluctuation coarse-graining,'' not as a particle label.
+The overall mass scale and vev factor are the ratio inner/outer.  The
+formal library records this as the \emph{outer neutral-shell fluctuation
+witness} (Appendix~\ref{app:lean-index})---not a standard physics
+abbreviation and not a particle label.
 
 \paragraph{Comparison-layer $\eta$.}
 Only after the shell ladder is integrated does the witness form
@@ -353,11 +528,11 @@ Only after the shell ladder is integrated does the witness form
   = \frac{\Omega_b\,\rho_{\mathrm{crit}}}{m_p\,n_\gamma(T_{\mathrm{CMB}})},
 \]
 with default $H_0=67.4\,\mathrm{km\,s^{-1}\,Mpc^{-1}}$ and
-$T_{\mathrm{CMB}}=2.7255\,\mathrm{K}$. This is \textbf{not} part of the
+$T_{\mathrm{CMB}}=2.7255\,\mathrm{K}$ \cite{planck2018cosmo,pdg2024}. This is \textbf{not} part of the
 proved Lean ratio graph; it is an auditable late-universe comparison
 readout. Lean modules
-\hyperref[lean:dynamic-bbn]{Dynamic BBN and baryogenesis} and
-\hyperref[lean:bbn-shell-opportunity]{shell reaction opportunity} now
+\LeanEng{lean:dynamic-bbn}{Dynamic BBN and baryogenesis} and
+\LeanEng{lean:bbn-shell-opportunity}{shell reaction opportunity} now
 mirror the binding-release and shell-clock factors used in the witness.
 
 \paragraph{Why $\eta_{10}$ moved: $6.09\to 6.36\to 5.59$.}
@@ -366,12 +541,12 @@ the programme:
 \begin{itemize}[leftmargin=2em]
 \item \textbf{$6.10$ (legacy anchor).}
   $\eta_{\mathrm{paper}}$ in the quarantined
-  \hyperref[lean:eta-paper]{baryogenesis $\eta$ paper module}; still the
+  \LeanEng{lean:eta-paper}{baryogenesis $\eta$ paper module}; still the
   lock-in calibration used by the fixed-$\eta$ BBN witness.
 \item \textbf{$\approx 6.28$--$6.36$ (intermediate dynamic paths).}
-  Early \texttt{hqiv\_dynamic\_bbn\_baryogenesis.py} runs with
-  \texttt{eta\_at\_horizon\_dynamic} and binding-curvature correction
-  ($\eta_{10}=6.28$); alternatively, holding the dynamic bulk
+  Early dynamic-baryogenesis witness with horizon dynamic $\eta$ and
+  binding-curvature correction ($\eta_{10}=6.28$; Appendix~\ref{app:lean-index});
+  alternatively, holding the dynamic bulk
   $\Omega_b$ fixed and raising only the comparison $H_0$ to
   $70$--$72\,\mathrm{km\,s^{-1}\,Mpc^{-1}}$ gives
   $\eta_{10}=6.04$--$6.39$.
@@ -385,27 +560,37 @@ $\eta(n;N)=\eta_{\mathrm{paper}}\cdot\Omega_k(n;N)$; they test how much
 of the observed scale can be \emph{derived} before the single-point
 anchor is applied.
 
-\begin{table}[h]
+\begin{summarybox}
+\noindent\textbf{Fixed $\eta_{\mathrm{paper}}$ vs.\ dynamic bulk (one sentence).}
+All ratio-level theorems (monotonicity, lock-in calibration, shared
+normalisation) are independent of the numerical value of
+$\eta_{\mathrm{paper}}$. The dynamic-bulk integrator tests how much of
+the observed scale can be recovered from per-shell curvature, Casimir
+vev, and binding feedback \emph{before} the single-point anchor is applied.
+\end{summarybox}
+
+\begin{table}[ht]
 \centering
+\small
 \caption{Comparison-layer $\eta_{10}\equiv \eta\times 10^{10}$ from
 different HQIV stages and inputs. Errors on the dynamic-bulk central
 value propagate $H_0=67.4\pm 2.5\,\mathrm{km\,s^{-1}\,Mpc^{-1}}$ at
 fixed $\Omega_b$; other rows are deterministic readouts at stated
 inputs. Observed band from BBN+$CMB$ synthesis \cite{coc2015}.}
 \label{tab:eta-methods}
-\begin{tabular}{@{}lcc p{5.8cm}@{}}
+\begin{tabularx}{\linewidth}{@{}lccX@{}}
 \toprule
 Method & $\eta_{10}$ & uncertainty & Notes \\
 \midrule
 Observed (BBN+$CMB$) & $6.10$ & $\pm 0.06$ & Comparison target \cite{coc2015} \\
 Lean lock-in anchor ($\eta_{\mathrm{paper}}$) & $6.10$ & --- & Quarantined calibration; not derived here \\
-Early dynamic baryogenesis & $6.28$ & --- & \texttt{eta\_at\_horizon\_dynamic} + binding correction \\
+Early dynamic baryogenesis & $6.28$ & --- & Horizon dynamic $\eta$ + binding correction \\
 Dynamic bulk v3 (primary) & $6.20$ & $\pm 0.42$ & Per-shell $\Omega_b$; $B_{\mathrm{curv}}$ + dynamic $C_2$ BBN clock \\
 \quad $H_0=70$ at fixed $\Omega_b$ & $6.04$ & --- & Comparison-layer $H_0$ sensitivity \\
 \quad $H_0=72$ at fixed $\Omega_b$ & $6.39$ & --- & Upper bracket of $H_0$ sweep \\
 \quad $\rho_{\mathrm{rad}}=0.5$ vs.\ $1.0$ & $6.68$ / $5.60$ & --- & Radiation-floor sensitivity on shell source \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 \paragraph{Casimir-modulated binding and BBN clock.}
@@ -448,34 +633,57 @@ f_{C_2}(T,\eta)=
 \kappa_6=\eta_{\mathrm{paper}}\,B_{\mathrm{curv}}\,\gamma\,C_2(\xi),
 \]
 with $\kappa_{6,\mathrm{ref}}$ at $T_{\mathrm{ref}}=T_{\mathrm{freeze}}(\eta)$,
-$w_{\mathrm{strong}}=4/8$, and $Q_D^{\mathrm{eff}}(T)$ from
-\leanid{bbnDeuteronBindingQ_effectiveAtT} (curvature-temperature binding release on
-the lock-in deuteron trace). No fitted MeV cutoffs: $w_{C_2}(T)$ rises toward
+$w_{\mathrm{strong}}=4/8$, and $Q_D^{\mathrm{eff}}(T)$ from the
+effective deuteron binding readout at temperature
+(Appendix~\ref{app:lean-index}). No fitted MeV cutoffs: $w_{C_2}(T)$ rises toward
 $\approx 0.36$ in the bottleneck and $T_{\mathrm{bn}}\approx 0.14\,\mathrm{MeV}$
 at $\eta_{10}\approx 6.2$ are \emph{derived}. Raw $\kappa_6$ growth on the hot
 chart over-burns D; the inverse lapse clock is the BBN readout of dynamic $C_2$.
 Standard
 radiation-dominated $H(T)$ is retained only as a diagnostic comparison
-(\texttt{legacy\_H\_cooling} mode).
+(legacy $H$-cooling mode).
 
-\begin{table}[h]
+\paragraph{BBN witnesses vs.\ standard reaction networks.}
+The custom shell-opportunity and dynamic-$C_2$ mechanisms are Lean-aligned
+witnesses that modulate the deuterium bottleneck and effective $Q$-values;
+they are \textbf{not} claimed to be equivalent to the full standard BBN
+reaction network. Full stoichiometric integration results
+(Table~\ref{tab:bbn-methods}, \cite{hqiv-bbn-paper}) are reported for
+comparison only; the proved content of this note stops at ratio-level
+$\eta$ bookkeeping and the dynamic-bulk comparison layer.
+
+\begin{table}[ht]
 \centering
-\caption{BBN abundance readout at dynamic-bulk
-$\eta=6.20\times 10^{-10}$ (witness
-\texttt{integrator\_lean\_audit.json}, 2026-05). Abundance certificates
-remain in \cite{hqiv-bbn-paper}; rows document integrator modes.}
+\small
+\caption{BBN abundance readout at lock-in $\eta_{\mathrm{paper}}=6.10\times
+10^{-10}$ (faithful integrator; \S\ref{sec:repro}). Shell-opportunity
+scaffold row documents the pre-synthesis-window driver; full abundance
+theorems are in \cite{hqiv-bbn-paper}.}
 \label{tab:bbn-methods}
-\begin{tabular}{@{}lcc p{5.5cm}@{}}
+\begin{tabular}{@{}lccc@{}}
 \toprule
-Network driver & $Y_p$ & $D/H$ & Notes \\
+Network driver & $Y_p$ & $D/H$ & $^7\mathrm{Li}/H$ \\
 \midrule
-Shell opportunity + dynamic $Q$ + dynamic $C_2$ & $0.245$ & $2.39\times 10^{-5}$ & Primary v3 (\texttt{bbnShellReactionOpportunity\_dynamic\_integrator}) \\
-Shell opportunity + dynamic $Q$ (no $C_2$) & $0.244$ & $7.5\times 10^{-6}$ & $B_{\mathrm{curv}}$ only; D bottleneck \\
-Legacy $H(T)$ + fixed lock-in $Q$ & $0.249$ & $5.3\times 10^{-10}$ & Fixed-$\eta_{\mathrm{paper}}$ baseline \\
+Faithful stoichiometric integrator (primary) &
+  $0.244$ & $2.51\times 10^{-5}$ & $2.54\times 10^{-10}$ \\
+Shell opportunity + dynamic $C_2$ (scaffold) &
+  --- & $\ll 10^{-5}$ & --- \\
+Legacy $H(T)$ + fixed lock-in $Q$ & $0.249$ & $5.3\times 10^{-10}$ & --- \\
 \midrule
-Observed band & $0.244\pm 0.004$ & $(2.53\pm 0.04)\times 10^{-5}$ & \cite{coc2015} \\
+Coc semi-analytic (\cite{coc2015}) & $0.244$ & $2.58\times 10^{-5}$ &
+  $4.65\times 10^{-10}$ \\
+Spite-plateau band & --- & --- & $(1.6$--$4.5)\times 10^{-10}$ \\
+\midrule
+Observed ($Y_p$, $D/H$) & $0.244\pm 0.004$ &
+  $(2.53\pm 0.04)\times 10^{-5}$ & --- \\
 \bottomrule
 \end{tabular}
+
+\medskip
+\footnotesize
+\emph{Row notes.} Primary row: $^3\mathrm{He}/H\approx 1.01\times 10^{-5}$;
+pre-depletion $^7\mathrm{Li}$; $z(D/H)\approx -0.45$ vs.\ Coc \cite{coc2015}.
+Coc and Spite rows are comparison layers, not HQIV integrator inputs.
 \end{table}
 
 \paragraph{Honest error budget.}
@@ -486,28 +694,26 @@ $\eta_{10}=5.60\pm 0.42$. A parallel early-dynamic baryogenesis
 correction and an $H_0$-only raise bracket $6.0$--$6.4$ without
 changing the per-shell source. Remaining upward levers visible in the
 witness---not yet promoted to theorems---include a
-trace-derived colour-singlet projector above $1/3$ and the Lean
-\texttt{baryogenesis\_binding\_curvature\_correction} term in
-\texttt{eta\_at\_horizon\_dynamic}. Downward levers include a larger
+trace-derived colour-singlet projector above $1/3$ and the binding-sourced
+baryogenesis correction in the horizon dynamic $\eta$ readout
+(Appendix~\ref{app:lean-index}). Downward levers include a larger
 effective radiation floor in the shell partition and stopping the
 integrator before additional post-lock-in shell accumulation.
 
 \paragraph{Witness discipline.}
-Machine-checked JSON:
-\texttt{data/dynamic\_bulk\_bbn\_v2.json} (bulk + BBN v3);
-\texttt{data/bbn\_witnesses\_dynamic.json} (early dynamic demo).
-Recompute with \texttt{python3 scripts/hqiv\_dynamic\_bulk\_bbn.py}.
+Machine-checked JSON witnesses are listed in \S\ref{sec:repro}. Standalone
+reproduction bundle: \texttt{scripts.zip} in this folder.
 
 \section{CP bias without naming \(\eta\): triality coupling}
 
-The \hyperref[lean:triality-well]{triality--rapidity-well module} defines
+The \LeanEng{lean:triality-well}{triality--rapidity-well module} defines
 \[
-\texttt{rapidityCPBias}(m) \;:=\; \Omega_k(m;m_{\mathrm{lockin}})-1,
+\mathrm{CP\text{-}bias}(m) \;:=\; \Omega_k(m;m_{\mathrm{lockin}})-1,
 \]
-the \hyperref[lean:rapidity-cp-bias]{rapidity CP-bias}---a pure
+the \LeanEng{lean:rapidity-cp-bias}{rapidity CP-bias}---a pure
 curvature-ratio deviation at the lock-in reference horizon. It then
 builds representation-sensitive triality increments by multiplying baseline
-barrier surfaces by $(1+\texttt{rapidityCPBias}(m)\cdot w_{\mathrm{rep}})$
+barrier surfaces by $(1+\mathrm{CP\text{-}bias}(m)\cdot w_{\mathrm{rep}})$
 with explicit $w_{\mathrm{rep}}\in\{0,+1,-1\}$ on the three
 $\mathrm{Spin}(8)$ triality channels, and proves exact three-rep averaging
 back to the rapidity well.
@@ -519,11 +725,11 @@ Lean proves the affine factors average identically to unity:
 \begin{equation}
 \label{eq:triality-tilt-average}
 \frac{1}{3}\sum_{\mathrm{rep}\in\{8_v,8_{s^+},8_{s^-}\}}
-\bigl(1+w_{\mathrm{rep}}\cdot \texttt{rapidityCPBias}(m)\bigr)=1
+\bigl(1+w_{\mathrm{rep}}\cdot \mathrm{CP\text{-}bias}(m)\bigr)=1
 \end{equation}
-(the \hyperref[lean:triality-tilt-avg]{triality tilt average identity}).
+(\LeanEng{lean:triality-tilt-avg}{triality tilt average identity}).
 The full triality increments average to the rapidity-written well surface
-(the \hyperref[lean:triality-inc-avg]{triality increment average identity}).
+(the \LeanEng{lean:triality-inc-avg}{triality increment average identity}).
 
 This is the cleanest Lean-backed ``CP-odd bias is tied to the same
 curvature-ratio channel'' statement that does \emph{not} import
@@ -533,14 +739,14 @@ coupling scaffold consistent with the lock-in ratios.
 
 \section{Link to HQVM Friedmann and O--Maxwell (compatibility, not yield)}
 
-The \hyperref[lean:gr-from-maxwell]{GR-from-Maxwell module} packages that
+The \LeanEng{lean:gr-from-maxwell}{GR-from-Maxwell module} packages that
 the same auxiliary $\phi$ appears in the HQVM lapse story and the
-O--Maxwell bookkeeping (the \hyperref[lean:same-phi]{shared-$\phi$
+O--Maxwell bookkeeping (the \LeanEng{lean:same-phi}{shared-$\phi$
 identity}), and that the same lattice $\alpha=3/5$ enters
 $G_{\mathrm{eff}}(\phi)=\phi^{\alpha}$ on the Friedmann side (the
-\hyperref[lean:same-alpha]{shared-$\alpha$ identity}). The homogeneous
+\LeanEng{lean:same-alpha}{shared-$\alpha$ identity}). The homogeneous
 Friedmann identity is packaged as an explicit algebraic equivalence (the
-\hyperref[lean:friedmann-compat]{HQVM Friedmann compatibility theorem}).
+\LeanEng{lean:friedmann-compat}{HQVM Friedmann compatibility theorem}).
 
 This supports the \emph{narrative} that cosmological background evolution used in companion numerics is not stitched from unrelated parameters: it is the same \((\alpha,\phi)\) ledger as the discrete gauge sector \cite{hqiv-oct-action-paper}.
 It does \emph{not}, by itself, integrate Boltzmann equations for baryon number violation in the SM.
@@ -568,22 +774,24 @@ This note stops where BBN begins at the \emph{ratio-level} lock-in
 calibration $\Omega_k(M;M)=1$ and the shared
 $\eta(n;N)=\eta_{\mathrm{paper}}\cdot\Omega_k(n;N)$ readout. The
 companion BBN preprint documents the library stack: the
-\hyperref[lean:bbn-umbrella]{BBN umbrella module} re-exports a
+\LeanEng{lean:bbn-umbrella}{BBN umbrella module} re-exports a
 network readout from composite-trace binding and isotope-ladder weights
-(\hyperref[lean:bbn-network]{BBN network-from-weights module}), an epoch
-ladder (\hyperref[lean:bbn-epoch]{BBN epoch modules}), and an integrated
-witness certificate (\hyperref[lean:bbn-witness]{BBN witness module})
-checked against \texttt{data/bbn\_witnesses.json}. Standard
+(\LeanEng{lean:bbn-network}{BBN network-from-weights module}), an epoch
+ladder (\LeanEng{lean:bbn-epoch}{BBN epoch modules}), and an integrated
+witness certificate (\LeanEng{lean:bbn-witness}{BBN witness module})
+checked against the BBN witness export (\S\ref{sec:repro}). Standard
 semi-analytic $Y_p$ and D/H reference fits (Coc et al.) appear only as
 \emph{comparison layers}, not as HQIV-derived inputs.
 
-The present v2 update adds the dynamic-bulk path that \emph{feeds} BBN:
-per-shell $\Omega_b$ and $\eta$ from
-\texttt{hqiv\_dynamic\_bulk\_bbn.py}, Casimir-modulated binding $Q$'s,
-and shell reaction opportunity in place of $H(T)$ as the integrator
-clock (Tables~\ref{tab:eta-methods}--\ref{tab:bbn-methods}). Those
-witnesses are documented here because they determine the comparison-layer
-$\eta$ passed into the BBN network; full abundance theorems remain in
+The present v3 update adds the dynamic-bulk path that \emph{feeds} comparison-layer
+$\eta$ and documents faithful BBN readouts at lock-in
+$\eta_{\mathrm{paper}}$: per-shell $\Omega_b$ from the dynamic bulk witness,
+Casimir-modulated binding $Q$'s
+\cite{hqiv-nucleon-binding-paper}, and the stoichiometric integrator at
+$\eta_{\mathrm{paper}}$ (Tables~\ref{tab:eta-methods}--\ref{tab:bbn-methods};
+\S\ref{sec:repro}).
+Those witnesses determine the comparison-layer $\eta$ band and the lock-in
+abundance panel passed downstream; full abundance theorems remain in
 \cite{hqiv-bbn-paper}.
 
 \section{Conclusion}
@@ -596,20 +804,62 @@ The first-principles content formalised today is:
 \item a triality representation scaffold coupling curvature-ratio bias to CP-sensitive increments, without importing \(\eta_{\mathrm{paper}}\).
   This scaffold ties CP-odd increments to the same curvature-ratio channel used for \(\mathrm{Spin}(8)\) closure and measurement; it does \emph{not} derive the bias itself from non-associativity of the octonion product (that remains a Tier-IV target).
 \item a GR/O--Maxwell compatibility package tying \((\alpha,\phi)\) across sectors;
-\item \textbf{(v2--v3 witnesses)} a dynamic bulk integrator deriving comparison-layer $\eta_{10}\approx 6.0$--$6.4$ from per-shell curvature, Casimir vev, and $B_{\mathrm{curv}}$; shell-opportunity BBN with dynamic $C_2$ yields $Y_p\approx 0.245$ and $D/H\approx 2.4\times 10^{-5}$ at $\eta_{10}\approx 6.2$ (Tables~\ref{tab:eta-methods}--\ref{tab:bbn-methods}, \texttt{integrator\_lean\_audit.json}).
+\item \textbf{(v3 witnesses)} a dynamic bulk integrator deriving comparison-layer $\eta_{10}\approx 6.20$ and $\Omega_b\approx 0.050$ from per-shell curvature, Casimir vev, and $B_{\mathrm{curv}}$; at lock-in $\eta_{\mathrm{paper}}$ the faithful BBN integrator yields $Y_p\approx 0.244$, $D/H\approx 2.51\times 10^{-5}$ ($z\approx -0.5$ vs.\ Coc \cite{coc2015}), $^7\mathrm{Li}/H\approx 2.54\times 10^{-10}$ (pre-depletion; Coc comparison $\approx 4.65\times 10^{-10}$; Tables~\ref{tab:eta-methods}--\ref{tab:bbn-methods}).
 \end{enumerate}
 That package is already enough for a mathematically disciplined
 ``baryogenesis stands on the same shoulders as $\mathrm{Spin}(8)$
 closure'' paper, now augmented by an explicit method-range audit for the
-observed $\eta$ band. The natural next formal manuscript in the programme
-is the BBN stack above; the remaining distance to textbook electroweak
-baryogenesis beyond that is washout, sphaleron integration, and
+observed $\eta$ band.
+
+\paragraph{Forward path.}
+The natural next formal manuscript is the BBN stack
+\cite{hqiv-bbn-paper}. The remaining distance to textbook electroweak
+baryogenesis lies in washout, sphaleron integration, and
 associator-derived CP violation---yield-level dynamics not yet in the
-Lean corpus. Closing the $\approx 8\%$ gap between the dynamic-bulk
-central $\eta_{10}$ and the observed value is expected to come from
-trace-derived baryon projectors and binding-sourced baryogenesis
+Lean corpus. Readers interested in the full programme are invited to
+begin with \href{\programmeurl}{disregardfiat.tech} and the
+\href{\leanrepourl}{HQIV-LEAN repository}. Closing the $\approx 8\%$ gap between the
+dynamic-bulk central $\eta_{10}$ and the observed value is expected to
+come from trace-derived baryon projectors and binding-sourced baryogenesis
 corrections already scaffolded in Lean, not from refitting
 $\eta_{\mathrm{paper}}$.
+
+\section*{Reproducibility}
+\label{sec:repro}
+
+All numerical rows in Tables~\ref{tab:eta-methods}--\ref{tab:bbn-methods} are
+regenerated from standalone Python witnesses bundled in
+\texttt{scripts.zip} in this folder (build script:
+\href{\scriptrepo/bundle\_baryogenesis\_scripts.py}{bundle\_baryogenesis\_scripts.py}
+from the repository root). The bundle includes entry scripts, transitive
+\texttt{hqiv\_*} imports, mirrored witness JSON, \texttt{pyproject.toml}, and
+\texttt{MANIFEST.sha256}. No Lean installation is required to verify the
+witnesses. The same scripts power witness panels on
+\href{\programmeurl}{disregardfiat.tech}.
+
+\noindent\textbf{Repository.}
+Source of truth: \href{\leanrepourl}{github.com/HQIV/hqiv-lean}. Witness JSON
+at \texttt{data/} in the repository root; the deposit bundle mirrors these
+under \texttt{scripts/data/}.
+
+\begin{summarybox}
+\noindent\textbf{Quick regeneration (repository root).}
+\begin{verbatim}
+python3 scripts/hqiv_dynamic_bulk_bbn.py
+python3 scripts/hqiv_bbn_integrator.py --json data/bbn_integrator.json
+python3 scripts/hqiv_integrator_lean_audit.py
+python3 -m unittest scripts.test_hqiv_dynamic_c2_bbn \
+                     scripts.test_hqiv_bbn_integrator
+python3 scripts/bundle_baryogenesis_scripts.py
+\end{verbatim}
+From the extracted bundle only (no Lean build required):
+\begin{verbatim}
+cd papers/baryogenesis_lockin/scripts
+PYTHONPATH=. python3 hqiv_dynamic_bulk_bbn.py
+PYTHONPATH=. python3 hqiv_bbn_integrator.py --json data/bbn_integrator.json
+PYTHONPATH=. python3 hqiv_integrator_lean_audit.py
+\end{verbatim}
+\end{summarybox}
 
 \section*{Acknowledgments}
 AI-assisted drafting and repository tooling were used during manuscript
@@ -621,8 +871,34 @@ in the HQIV-LEAN library \cite{hqiv-lean}.
 \section{Lean module index}
 \label{app:lean-index}
 
-The Lean development lives at \url{https://github.com/HQIV/hqiv-lean}
-\cite{hqiv-lean}. Reader-friendly anchors in the body link here.
+The Lean development lives at \href{\leanrepourl}{HQIV-LEAN}
+\cite{hqiv-lean}. The main text cites \emph{English} module and theorem
+names (clickable links to entries below); Lean file paths and identifier
+names appear only in this appendix. The same index is browsable at
+\href{\programmeurl}{disregardfiat.tech}.
+
+\subsection*{Recommended starting modules for newcomers}
+
+\begin{description}[leftmargin=0em,style=nextline]
+\item[\textbf{\leanfile{Hqiv/Geometry/OctonionicLightCone.lean}}]
+  Discharges the discrete shell ladder, shell-shape factor $\sigma(m)$,
+  curvature integral $I(n)$, and $\Omega_k$ monotonicity---the geometric
+  spine every downstream application shares.
+\item[\textbf{\leanfile{Hqiv/Physics/BaryogenesisCore.lean}}]
+  Packages QCD/lock-in shell indices and $\Omega_k$ readouts \emph{without}
+  importing experimental $\eta$; start here for ratio-level cosmology.
+\item[\textbf{\leanfile{Hqiv/Physics/BaryogenesisWitness.lean}}]
+  Defines $\eta(n;N)$ with shared normalisation to $\Omega_k$ and proves
+  the parallel monotonicity lemmas once $\eta_{\mathrm{paper}}$ is declared.
+\item[\textbf{\leanfile{Hqiv/Physics/BaryogenesisDynamicBulk.lean}}]
+  v3 dynamic-bulk packaging: colour-singlet fraction, $\Omega_b$ channel,
+  comparison-layer $\eta$ bridge (witnessed in Python, partially proved).
+\item[\textbf{\leanfile{Hqiv/Physics/BBNStoichiometricIntegrator.lean}}]
+  Companion entry to \cite{hqiv-bbn-paper}: faithful BBN stoichiometric
+  integrator consuming lock-in $\eta$ from this note.
+\end{description}
+
+\subsection*{Full module index}
 
 \begingroup
 \sloppy
@@ -687,6 +963,10 @@ The Lean development lives at \url{https://github.com/HQIV/hqiv-lean}
   \leanid{same\_alpha\_in\_O\_Maxwell\_and\_HQVM}.
 \item[\phantomsection\label{lean:friedmann-compat}\textbf{HQVM Friedmann compatibility.}]
   \leanid{O\_Maxwell\_compatible\_with\_HQVM\_GR\_homogeneous}.
+\item[\phantomsection\label{lean:bbn-stoichiometric}\textbf{BBN stoichiometric integrator (companion).}]
+  Synthesis-window $D/H$, coupled neutron inventory, stratified $^3\mathrm{He}$
+  gates; Python mirror \scriptfile{hqiv\_bbn\_integrator.py}.
+  \leanfile{Hqiv/Physics/BBNStoichiometricIntegrator.lean}.
 \item[\phantomsection\label{lean:bbn-programme}\textbf{BBN companion \cite{hqiv-bbn-paper} (not in this note's graph).}]
   Umbrella + network + epoch + witness; consumes lock-in $\eta$.
   See entries below.
@@ -718,6 +998,11 @@ The Lean development lives at \url{https://github.com/HQIV/hqiv-lean}
   \leanid{bbnShellReactionOpportunity},
   \leanid{bbnCurvatureOpportunityFactor} in
   \leanfile{Hqiv/Physics/BBNEpochNetwork.lean}.
+\item[\phantomsection\label{lean:dynamic-bulk-vital}\textbf{Dynamic bulk vital bundle.}]
+  \leanid{colorSingletFraction}, \leanid{omegaBFromOmegaM},
+  \leanid{etaComparisonFromCosmology},
+  \leanid{baryogenesis\_dynamic\_bulk\_vital\_holds\_any}.
+  \leanfile{Hqiv/Physics/BaryogenesisDynamicBulk.lean}.
 \item[\phantomsection\label{lean:dynamic-bulk-witness}\textbf{Dynamic bulk witness (Python).}]
   \texttt{scripts/hqiv\_dynamic\_bulk\_bbn.py} $\to$
   \texttt{data/dynamic\_bulk\_bbn\_v2.json};
@@ -729,6 +1014,7 @@ The Lean development lives at \url{https://github.com/HQIV/hqiv-lean}
 \section{Lean dependency sketch}
 \label{app:dependency}
 
+{\footnotesize
 \begin{verbatim}
 OctonionicLightCone
   (shell_shape, curvature_integral, curvature_integral_strict_mono,
@@ -738,34 +1024,26 @@ OctonionicLightCone
         v
 BaryogenesisCore
   (m_QCD, m_lockin, T_QCD, T_lockin, baryogenesisShells,
-   omega_k_lockin_calibration, baryogenesis_vital_omega_T_no_eta)
+   omega_k_lockin_calibration, ...)
         |
         +----------------------> TrialityRapidityWellEquivalence
-        |                        (rapidityCPBias from omega_k_at_horizon;
-        |                         triality_cp_tilt_factors_average_eq_one;
-        |                         cpSensitiveTrialityIncrement_threeRep_average_eq_rapidityWell)
+        |                        (rapidityCPBias; triality tilt average)
         |
         +--> BaryogenesisEtaPaper  (eta_paper only)
         |
         v
 BaryogenesisWitness
-  (eta_at_horizon_mono, eta_at_horizon_strict_mono,
-   eta_at_horizon_le_eta_paper,
-   baryogenesis_same_normalization_as_omega_k, ...)
+  (eta monotonicity; baryogenesis_same_normalization_as_omega_k)
 
-DynamicBBNBaryogenesis  (bbnBindingReleaseFactor, *_effectiveAtT,
-  bbnDynamicC2OpportunitySuppression,
-  bbnShellReactionOpportunity_dynamic_integrator)
-  --> HopfShellBeltramiMassBridge.tuftHopfKappa6AtXi / tuftLapseConcentrationAtXi
-  --> BBNEpochNetwork.bbnShellReactionOpportunity
+DynamicBBNBaryogenesis + HopfShellBeltramiMassBridge (dynamic C2 pack)
+GRFromMaxwell  (same_phi / same_alpha / Friedmann compatibility)
 
-GRFromMaxwell  (same_phi / same_alpha / HQVM Friedmann compatibility)
+BigBangNucleosynthesis  (companion; not in this note's graph)
+  --> BBNNetworkFromWeights, BBNEpochNetwork, BBNWitness
 
-BigBangNucleosynthesis  (companion hqiv-bbn-paper; not in this note's graph)
-  --> BBNNetworkFromWeights, BBNEpochNetwork, BBNEpochEvolution, BBNWitness
-
-Python witnesses: dynamic_bulk_bbn_v2.json, bbn_witnesses_dynamic.json
+Python witnesses: see Sec. repro
 \end{verbatim}
+}
 
 \bibliographystyle{plain}
 \bibliography{../references}

@@ -6,6 +6,15 @@
 \providecommand{\leanCertAnomaly}{}
 \providecommand{\leanCertTopology}{}
 \providecommand{\leanCertStrongColor}{}
+\providecommand{\leanPatchHolonomyWitness}{(\leanfile{Hqiv/Physics/SO8PlaquetteHolonomy.lean},
+witness \leanid{so8PlaquetteHolonomyDischarged_holds})}
+\providecommand{\leanPatchWilsonKinetic}{(\leanfile{Hqiv/Physics/ActionHolonomyGlue.lean},
+witness \leanid{wilsonKineticPlaquetteEquivalence_discharged})}
+\providecommand{\leanPatchHaarMeasure}{(\leanfile{Hqiv/Physics/NonAbelianHolonomyMeasureScaffold.lean})}
+\providecommand{\leanPatchDiscretePoincare}{(\leanfile{Hqiv/Physics/DiscreteActionStrongPoincareBridge.lean},
+\leanfile{Hqiv/Physics/DiscreteActionPoincareScaffold.lean})}
+\providecommand{\leanPatchSpatialRotation}{(\leanfile{Hqiv/Geometry/SpatialRotationLorentzClosure.lean},
+witness \leanid{spatial_rotation_lorentz_closure_discharged})}
 \providecommand{\leanfile}[1]{\nolinkurl{#1}}
 \providecommand{\leanid}[1]{\nolinkurl{#1}}
 
@@ -44,15 +53,12 @@ cyclic plaquette flatness, and weak/colour commutator certificates are discharge
 the octonion carrier (see the sector zeta and holonomy discharge bundle in the Lean
 catalog).  **Matrix Wilson layer:** full four-edge SO(8) generator transport and
 Hopf-shell $T^4$ torsion plaquettes with pinned non-abelian witness
-(\leanfile{Hqiv/Physics/SO8PlaquetteHolonomy.lean},
-witness \leanid{so8PlaquetteHolonomyDischarged_holds}).  **Wilson--kinetic equivalence**
-(\leanfile{Hqiv/Physics/ActionHolonomyGlue.lean},
-witness \leanid{wilsonKineticPlaquetteEquivalence_discharged}).  **Partial / open:** Haar
+\leanPatchHolonomyWitness.  **Wilson--kinetic equivalence**
+\leanPatchWilsonKinetic.  **Partial / open:** Haar
 measure on rotated charts
-(\leanfile{Hqiv/Physics/NonAbelianHolonomyMeasureScaffold.lean}); general flat HQVM kinetic
+\leanPatchHaarMeasure; general flat HQVM kinetic
 boost and full strong-interacting discrete-action Poincaré
-(\leanfile{Hqiv/Physics/DiscreteActionStrongPoincareBridge.lean},
-\leanfile{Hqiv/Physics/DiscreteActionPoincareScaffold.lean}).  Where the optional
+\leanPatchDiscretePoincare.  Where the optional
 strong-colour certificate is invoked, the global Gell-Mann bracket law is proved on
 the finite $\mathfrak{su}(3)$ chart\leanCertStrongColor.
 \item \textbf{Rapidity phase and Lorentz invariance.} The null-lattice carrier
@@ -66,8 +72,7 @@ $\phi$ transforms as a Lorentz scalar.  The honest $3{+}1$ extension preserves
 rotations on $\mathrm{Fin}\,3$ spatial vectors preserve Euclidean inner products,
 $\|{\mathbf r}\times{\mathbf v}\|^2$, axis-projection fractions, and the spatial
 block of \texttt{minkowskiSq4} when time is fixed
-(\leanfile{Hqiv/Geometry/SpatialRotationLorentzClosure.lean},
-witness \leanid{spatial_rotation_lorentz_closure_discharged}).  Applied discharge:
+\leanPatchSpatialRotation.  Applied discharge:
 CMB sky rotation shifts the Stokes angle additively while preserving
 $\cos^2+\sin^2=1$; O-Maxwell fluid sources rotate covariantly with gradients;
 coronal axis projections are joint rotation invariants.  Full patch Lorentz on the
@@ -87,3 +92,31 @@ statements that supply the same consistency checks for the readout pipeline.  Th
 is why familiar QFT language can appear in the comparison layer while the
 predictions remain patch-level statements with fewer adjustable inputs than a
 continuum effective fit.
+
+\paragraph{Projection geometry and the classical $\zeta$ dictionary (2026-06).}
+HQIV uses \emph{zeta} in two distinct, now formally separated roles:
+\begin{itemize}[nosep]
+\item \textbf{Sector zeta on the patch carrier} (TUFT+SM synthesis): fibre-torsion
+subleading bodies, \texttt{zetaHQIVTerm} phase on Hopf shells, and holonomy
+discharge bundles on the octonion light-cone carrier---finite spectral readouts
+indexed by shell and Fano sector, not the Riemann function.
+\item \textbf{Classical $\zeta(s)$ as an SO(4) projection readout}
+(\cite{hqiv-s3-zeta-so4-paper}): the Mathlib Riemann zeta packaged as a
+\emph{regional} closed form on $\mathbb{C}$---Dirichlet/Euler for $\Re s>1$,
+sin--cos--$\Gamma$ assembly on the strip, Bernoulli slots---with the
+functional-equation pair $(\sigma,1-\sigma)$ interpreted as a $45^\circ$
+quaternionic projection.  Machine-checked on this spine: harmonic divergence
+forces $\Delta$ and $\mathfrak{so}(4)$ closure; shell sum $=\zeta(s)$ for
+$\Re s>1$; polar decoupling $n^{-s}=n^{-\sigma}\cdot e^{-it\log n}$ (modulus
+$\sigma$-only, phase $t$-only); prime-log Diophantine independence; Goldbach
+circle $pq+(q-N)^2=N^2$ as additive curvature in the log channel; and a large
+family of RH-\emph{equivalent} locators (twiddle, spectral weights, polar
+collapse, transformer adjoint law, S$^7$ torsion cancellation) with
+\emph{zero slack}---not a discharge of RH or Goldbach parity.
+\end{itemize}
+Continuum heat-flow and de~Bruijn--Newman notation in the same story spine are
+\emph{comparison ports} ($\texttt{dbnHeatFamily}$, lattice dominance hypotheses);
+they are not load-bearing continuum extensions of the patch.  Formal mathematical
+notes may include only the readout-dictionary paragraph
+(\texttt{readout\_dictionary\_messaging.tex}) rather than this full contract when
+the manuscript is projection geometry rather than patch phenomenology.

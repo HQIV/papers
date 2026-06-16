@@ -35,4 +35,4 @@ lake env lean Hqiv/Physics/HepDecayReadout.lean
 
 ## Upstream
 
-Consumes the published TUFT+SM synthesis (`hqiv-tuft-sm-lagrangian-paper`, DOI [`10.5281/zenodo.20517172`](https://doi.org/10.5281/zenodo.20517172)) and the nucleon-binding three-ledger programme (`hqiv-nucleon-binding-paper`).
+Consumes the published TUFT+SM synthesis (`hqiv-tuft-sm-lagrangian-paper`, DOI [`10.5281/zenodo.20601215`](https://doi.org/10.5281/zenodo.20601215)) and the nucleon-binding three-ledger programme (`hqiv-nucleon-binding-paper`).

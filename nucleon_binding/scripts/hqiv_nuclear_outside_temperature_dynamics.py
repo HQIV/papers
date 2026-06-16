@@ -52,7 +52,188 @@ AU_M = 1.495978707e11
 GALACTIC_VC_M_S = 233_000.0  # circular speed at the Sun (local Milky-Way disk)
 C_LIGHT_M_S = 299792458.0
 
+# CMB monopole (universe-age / relic background) and Solar-System peculiar velocity.
+CMB_TEMPERATURE_K = 2.725
+LAB_ROOM_TEMPERATURE_K = 300.0
+CMB_DIPOLE_V_M_S = 369.82e3  # SS peculiar speed toward Leo (Planck 2018 class)
+
 GravityBindingTier = Literal["none", "earth", "solar_system", "full"]
+
+
+@dataclass(frozen=True)
+class LabOutsideEnvironment:
+    """
+    Lab outside-curvature slots relative to the hadronic lock-in anchor (``XI_LOCKIN``).
+
+    * **Anchor chart** — ``xi_lock`` names the QCD-onset export row; ``f_anchor = 1`` there.
+    * **CMB temperature** — ``T_CMB`` maps to ``ξ_CMB = T_Pl/(k_B T)`` (cosmic age slot).
+    * **Lab temperature** — room/cryogenic ``T_lab`` enters through the same ``T(ξ)`` ladder.
+    * **Gravity** — ``ε = Σ GM/(Rc²)`` on Earth + Sun + Galactic disk support.
+    * **CMB dipole** — peculiar ``v/c`` books an additive lapse slot on the same ``G_eff``
+      channel as gravity (flyby / beam readout convention).
+    """
+
+    lab_temperature_K: float = LAB_ROOM_TEMPERATURE_K
+    reference_temperature_K: float = CMB_TEMPERATURE_K
+    gravity_tier: GravityBindingTier = "full"
+    cmb_dipole_velocity_m_s: float = CMB_DIPOLE_V_M_S
+    anchor_xi: float = XI_LOCKIN
+    lab_xi: float | None = None
+    bonded: bool = False
+
+    @property
+    def cmb_proper_motion_v_over_c(self) -> float:
+        return self.cmb_dipole_velocity_m_s / C_LIGHT_M_S
+
+    @property
+    def lab_xi_from_temperature(self) -> float:
+        if self.lab_xi is not None:
+            return self.lab_xi
+        return xi_from_temperature_K(self.lab_temperature_K)
+
+    @property
+    def reference_xi_from_temperature(self) -> float:
+        return xi_from_temperature_K(self.reference_temperature_K)
+
+    @property
+    def gravity_phi_epsilon(self) -> float:
+        return local_lab_gravity_phi_epsilon(self.gravity_tier)
+
+    @property
+    def combined_phi_epsilon(self) -> float:
+        """Gravity stack plus CMB-dipole ``v/c`` on the outside ``G_eff`` channel."""
+        return self.gravity_phi_epsilon + self.cmb_proper_motion_v_over_c
+
+    def temperature_modulator(self, *, at_lab: bool = True) -> float:
+        xi = self.lab_xi_from_temperature if at_lab else self.reference_xi_from_temperature
+        return outside_curvature_binding_modulator(xi, bonded=self.bonded)
+
+    def gravity_modulator(self) -> float:
+        return outside_gravity_geff_modulator(self.gravity_phi_epsilon)
+
+    def kinetic_modulator(self) -> float:
+        return outside_gravity_geff_modulator(self.cmb_proper_motion_v_over_c)
+
+    def lab_modulator(self) -> float:
+        """Cosmic temperature ladder at ``T_lab`` plus gravity and dipole."""
+        return outside_environment_modulator(
+            self.lab_xi_from_temperature,
+            bonded=self.bonded,
+            phi_gravity_epsilon=self.combined_phi_epsilon,
+        )
+
+    def hadronic_lab_modulator(self) -> float:
+        """
+        Mass-chart modulator at the lock-in shell with lab gravity + dipole only.
+
+        CMB/lab temperature enters as a separate support ratio, not by replacing
+        ``xi_lock`` on the hadronic binding chart.
+        """
+        return outside_environment_modulator(
+            self.anchor_xi,
+            bonded=self.bonded,
+            phi_gravity_epsilon=self.combined_phi_epsilon,
+        )
+
+    def anchor_modulator(self) -> float:
+        return outside_environment_modulator(
+            self.anchor_xi,
+            bonded=self.bonded,
+            phi_gravity_epsilon=0.0,
+        )
+
+    def support_ratio_vs_cmb(self) -> float:
+        """Lifetime-style ratio: lab (``T_lab``, gravity, dipole) vs CMB monopole reference."""
+        return lab_outside_support_lifetime_factor(
+            self.lab_temperature_K,
+            phi_gravity_epsilon=self.combined_phi_epsilon,
+            reference_K=self.reference_temperature_K,
+            reference_phi_gravity_epsilon=0.0,
+        )
+
+    def increment_vs_anchor(self) -> float:
+        """``f_hadronic_lab / f_anchor − 1`` for differential mass booking."""
+        anchor = self.anchor_modulator()
+        if anchor <= 0.0:
+            return math.inf
+        return self.hadronic_lab_modulator() / anchor - 1.0
+
+
+@dataclass(frozen=True)
+class LabOutsideDecomposition:
+    """Ppm-scale audit of each outside slot on the nucleon trace."""
+
+    trace_mev: float
+    anchor_modulator: float
+    lab_modulator: float
+    temperature_modulator_lab: float
+    temperature_modulator_cmb: float
+    gravity_modulator: float
+    kinetic_modulator: float
+    support_ratio_vs_cmb: float
+    increment_vs_anchor: float
+    mass_shift_ppm_vs_anchor: float
+    mass_shift_ppm_vs_pdg: float
+    lab_xi: float
+    reference_xi: float
+    anchor_xi: float
+    gravity_phi_epsilon: float
+    cmb_proper_motion_v_over_c: float
+
+    def to_dict(self) -> dict[str, float]:
+        return asdict(self)
+
+
+def cmb_proper_motion_v_over_c(v_m_s: float = CMB_DIPOLE_V_M_S) -> float:
+    return v_m_s / C_LIGHT_M_S
+
+
+def lab_outside_decomposition(
+    env: LabOutsideEnvironment | None = None,
+    *,
+    shell: int = REFERENCE_M,
+    pdg_proton_mev: float = 938.27208816,
+    inner_raw_mev: float | None = None,
+) -> LabOutsideDecomposition:
+    """Export ppm budget for gravity + CMB temperature + dipole slots."""
+    env = env or LabOutsideEnvironment()
+    trace = niob.nucleon_trace_binding_mev(shell)
+    inner = inner_raw_mev if inner_raw_mev is not None else trace  # placeholder if unset
+    inc = env.increment_vs_anchor()
+    observed = inner - trace * inc
+    return LabOutsideDecomposition(
+        trace_mev=trace,
+        anchor_modulator=env.anchor_modulator(),
+        lab_modulator=env.hadronic_lab_modulator(),
+        temperature_modulator_lab=env.temperature_modulator(at_lab=True),
+        temperature_modulator_cmb=env.temperature_modulator(at_lab=False),
+        gravity_modulator=env.gravity_modulator(),
+        kinetic_modulator=env.kinetic_modulator(),
+        support_ratio_vs_cmb=env.support_ratio_vs_cmb(),
+        increment_vs_anchor=inc,
+        mass_shift_ppm_vs_anchor=inc * trace / pdg_proton_mev * 1.0e6,
+        mass_shift_ppm_vs_pdg=(observed - pdg_proton_mev) / pdg_proton_mev * 1.0e6,
+        lab_xi=env.lab_xi_from_temperature,
+        reference_xi=env.reference_xi_from_temperature,
+        anchor_xi=env.anchor_xi,
+        gravity_phi_epsilon=env.gravity_phi_epsilon,
+        cmb_proper_motion_v_over_c=env.cmb_proper_motion_v_over_c,
+    )
+
+
+def per_nucleon_lab_outside_mass_shift_mev(
+    env: LabOutsideEnvironment | None = None,
+    *,
+    shell: int = REFERENCE_M,
+) -> float:
+    """
+    Differential outside booking on mass: ``−τ × (f_lab/f_anchor − 1)``.
+
+    Positive return means predicted mass increases (outside weakened vs anchor).
+    """
+    env = env or LabOutsideEnvironment()
+    trace = niob.nucleon_trace_binding_mev(shell)
+    return -trace * env.increment_vs_anchor()
 
 
 @dataclass(frozen=True)
@@ -468,10 +649,14 @@ def nucleon_own_binding_mev(
     *,
     bonded: bool,
     c: float = 1.0,
+    phi_gravity_epsilon: float = 0.0,
 ) -> float:
     """Per-nucleon composite trace binding modulated by outside curvature at ξ."""
     trace = niob.nucleon_trace_binding_mev(m, c)
-    return trace * outside_curvature_binding_modulator(xi, bonded=bonded)
+    mod = outside_environment_modulator(
+        xi, bonded=bonded, phi_gravity_epsilon=phi_gravity_epsilon
+    )
+    return trace * mod
 
 
 def caustic_outside_binding_at_xi(
@@ -601,6 +786,21 @@ def cluster_mass_mev_nuclear(
     return float(A) * m_nucleon - total
 
 
+def binding_q_network_at_xi(
+    m_shell: int,
+    m_nucleon: float,
+    xi: float,
+    *,
+    c: float = 1.0,
+) -> tuple[float, float, float]:
+    """Light-nucleus Q from shared-well network + spin–magnetic residual at ξ."""
+    _ = m_nucleon
+    Q_D = bbn.cluster_binding_network_mev(m_shell, 2, Z=1, c=c, xi=xi)
+    Q_4 = bbn.cluster_binding_network_mev(m_shell, 4, Z=2, c=c, xi=xi)
+    Q_3 = bbn.cluster_binding_network_mev(m_shell, 3, Z=2, c=c, xi=xi)
+    return Q_D, Q_4, Q_3
+
+
 def binding_q_hybrid_at_xi(
     m_shell: int,
     m_nucleon: float,
@@ -608,14 +808,20 @@ def binding_q_hybrid_at_xi(
     *,
     xi_lock: float = XI_LOCKIN,
     c: float = 1.0,
+    use_network_spine: bool = True,
 ) -> tuple[float, float, float]:
     """
-    Nuclear inside/outside shape at ξ with lock-in amplitudes anchored to the
-    legacy BBN valley witness at ``ξ_lock`` (proton anchor unchanged).
+    Nuclear binding Q at ξ with lock-in amplitudes anchored to the network spine
+    (default) or legacy valley witness when ``use_network_spine=False``.
     """
-    Q_n = binding_q_nuclear_at_xi(m_shell, m_nucleon, xi, c=c)
-    Q_nl = binding_q_nuclear_at_xi(m_shell, m_nucleon, xi_lock, c=c)
-    Q_ll = bbn.lockin_binding_q(m_nucleon, m_shell, c)[:3]
+    if use_network_spine:
+        Q_n = binding_q_network_at_xi(m_shell, m_nucleon, xi, c=c)
+        Q_nl = binding_q_network_at_xi(m_shell, m_nucleon, xi_lock, c=c)
+        Q_ll = bbn.lockin_binding_q_network(m_nucleon, m_shell, c, xi=xi_lock)[:3]
+    else:
+        Q_n = binding_q_nuclear_at_xi(m_shell, m_nucleon, xi, c=c)
+        Q_nl = binding_q_nuclear_at_xi(m_shell, m_nucleon, xi_lock, c=c)
+        Q_ll = bbn.lockin_binding_q(m_nucleon, m_shell, c)[:3]
     out: list[float] = []
     for qn, qnl, qll in zip(Q_n, Q_nl, Q_ll):
         if abs(qnl) < 1e-30:

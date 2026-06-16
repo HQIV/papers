@@ -54,7 +54,7 @@ Nielsen TUFT Hopf Shells and Inner--Outer Casimir Realization}
 \author{Steven Ettinger Jr}
 \address{Independent Researcher}
 \email{steven@disregardfiat.tech}
-\date{Published v1 --- Zenodo \href{https://doi.org/10.5281/zenodo.20517172}{10.5281/zenodo.20517172} (2026-06-02)}
+\date{Published v2 --- Zenodo \href{https://doi.org/10.5281/zenodo.20601215}{10.5281/zenodo.20601215} (2026-06-08)}
 
 \subjclass[2020]{81T13, 81T25, 83C45, 68T15, 81V22}
 \keywords{Standard Model Lagrangian; Hopf fibration; discrete octonion; inner--outer Casimir; machine-checked physics; Nielsen TUFT; dynamic mass spectrum; longitudinal electromagnetic forces}
@@ -545,10 +545,10 @@ monotone in the horizon coordinate: colder slices (larger $\xi$) concentrate lap
   \label{fig:c2-xi}
 \end{figure}
 
-On the BBN temperature chart the same $C_2(\xi)$ enters $\kappa_6=\eta_{\mathrm{obs}}\,B_{\mathrm{curv}}(\xi)\,\gamma\,C_2(\xi)$ with \textbf{dynamic opportunity weighting} rather than a lock-in mass re-fit: for $T\le T_{\mathrm{bn}}(\eta)$ the shell reaction clock multiplies by $(\kappa_{6,\mathrm{ref}}/\kappa_6)^{w_{C_2}(T)}$ with $w_{C_2}$ tied to the deuteron bottleneck.\footnote{Lean: \hyperref[lean:dynamic-bbn]{dynamic BBN baryogenesis}; script: \scriptfile{hqiv_dynamic_bulk_bbn.py}.}
+On the BBN temperature chart the same $C_2(\xi)$ enters $\kappa_6=\eta_{\mathrm{obs}}\,B_{\mathrm{curv}}(\xi)\,\gamma\,C_2(\xi)$ with \textbf{dynamic opportunity weighting} rather than a lock-in mass re-fit: for $T\le T_{\mathrm{bn}}(\eta)$ the shell reaction clock multiplies by $(\kappa_{6,\mathrm{ref}}/\kappa_6)^{w_{C_2}(T)}$ with $w_{C_2}$ tied to the deuteron bottleneck.\footnote{Lean: \hyperref[lean:dynamic-bbn]{dynamic BBN baryogenesis}, \hyperref[lean:bbn-stoichiometric]{BBN stoichiometric integrator}; scripts: \scriptfile{hqiv_bbn_integrator.py}, \scriptfile{hqiv_bbn_condition_decay.py}.}
 
 \paragraph{Cosmological consistency check.}
-The \emph{same} $C_2(\xi)$ slot that fixes laboratory $\kappa_6$ at $\xi_{\mathrm{lock}}$ enters the BBN integrator without extra MeV cutoffs. At $\eta_{10}\approx 6.2$ the dynamic-$C_2$ network yields $Y_p\approx 0.245$ and $D/H\approx 2.4\times 10^{-5}$ (audit: \path{data/integrator\_lean\_audit.json}), supporting the interpretation of $C_2$ as physical lapse running rather than a lock-in-only fit. Laboratory mass tables remain at $\xi_{\mathrm{ref}}=5$; cosmology probes $\xi(T)$ directly.
+The \emph{same} $C_2(\xi)$ slot that fixes laboratory $\kappa_6$ at $\xi_{\mathrm{lock}}$ enters the faithful BBN integrator \cite{hqiv-bbn-paper,hqiv-nucleon-binding-paper} without extra MeV cutoffs. At $\eta_{\mathrm{paper}}=6.10\times10^{-10}$ the stoichiometric witness exports $Y_p\approx 0.244$ (post-synthesis neutron inventory; obs.\ $0.244\pm0.004$), $D/H\approx 2.51\times10^{-5}$ ($z\approx -0.5$ vs.\ Coc $(2.53\pm0.04)\times10^{-5}$), $^3\mathrm{He}/\mathrm{H}\approx 1.01\times10^{-5}$, and $^7\mathrm{Li}/\mathrm{H}\approx 2.54\times10^{-10}$ (pre-depletion HQIV readout; Coc semi-analytic comparison $\approx 4.65\times10^{-10}$)---see \path{data/bbn\_integrator.json} and decomposition tables in \path{data/bbn\_paper\_tables.json}. This supports $C_2$ as physical lapse running on the MeV chart rather than a lock-in-only mass fit. Laboratory mass tables remain at $\xi_{\mathrm{ref}}=5$; cosmology probes $\xi(T)$ directly through the nucleon outside-curvature and $\nu$-opacity stack wired in \cite{hqiv-nucleon-binding-paper}.
 
 \subsection{Error budget and sensitivity}
 \label{sec:error-budget}
@@ -1168,7 +1168,7 @@ For cross-check exports only, \hyperref[lean:scale-witness]{scale witness discip
 \paragraph{Curvature budget and shell readouts.}
 The cumulative chart ratio $\Omega_k(\xi)/\Omega_k(\xi_{\mathrm{lock}})$ compares epochs to lock-in; it is \emph{not} the same-epoch local/global budget. While local and global curvature coincide (through recombination and the lock-in chart), $B_{\mathrm{curv}}=1$ and $\eta_{\mathrm{local}}=\eta_{\mathrm{obs}}$. For shell-$n$ versus horizon-$N$ comparisons the partial readout
 $\eta(n;N)=\eta_{\mathrm{obs}}\,\Omega_k(n;N)$
-remains the baryogenesis witness only; BBN exports use the dynamic opportunity clock of \S\ref{sec:error-budget}, not a raw $\kappa_6$ multiplier at MeV temperatures.
+remains the baryogenesis witness only; BBN exports use the faithful stoichiometric integrator of \S\ref{sec:c2-rindler} (dynamic-$C_2$ opportunity clock plus synthesis-window $n\!+\!p\!\to\!D$ capture), not a raw $\kappa_6$ multiplier at MeV temperatures.
 
 The overlap $\gamma_{\mathrm{HQIV}}=2/5$ is the proved horizon-split coefficient; $C_2$ is the lapse-concentration factor of \eqref{eq:C2-lapse}--\eqref{eq:obs-lapse}. At lock-in Lean proves $C_2=56/45$; the pre-closure regression $1.135\ldots$ is retained only as \texttt{tuftHopfKappa6SecondOrderCorrectionLegacy}.
 
@@ -1471,7 +1471,7 @@ The present synthesis establishes the structural bridge and the dynamic mechanis
 \begin{itemize}[nosep]
 \item \textbf{Longitudinal EM.} Phase-gradient stress from O-Maxwell (\S\ref{sec:longitudinal-em}): absence of the correlated signature at computed sensitivity, together with static $\kappa_6$, would reject the carrier.
 \item \textbf{Temperature running.} Masses, $\sin^2\theta_W$, and $\kappa_6$ must co-vary along $\xi(T)$ without per-sector retuning; a $\gtrsim 5\%$ drift in $\mu/\mathrm{PDG}$ and $e/\mathrm{PDG}$ at fixed $\xi$ while holding hadron readouts fixed would fail the chart.
-\item \textbf{BBN consistency.} The same $C_2(\xi)$ must yield $Y_p$ and $D/H$ in the audited band at $\eta_{10}\approx 6.2$ without ad hoc MeV cutoffs (\S\ref{sec:error-budget}).
+\item \textbf{BBN consistency.} The same $C_2(\xi)$ must yield $Y_p$ and light-ion abundances in the audited band at $\eta_{\mathrm{paper}}$ ($\eta_{10}=6.10$) without ad hoc MeV cutoffs: current witness $Y_p\approx 0.244$, $D/H\approx 2.51\times10^{-5}$ ($z\approx -0.5$ vs.\ Coc), $^7\mathrm{Li}/H\approx 2.54\times10^{-10}$ (pre-depletion; Coc comparison $\approx 4.65\times10^{-10}$; \S\ref{sec:c2-rindler}, \cite{hqiv-bbn-paper}).
 \item \textbf{Birefringence.} Isotropic birefringence is a line-of-sight HQVM lapse integral from last scattering ($z_{\mathrm{rec}}\approx 1100$) to the observer, not a local age at emission. Under proton lock-in, $\beta_{\mathrm{HQIV}}\approx 0.379^\circ$ follows from $(m_p,t_{\mathrm{wall}},T_{\mathrm{CMB}})$ and \emph{selects} wall-clock over look-back time (\S\ref{subsec:scale-witness}, Table~\ref{tab:scale-witness-chain}).
 \item \textbf{Single-witness consistency.} Improving the proton mass by one significant figure should shrink predicted $t_{\mathrm{app}}$ uncertainty by the same factor ($\delta t/t\approx\delta m_p/m_p$). A simultaneous failure to match FIRAS $T_{\mathrm{CMB}}$, Planck $\eta_{\mathrm{obs}}$, and the PDG lock-in table from one $m_p$ anchor would falsify the witness discipline.
 \end{itemize}
@@ -1481,6 +1481,8 @@ A combined failure of lock-in lepton matches ($>5\sigma$ on $\mu$ and $e$ simult
 \section{Conclusion}
 
 Nielsen's TUFT supplies the topological tool and the synthesis vision on the complex Hopf fibration. This paper supplies the dynamic realisation on the discrete octonion carrier fixed by the two HQIV axioms, the inner--outer Casimir mechanism that makes the spectrum explicitly temperature-dependent, the complete set of ground and excited-state readouts, and the sector-by-sector projection of the proved discrete octonion action onto the full Standard Model Lagrangian.
+
+Tier-2 companion notes on nucleon binding, baryogenesis lock-in, and BBN abundances \cite{hqiv-nucleon-binding-paper,hqiv-baryogenesis-paper,hqiv-bbn-paper} apply the same $\kappa_6$ and $C_2(\xi)$ slots at laboratory and cosmological epochs without introducing alternate mass rules; the BBN faithful integrator closes $Y_p$, $D/H$, $^3\mathrm{He}/H$, and $^7\mathrm{Li}/H$ at $\eta_{\mathrm{paper}}$ using the lapse clock derived here.
 
 The result is a single, parameter-free (beyond now-slice choice) constructive bridge from the axioms to the entire effective $\mathcal{L}_{\rm SM}$ at any epoch, together with a set of HQIV-specific predictions (longitudinal forces, exact discrete rationals, temperature-dependent running) that have no direct counterpart in the pure continuum treatment. The two programmes are complementary: the topological analysis explains necessity; the discrete carrier dynamics exhibit explicit realisation and cosmological accessibility.
 
@@ -1565,6 +1567,9 @@ The Lean development lives at \url{https://github.com/HQIV/hqiv-lean}. Claims in
   \hyperref[lean:dynamic-bbn]{Dynamic BBN baryogenesis}\label{lean:dynamic-bbn} &
   \leanfile{Hqiv/Physics/DynamicBBNBaryogenesis.lean} &
   Lapse-weighted BBN reaction clock above deuteron bottleneck \\
+  \hyperref[lean:bbn-stoichiometric]{BBN stoichiometric integrator}\label{lean:bbn-stoichiometric} &
+  \leanfile{Hqiv/Physics/BBNStoichiometricIntegrator.lean} &
+  Faithful synthesis-window $D/H$, coupled neutron inventory (\cite{hqiv-bbn-paper}) \\
   \hyperref[lean:omaxwell-action]{O-Maxwell action}\label{lean:omaxwell-action} &
   \leanfile{Hqiv/Physics/Action.lean} &
   Maxwell's equations on octonions; phase-gradient source \\
@@ -1627,14 +1632,17 @@ The Lean development lives at \url{https://github.com/HQIV/hqiv-lean}. Claims in
 \normalsize
 
 \paragraph{Python evaluation scripts.}
-The Zenodo supplementary \path{scripts.zip} bundles the five entry scripts below together with their local import closure (37 files total; see \path{scripts/README.md}). The same files live in the repository under \url{https://github.com/HQIV/hqiv-lean/tree/main/scripts}:
+The Zenodo supplementary \path{scripts.zip} bundles the nine entry scripts below together with their local import closure (49 files total; see \path{scripts/README.md}). The same files live in the repository under \url{https://github.com/HQIV/hqiv-lean/tree/main/scripts}:
 \begin{itemize}[nosep]
 \item \scriptfile{hqiv_tuft_mass_spectrum_pdg_eval.py} --- full PDG comparison tables at $\xi_{\mathrm{ref}}=5$.
 \item \scriptfile{hqiv_tuft_electroweak_boson_readout.py} --- $W$/$Z$/$H$ readout and geometric $\sin^2\theta_W$.
 \item \scriptfile{hqiv_tuft_global_hadron_readout.py} --- global hadron excitation layer.
 \item \scriptfile{hqiv_scale_witness.py} --- proton-lock-in propagation chain (\S\ref{subsec:scale-witness}).
 \item \scriptfile{hqiv_lean_physics_primitives.py} --- $C_2(\xi)$ epoch table and Figure~\ref{fig:c2-xi}.
-\item \scriptfile{hqiv_dynamic_bulk_bbn.py} --- dynamic BBN lapse clock (\S\ref{sec:c2-rindler}).
+\item \scriptfile{hqiv_bbn_integrator.py} --- faithful BBN abundances at $\eta_{\mathrm{paper}}$ (\S\ref{sec:c2-rindler}; \cite{hqiv-bbn-paper}).
+\item \scriptfile{hqiv_bbn_condition_decay.py} --- dynamic BBN opportunity weighting on the deuteron bottleneck.
+\item \scriptfile{hqiv_bbn_paper_tables.py} --- BBN decomposition, $\eta$ sweep, sensitivity tables.
+\item \scriptfile{hqiv_integrator_lean_audit.py} --- integrator $\leftrightarrow$ Lean audit bundle.
 \end{itemize}
 
 \paragraph{One-click reproducibility.}

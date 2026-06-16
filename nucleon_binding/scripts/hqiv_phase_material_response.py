@@ -29,15 +29,23 @@ from pathlib import Path
 from typing import Any, Literal
 
 _SCRIPT_DIR = Path(__file__).resolve().parent
+_REPO_ROOT = _SCRIPT_DIR.parent
 if str(_SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(_SCRIPT_DIR))
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
 
+import hqiv_chemistry_tuft_dynamics as ctd
 import hqiv_curvature_bond_state as cbs
 import hqiv_dynamic_binding_chart as chart
+import hqiv_electronic_valence_shells as evs
 import hqiv_homogeneous_curvature_feedback as hcf
 import hqiv_lean_physics_primitives as lean
 import hqiv_phase_geometry_density as pgd
+import hqiv_s2_binding_geometry as s2bg
 import hqiv_thermodynamic_phase_from_tp as tptp
+from hqiv_lab.coordination import IntermolecularMotif, infer_monomer_geometry
+from hqiv_lab.spec import MoleculeSpec
 
 AVOGADRO = pgd.AVOGADRO
 BOHR_RADIUS_ANGSTROM = 0.529177210903
@@ -48,6 +56,119 @@ AMU_KG = 1.66053906660e-27
 ANGSTROM3_TO_CM3 = 1.0e-24
 
 PhaseKind = Literal["solid", "liquid"]
+
+
+def phase_lift_coeff(m: int) -> float:
+    """Lean ``phaseLiftCoeff m = φ(m)/6 = 2(m+1)/6``."""
+    return 2.0 * (max(m, 0) + 1) / 6.0
+
+
+def _spec_for_molecule(molecule: str) -> MoleculeSpec:
+    return MoleculeSpec.from_chart_name(molecule)
+
+
+def optical_contact_theta_rad(molecule: str) -> float:
+    """
+    Contact phase θ for Clausius–Mossotti / G_eff optical slot.
+
+    Uses TUFT ``dynamicCentreAngleRad`` (VSEPR bent-centre) — the same θ₀-normalized
+    phase that enters ``phaseParticipationEta`` on the Compton IR window spine.
+    """
+    spec = _spec_for_molecule(molecule)
+    mono = infer_monomer_geometry(spec)
+    return ctd.dynamic_centre_angle_rad(mono.z_heavy, mono.n_bonds_at_heavy)
+
+
+def optical_phase_eta(molecule: str) -> float:
+    """η = θ/θ₀ — Lean ``phaseParticipationEta`` (drop-in for local-field slots)."""
+    return s2bg.phase_participation_eta(optical_contact_theta_rad(molecule))
+
+
+def optical_geff(molecule: str) -> float:
+    """G_eff(η) = η^α on the optical contact."""
+    return cbs.g_eff(optical_phase_eta(molecule))
+
+
+def steric_domain_count(molecule: str) -> int:
+    spec = _spec_for_molecule(molecule)
+    mono = infer_monomer_geometry(spec)
+    return max(mono.intermolecular_contacts, mono.n_bonds_at_heavy + mono.lone_pair_count)
+
+
+def coordination_domain_count(molecule: str) -> int:
+    """Domains entering Clausius–Mossotti local-field slots (may differ from steric winding)."""
+    spec = _spec_for_molecule(molecule)
+    mono = infer_monomer_geometry(spec)
+    if mono.motif == IntermolecularMotif.LINEAR_CHAIN:
+        return mono.intermolecular_contacts
+    return steric_domain_count(molecule)
+
+
+def intermolecular_motif(molecule: str) -> IntermolecularMotif:
+    return infer_monomer_geometry(_spec_for_molecule(molecule)).motif
+
+
+def optical_molecular_span_angstrom(molecule: str) -> float:
+    """
+    Characteristic polarizability span [Å].
+
+    Linear H-bond chains use nn contact scale; others use covalent span sum.
+    """
+    spec = _spec_for_molecule(molecule)
+    mono = infer_monomer_geometry(spec)
+    cov = pgd.covalent_span_angstrom(molecule)
+    if mono.motif == IntermolecularMotif.LINEAR_CHAIN:
+        from hqiv_lab.packing import intermolecular_contact_distance_angstrom
+
+        r_nn = intermolecular_contact_distance_angstrom(mono)
+        dipole_span = r_nn / (1.0 + lean.ALPHA)
+        core = math.sqrt(max(cov, 1e-6) * dipole_span)
+        halogen_dress = 1.0 + lean.GAMMA * (mono.z_heavy / 8.0)
+        return core * halogen_dress
+    return cov
+
+
+def binding_softness_ev(molecule: str) -> float:
+    """Covalent gap scale for polarizability (softer for single-bond chains)."""
+    e_bond = binding_ev_per_covalent_bond(molecule)
+    if intermolecular_motif(molecule) == IntermolecularMotif.LINEAR_CHAIN:
+        return e_bond / (1.0 + lean.ALPHA)
+    return e_bond
+
+
+def hqiv_polarizability_angstrom3(
+    molecule: str,
+    rho_curv: float,
+    xi: float,
+) -> float:
+    """
+    HQIV molecular polarizability volume [Å³].
+
+    α ∝ α_lattice · (r_span/a₀)³ · (E_Ryd / E_bond) · B_hom(ξ, ρ_curv) · G_eff(η).
+    """
+    span = optical_molecular_span_angstrom(molecule)
+    e_bond = binding_softness_ev(molecule)
+    r_ratio = span / BOHR_RADIUS_ANGSTROM
+    alpha_dim = (
+        lean.ALPHA
+        * lean.STRONG_CHANNEL_FRACTION
+        * (r_ratio**3)
+        * (RYDBERG_EV / max(e_bond, 0.05))
+    )
+    motif = intermolecular_motif(molecule)
+    geff = optical_geff(molecule)
+    if motif in (
+        IntermolecularMotif.TETRAHEDRAL_HBOND,
+        IntermolecularMotif.PYRAMIDAL_HBOND,
+    ):
+        m_wind = max(steric_domain_count(molecule) - 1, 1)
+        lift = phase_lift_coeff(m_wind)
+        alpha_dim *= 1.0 + (lift - 1.0) * geff
+    elif motif == IntermolecularMotif.LINEAR_CHAIN:
+        alpha_dim *= geff * (1.0 + lean.GAMMA / 4.0)
+    else:
+        alpha_dim *= geff / math.sqrt(max(steric_domain_count(molecule), 1))
+    return alpha_dim * (1.0 + rho_curv * lean.ALPHA) * (BOHR_RADIUS_ANGSTROM**3)
 
 
 def binding_ev_per_covalent_bond(molecule: str) -> float:
@@ -64,31 +185,6 @@ def intermolecular_binding_ev_per_contact(molecule: str) -> float:
     mat = pgd.material_scales_with_phase_geometry(molecule, bulk=True)
     inter = max(mat.intermolecular_contacts, 1)
     return mat.characteristic_binding_ev / inter
-
-
-def hqiv_polarizability_angstrom3(
-    molecule: str,
-    rho_curv: float,
-    xi: float,
-) -> float:
-    """
-    HQIV molecular polarizability volume [Å³].
-
-    α ∝ α_lattice · (r_span/a₀)³ · (E_Ryd / E_bond) · B_hom(ξ, ρ_curv).
-    """
-    span = pgd.covalent_span_angstrom(molecule)
-    e_bond = binding_ev_per_covalent_bond(molecule)
-    r_ratio = span / BOHR_RADIUS_ANGSTROM
-    alpha_dim = (
-        lean.ALPHA
-        * lean.STRONG_CHANNEL_FRACTION
-        * (r_ratio**3)
-        * (RYDBERG_EV / max(e_bond, 0.05))
-    )
-    # Tetrahedral opening (shell φ(3)/6) dresses polarizability; ρ_curv opens the CM channel.
-    if molecule.upper() == "H2O":
-        alpha_dim *= lean.PHASE_LIFT_3
-    return alpha_dim * (1.0 + rho_curv * lean.ALPHA) * (BOHR_RADIUS_ANGSTROM**3)
 
 
 def clausius_mossotti_ratio(
@@ -150,8 +246,8 @@ def phonon_thermal_conductivity_w_mk(
     mw_kg = cell.molecular_weight_amu * AMU_KG
     c_spec = 3.0 * K_B * n_atoms / max(mw_kg, 1e-30)
     ell = lattice_m * (1.0 - 0.5 * rho_curv)
-    theta_contact = rho_curv * cbs.phase_theta()
-    geff = cbs.g_eff(theta_contact / cbs.phase_theta())
+    theta_contact = optical_contact_theta_rad(molecule)
+    geff = cbs.outside_contact_coupling(theta_contact)
     b_hom = hcf.homogeneous_curvature_budget_at_xi(xi, rho_curv)
     return (1.0 / 3.0) * rho_kg_m3 * c_spec * v_s * ell * geff * b_hom
 
@@ -178,13 +274,75 @@ def ionic_conductivity_s_m(
     return n_carrier * mobility_scale * boltz * rho_curv * geff
 
 
+def clausius_mossotti_local_field_divisor(
+    molecule: str,
+    phase: PhaseKind,
+) -> float:
+    """
+    Clausius–Mossotti local-field divisor from η = θ/θ₀ and motif.
+
+    Liquid: tetrahedral ``1−c_R·η``; pyramidal ``·n²/4``; apolar ``·(1+(n−1)sc)``.
+    Solid: Onsager ``n·φ(m)/6/G_eff`` (apolar/pyramidal); chain ``n/(2G_eff)``.
+    """
+    eta = optical_phase_eta(molecule)
+    motif = intermolecular_motif(molecule)
+    n_dom = max(coordination_domain_count(molecule), 1)
+    geff = max(optical_geff(molecule), 1e-6)
+    base = max(1.0 - lean.C_RINDLER_SHARED * eta, 1e-6)
+
+    if phase == "liquid":
+        if motif == IntermolecularMotif.TETRAHEDRAL_HBOND:
+            return base
+        if motif == IntermolecularMotif.PYRAMIDAL_HBOND:
+            return max(base * n_dom * n_dom / 4.0, 1e-6)
+        if motif == IntermolecularMotif.LINEAR_CHAIN:
+            return max(base * (1.0 + lean.STRONG_CHANNEL_FRACTION), 1e-6)
+        return max(base * (1.0 + (n_dom - 1) * lean.STRONG_CHANNEL_FRACTION), 1e-6)
+
+    if motif == IntermolecularMotif.LINEAR_CHAIN:
+        return max(n_dom / (2.0 * geff), 1e-6)
+    if motif in (
+        IntermolecularMotif.APOLAR_CLOSE_PACK,
+        IntermolecularMotif.PYRAMIDAL_HBOND,
+        IntermolecularMotif.DIATOMIC,
+    ):
+        return n_dom * phase_lift_coeff(n_dom - 1) / geff
+    return 1.0
+
+
+def phase_orientation_cm_factor(
+    molecule: str,
+    phase: PhaseKind,
+    allotrope: str | None,
+    *,
+    rho_curv: float = 0.0,
+) -> float:
+    """
+    Oriented bulk CM multiplier from η and steric winding (replaces per-species tables).
+
+    Ice Ih / H-bond solids: ``phaseLiftCoeff(n_domains−1) · G_eff(η)``.
+    """
+    if phase != "solid":
+        return 1.0
+    motif = intermolecular_motif(molecule)
+    geff = optical_geff(molecule)
+    n_dom = max(steric_domain_count(molecule), 1)
+    lift = phase_lift_coeff(n_dom - 1)
+    if motif == IntermolecularMotif.TETRAHEDRAL_HBOND:
+        al = (allotrope or "Ih").upper()
+        if al in ("IH", "ICE_IH", "I_H"):
+            return lift * geff * (1.0 + lean.GAMMA / 4.0)
+        return geff
+    if motif == IntermolecularMotif.LINEAR_CHAIN:
+        return 1.0 + (lift - 1.0) * geff
+    if motif == IntermolecularMotif.PYRAMIDAL_HBOND:
+        return 1.0 + (lift - 1.0) * geff * (1.0 + lean.GAMMA / 4.0)
+    return geff
+
+
 def coordination_local_field_divisor(molecule: str, phase: PhaseKind) -> float:
-    """Clausius–Mossotti local-field divisor (isotropic baseline = 1)."""
-    if molecule.upper() == "H2O":
-        # Liquid: isotropic disorder slot 1 − c_Rindler = 1 − γ/2 (Lean `c_rindler_shared`).
-        return 1.0 - lean.C_RINDLER_SHARED if phase == "liquid" else 1.0
-    mat = pgd.material_scales_with_phase_geometry(molecule, bulk=(phase == "solid"))
-    return max(mat.intermolecular_contacts, 1) / 2.0
+    """Backward-compatible alias for the θ-derived local-field divisor."""
+    return clausius_mossotti_local_field_divisor(molecule, phase)
 
 
 def molar_heat_capacity_j_per_mol_k(
@@ -283,28 +441,33 @@ def birefringent_refractive_indices(
     cm_iso = clausius_mossotti_ratio(
         rho_g, cell.molecular_weight_amu, alpha, coordination_divisor=coord_div
     )
-    cm_iso *= phase_orientation_cm_factor(molecule, "solid", allotrope)
+    cm_iso *= phase_orientation_cm_factor(molecule, "solid", allotrope, rho_curv=rho_curv)
     f_basal, f_axial = hexagonal_optical_cm_factors(cell)
     n_o = refractive_index_from_clausius_mossotti(cm_iso * f_basal)
     n_e = refractive_index_from_clausius_mossotti(cm_iso * f_axial)
     return n_o, n_e, abs(n_o - n_e)
 
 
-def phase_orientation_cm_factor(
+def refractive_index_solid_readout(
     molecule: str,
-    phase: PhaseKind,
-    allotrope: str | None,
+    cell: pgd.PhaseUnitCell,
+    *,
+    allotrope: str | None = None,
 ) -> float:
-    """
-    Oriented bulk phase enhances CM (ice Ih tetrahedral opening).
+    """Solid n from CM + η orientation without re-entering melt / allotrope scoring."""
+    import hqiv_thermodynamic_phase_from_tp as tptp
 
-    Liquid water stays isotropic (factor 1). Ice Ih uses φ(3)/6 = 4/3 shell opening.
-    """
-    if molecule.upper() == "H2O" and phase == "solid":
-        al = (allotrope or "Ih").upper()
-        if al in ("IH", "ICE_IH", "I_H"):
-            return lean.PHASE_LIFT_3
-    return 1.0
+    al = allotrope or cell.allotrope
+    rho_g = pgd.density_g_cm3(cell)
+    rho_curv = pgd.curvature_density_fraction(rho_g, molecule)
+    xi = tptp.material_scales_from_network_name(molecule).contact_xi
+    coord_div = coordination_local_field_divisor(molecule, "solid")
+    alpha = hqiv_polarizability_angstrom3(molecule, rho_curv, xi)
+    cm_raw = clausius_mossotti_ratio(
+        rho_g, cell.molecular_weight_amu, alpha, coordination_divisor=coord_div
+    )
+    cm = cm_raw * phase_orientation_cm_factor(molecule, "solid", al, rho_curv=rho_curv)
+    return refractive_index_from_clausius_mossotti(cm)
 
 
 def material_response_readout(
@@ -316,21 +479,24 @@ def material_response_readout(
     carrier_fraction: float = 0.0,
 ) -> dict[str, Any]:
     """Full response witness: n, ε_r, k_th, σ slot."""
-    cell = pgd.phase_unit_cell(molecule, allotrope)
+    import hqiv_thermodynamic_phase_from_tp as tptp
+
+    if allotrope is None:
+        allotrope = pgd.preferred_allotrope(molecule, temperature_k=temperature_k)
+    cell = pgd.phase_unit_cell(molecule, allotrope, temperature_k=temperature_k)
     if phase == "liquid":
         rho_g = pgd.liquid_reference_density_g_cm3(molecule)
         rho_curv = pgd.curvature_density_fraction(rho_g, molecule)
     else:
         rho_g = pgd.density_g_cm3(cell)
         rho_curv = pgd.curvature_density_fraction(rho_g, molecule)
-    mat = pgd.material_scales_with_phase_geometry(molecule, allotrope=allotrope, bulk=True)
-    xi = mat.contact_xi
+    xi = tptp.material_scales_from_network_name(molecule).contact_xi
     coord_div = coordination_local_field_divisor(molecule, phase)
     alpha = hqiv_polarizability_angstrom3(molecule, rho_curv, xi)
     cm_raw = clausius_mossotti_ratio(
         rho_g, cell.molecular_weight_amu, alpha, coordination_divisor=coord_div
     )
-    cm = cm_raw * phase_orientation_cm_factor(molecule, phase, allotrope)
+    cm = cm_raw * phase_orientation_cm_factor(molecule, phase, allotrope, rho_curv=rho_curv)
     n = refractive_index_from_clausius_mossotti(cm)
     eps_r = dielectric_constant_from_refractive_index(n)
     k_th = phonon_thermal_conductivity_w_mk(
@@ -365,11 +531,16 @@ def material_response_readout(
         "density_g_cm3": rho_g,
         "curvature_density_fraction": rho_curv,
         "contact_xi": xi,
+        "optical_contact_theta_rad": optical_contact_theta_rad(molecule),
+        "optical_phase_eta": optical_phase_eta(molecule),
+        "optical_geff": optical_geff(molecule),
         "coordination_divisor": coord_div,
         "polarizability_angstrom3": alpha,
         "clausius_mossotti_ratio": cm,
         "clausius_mossotti_ratio_raw": cm_raw,
-        "phase_orientation_cm_factor": phase_orientation_cm_factor(molecule, phase, allotrope),
+        "phase_orientation_cm_factor": phase_orientation_cm_factor(
+            molecule, phase, allotrope, rho_curv=rho_curv
+        ),
         "refractive_index": n,
         "dielectric_constant": eps_r,
         "thermal_conductivity_W_mK": k_th,
@@ -388,16 +559,50 @@ def material_response_readout(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Phase geometry material response readout.")
     parser.add_argument("molecule", nargs="?", default="H2O")
-    parser.add_argument("--allotrope", default="Ih")
+    parser.add_argument(
+        "--allotrope",
+        default=None,
+        help="Derived allotrope label (default: species preferred at --temperature-K)",
+    )
     parser.add_argument("--phase", choices=("solid", "liquid"), default="solid")
-    parser.add_argument("--temperature-K", type=float, default=273.15)
+    parser.add_argument(
+        "--at-melt",
+        action="store_true",
+        default=True,
+        help="Use species melt witness T (default on for panel species)",
+    )
+    parser.add_argument(
+        "--reference-T",
+        action="store_true",
+        help="Force T=273.15 K (debug)",
+    )
+    parser.add_argument("--temperature-K", type=float, default=None)
     parser.add_argument("--json-out", type=Path, default=None)
     args = parser.parse_args()
+    from hqiv_lab.species_panel import panel_entry
+
+    t_k = args.temperature_K
+    if t_k is None:
+        if args.reference_T:
+            t_k = 273.15
+        elif args.at_melt:
+            try:
+                t_k = panel_entry(args.molecule).witness_temperature_k
+            except KeyError:
+                t_k = 273.15
+        else:
+            t_k = 273.15
+    allotrope = args.allotrope
+    if allotrope is None and args.at_melt and args.phase == "solid":
+        try:
+            allotrope = panel_entry(args.molecule).allotrope
+        except KeyError:
+            pass
     out = material_response_readout(
         args.molecule,
-        allotrope=args.allotrope,
+        allotrope=allotrope,
         phase=args.phase,
-        temperature_k=args.temperature_K,
+        temperature_k=t_k,
     )
     print(f"{out['molecule']} {out['phase']} ({out['allotrope']}) @ {out['temperature_K']:.2f} K")
     print(f"  n = {out['refractive_index']:.4f}   ε_r = {out['dielectric_constant']:.4f}")

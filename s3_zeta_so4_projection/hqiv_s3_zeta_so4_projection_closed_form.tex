@@ -13,9 +13,9 @@
 \newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\path{#1}}}
 \newcommand{\leanid}[1]{\path{#1}}
 
-\title[S$^3$ / SO(4) $\zeta(s)$ Projection]
-{$\zeta(s)$ as an SO(4) Projection to the Complex Plane:\\
-Harmonic--$\Delta$ Closure, Quaternion Axis Readout, and Regional Closed Forms}
+\title[Regional $\zeta(s)$ and SO(4) projection]
+{Regional Closed Forms for $\zeta(s)$:\\
+An SO(4) Projection and Machine-Checked Reformulations of RH}
 
 \author{Steven Ettinger Jr}
 \address{Independent Researcher}
@@ -32,61 +32,101 @@ Harmonic--$\Delta$ Closure, Quaternion Axis Readout, and Regional Closed Forms}
 \begin{document}
 \begin{abstract}
 \noindent\textbf{Position.}
-This note synthesises the machine-checked S$^3$ / Riemann story spine in the
-public HQIV Lean library \cite{hqiv-lean}.  It sits on the closure record
-\cite{hqiv-so8-paper} (harmonic divergence $\Rightarrow$ phase lift $\Delta$,
-$\langle\mathfrak{so}(3),\Delta_4\rangle_{\mathrm{Lie}}=\mathfrak{so}(4)$),
-the octonion light-cone carrier \cite{hqiv-lightcone-paper}, and the TUFT+SM
-synthesis \cite{hqiv-tuft-sm-lagrangian-paper}.  It is \emph{not} a phenomenology
-paper; it is a formal packaging of $\zeta(s)$ as a projection geometry.
+This note records a machine-checked geometric interpretation of the Riemann zeta
+function in the public HQIV Lean library \cite{hqiv-lean}, building on the
+$\mathfrak{so}(8)$ closure record \cite{hqiv-so8-paper}, the octonion
+light-cone carrier \cite{hqiv-lightcone-paper}, and the TUFT+SM synthesis
+\cite{hqiv-tuft-sm-lagrangian-paper}.  It is a \emph{formal mathematics} paper,
+not a phenomenology forecast: every theorem is a regional closed form,
+projection identity, or logical equivalence stated in standard analytic
+notation and verified by \texttt{lake build HQIVStory}.
 
 \noindent\textbf{Main geometric claim.}
-The functional-equation pair $(\sigma,1-\sigma)$ is rotated at $45^\circ$ in a
-quaternionic two-plane.  The diagonal slot is fixed at $1/\sqrt2$ (even / $i$
-carrier); the equator slot $(2\sigma-1)/\sqrt2$ is the odd sin--cos carrier.
-Classical $\zeta(s)$ is then a \emph{regional} closed form on $\mathbb{C}$:
-Dirichlet / Euler on $\Re s>1$, a sin--cos--$\Gamma$--$\pi$ functional-equation
-assembly on the open strip, Bernoulli values at negative integers, and
-$\pi$-sector Bernoulli closed forms at even positives.
+The functional-equation reflection $\sigma\leftrightarrow 1-\sigma$ is realized
+as a $45^\circ$ rotation in a quaternionic plane.  The fixed diagonal component
+is $1/\sqrt2$; the variable \emph{equator factor} $(2\sigma-1)/\sqrt2$
+(Lean: \texttt{so4CriticalFactor}) is the sin--cos carrier on the strip.
+Classical $\zeta(s)$ is then a \emph{piecewise} closed form on $\mathbb{C}$ in
+the usual sense: Dirichlet/Euler for $\Re s>1$, the functional-equation
+sin--cos--$\Gamma$ assembly on the open strip, Bernoulli values at negative
+integers, and $\pi$-power formulas at even positives.
 
-\noindent\textbf{Projection trichotomy.}
-At even integers $s=2k$ the angle $\pi s/2=k\pi$ kills the sine (j--k) slot
+\noindent\textbf{Open-strip assembly.}
+The functional-equation expression for $\zeta(s)$ on $0<\Re s<1$ combines
+$\Gamma(1-s)$ poles, oscillating sin/cos factors, and apparent singularities
+that obscure where the \emph{nontrivial} zeros can live until the regional
+bookkeeping is separated (\S\ref{sec:real-line}): trivial zeros and $\Gamma$
+poles are classified explicitly; the equator factor vanishes only on
+$\Re s=\tfrac12$; and the meaningful zero question is pinned to that critical
+line.  Pairwise cancellation along the FE orbit $(s,1-s)$ holds for every
+$\sigma$, but only pointwise vanishing of the equator factor forces
+$\sigma=\tfrac12$ (\S\ref{sec:orbit-gap}).
+
+\noindent\textbf{Sine/cosine trichotomy.}
+At even integers $s=2k$ the angle $\pi s/2=k\pi$ kills the sine factor
 ($\sin=0$, $\cos=(-1)^k$): even $\zeta$-values are pure $\pi$-powers.
-At odd integers the cosine slot vanishes and sine carries the residue (no
+At odd integers the cosine factor vanishes and sine carries the residue (no
 elementary closed form for $\zeta(3)$, $\zeta(5)$, \ldots).
-On the fractional open strip both slots are nonzero: the rotation ratio
-$\tan(\pi s/2)$ is the projection readout.
+On the fractional open strip both factors are nonzero and
+$\tan(\pi s/2)$ is the rotation ratio.
 
-\noindent\textbf{Reading the ``weird'' closed form.}
-The open-strip formula displays $\Gamma(1-s)$ poles and sin/cos zeros that look
-singular.  In the HQIV packaging these are not pathologies: negative-even trivial
-zeros are discharged from the nontrivial-zero slot; $\Gamma$ poles are the
-even-sector continuation markers; together they force the \emph{meaningful}
-zero-locus question onto the real critical line $\Re s=\tfrac12$---the only
-place the equator projection $(2\sigma-1)/\sqrt2$ vanishes pointwise.
+\noindent\textbf{RH and Goldbach.}
+Classically RH and Goldbach are independent open problems.  Here both are tied
+to the same normalized slope $\tfrac12$: critical-line localization for
+nontrivial $\zeta$-zeros, and midpoint slope $N/(p+q)=\tfrac12$ for Goldbach
+prime pairs (\S\ref{sec:rh-goldbach}).  Lean proves an \emph{exact equivalence}
+between a single bridge hypothesis (\texttt{SO8ProjectedHalfSlopeBridge}\,$2$)
+and \texttt{RiemannHypothesis} $\wedge$ \texttt{GoldbachParity}---not a
+one-sided implication with extra conditions.  Proving the bridge remains as hard
+as the conjunction of the two classical conjectures.
 
 \noindent\textbf{Status.}
-Every algebraic / Mathlib link in the harmonic--prime--$\zeta$ chain and every
-45$^\circ$ projection identity cited here is sorry-free in
-\texttt{lake build HQIVStory}.  Unconditional \emph{Riemann Hypothesis} is
-\emph{not} claimed: the capstone predicate
-\texttt{InteriorAssemblyNonzeroAtNontrivialZerosOffLine} remains the single
-honest analytic gap (Appendix~\ref{app:status}).
+Every algebraic / Mathlib link in the harmonic--prime--$\zeta$ chain, every
+45$^\circ$ projection identity, the $\Re s$-dependence lemmas, the FE
+quadruplet orbit formulation, the bridge equivalence
+RH $\wedge$ Goldbach $\Leftrightarrow$ half-slope bridge, the
+discrete-dominates-continuum heat-flow comparison with exact phase lock,
+the concrete-$\Lambda$ port of the de Bruijn--Newman constant, the tangent
+orbit law, the spectral-cancellation profile of zeros (no cancellation in
+the Euler product region; resonance blow-up of $1/\zeta$ at every zero), and
+the resonance-channeling reduction (two-channel dichotomy;
+\texttt{InteriorAssemblyNonzero} $\Leftrightarrow$ RH; RH $\Leftrightarrow$
+square-root spectral weights at every zero), the vertical-axis rigidity
+(the zero set admits at most one mirror axis, necessarily $\Re s=\tfrac12$),
+the Diophantine transformer laws (trace ladder $\to\zeta$; FE
+composition $=\mathrm{diag}(1/n)$; adjoint law $\Leftrightarrow$ line; RH
+$\Leftrightarrow$ adjoint law at every zero), and the octonionic
+associator channel (commutative saturation of the transformer family;
+non-associative torsion provably active at every zero; RH
+$\Leftrightarrow$ torsion weights), and the S$^7$/SO(8) torsion
+cancellation laws (single $S^7$ point; chirality flip; RH
+$\Leftrightarrow$ FE torsion cancellation at every zero), and the log
+edge (polar decoupling; prime-log incommensurability; two prime phases
+pin the height; the Goldbach circle $pq+(q-N)^2=N^2$)
+cited here are sorry-free in \texttt{lake build HQIVStory}.  Unconditional
+\emph{Riemann Hypothesis} and \emph{Goldbach parity} are \emph{not} claimed: the
+main conditional hypothesis
+\texttt{InteriorAssemblyNonzeroAtNontrivialZerosOffLine} and a witness for the
+(provably equivalent) half-slope bridge remain open (Appendix~\ref{app:status}).
 \end{abstract}
 \maketitle
 
-\input{../include/patch_theory_messaging.tex}
+\input{../include/readout_dictionary_messaging.tex}
 
 \section{Introduction}\label{sec:intro}
 
 The Riemann zeta function is usually introduced as a Dirichlet series and then
-analytically continued.  In the HQIV S$^3$ story the same object is instead a
-\emph{projection readout}: the functional equation is a reflection symmetry
-$\sigma\leftrightarrow 1-\sigma$, the $45^\circ$ twiddle separates a fixed
-diagonal channel from a free equator channel, and the divergent harmonic backbone
-of the closure paper forces a nonzero phase-lift connector $\Delta$ that closes
-$\mathfrak{so}(3)+\Delta$ to $\mathfrak{so}(4)$ on the four-dimensional
-quaternion carrier.
+analytically continued.  On the open critical strip $0<\Re s<1$, the continued
+formula is the standard sin--cos--$\Gamma$ functional-equation assembly:
+products of $\Gamma$, $\pi$, $\sin(\pi s/2)$, and $\cos(\pi s/2)$ that look
+over-determined and singular until trivial zeros and continuation slots are
+separated (\S\ref{sec:real-line}).  This note gives a geometric interpretation of
+that assembly: the functional equation is reflection symmetry
+$\sigma\leftrightarrow 1-\sigma$ rotated by $45^\circ$; a fixed diagonal
+component separates from a variable \emph{equator factor}
+$(2\sigma-1)/\sqrt2$; and the divergent harmonic series of the closure paper
+forces a phase-lift connector $\Delta$ that closes $\mathfrak{so}(3)+\Delta$ to
+$\mathfrak{so}(4)$ on a four-dimensional quaternion carrier.
 
 This note records what is already proved in Lean:
 \begin{enumerate}[label=(\roman*),nosep]
@@ -94,17 +134,158 @@ This note records what is already proved in Lean:
 \item the harmonic $\Rightarrow$ prime Euler product $\Rightarrow$ $\zeta$
       $\Rightarrow$ $\Lambda=-\zeta'/\zeta$ pipeline for $\Re s>1$;
 \item regional closed forms for $\zeta(s)$ matching Mathlib;
-\item j/k axis rotation cancellation at even $\pi$-multiples and rotation ratios
-      on odd / fractional slots;
-\item discharge lemmas excluding nontrivial zeros from half-planes and negative
-      integer slots;
+\item sine/cosine factor cancellation at even $\pi$-multiples and rotation ratios
+      on odd / fractional arguments;
+\item exclusion lemmas ruling out nontrivial zeros in half-planes and at
+      negative integer slots;
 \item a factorization $\zeta(s)=h(s)\cdot(2\sigma-1)/\sqrt2$ on the open strip
-      off $\sigma=\tfrac12$, with $h=\texttt{interiorStripH}$.
+      off $\sigma=\tfrac12$, with $h=\texttt{interiorStripH}$;
+\item dependence on $\Re s$ only: the equator factor is a function of
+      $\sigma=\Re s$ and cannot globally identify $\zeta$ with the projection
+      formula (\S\ref{sec:sigma-scope});
+\item FE + Schwarz quadruplet orbits for $\zeta$-zeros, with unconditional FE
+      pairs and conditional full quadruplets (\S\ref{sec:quadruplet});
+\item the shared $\tfrac12$ slope bridge: exact equivalence of RH $\wedge$
+      Goldbach with a single geometric hypothesis (\S\ref{sec:rh-goldbach});
+\item the discrete/continuum heat-flow comparison
+      $c\lVert H_t\rVert\le\lVert\texttt{HQIVDeformedSum}\rVert$ with exact
+      phase alignment (\S\ref{sec:dbn-comparison}), and the de Bruijn--Newman
+      constant ported as a concrete Lean definition with Rodgers--Tao and
+      Newman/dBN as named statements (\S\ref{sec:dbn-port});
+\item the tangent law of the quadruplet orbit: FE inverts and Schwarz
+      conjugates $T(s)=\tan(\pi s/2)$, and the critical line is exactly the
+      unimodular-tangent locus (\S\ref{sec:tangent-orbit});
+\item zeros as spectral cancellations of the Euler product: no cancellation
+      in the product region, breakdown-locus confinement, and resonance
+      blow-up of $\lVert1/\zeta\rVert$ at every zero
+      (\S\ref{sec:spectral-cancellation});
+\item resonance channeling: the two-channel dichotomy at every zero, the
+      equivalence \texttt{InteriorAssemblyNonzero}\,$\Leftrightarrow$\,RH,
+      the SO(4) spectral-line transformer $n\mapsto n^{-s}$ with FE pairing
+      $\lVert n^{-s}\rVert\lVert n^{-(1-s)}\rVert=1/n$, and
+      RH $\Leftrightarrow$ square-root spectral weights at every zero
+      (\S\ref{sec:resonance-channeling});
+\item vertical axis rigidity: composing the FE point-reflection with any
+      second mirror axis yields a translation that marches zeros out of the
+      strip, so the zero set admits at most one vertical axis and it must be
+      $\Re s=\tfrac12$ (\S\ref{sec:axis-rigidity});
+\item same-height orbit collapse: the quadruplet partner $1-\overline{\rho}$
+      shares $\rho$'s height and merges with it exactly on the line, giving
+      RH $\Leftrightarrow$ ``one zero per height'' --- unconditionally in
+      the $\lvert\Im\rvert$ form, and with explicit Schwarz hypothesis in
+      the strict form (\S\ref{sec:same-height});
+\item polar projection collapse: the polar separation
+      $1-\overline{s}-s=-\sqrt2\cdot\texttt{so4CriticalFactor}(s)$ is the
+      equator factor itself, and single-point polar projection on the zero
+      set is RH (\S\ref{sec:polar-collapse});
+\item the zero--holonomy--Goldbach chain: every zero activates every
+      midpoint pair, each pair carries Hopf holonomy support, and the
+      half-slope bridge rewrites as polar collapse $\wedge$ parity
+      (\S\ref{sec:zero-holonomy-chain});
+\item the TUFT nested frame tower: level-$N$ spectral frames on odd spheres
+      $S^{2N-1}$, the harmonic radius law
+      $\texttt{frameNormSq}=H_N\Leftrightarrow\Re s=\tfrac12$ at every
+      level, divergence of the radius ladder on the line, and RH
+      $\Leftrightarrow$ harmonic radii at every zero
+      (\S\ref{sec:tuft-tower});
+\item the Diophantine transformer: the level-$N$ diagonal operator
+      $D_N(s)=\mathrm{diag}(1^{-s},\dots,N^{-s})$ whose trace ladder
+      converges to $\zeta$, whose Hilbert--Schmidt norm is the tower
+      radius, whose FE composition is the fixed rational harmonic operator
+      $\mathrm{diag}(1/n)$, and whose adjoint law
+      $D_N(1-s)=D_N(s)^{\dagger}\Leftrightarrow\Re s=\tfrac12$ gives RH
+      $\Leftrightarrow$ self-adjointness across FE at every zero
+      (\S\ref{sec:diophantine-transformer});
+\item the octonionic associator channel: the transformer family is
+      provably commutative and normal (the formal reason the diagonal
+      attack saturates), while the non-associative carrier escapes —
+      the triple $(e_1,e_2,e_4)$ has $[e_1,e_2,e_4]=-e_3-e_4\neq0$ on the
+      frozen Fano tables, prime spectral weights ride the associator
+      trilinearly, the channel $2(abc)^{-2\sigma}$ never vanishes
+      (zeros kill the abelian assembly, never the torsion), and RH
+      $\Leftrightarrow$ square-root torsion weight at every zero
+      (\S\ref{sec:associator-channel});
+\item S$^7$ torsion cancellation under SO(8): the torsion vector is a
+      positive multiple of one fixed carrier direction (the S$^7$ shadow
+      never moves), the FE defect is odd with a chirality flip across the
+      line, FE partners' torsions share an SO(8) orbit iff they are
+      equal iff $\Re s=\tfrac12$, and RH $\Leftrightarrow$ the torsion
+      defect vanishes at every zero
+      (\S\ref{sec:s7-torsion});
+\item the critical-line carrier bundle: the strip embeds as a cylinder
+      $\sigma\times S^1$, but only at $\Re s=\tfrac12$ is the lift the full
+      Hopf circle ($r=1$, $f=0$, rolling map); off the line the fiber shrinks
+      ($r<1$), the tangent sorts the half-planes hyperbolically, and
+      quadruplet collapse fails---whole-strip classification is conditional
+      (\S\ref{sec:analytic-strip-lift});
+\item the log edge: polar decoupling
+      $n^{-s}=n^{-\sigma}\cdot e^{-it\log n}$ (modulus knows only
+      $\sigma$, phase only $t$), Diophantine independence of prime
+      phase speeds ($k\log p=m\log q\Rightarrow k=m=0$, from unique
+      factorization), two prime phases pin the height exactly, the
+      Goldbach circle $pq+(q-N)^2=N^2$ as literal additive curvature
+      with phase-speed cap $\log(pq)\le2\log N$, and — under RH — two
+      prime phases as a complete address for a zero
+      (\S\ref{sec:log-edge}).
 \end{enumerate}
 The remaining RH step is \emph{not} continuation; it is proving that the assembly
 $h$ does not vanish at nontrivial zeros off the line---equivalently, upgrading
 orbit cancellation (functional-equation pairs) to pointwise cancellation at
-actual $\zeta$ zeros.
+actual $\zeta$ zeros.  Goldbach is the same geometric half-slope on the additive
+prime channel, equivalent only under the holonomy bridge hypothesis.
+
+\subsection{Why zeta functions appear in HEP and other HQIV integrations}
+\label{sec:hep-zeta-bridge}
+
+HQIV does not use ``zeta'' as a single object.  Three layers recur across the
+library and paper series; this note isolates the \emph{classical projection}
+layer and explains why the same vocabulary appears in high-energy phenomenology
+readouts without implying that every ``zeta'' is Riemann's function.
+
+\paragraph{Sector zeta on the patch carrier.}
+In the TUFT+SM synthesis \cite{hqiv-tuft-sm-lagrangian-paper}, \emph{sector
+zeta} means fibre-torsion subleading spectral bodies on nested Hopf shells:
+Beltrami-sector determinants, \texttt{zetaHQIVTerm} phase on the null-lattice
+carrier, and holonomy discharge bundles on $\mathfrak{so}(8)$.  These are
+\emph{finite} shell-indexed readouts tied to mass rungs and coupling ladders on
+the accessible patch---not the complex-analytic $\zeta(s)$ studied here.
+
+\paragraph{Classical $\zeta(s)$ as projection geometry (this note).}
+The present manuscript shows that Mathlib's Riemann zeta is already a
+\emph{regional closed form} of an SO(4) projection: harmonic shell weights sum
+to $\zeta(s)$ for $\Re s>1$; prime Euler products and $\Lambda=-\zeta'/\zeta$
+follow on the same region; the open strip is a sin--cos--$\Gamma$ assembly with
+a $45^\circ$ equator factor $(2\sigma-1)/\sqrt2$.  The proved polar law
+$n^{-s}=n^{-\sigma}\cdot e^{-it\log n}$ (\S\ref{sec:log-edge}) is the
+structural reason modulus-based equivalent conditions throughout this note
+reformulate RH
+without importing phase data into $\sigma$.
+
+\paragraph{HEP multichannel and decay formulas.}
+The heavy-flavour decay programme \cite{hqiv-hep-decay-paper} uses the same
+\emph{spectral--log} pattern at the formula layer: discrete multichannel
+branching rules, three-ledger $\beta$ tipping, and rational EM contact
+coefficients are computed from composite traces and shell weights without
+partial-width inputs.  Zeta language enters because \textbf{(i)}~prime and
+shell indices carry multiplicative weights $n^{-s}$ (or their real-axis
+cousins) in every channel; \textbf{(ii)}~logarithmic phase speeds $\log p$,
+$\log N$ tie additive midpoint data (Goldbach circle, \S\ref{sec:log-edge}) to
+multiplicative pooling (quarkonium channels, joint products $pq$); and
+\textbf{(iii)}~continuation and resonance (zeros of assembled factors, blow-up
+of $1/\zeta$, spectral cancellation profile, \S\ref{sec:spectral-cancellation})
+is the same geometric template as ``channel factors vanish where the global
+assembly vanishes.''  This note does not reproduce HEP numerics; it supplies
+the proved analytic spine that makes the shared vocabulary precise: zeta
+functions in HQIV integrations are projection formulas for prime/shell spectral
+data, not ad hoc naming.
+
+\paragraph{Continuum notation elsewhere.}
+Heat-flow, de~Bruijn--Newman, and O-Maxwell continuum charts in sibling
+manuscripts are \emph{comparison dictionaries} for classical literature---as
+in \texttt{readout\_dictionary\_messaging.tex} above, not load-bearing
+continuum extensions.  The discrete harmonic ladder and shell index remain the
+proved ontology; a literal continuum limit on those indices would erase the
+predictions (\cite{hqiv-so8-paper}).
 
 \section{Harmonic divergence forces $\Delta$ and SO(4)}\label{sec:harmonic-delta}
 
@@ -165,18 +346,218 @@ The free coordinate vanishes iff $\sigma=\tfrac12$:
   \quad\Longleftrightarrow\quad
   \sigma=\tfrac12.
 \]
-A nonzero twiddle shift $\pi/4+\delta$ with $\sin\delta\neq0$ moves the
+A nonzero rotation offset $\pi/4+\delta$ with $\sin\delta\neq0$ moves the
 vanishing locus off $\sigma=\tfrac12$
 (\leanfile{Hqiv/Story/S3RotationRigidity.lean}).
 \end{theorem}
 
-The complex lift of the equator readout is the \textbf{SO(4) critical factor}
+The complex lift of the equator factor is the \textbf{SO(4) critical factor}
 \[
   \texttt{so4CriticalFactor}(s)=\frac{2\sigma-1}{\sqrt2},
   \qquad s=\sigma+i t,
 \]
 which vanishes exactly on $\Re s=\tfrac12$
 (\leanfile{Hqiv/Story/S3ZetaClosedForm.lean}).
+
+\subsection{The equator factor depends only on $\Re s$}\label{sec:sigma-scope}
+
+The exact $45^\circ$ projection is distinguished: other rotation angles move
+the vanishing locus off $\sigma=\tfrac12$
+(\leanfile{Hqiv/Story/S3RotationRigidity.lean}).  What the projection formula
+\emph{cannot} decide is also proved:
+\begin{itemize}[nosep]
+\item \textbf{$\sigma$-blindness.} \texttt{exactTwiddleReadout} and
+      \texttt{so4CriticalFactor} depend only on $\sigma=\Re s$, not on height
+      $t=\Im s$
+      (\leanfile{Hqiv/Story/S3SigmaReadoutScope.lean},
+      \leanid{sigmaReadout\_blind\_to\_imaginary\_height}).
+\item \textbf{Identification $\not\Rightarrow$ constraint.}  Pointwise equality
+      $\zeta(s)=\texttt{exactTwiddleReadout}(s)$ transfers zero iff at $s$, but
+      does not force $\sigma=\tfrac12$ without that identification
+      (\leanid{zeta\_eq\_readout\_same\_zero\_set}).
+\item \textbf{No global identification.}  $\zeta(s)=\texttt{exactTwiddleReadout}(s)$
+      for all $s$ fails: $\zeta(0)=-\tfrac12$ but the projection formula gives $-1/\sqrt2$
+      (\leanid{not\_globally\_zeta\_eq\_real\_twiddle\_readout}).
+\item \textbf{Affine form.}  Off the even lift,
+      $\texttt{so4CriticalFactor}(z)=(2\Re z-1)/\sqrt2$
+      (\leanid{so4CriticalFactor\_eq\_affine\_re}); this is real-valued in $\sigma$
+      and not holomorphic in $s$.
+\end{itemize}
+Proving regional $\zeta$ closed forms therefore \emph{relocates} zeros onto the
+construction without transferring the equator vanishing locus onto $\zeta$.
+
+\subsection{Mirrored twiddle pairs}\label{sec:mirrored-twiddle}
+
+The functional equation supplies reflection $\sigma\leftrightarrow1-\sigma$.
+Rather than treating twiddle angles as independent knobs, one may pair angles
+that are mirrors under the same reflection:
+\[
+  \theta\;\longleftrightarrow\;\frac{\pi}{2}-\theta.
+\]
+\leanfile{Hqiv/Story/S3MirroredTwiddlePair.lean} formalizes two complementary
+readouts.
+
+\paragraph{Rotation twiddle (paper default).}
+On the FE pair $(\sigma,1-\sigma)$ the free coordinate after rotation by
+$\theta$ is
+\[
+  \texttt{rotFree}_\theta(\sigma)=\sigma(\cos\theta+\sin\theta)-\sin\theta,
+\]
+with vanishing locus the \textbf{projection line}
+$\sigma_0(\theta)=\sin\theta/(\cos\theta+\sin\theta)$
+(\leanfile{Hqiv/Story/S3RotationRigidity.lean}).
+Its mirror at $\pi/2-\theta$ has zero locus
+\[
+  \sigma_0\!\left(\frac{\pi}{2}-\theta\right)=1-\sigma_0(\theta),
+\]
+so the two candidate axes are symmetric about $\sigma=\tfrac12$
+(\leanid{projectionLine\_mirror}).
+Across the FE orbit the pair cancels pairwise:
+\[
+  \texttt{rotFree}_\theta(\sigma,1-\sigma)
+  +\texttt{rotFree}_{\pi/2-\theta}(1-\sigma,\sigma)=0
+\]
+(\leanid{rotFree\_mirror\_pair\_sum}); on a fixed pair $(\sigma,1-\sigma)$ the
+sum and difference separate into
+\[
+  (\cos\theta+\sin\theta)(2\sigma-1)
+  \quad\text{and}\quad
+  \cos\theta-\sin\theta,
+\]
+so the critical line is the \textbf{coincidence locus} where the two channels
+agree in the $\sigma$-only sense: the difference is constant in $\sigma$ and
+vanishes only at $\theta=\pi/4$, when both angles coincide and
+$\sigma_0(\pi/4)=\tfrac12$.
+
+\paragraph{Affine twiddle (weighted $\sigma$ form).}
+The weighted combination
+\[
+  \texttt{affineTwiddle}_\theta(\sigma)=\cos\theta\,\sigma+\sin\theta\,(1-\sigma)
+\]
+is the mirror swap
+$\sin\theta\,\sigma+\cos\theta\,(1-\sigma)$ at $\pi/2-\theta$
+(\leanid{affineTwiddle\_mirror\_angle}).
+When $\sin\theta\neq\cos\theta$ its zero is
+$\sigma=\sin\theta/(\sin\theta-\cos\theta)$, again mirrored by
+$\sigma\mapsto1-\sigma$ (\leanid{affineTwiddleZero\_mirror}).
+At $\theta=\pi/4$ this family is \emph{degenerate}: $\cos\theta=\sin\theta$ so
+the readout is the constant $\sin(\pi/4)\neq0$ and never vanishes
+(\leanid{affineTwiddle\_pi\_div\_four\_ne\_zero}); the $45^\circ$ critical-line
+pin is native to the rotation/normalized form, not this affine parameterization.
+
+\paragraph{Example: $30^\circ$ and $60^\circ$.}
+$\pi/6$ and $\pi/3$ are a mirror pair.
+Their affine zero loci are far from $\sigma=\tfrac12$ (e.g.\ at $\pi/6$ the zero
+is $(1/2)/(1/2-\sqrt3/2)$), but they satisfy the exact swap
+$\sigma_0(\pi/3)=1-\sigma_0(\pi/6)$
+(\leanid{affineTwiddleZero\_pi\_six\_pi\_three\_mirror}).
+Near-$45^\circ$ rotation angles instead give projection lines
+$\sigma=\tfrac12\pm\varepsilon$ --- the regime where both mirrors hug the
+critical line.
+
+\paragraph{Interaction with sine/cosine slots and vertical rigidity.}
+The FE channel already carries the angle $\pi s/2$ in
+$\sin(\pi s/2)$ and $\cos(\pi s/2)$ (\S\ref{sec:quaternion}); mirrored twiddles
+add a second angular degree on the real $\sigma$ pair, enriching the
+even/odd/fractional projection trichotomy without replacing it.
+Each individual twiddle still defines a straight vertical candidate axis; if
+two such mirrors are imposed together with FE closure, the same translation
+argument as in \S\ref{sec:axis-rigidity} forces any common strip zero locus onto
+the unique fixed line $\Re s=\tfrac12$.
+Off the line the pair distinguishes \emph{orbit} cancellation (FE partners) from
+\emph{pointwise} coincidence on $\sigma=\tfrac12$ --- a two-channel sharpening
+of the orbit-vs-pointwise gap (\S\ref{sec:orbit-gap}).
+
+\subsection{Higher twiddles as probes of the factorization engine}\label{sec:higher-twiddle-probes}
+
+The linear-twiddle family and its cubic specializations are \textbf{not} intended
+to yield new information about the location of zeros on their own loci.  Their
+purpose is to illuminate the \textbf{factorization engine} --- the decomposition
+of $\zeta(s)$ into an interior assembly times a geometric readout factor --- when
+the readout is taken from channels other than the distinguished $45^\circ$
+projection.
+
+\paragraph{Main channel (paper default).}
+Off the critical line on the open strip,
+\[
+  \zeta(s)=h(s)\cdot\texttt{so4CriticalFactor}(s)
+  =h(s)\cdot\frac{2\sigma-1}{\sqrt2}
+\]
+(\S\ref{sec:explicit-h}, \eqref{eq:h-explicit}): the interior assembly
+$h=\texttt{interiorStripH}$ absorbs everything that is not the equator readout.
+
+\paragraph{Higher-twiddle readouts.}
+For a coefficient $c\in(0,1)$ the linear free readout is
+\[
+  \text{free}_c(\sigma)=c\cdot\sigma+(1-c)\cdot(1-\sigma),
+\]
+with zero on the vertical line $\sigma_c=(c-1)/(2c-1)$ when $2c-1\neq0$.
+Functional-equation reflection interchanges $c$ with $1-c$, producing mirrored
+pairs (\S\ref{sec:mirrored-twiddle}).
+Specializing to the plastic constant via $c_\rho=1-\rho^{-1}$ (unique $\rho>1$ with
+$\rho^3=\rho+1$) produces the normalized cubic twiddle
+\texttt{so4PlasticCubicFree} whose zero locus is the explicit algebraic number
+\[
+  \sigma_\rho=\frac{1}{2-\rho}
+\]
+(\leanfile{Hqiv/Story/S3CubicPlasticTwiddle.lean}:
+mirror symmetry, normalization, and FE partner
+\leanid{so4PlasticCubicFree\_one\_sub};
+patch factorization off the probe locus in
+\leanfile{Hqiv/Story/S3HigherTwiddleFactorizationProbe.lean}).
+This locus lies far from $\Re s=\tfrac12$; the construction is a \emph{controlled
+perturbation} of the readout geometry, not a competing critical-line candidate.
+
+\paragraph{Multi-channel laboratory.}
+Because cubic (and, more generally, higher-degree) twiddles are not expected to
+constrain zeros directly on their own axes, they serve as probes of
+\textbf{cross-channel} behavior inside the factorization architecture:
+\begin{itemize}[nosep]
+\item How does the interior assembly change when the geometric factor is
+      $\texttt{so4PlasticCubicFree}$ (or another $\text{free}_c$) instead of
+      \texttt{so4CriticalFactor}?
+\item What is the coupling between the main $45^\circ$ channel and a higher-twiddle
+      channel when both are measured at the same strip point?
+\item Can one define a controlled cross-talk term supported only on semiprime
+      spectral weights?
+\end{itemize}
+The patch-level target, not yet formalized, is a family
+\[
+  \zeta(s)=h_c(s)\cdot\text{free}_c(\Re s)
+  \quad\text{(off the zero locus of channel $c$)},
+\]
+parallel to \eqref{eq:h-explicit} but with readout channel $c$ replacing the
+$45^\circ$ equator factor.
+
+\paragraph{Semiprime-mediated influence on the critical line.}
+Any influence a higher-twiddle channel exerts on points lying on the $45^\circ$
+critical line is expected to be \textbf{semiprime mediated}: it can reach the
+main channel only through spectral weights supported on integers with exactly
+two prime factors (semiprimes $pq$ with $p\neq q$ in the square-free case).
+This mirrors the arithmetic difficulty of locating or controlling semiprimes in
+the additive Goldbach channel (\S\ref{sec:rh-goldbach}): midpoint pairs
+$p+q=2N$ are easy to \emph{certify} once found, while products $pq$ are the
+composite objects that factorization-side bookkeeping must resolve
+(\leanfile{Hqiv/Geometry/GoldbachG2Parity.lean}, composite-branch and
+\texttt{G$_2$}-triple decomposition lemmas).
+Consequently higher twiddles may affect the factorization engine at
+critical-line points only \emph{indirectly and weakly} --- not as new zero
+locators, but as cross-talk that must pass through the hardest multiplicative
+spectral lines.
+
+\paragraph{Open technical tasks.}
+\begin{enumerate}[label=(\roman*),nosep]
+\item Define $h_c(s)$ (or $h_\rho$) relative to a higher-twiddle readout, matching
+      the interior assembly role of \texttt{interiorStripH}.
+\item Prove the corresponding patch-level factorization inside finite spectral
+      frames of level $N$.
+\item Make precise the semiprime support of any cross-talk between the $45^\circ$
+      channel and higher-twiddle channels (a leakage term vanishing on primes and
+      higher-composite weights).  Lean already types finite-frame leakage with
+      \texttt{SemiprimeSupportedWeight} and proves prime spectral lines carry
+      zero weight (\leanfile{Hqiv/Story/S3HigherTwiddleFactorizationProbe.lean},
+      \leanid{semiprime\_weight\_kills\_prime\_spectral\_line}).
+\end{enumerate}
 
 \section{Quaternion axis projection}\label{sec:quaternion}
 
@@ -185,18 +566,18 @@ $\pm i,\pm j,\pm k$ project to $\pm1/\sqrt2$ on single axes and cancel as
 antipodal orbit pairs (\leanfile{Hqiv/Story/S3SixPolesResidual.lean},
 \leanfile{Hqiv/Story/S3PrimeAxisCancellation.lean}).
 
-\begin{definition}[j/k slots in the FE channel]
-Define the sine and cosine projection slots
+\begin{definition}[Sine and cosine factors in the FE channel]
+Define the sine and cosine factors
 \[
   \mathcal{S}(s)=\sin\frac{\pi s}{2},
   \qquad
   \mathcal{C}(s)=\cos\frac{\pi s}{2}.
 \]
-These are the j/k rotation content in the functional-equation odd channel;
-$\mathcal{C}$ is packaged as \texttt{zetaSinCosFactor} in Lean.
+These are the oscillating factors in the functional-equation odd channel;
+$\mathcal{C}$ is \texttt{zetaSinCosFactor} in Lean.
 \end{definition}
 
-\begin{theorem}[Even $\pi$-multiples: j/k cancellation]\label{thm:even-cancel}
+\begin{theorem}[Even $\pi$-multiples: sine vanishes]\label{thm:even-cancel}
 For $k\in\mathbb{N}$ at $s=2k$:
 \[
   \mathcal{S}(2k)=\sin(k\pi)=0,
@@ -229,15 +610,253 @@ They explain why \textbf{even} $\zeta$-values admit $\pi$-sector closed forms
 while \textbf{odd} positive integers (e.g.\ $\zeta(3)$) occupy the Ap\'ery /
 plastic continuation slot with no elementary closed form in Mathlib.
 
+\section{Analytic strip lift: cylinder $\sigma\times S^1$ in $\mathbb{H}$}
+\label{sec:analytic-strip-lift}
+
+The critical strip $0<\sigma<1$ embeds as a \emph{cylinder cover}: at fixed
+$\sigma$ the height $t=\Im s$ rolls a Hopf fiber on $S^3\subset\mathbb{H}$,
+while $\sigma$ enters through the $45^\circ$ free coordinate of
+\S\ref{sec:45-proj}.
+The geometric punch is not ``the whole strip is a flat cylinder'' but
+\textbf{what is special about the critical line}: there the free coordinate
+vanishes, the fiber radius is maximal, the lift is the rolling map, and the
+tangent readout is unimodular with quadruplet collapse; off the line the
+analytic slots carry hyperbolic ($\cosh/\sinh$) sorting and the Hopf circle is
+strictly shrunk.
+Lean packages the contrast in
+\leanfile{Hqiv/Story/S3CriticalLineCarrierBundle.lean}; the lift and
+conditional whole-strip classification remain in
+\leanfile{Hqiv/Story/S3AnalyticStripLift.lean} and
+\leanfile{Hqiv/Story/S3AnalyticStripClassification.lean}.
+
+\subsection{Lift and Hopf fiber}
+
+\begin{definition}[Analytic strip lift]
+For $\sigma,t\in\mathbb{R}$ define the \textbf{free coordinate}
+\[
+  f(\sigma)=\frac{2\sigma-1}{\sqrt2}=\texttt{rot45Free}(\sigma,1-\sigma),
+\]
+the \textbf{Hopf fiber radius}
+$r(\sigma)=\sqrt{1-f(\sigma)^2}$, and the lift
+\[
+  \texttt{stripAnalyticLift}(\sigma,t)
+  = \bigl(0,\; f(\sigma),\; r(\sigma)\cos t,\; r(\sigma)\sin t\bigr)
+\]
+on the $p_0=0$ slice of $S^3$.
+For $s=\sigma+it$ set $\texttt{stripPointLift}(s)=\texttt{stripAnalyticLift}(\sigma,t)$.
+\end{definition}
+
+\begin{theorem}[On-shell and $\sigma$-equator]\label{thm:lift-on-s3}
+For $0\le\sigma\le1$ and all $t$, the lift lies on $S^3$
+(\leanid{strip\_analytic\_lift\_on\_s3}).
+The free coordinate vanishes exactly on the critical line:
+$f(\sigma)=0\Leftrightarrow\sigma=\tfrac12$
+(\leanid{strip\_sigma\_free\_coord\_vanishes\_iff}).
+At $\sigma=\tfrac12$ the lift agrees with the rolling map of
+\leanfile{Hqiv/Story/S3StripRollingProjection.lean}:
+$\texttt{stripAnalyticLift}(\tfrac12,t)=\texttt{stripRollingMap}(t)$
+(\leanid{strip\_analytic\_lift\_eq\_rolling}).
+\end{theorem}
+
+\subsection{Critical line carrier bundle}\label{subsec:critical-line-carrier}
+
+\begin{theorem}[Line is the unique maximal-circle, unimodular locus]\label{thm:line-carrier-chain}
+On the open strip $0<\sigma<1$, the following are equivalent
+(\leanid{critical\_line\_carrier\_iff\_chain}):
+\[
+  \Re s=\tfrac12
+  \;\Longleftrightarrow\;
+  f(\sigma)=0 \;\wedge\; r(\sigma)=1
+  \;\wedge\; \texttt{criticalLineDeviation}(s)=0
+  \;\wedge\; \texttt{so4CriticalFactor}(s)=0
+  \;\wedge\; \lVert\tan(\pi s/2)\rVert=1
+  \;\wedge\; T(s)^{-1}=\overline{T(s)}.
+\]
+Here $f(\sigma)=\texttt{stripSigmaFreeCoord}(\sigma)$ and
+$r(\sigma)=\texttt{stripHopfFiberRadius}(\sigma)$.
+The lift on the line is the rolling map
+(\leanid{critical\_line\_lift\_is\_rolling}).
+\end{theorem}
+
+\begin{theorem}[Off-line carrier tax]\label{thm:off-line-carrier}
+For $0\le\sigma\le1$ with $\sigma\neq\tfrac12$,
+$f(\sigma)\neq0$ and $r(\sigma)<1$
+(\leanid{off\_line\_carrier\_shrinks\_hopf\_fiber},
+\leanid{strip\_hopf\_fiber\_radius\_lt\_one\_iff}).
+On the open strip with $\Re s\neq\tfrac12$, the tangent is not unimodular,
+the quadruplet does not collapse, and $\sigma$ sorts into the disk or
+exterior of the unit circle
+(\leanid{off\_line\_hyperbolic\_tangent\_sorts},
+\leanid{critical\_strip\_off\_line\_quadruplet\_does\_not\_collapse}).
+Cancellation off the line requires the full offset
+$f(\sigma)+r(\sigma)(\cos t+\sin t)=0$, not merely $\cos t+\sin t=0$
+(\leanid{strip\_analytic\_cancellation\_off\_line\_needs\_free}).
+\end{theorem}
+
+\begin{theorem}[Path C on the line via rolling]\label{thm:line-pathC-rolling}
+Under \texttt{StripAnalyticLiftMatches} and \texttt{ZetaEqualsS3ResidualAt},
+for $\Re s=\tfrac12$,
+\[
+  \zeta(s)=0
+  \;\Longleftrightarrow\;
+  \texttt{ZeroProducingOrbit}(\texttt{stripRollingMap}(t))
+  \;\wedge\;
+  \texttt{PathEStripHolonomyCloses}(s)
+\]
+(\leanid{critical\_line\_pathC\_classification\_via\_rolling});
+equivalently, only the rolling orbit is needed on the line
+(\leanid{critical\_line\_pathC\_rolling\_only}).
+\end{theorem}
+
+The hyperbolic character off-line is in the \emph{analytic} sin/cos slots
+($\cosh/\sinh$ factors cancel only in
+$\lVert\sin\rVert^2-\lVert\cos\rVert^2=-\cos(\pi\sigma)$,
+\leanid{normSq\_proj\_sin\_sub\_cos}), not in the constraint
+$f(\sigma)^2+r(\sigma)^2=1$ (a unit circle in the lift chart,
+\leanid{strip\_lift\_free\_radius\_unit\_circle}).
+
+\subsection{$\mathbb{C}$ cover versus $\mathbb{H}$ circle}
+
+In $\mathbb{C}$ the height $t$ is a \emph{non-compact} cover coordinate.
+On the lift, $t$ and $t+2\pi n$ define the same point on $S^3$
+(\leanid{strip\_analytic\_lift\_period},
+\leanid{sameStripHeight}).
+The Hopf-base trace $(r(\sigma)\cos t,r(\sigma)\sin t)$ is likewise
+$2\pi$-periodic in $t$ (\leanid{strip\_hopf\_circle\_period}).
+Thus each fixed $\sigma$ carries an $S^1$ fiber inside $\mathbb{H}$ while
+$\mathbb{C}$ records the universal cover --- the geometric form of
+``countably infinite heights, compact phase carrier'' discussed in the
+spectral literature without the quaternion chart.
+
+\subsection{Harmonic-shell arc sweep (not heights $t$)}\label{subsec:harmonic-shell-counting}
+
+Counting by scanning $t\in\mathbb{R}$ conflates the universal cover with a counter.
+On the line, $t\neq t+2\pi$ yet the same fiber class is recovered
+(\leanid{strip\_height\_not\_injective\_on\_circle},
+\leanid{strip\_rolling\_map\_respects\_height\_cover}).
+
+The promoted counting axis pairs harmonic depth $H_n$ with angular \emph{arc
+partitions}.  At shell $n>0$ the Hopf circle is cut into $n$ arcs of width
+$2\pi/n$, indexed by $k$ at polar angle $2\pi k/n$
+(\leanid{shellSweepAngle}, \leanid{shellArcWidth}).
+Finer shells refine the sweep when $n\mid m$
+(\leanid{sweep\_refines\_coarser\_angle}, \leanid{sweep\_arc\_width\_refines}).
+Slots form a countable union of finite partitions:
+$\texttt{HarmonicShellSlot}=\Sigma_n\,\texttt{Fin}\,n$ injects into $\mathbb{N}$
+(\leanid{encodeHarmonicShellSlot\_injective}).
+
+Monotone ticks $1,2,3,\ldots$ order shells by cumulative weight $H_n$ only.
+Sweeping the circle adds \emph{spatial resolution on $S^1$}: shell $n$ is an
+$n$-way partition of the same compact carrier, not one more real height.
+Divergent $H_n$ supplies depth; $2\pi k/n$ supplies angular resolution
+(\leanid{harmonic\_depth\_diverges}, \texttt{HarmonicSweepCountingAxis}).
+Each slot carries primitive-root phase on $S^1$
+(\leanid{shell\_slot\_phase\_eq\_exp\_angle}) and rolls to
+$\texttt{stripRollingMap}(2\pi k/n)$
+(\leanid{strip\_rolling\_at\_slot\_eq\_lift}).
+Head/tail reflection is antipodal, $\theta\mapsto\theta+\pi$
+(\leanid{head\_tail\_reflect\_rolling\_antipodal}); reflections quotient slots,
+they do not enumerate them.
+
+\paragraph{$j$--$k$ unit-circle zero readout.}
+On the line the Hopf lift is a point $(j,k)=(\cos t,\sin t)$ on $S^1$
+(\leanid{hopfJKCirclePoint}).  The phase readout uses the \emph{coordinate
+product} in place of a bare $\mathbb{C}$ generator:
+$e^{\pi i j k}$ (\leanid{hopfJKUnitCirclePhase}); amplitude is the $45^\circ$
+projection $j/\sqrt2+k/\sqrt2$ (\leanid{hopfJKCriticalAmplitude}).
+\textbf{Unconditional:} twiddle vanishes iff $j+k=0$ on the circle
+(\leanid{hopf\_jk\_twiddle\_vanishes\_iff\_cos\_sin}).
+\textbf{Conditional:} $\zeta(\tfrac12+it)=0$ iff the amplitude vanishes under
+\texttt{RollingZetaIdentificationAtCriticalLine}
+(\leanid{zeta\_zero\_iff\_hopf\_jk\_twiddle}).
+Harmonic-shell slots at angle $2\pi k/n$ inherit the same readout
+(\leanid{harmonic\_shell\_balance\_iff\_jk\_product\_phase}).
+
+\paragraph{Euler prime product counting on the circle.}
+On $s=\tfrac12+it$ each factor splits as $n^{-s}=n^{-1/2}\cdot e^{-it\log n}$
+(\leanid{critical\_line\_prime\_power\_polar}): modulus $n^{-1/2}$ carries no
+angle; the unit phase $\texttt{linePhase}\,n\,t$ lives on the Hopf circle.
+Multiplication in $\mathbb{N}$ is phase multiplication
+(\leanid{euler\_phase\_multiplicative\_at\_slot}).  The natural counter is not a
+height scan $t\in\mathbb{R}$ but a triple index
+\[
+  (\text{shell }n,\ \text{arc }k,\ \text{prime }p)
+  \quad\longmapsto\quad
+  \texttt{linePhase}\,p\,(2\pi k/n),
+\]
+together with the $j$--$k$ amplitude at that arc
+(\leanfile{Hqiv/Story/S3HopfJKEulerPrimeCircleCounting.lean}).
+Two distinct prime phases \emph{pin} the circle point
+(\leanid{two\_prime\_phases\_pin\_circle\_angle}); one prime leaves only a
+$2\pi/\log p$ ghost lattice.  Under the rolling bridge,
+$\zeta=0$ at a slot angle iff the prime-log twiddle vanishes there
+(\leanid{zeta\_zero\_iff\_shell\_prime\_twiddle}).
+
+\textbf{Honesty.}  $\zeta(s)=0$ on the line as cover balance still requires
+\texttt{RollingZetaIdentificationAtCriticalLine}
+(\leanid{zeta\_zero\_iff\_cover\_balance}); the counting axis $(n,k)$ is
+unconditional (\leanid{harmonicShellZeroCountingBundle}).
+
+\subsection{45° readout on the whole strip}
+
+The $45^\circ$ projection amplitude on the lift is
+\[
+  \texttt{criticalProj}(\texttt{stripAnalyticLift}(\sigma,t))
+  = \frac{f(\sigma)+r(\sigma)(\cos t+\sin t)}{\sqrt2}
+\]
+(\leanid{strip\_analytic\_critical\_proj}).
+Cancellation is the balanced condition
+$f(\sigma)+r(\sigma)(\cos t+\sin t)=0$
+(\leanid{strip\_analytic\_cancellation\_iff}).
+The Fourier twiddle
+$\texttt{stripAnalyticTwiddle}(\sigma,t)=e^{it}\cdot\texttt{criticalProj}(\cdots)$
+extends the critical-line rolling twiddle to all $\sigma$
+(\leanid{strip\_analytic\_twiddle\_on\_line}).
+
+\subsection{Conditional zero classification}
+
+\textbf{Honesty.} As in \S\ref{sec:real-line}, identifying $\zeta(s)$ with the
+lifted residual requires \texttt{ZetaEqualsS3ResidualAt} and the sample
+hypothesis \texttt{StripAnalyticLiftMatches} ($P.\texttt{coords}=\texttt{stripPointLift}(s)$).
+
+\begin{theorem}[Whole-strip cancellation form]\label{thm:strip-cancel}
+Under \texttt{StripAnalyticLiftMatches} and \texttt{ZetaEqualsS3ResidualAt},
+\[
+  \zeta(s)=0
+  \;\Longleftrightarrow\;
+  f(\sigma)+r(\sigma)(\cos t+\sin t)=0
+\]
+on the open strip (\leanid{zeta\_zero\_iff\_strip\_analytic\_cancellation}).
+\end{theorem}
+
+\begin{theorem}[Path C/E on the cylinder]\label{thm:strip-pathC}
+Under the same hypotheses, for $0<\sigma<1$,
+\[
+  \zeta(s)=0
+  \;\Longleftrightarrow\;
+  \texttt{ZeroProducingOrbit}(\texttt{stripPointLift}(s))
+  \;\wedge\;
+  \texttt{PathEStripHolonomyCloses}(s)
+\]
+(\leanid{analytic\_strip\_pathC\_classification}).
+On $\sigma=\tfrac12$ this recovers the rolling classification of
+\leanfile{Hqiv/Story/S3StripRollingProjection.lean}
+(\leanid{analytic\_strip\_rolling\_classification\_on\_line}).
+\end{theorem}
+
+The capstone \texttt{InteriorAssemblyNonzeroAtNontrivialZerosOffLine} is
+unchanged: the lift supplies \emph{geometry} on $\sigma\times S^1$; the
+identification bridge remains RH-hard.
+
 \section{Regional closed form for $\zeta(s)$}\label{sec:closed-form}
 
-Table~\ref{tab:regional} collects the proved regional packaging.  Every row is
+Table~\ref{tab:regional} collects the proved regional formulas.  Every row is
 machine-checked against Mathlib in \leanfile{Hqiv/Story/S3ZetaClosedForm.lean}
 and \leanfile{Hqiv/Story/S3SO4ZetaProjectionClosedForm.lean}.
 
 \begin{table}[h]
 \centering
-\caption{Regional SO(4) channel packaging for $\zeta(s)$ (all rows proved).}
+\caption{Regional closed forms for $\zeta(s)$ from the SO(4) projection (all rows proved).}
 \label{tab:regional}
 \begin{tabular}{@{}lll@{}}
 \toprule
@@ -294,7 +913,7 @@ For $k\ge1$,
 In particular $\zeta(2)=\pi^2/6$ and $\zeta(4)=\pi^4/90$.
 \end{theorem}
 
-At these points $\mathcal{S}(2k)=0$: the j/k rotation has completed full
+At these points $\mathcal{S}(2k)=0$: the sine/cosine rotation has completed full
 $\pi$-turns and only the even $\pi$-sector residue remains---consistent with
 Theorem~\ref{thm:even-cancel}.
 
@@ -307,7 +926,7 @@ For $k\in\mathbb{N}$,
 \]
 \end{theorem}
 
-\subsection{Master projection packaging}
+\subsection{Master projection formula}
 
 \begin{definition}
 \texttt{zetaSO4Projected}$(s):=\zeta(s)$ with the regional characterisations of
@@ -323,18 +942,18 @@ Off the critical line on the open strip,
 when $0<\sigma<1$ and $\sigma\neq\tfrac12$
 (\leanid{zetaSO4Projected\_eq\_sin\_cos\_channel\_off\_line}).
 
-\section{Why the closed form looks weird---and why the answer is on the real line}\label{sec:real-line}
+\section{Open-strip assembly and the critical line}\label{sec:real-line}
 
-The strip formula~\eqref{eq:fe-strip} exposes three features that appear
-singular when read naively:
+The open-strip functional-equation assembly~\eqref{eq:fe-strip} exposes three
+features that look singular when read naively:
 \begin{enumerate}[label=(\alph*),nosep]
 \item $\Gamma(1-s)$ has poles at $s=1,2,3,\ldots$;
 \item $\cos(\pi(1-s)/2)$ has zeros at odd integers;
 \item negative-even \emph{trivial} zeros of $\zeta$ sit at $s=-2,-4,\ldots$
 \end{enumerate}
 
-The HQIV discharge chain treats these as \textbf{regional bookkeeping}, not as
-contradictions:
+The machine-checked classification treats these as \textbf{regional bookkeeping},
+not as contradictions:
 \begin{itemize}[nosep]
 \item \textbf{Negative-even trivial zeros} are the only negative-integer zeros;
       nontrivial zeros cannot occupy negative integer slots
@@ -348,16 +967,733 @@ contradictions:
       zero locus.
 \end{itemize}
 
+\section{Orbit cancellation vs.\ pointwise vanishing}\label{sec:orbit-gap}
+
+\leanfile{Hqiv/Story/S3OrbitVsPointwiseGap.lean} separates three layers:
+\begin{enumerate}[label=(\roman*),nosep]
+\item \textbf{Orbit cancellation.}  For every $\sigma$,
+      $\texttt{rot45Free}(\sigma)+\texttt{rot45Free}(1-\sigma)=0$
+      (\leanid{orbit\_free\_sum\_cancels}); this holds even off
+      $\Re s=\tfrac12$ and cannot exclude off-line $\zeta$ zeros by itself.
+\item \textbf{Pointwise vanishing.}  A single free coordinate vanishes iff
+      $\sigma=\tfrac12$ (\leanid{pointwise\_free\_zero\_iff\_on\_line}).
+\item \textbf{RH equivalence.}  \texttt{AllNontrivialZerosOnLine}
+      $\Leftrightarrow$ \texttt{RiemannHypothesis}
+      (\leanid{allNontrivialZerosOnLine\_iff\_RiemannHypothesis}).
+\end{enumerate}
+
+\subsection{FE + Schwarz quadruplet}\label{sec:quadruplet}
+
+Nontrivial zeros satisfy the FE pair $\zeta(1-s)=0$ unconditionally
+(\leanfile{Hqiv/Story/S3ZeroQuadrupletOrbit.lean},
+\leanid{zeta\_zero\_fe\_pair}).  The full Schwarz quadruplet
+\[
+  \{s,\,1-s,\,\overline{s},\,1-\overline{s}\}
+\]
+is packaged as \texttt{zetaZeroQuadruplet}; all four points carry zeros when
+the conjugation identity $\zeta(\overline{t})=\overline{\zeta(t)}$ is available
+(\leanid{zeta\_zero\_quadruplet}).  On $\Re s=\tfrac12$ the reflections
+$\overline{s}$ and $1-s$ coincide, collapsing the quadruplet to an FE pair---the
+same collapse as orbit vs.\ pointwise on the $\sigma$ channel.
+
 \begin{remark}[Geometric reading]
 The ``infinity'' from $\Gamma$ and the ``zero'' from negative-even slots are
 two faces of the same projection geometry: they clear the plane of spurious
 complex-axis candidates and leave the \emph{pointwise} equator condition
 $\texttt{rot45Free}=0\Leftrightarrow\sigma=\tfrac12$ as the only balanced
-imaginary readout (\leanfile{Hqiv/Story/S3OrbitVsPointwiseGap.lean}).
-Orbit pairs $\{\sigma,1-\sigma\}$ always cancel in sum; RH asks that actual
-$\zeta$ zeros satisfy the stronger pointwise condition---literally
-$\texttt{AllNontrivialZerosOnLine}\Leftrightarrow\texttt{RiemannHypothesis}$.
+$\sigma$-only dependence.  RH asks that actual $\zeta$ zeros satisfy this stronger
+pointwise condition, not merely orbit cancellation along $\sigma\leftrightarrow
+1-\sigma$.
 \end{remark}
+
+\subsection{Tangent law of the orbit: factorization angles and the unimodular
+locus}\label{sec:tangent-orbit}
+
+The strip closed form carries a \emph{factorization angle} $\pi s/2$: the sine/cosine
+rotation slots are $\sin(\pi s/2)$ and $\cos(\pi s/2)$ and their ratio
+$T(s)=\tan(\pi s/2)$ is the projection formula
+(\texttt{zetaAxisRotationRatio}).
+\leanfile{Hqiv/Story/S3TangentOrbitCriticalLine.lean} proves the orbit law
+for that angle under the FE + Schwarz quadruplet --- all of it
+unconditional projection geometry, no RH input.
+
+\paragraph{The orbit acts on the tangent by inversion and conjugation.}
+FE reflection swaps the slots exactly
+($\sin\!\big(\pi(1-s)/2\big)=\cos(\pi s/2)$,
+\leanid{proj\_sin\_one\_sub}), so
+\[
+  T(1-s) = T(s)^{-1},
+  \qquad
+  T(\overline{s}) = \overline{T(s)},
+  \qquad
+  T(1-\overline{s}) = \overline{T(s)}^{-1}
+\]
+(\leanid{projTangent\_one\_sub}, \leanid{projTangent\_schwarz},
+\leanid{projTangent\_quadruplet}), with the orbit reciprocity
+$T(1-s)\,T(s)=1$ on the strip
+(\leanid{projTangent\_orbit\_reciprocity}).  The quadruplet
+$\{s,1-s,\overline{s},1-\overline{s}\}$ reads out through the tangent as
+$\{T,\,T^{-1},\,\overline{T},\,\overline{T}^{-1}\}$: the group
+$\{1,\mathrm{inv},\mathrm{conj},\mathrm{inv}\circ\mathrm{conj}\}$.
+
+\paragraph{The critical line is exactly the unimodular locus.}
+The engine is the exact modulus identity
+\[
+  \big\lVert\sin(\pi s/2)\big\rVert^2-\big\lVert\cos(\pi s/2)\big\rVert^2
+  \;=\; -\cos\!\big(\pi\,\Re s\big)
+\]
+(\leanid{normSq\_proj\_sin\_sub\_cos}): the $\Im s$ content rides in common
+$\cosh/\sinh$ factors that cancel in the difference --- the $\sigma$-blindness
+of \S\ref{sec:sigma-scope}, reappearing at the tangent level.  Consequently,
+on the open strip,
+\[
+  \lVert T(s)\rVert^2 = 1 \;\Longleftrightarrow\; \Re s=\tfrac12,
+  \qquad
+  \lVert T(s)\rVert^2 < 1 \;\Longleftrightarrow\; \Re s<\tfrac12,
+  \qquad
+  \lVert T(s)\rVert^2 > 1 \;\Longleftrightarrow\; \Re s>\tfrac12
+\]
+(\leanid{normSq\_projTangent\_eq\_one\_iff} and companions): the tangent
+modulus is a \emph{complete invariant} for the critical line and sorts the
+strip around it.
+
+\paragraph{Orbit collapse $\Leftrightarrow$ critical line.}
+Inversion equals conjugation on the tangent --- $T^{-1}=\overline{T}$,
+collapsing the quadruplet tangent orbit from four values to two --- precisely
+on the critical line (\leanid{projTangent\_inv\_eq\_conj\_iff}).  And the tie
+to the $\zeta$ factorization is exact: the equator factor of
+$\zeta=h\cdot(2\sigma-1)/\sqrt2$ vanishes exactly where the tangent is
+unimodular,
+\[
+  \texttt{so4CriticalFactor}(s)=0
+  \quad\Longleftrightarrow\quad
+  \lVert\tan(\pi s/2)\rVert^2=1
+\]
+(\leanid{so4CriticalFactor\_zero\_iff\_unimodular\_tangent}).  The critical
+line is thus characterized three ways at once --- vanishing equator factor,
+unimodular factorization tangent, and coincidence of the two orbit
+symmetries --- all proved to be the same locus.
+
+\subsection{Zeros as spectral cancellations of the Euler product}
+\label{sec:spectral-cancellation}
+
+The reading that drives this entire construction --- \emph{the zeros are
+exactly the spectral cancellations that give the Euler prime product} ---
+has three provable faces, and
+\leanfile{Hqiv/Story/S3EulerSpectralCancellation.lean} proves all three.
+None of them requires RH.
+
+\paragraph{In the product region the prime phases provably cannot cancel.}
+For $\Re s>1$ every Euler factor is individually nonvanishing,
+$\lVert p^{-s}\rVert=p^{-\Re s}<1$ so $(1-p^{-s})^{-1}\neq0$
+(\leanid{euler\_factor\_ne\_zero}); the product of these phases converges to
+$\zeta(s)$ \emph{and} the value is nonzero
+(\leanid{euler\_product\_region\_no\_cancellation}, packaging Mathlib's
+\texttt{riemannZeta\_eulerProduct\_hasProd} with the nonvanishing).  Where
+the spectral product is a genuine convergent product, cancellation can never
+\emph{complete}: a zero would contradict the product representation itself.
+
+\paragraph{Zeros live exactly on the breakdown locus.}
+Contrapositively, $\zeta(s)=0$ forces $\Re s<1$ --- impossible anywhere the
+product region extends, including the closed boundary $\Re s=1$
+(\leanid{zero\_forces\_product\_breakdown}).  Combined with the strip
+confinement of \S\ref{sec:real-line}, every nontrivial zero sits in the open
+strip $0<\Re s<1$ (\leanid{spectral\_cancellation\_in\_breakdown\_locus}) ---
+precisely the region where the prime spectral series no longer converges
+absolutely.  The zero set lives on the breakdown locus of the Euler product
+and nowhere else.
+
+\paragraph{Each zero is a resonance pole of the inverse spectral response.}
+On the product region the prime spectrum is \emph{tame}: the von Mangoldt
+series converges and equals the log-derivative,
+$\sum_n\Lambda(n)n^{-s}=-\zeta'(s)/\zeta(s)$
+(\leanid{spectral\_series\_tame}).  The \emph{inverse} spectral response
+$1/\zeta$ --- the un-inverted prime-phase product $\prod_p(1-p^{-s})$
+continued to the strip --- blows up at every zero:
+\[
+  \big\lVert \zeta(s)^{-1}\big\rVert \;\longrightarrow\; \infty
+  \qquad\text{as } s\to\rho \text{ along the nonvanishing locus,}
+\]
+unconditionally for any zero $\rho\neq1$
+(\leanid{inverse\_spectral\_response\_blows\_up\_at\_zero}); the
+punctured-neighbourhood version carries the classical isolated-zero fact as
+an explicit hypothesis rather than smuggling it in
+(\leanid{inverse\_spectral\_response\_blows\_up\_punctured}).  A completed
+cancellation is a \emph{resonance}: the spectral measure of the primes
+diverges exactly there.
+
+\paragraph{Capstone: the spectral-cancellation profile.}
+\leanid{spectral\_cancellation\_profile} packages, for any nontrivial zero
+$\rho$: (i) open-strip confinement (breakdown region); (ii) impossibility in
+the product region; (iii) the resonance blow-up of $\lVert1/\zeta\rVert$ at
+$\rho$; and (iv) the quadruplet tangent orbit
+$\{T,T^{-1},\overline{T},\overline{T}^{-1}\}$ of
+\S\ref{sec:tangent-orbit} attached to the factorization angle $\pi\rho/2$.
+A nontrivial zero \emph{is} a completed spectral cancellation carrying the
+full orbit data.  What RH adds --- and only RH --- is that every such
+cancellation sits on the unimodular-tangent locus $\lVert T\rVert=1$.
+
+\subsection{Resonance channeling and the SO(4) spectral-line transformer}
+\label{sec:resonance-channeling}
+
+\leanfile{Hqiv/Story/S3SpectralResonanceChanneling.lean} combines the three
+proved layers --- tangency, equator factor, and spectral cancellation --- into the
+sharpest forcing statements available without assuming RH.
+
+\paragraph{The cancellation is collective.}
+A single prime line never cancels on the entire right half-plane: for
+$\Re s>0$ (in particular on the whole strip), $1-p^{-s}\neq0$
+(\leanid{euler\_factor\_base\_ne\_zero\_right\_half}), so every finite
+spectral truncation $\prod_{p\in F}(1-p^{-s})$ is nonzero
+(\leanid{finite\_spectral\_truncation\_ne\_zero}).  A zeta zero needs all
+primes at once; no finite interference produces it.
+
+\paragraph{The two-channel dichotomy.}
+On the strip $\zeta=h\cdot(2\sigma-1)/\sqrt2$ off the line, so at any
+nontrivial zero the collective cancellation must be absorbed by exactly one
+of two channels (\leanid{resonance\_channeling\_dichotomy}):
+\[
+  \underbrace{\Re\rho=\tfrac12:\;
+    \texttt{so4CriticalFactor}(\rho)=0,\;\lVert T(\rho)\rVert^2=1}_{
+    \text{geometric equator channel absorbs}}
+  \qquad\text{or}\qquad
+  \underbrace{\Re\rho\neq\tfrac12:\;
+    \texttt{interiorStripH}(\rho)=0}_{
+    \text{free assembly forced to vanish}}
+\]
+(\leanid{offline\_zero\_forces\_assembly\_vanish}).  RH is exactly the
+statement that the second channel never fires, and this is now a proved
+\emph{equivalence}, not merely an implication:
+\leanid{geometric\_channel\_absorption\_iff\_RH} gives
+$\texttt{InteriorAssemblyNonzeroAtNontrivialZerosOffLine}\;
+\texttt{interiorStripH}\Leftrightarrow\text{RH}$.
+
+\paragraph{The SO(4) spectral-line transformer.}
+For a given $n$, the transformer is the spectral line
+$\texttt{so4SpectralLine}\,n\,s=n^{-s}$, with proved laws: the modulus law
+$\lVert n^{-s}\rVert=n^{-\Re s}$ ($\sigma$-blindness at the spectrum level,
+\leanid{so4SpectralLine\_norm}); the unconditional \emph{FE pairing}
+\[
+  \lVert n^{-s}\rVert\cdot\lVert n^{-(1-s)}\rVert=\frac1n
+  \qquad\text{for \emph{all} } s
+\]
+(\leanid{so4SpectralLine\_fe\_product}); the \emph{geometric-mean condition}
+--- the two paired lines are equal iff $\Re s=\tfrac12$
+(\leanid{so4SpectralLine\_geometric\_mean\_iff}); the
+\emph{square-root-weight condition} $\lVert n^{-s}\rVert^2=1/n
+\Leftrightarrow\Re s=\tfrac12$ (\leanid{so4SpectralLine\_sq\_weight});
+multiplicativity $(ab)^{-s}=a^{-s}b^{-s}$
+(\leanid{so4SpectralLine\_mul}); and the prime generation of every line ---
+every $n\ge2$ is a multiple of a prime and its line factors through that
+prime's line (\leanid{spectral\_line\_prime\_factorization}).
+
+\paragraph{Main conditional hypothesis.}
+\leanid{RH\_iff\_zero\_spectral\_weights}: \textbf{RH is equivalent to the
+statement that at every nontrivial zero, every spectral line carries exactly
+square-root weight} $\lVert n^{-\rho}\rVert^2=1/n$.  ``For every prime, the
+zero sits at its square-root pole weight'' --- made exact and proved
+RH-equivalent.  And \leanid{zero\_line\_characterizations} shows the three
+equivalent conditions agree at every zero: vanishing equator factor $\Leftrightarrow$
+unimodular tangent $\Leftrightarrow$ all lines at square-root weight
+$\Leftrightarrow\Re\rho=\tfrac12$.  The unconditional content is a genuine
+\emph{reduction}: RH is now a single-channel statement --- the free assembly
+$h$ never absorbs a collective cancellation --- with every geometric equivalent condition
+proved to name the same line.
+
+\subsection{Vertical axis rigidity: the orbits cannot wobble}
+\label{sec:axis-rigidity}
+
+\leanfile{Hqiv/Story/S3VerticalAxisRigidity.lean} formalizes the rigidity
+intuition: any ``curvature'' of the zero locus --- a second symmetry axis, a
+tilted or bent critical line --- would force zeros \emph{out of the strip,
+off to infinity}.
+
+\paragraph{Two mirrors make a translation.}
+The zero set is unconditionally closed under the FE point-reflection
+$\rho\mapsto1-\rho$ (\leanid{nontrivial\_zero\_fe\_closed} --- FE only, no
+Schwarz hypothesis needed).  Suppose it were \emph{also} closed under the
+mirror $\texttt{verticalReflect}\,\sigma_0:s\mapsto2\sigma_0-\overline{s}$
+about some axis $\Re s=\sigma_0$.  Composing the two symmetries twice yields
+the translation
+\[
+  s\;\longmapsto\;s+(2-4\sigma_0),
+\]
+nontrivial unless $\sigma_0=\tfrac12$; iterating it marches any zero
+monotonically in $\Re$, straight out of the open strip --- contradicting the
+proved strip confinement.  Hence
+(\leanid{strip\_set\_unique\_vertical\_axis}, abstract;
+\leanid{zeta\_zero\_unique\_vertical\_axis}, instantiated): \textbf{the
+nontrivial zero set admits at most one vertical mirror axis, and it must be
+$\Re s=\tfrac12$.}  The only hypothesis carried by the zeta instantiation is
+nonemptiness of the zero set (Hardy 1914, classical, not yet in Mathlib).
+
+\paragraph{Supporting rigidity facts (all unconditional).}
+The fixed-point set of any vertical mirror is exactly its axis --- a
+straight line, never a curve (\leanid{verticalReflect\_fixed\_iff}); the
+mirror about $\tfrac12$ is the FE+Schwarz composite $1-\overline{s}$
+(\leanid{verticalReflect\_half\_eq\_one\_sub\_schwarz}).  If a point and its
+FE partner $1-s$ share a vertical line, that line is $\Re s=\tfrac12$
+(\leanid{fe\_pair\_same\_vertical\_line\_iff}): any two symmetry-partner
+points on one line force \emph{the} line.  And the candidate locus itself
+has no curvature anywhere: as a subset of all of $\mathbb{C}$, the
+square-root-weight locus is exactly the straight vertical line
+$\{\Re s=\tfrac12\}$ (\leanid{sq\_weight\_locus\_is\_vertical\_line}), swept
+by the vertical flow $s\mapsto s+it$ with no transverse drift
+(\leanid{sq\_weight\_locus\_vertical\_flow}).
+
+\paragraph{Honest scope.}
+``Two points on the line force all points onto the line'' is not a valid
+inference classically.  What is proved: (i) two symmetry-partner points on a
+common vertical line pin that line to $\tfrac12$; (ii) the candidate locus
+is a perfect straight line, not a curve; (iii) the zero set cannot support a
+second mirror axis without leaking out of the strip.  Promoting ``the unique
+possible axis is $\tfrac12$'' to ``every zero lies on it'' is exactly RH.
+
+\subsection{Same-height orbit collapse: ``one zero per height'' is exactly
+RH}\label{sec:same-height}
+
+\leanfile{Hqiv/Story/S3SameHeightOrbitCollapse.lean} scopes the two-part
+equivalence --- \emph{collectivity pins the axis; two zeros at the same
+height are off the board} --- and extracts the genuine theorem inside it.
+
+\paragraph{Collectivity does not pin the axis.}
+The cancellation at every zero is provably collective, but at \emph{any}
+point of the strip the all-primes weight family is the perfectly consistent
+$\lVert n^{-s}\rVert^2=n^{-2\sigma}$
+(\leanid{spectral\_weights\_consistent\_at\_any\_sigma}): nothing diverges
+or contradicts off the line.  What distinguishes $\sigma=\tfrac12$ is solely
+the square-root normalization $n^{-1}$ --- and that normalization \emph{is}
+RH (\leanid{RH\_iff\_zero\_spectral\_weights}).
+
+\paragraph{The same-height partner and the merge law.}
+The quadruplet member $1-\overline{s}$ sits at the \emph{same height},
+$\Im(1-\overline{s})=\Im s$ (\leanid{one\_sub\_schwarz\_same\_height}), and
+merges with $s$ exactly on the critical line
+(\leanid{same\_height\_partner\_merges\_iff} --- the mirror fixed-point law
+again).  An off-line zero would therefore carry a \emph{distinct} second
+zero at its own height; an on-line zero carries none.
+
+\paragraph{``One zero per height'' $\Leftrightarrow$ RH.}
+Declaring the straddling case off the board is not a proof of RH --- it is an
+exact reformulation of RH, proved as an equivalence in two strengths:
+\begin{itemize}[nosep]
+\item \leanid{RH\_iff\_height\_pins\_re} (\textbf{FE only, unconditional}):
+      RH $\Leftrightarrow$ any two nontrivial zeros with the same
+      $\lvert\Im\rvert$ have the same $\Re$.  The backward direction needs
+      no Schwarz input: the FE partner $1-\rho$ already supplies a zero of
+      equal $\lvert\Im\rvert$ with reflected real part, forcing
+      $\Re\rho=1-\Re\rho$.
+\item \leanid{RH\_iff\_unique\_zero\_per\_height} (Schwarz identity carried
+      as the explicit hypothesis, in the style of
+      \leanid{zeta\_zero\_quadruplet}): RH $\Leftrightarrow$ each height
+      carries at most one nontrivial zero.
+\end{itemize}
+The orbit picture is correct: a quadruplet either straddles the line with
+two distinct same-height members or collapses onto it.  Both directions are
+machine-checked with exact equivalence.
+
+\subsection{Polar projection collapse: the poles must land on one point}
+\label{sec:polar-collapse}
+
+\leanfile{Hqiv/Story/S3PolarProjectionCollapse.lean} formalizes the polar
+reading: \emph{the poles of $S^3$ must project to a single point on the
+complex plane for the zero to sit on the line} --- and resolves the worry
+that ``SO(4) is only applicable if RH is true.''
+
+\paragraph{The polar separation is the equator factor.}
+At the height of $s$ the mirror presents two pole images, $s$ and
+$\texttt{polarPartner}\,s=1-\overline{s}$, always at the same height
+(\leanid{polarPartner\_same\_height}).  Their separation is horizontal,
+real, and \emph{exactly} the equator factor:
+\[
+  \texttt{polarPartner}\,s-s \;=\; 1-2\sigma
+  \;=\; -\sqrt2\cdot\texttt{so4CriticalFactor}(s)
+\]
+(\leanid{polar\_separation\_eq},
+\leanid{polar\_separation\_eq\_twiddle}), with norm equal to twice the
+distance to the critical line
+(\leanid{polar\_separation\_eq\_twice\_deviation}).  The $45^\circ$ equator factor
+factor is, verbatim, the displacement between the two pole projections: off
+the line the SO(4) geometry does not break --- it \emph{reports} the polar
+separation through the surviving equator channel, which is precisely the
+off-line branch of the channeling dichotomy of
+\S\ref{sec:resonance-channeling}.
+
+\paragraph{Single-point projection $\Leftrightarrow$ RH.}
+The two pole images coincide iff $\Re s=\tfrac12$
+(\leanid{polar\_collapse\_iff\_on\_line}).  Single-point polar projection on
+the zero set (\leanid{PolarProjectionCollapsesOnZeros}) is therefore not a
+hidden presupposition of the SO(4) machinery but a well-formed proposition,
+and it is RH --- proved as a exact-equivalence equivalence
+(\leanid{polar\_collapse\_iff\_RH}), chaining to ``one zero per height''
+given the Schwarz identity
+(\leanid{polar\_collapse\_iff\_unique\_height}).  Single-point polar
+projection at every zero is thus the fourth face of RH in this stack, equal
+in strength to unimodular tangent, square-root spectral weights, and
+one-zero-per-height.
+
+\subsection{Zero--holonomy--Goldbach chain: every zero activates every
+pair}\label{sec:zero-holonomy-chain}
+
+\leanfile{Hqiv/Story/S3ZeroHolonomyGoldbachChain.lean} chains the
+collectivity of the cancellation through the Goldbach parity bridge: since
+all zeros are comprised of all primes, every zero carries the holonomy of
+every Goldbach pair.
+
+\paragraph{Activation and the AM--GM weight cap (unconditional).}
+At any nontrivial zero $\rho$ and for any midpoint pair $p+q=2N$, both prime
+lines are nonvanishing participants in the collective cancellation
+(\leanid{zero\_activates\_pair}), and the joint line factors
+multiplicatively through the pair.  AM--GM gives $pq\le N^2$
+(\leanid{midpoint\_pair\_product\_le}), so on the critical line the joint
+pair weight obeys
+\[
+  \lVert (pq)^{-s}\rVert^2=\frac1{pq}\;\ge\;\frac1{N^2}
+\]
+(\leanid{midpoint\_pair\_joint\_weight\_bound}): the \emph{additive}
+half-slope datum $N$ caps the \emph{multiplicative} spectral weight of its
+pairs.
+
+\paragraph{Every zero contains the holonomy of every pair.}
+The main chain theorem \leanid{zero\_contains\_pair\_holonomy} states, at any
+nontrivial zero and for any midpoint pair: activation of both prime lines,
+multiplicative factorization of the joint line, SO(4) midpoint slope
+$\tfrac12$, and the Hopf-fiber holonomy support certificate (integrable
+shell with \texttt{SO8AdmissibleHolonomy} $\Delta$/G$_2$/triality fields)
+--- all unconditional.  Under \texttt{GoldbachParity}, every midpoint
+$N\ge2$ admits a holonomy-supported pair
+(\leanid{parity\_gives\_holonomy\_support}).
+
+\paragraph{The bridge in geometric-channel language.}
+The SO(8) half-slope bridge now rewrites with both channels geometric:
+\begin{align*}
+  \texttt{SO8ProjectedHalfSlopeBridge}\,2
+  &\;\Longleftrightarrow\;
+  \text{(square-root spectral weights at every zero)}\wedge\text{parity}\\
+  &\;\Longleftrightarrow\;
+  \text{(single-point polar projection at every zero)}\wedge\text{parity}
+\end{align*}
+(\leanid{bridge\_iff\_spectral\_weights\_and\_parity},
+\leanid{bridge\_iff\_polar\_collapse\_and\_parity}).  The chain does not
+prove either side --- the bridge remains exactly RH $\wedge$ Goldbach
+with exact equivalence --- but both sides now speak the same SO(4)/holonomy
+dialect: zeta-side polar collapse, prime-side holonomy-supported midpoint
+pairs.
+
+\subsection{TUFT nested frame tower: odd spheres and the harmonic radius
+ladder}\label{sec:tuft-tower}
+
+\leanfile{Hqiv/Story/S3TuftNestedFrameTower.lean} formalizes what the TUFT
+nested fibration --- odd spheres $S^{2n+1}$ for every $n$ --- buys.  At
+level $N$ the first $N$ spectral lines assemble into the frame vector
+$(1^{-s},\dots,N^{-s})\in\mathbb{C}^N$, whose normalized version lives on
+$S^{2N-1}$; the structure is carried by the squared radius
+$\texttt{spectralFrameNormSq}\,N\,s=\sum_{n\le N}\lVert n^{-s}\rVert^2$.
+
+\paragraph{Tower structure (unconditional).}
+The levels nest with the new line's weight as increment
+(\leanid{spectralFrameNormSq\_succ}); every level is $\sigma$-blind, so the
+vertical flow moves the frame on a sphere of \emph{fixed} radius
+(\leanid{spectralFrameNormSq\_eq\_of\_re\_eq}); the radius never
+degenerates (\leanid{spectralFrameNormSq\_pos}).
+
+\paragraph{The harmonic radius law.}
+The rigidity payoff is a \emph{ladder of equivalent conditions}: for every level
+$N\ge2$,
+\[
+  \texttt{spectralFrameNormSq}\,N\,s = H_N
+  \quad\Longleftrightarrow\quad
+  \Re s=\tfrac12
+\]
+(\leanid{frame\_radius\_eq\_harmonic\_iff}), where $H_N$ is the harmonic
+backbone of the closure story.  The critical line is the unique vertical
+line on which the nested sphere radii reproduce the harmonic ladder ---
+\emph{the divergent series that forced $\Delta$ and closed
+$\mathfrak{so}(3)+\Delta$ to $\mathfrak{so}(4)$ in the first place}.  The
+loop closes: on the line the tower rebuilds the harmonic divergence
+(\leanid{frame\_tower\_diverges\_on\_line}, via Mathlib's divergence of the
+harmonic series), and the closure inequality $H_N\le K(N)$ reads as a
+curvature bound on the nested sphere radii
+(\leanid{frame\_radius\_le\_curvature\_on\_line}).
+
+\paragraph{What it buys --- in classical terms.}
+\leanid{RH\_iff\_zero\_frame\_tower\_harmonic}: RH $\Leftrightarrow$ at
+every nontrivial zero the \emph{whole tower} carries harmonic radii --- an
+infinite ladder of equivalent reformulations, one per level, all collapsing
+to the same bit.  The tower adds consistency rigidity (infinitely many
+independent conditions provably naming one line, with the closure backbone as
+reference values), not a new forcing mechanism: each level is
+  RH-equivalent, not RH-implying.
+
+\subsection{The Diophantine transformer: the operator behind the
+tower}\label{sec:diophantine-transformer}
+
+The tower, the spectral lines, and the FE pairing are all shadows of one
+concrete object.  \leanfile{Hqiv/Story/S3DiophantineTransformer.lean}
+defines the level-$N$ \emph{Diophantine transformer}
+\[
+  D_N(s) \;=\; \mathrm{diag}\bigl(1^{-s},\,2^{-s},\,\dots,\,N^{-s}\bigr)
+  \;\in\; M_N(\mathbb{C}),
+\]
+an integer-indexed, prime-generated diagonal operator on $\mathbb{C}^N$
+(entries are multiplicative in the index, so the primes generate
+everything), and proves its laws unconditionally.
+
+\paragraph{Trace ladder $\to\zeta$.}
+$\operatorname{tr}D_N(s)$ is the $N$-th Dirichlet partial sum
+(\leanid{diophantineTransformer\_trace}), and on the product region
+$\Re s>1$ the trace ladder converges:
+$\operatorname{tr}D_N(s)\to\zeta(s)$
+(\leanid{diophantineTransformer\_trace\_tendsto}).  The zeta function
+\emph{is} the trace of the transformer tower.
+
+\paragraph{HS norm $=$ tower radius.}
+The squared Hilbert--Schmidt norm of $D_N(s)$ is exactly
+$\texttt{spectralFrameNormSq}\,N\,s$
+(\leanid{diophantineTransformer\_hs\_normSq}): the TUFT frame radius of
+\S\ref{sec:tuft-tower} is the operator's norm ladder, and the harmonic
+radius law becomes ``$D_N$ is harmonically normalized
+($\lVert D_N\rVert_{\mathrm{HS}}^2=H_N$) exactly on the critical line.''
+
+\paragraph{FE composition is a fixed rational operator.}
+For \emph{every} $s$,
+\[
+  D_N(s)\cdot D_N(1-s)
+  \;=\;
+  \mathrm{diag}\bigl(1,\tfrac12,\tfrac13,\dots,\tfrac1N\bigr)
+\]
+(\leanid{diophantineTransformer\_fe\_product}) --- the $s$-dependence
+cancels completely and what remains is a pure Diophantine object with
+rational entries, whose trace is the harmonic backbone $H_N$
+(\leanid{feProduct\_trace\_eq\_harmonic}).  The functional equation, seen
+through the transformer, is the statement that the two reflected operators
+always compose to the \emph{integer harmonic operator}.
+
+\paragraph{The adjoint law names the line.}
+The genuinely new rigidity is at the level of adjoints: for any $n\ge2$,
+\[
+  n^{-(1-s)}=\overline{n^{-s}}
+  \quad\Longleftrightarrow\quad
+  \Re s=\tfrac12
+\]
+(\leanid{transformer\_entry\_adjoint\_iff}), hence for $N\ge2$
+\[
+  D_N(1-s)=D_N(s)^{\dagger}
+  \quad\Longleftrightarrow\quad
+  \Re s=\tfrac12
+\]
+(\leanid{diophantineTransformer\_adjoint\_iff}).  The FE reflection agrees
+with the operator adjoint precisely on the critical line, and there the
+transformer is a \emph{scaled isometry} whose unitarity defect is again the
+fixed harmonic diagonal:
+$D_N(s)D_N(s)^{\dagger}=\mathrm{diag}(1/n)$
+(\leanid{transformer\_scaled\_isometry\_on\_line}).
+
+\paragraph{RH in operator language.}
+\leanid{RH\_iff\_transformer\_adjoint\_at\_zeros}: RH $\Leftrightarrow$ at
+every nontrivial zero and every level $N\ge2$,
+$D_N(1-\rho)=D_N(\rho)^{\dagger}$.  This is the machine-checked
+form of the Hilbert--P\'olya intuition the construction has been circling:
+not ``there exists a self-adjoint operator whose spectrum is the zeros,''
+but ``RH $\Leftrightarrow$ the concrete transformer family is
+self-adjoint-across-FE at the zeros.''  As with every equivalent condition in this
+paper, the law is an exact reformulation of RH, not a proof of RH.
+
+\subsection{The octonionic associator channel: breaking the abelian
+obstruction}\label{sec:associator-channel}
+
+Diagonalization itself is the obstruction.
+\leanfile{Hqiv/Story/S3OctonionicAssociatorChannel.lean} first proves the
+saturation formally: the transformer family is \emph{abelian} and
+\emph{normal},
+\[
+  D_N(s)\,D_N(s') = D_N(s')\,D_N(s),
+  \qquad
+  D_N(s)\,D_N(s)^{\dagger} = D_N(s)^{\dagger}\,D_N(s)
+\]
+(\leanid{diophantineTransformer\_mul\_comm},
+\leanid{diophantineTransformer\_normal}).  A commuting normal family is
+simultaneously diagonalizable; every invariant it carries factors through
+the entries, and the entries are exactly the $\sigma$-blind /
+RH-equivalent readouts catalogued above.  This is the machine-checked
+``good reason'' the diagonal attack cannot go further.
+
+\paragraph{The escape hatch is non-associativity.}
+The HQIV stack carries one algebra that no commuting family can simulate:
+the octonionic light-cone carrier, whose associator
+$[x,y,z]=(xy)z-x(yz)$ is the same phase channel that supplies CP-odd
+structure and Lorentz bookkeeping elsewhere in the framework.  On the
+frozen Fano tables the witness is concrete:
+\[
+  [e_1,e_2,e_4] \;=\; (e_1e_2)e_4 - e_1(e_2e_4)
+  \;=\; e_7e_4 - e_1(-e_5)
+  \;=\; -e_3 - e_4 \;\neq\; 0,
+\]
+with squared norm $2$
+(\leanid{octonionAssociator\_e1\_e2\_e4},
+\leanid{octonionAssociatorNormSq\_e1\_e2\_e4}).
+
+\paragraph{Spectral weights ride the torsion.}
+The associator is trilinear in scalar weights
+(\leanid{octonionAssociator\_smul}), so the prime spectral moduli couple
+cleanly: weighting $(e_1,e_2,e_4)$ by
+$\lVert a^{-s}\rVert,\lVert b^{-s}\rVert,\lVert c^{-s}\rVert$ defines the
+\emph{associator channel} with closed form
+\[
+  \texttt{octAssociatorChannel}\;a\,b\,c\,s
+  \;=\; 2\,(abc)^{-2\sigma}
+\]
+(\leanid{octAssociatorChannel\_eq}).  Three unconditional laws follow:
+\begin{itemize}[nosep]
+\item \textbf{Zeros cannot cancel the torsion}
+      (\leanid{zero\_keeps\_associator\_torsion}): the channel is strictly
+      positive at every point — in particular at every nontrivial zero.
+      The zero annihilates the abelian assembly $\sum n^{-s}$; the
+      non-associative channel survives untouched, carrying every prime's
+      weight through the cancellation.
+\item \textbf{Asymmetry condition}
+      (\leanid{octAssociatorChannel\_eq\_iff}): the channel carries the
+      square-root weight $2/(abc)$ exactly on $\Re s=\tfrac12$.
+\item \textbf{FE pairing} (\leanid{octAssociatorChannel\_fe\_product}):
+      channel$(s)\cdot$channel$(1-s)=4/(abc)^2$ for every $s$ — the
+      associator analogue of $D_N(s)D_N(1-s)=\mathrm{diag}(1/n)$.
+\end{itemize}
+The Goldbach hook also extends: for a midpoint pair $p+q=2N$, the triple
+$(p,q,2N)$ keeps the channel above $1/N^3$ on the line
+(\leanid{midpoint\_triple\_channel\_floor}) — the AM--GM cap pushed into
+the non-associative channel.
+
+\paragraph{What the asymmetry buys --- in classical terms.}
+\leanid{RH\_iff\_zero\_associator\_channel}: RH $\Leftrightarrow$ at every
+nontrivial zero the channel carries exact square-root weight for every
+triple.  The channel structurally breaks the abelian obstruction — it is
+an orientation-sensitive three-slot invariant that no commuting diagonal
+family can produce, and unlike the assembly it is provably \emph{active}
+at every zero.  But its modulus coupling is still driven by $\Re s$
+alone, so the condition collapses to the same single bit: another exact
+reformulation.  What is genuinely new is the \emph{shape} of the
+invariant (a non-associative three-form versus abelian diagonals) and the
+unconditional positivity at zeros; converting the torsion's phase
+content — rather than its modulus — into a forcing mechanism is the open
+edge this section names.
+
+\subsection{S\texorpdfstring{$^7$}{7} torsion cancellation: the SO(8)
+twist}\label{sec:s7-torsion}
+
+\leanfile{Hqiv/Story/S3OctonionS7TorsionCancellation.lean} keeps the full
+\emph{torsion vector}
+$\texttt{octTorsionVector}\,a\,b\,c\,s\in\mathbb{R}^8$ in the carrier and
+asks where it cancels between FE partners.  The carrier's unit sphere is
+$S^7$; the rotation group is SO(8), whose complete invariant on
+$\mathbb{R}^8$ is the norm.
+
+\paragraph{The S$^7$ shadow never moves.}
+For every spectral parameter,
+\[
+  \texttt{octTorsionVector}\,a\,b\,c\,s
+  \;=\;
+  (abc)^{-\sigma}\,\cdot\,(-e_3-e_4)
+\]
+(\leanid{octTorsionVector\_eq}): a \emph{positive} radial weight times one
+fixed carrier direction (\leanid{octTorsion\_single\_point\_on\_s7}).  The
+entire spectral flow is radial; $S^7$ sees a single point, and all the
+information sits in the weight $(abc)^{-\sigma}$.
+
+\paragraph{Cancellation, chirality, orbits.}
+The FE defect
+$\texttt{octTorsionDefect}=\texttt{torsion}(s)-\texttt{torsion}(1-s)$ is
+the weight gap $(abc)^{-\sigma}-(abc)^{-(1-\sigma)}$ times the fixed
+direction (\leanid{octTorsionDefect\_eq}), is odd under $s\mapsto1-s$
+(\leanid{octTorsionDefect\_antisymm}), and:
+\begin{itemize}[nosep]
+\item \textbf{cancels exactly on the line}
+      (\leanid{octTorsionDefect\_zero\_iff}): torsion$(s)=$
+      torsion$(1-s)$ $\Leftrightarrow$ $\Re s=\tfrac12$;
+\item \textbf{flips chirality across the line}
+      (\leanid{octTorsionWeightGap\_pos\_iff},
+      \leanid{octTorsionWeightGap\_neg\_iff}): the defect points along
+      $-e_3-e_4$ for $\sigma<\tfrac12$ and along $+e_3+e_4$ for
+      $\sigma>\tfrac12$ — the critical line is the unique
+      chirality-neutral locus, the CP-odd signature of the channel;
+\item \textbf{SO(8) orbit law} (\leanid{octTorsion\_so8\_orbit\_iff}):
+      FE partners' torsions lie on a common SO(8) orbit (equal norms)
+      iff $\Re s=\tfrac12$ — and since both vectors share one ray, orbit
+      coincidence already forces vector equality
+      (\leanid{octTorsion\_orbit\_eq\_iff\_collapse}).
+\end{itemize}
+
+\paragraph{Zeros on the critical line --- scope of the equivalence.}
+\leanid{RH\_iff\_zero\_torsion\_cancellation}: RH $\Leftrightarrow$ at
+every nontrivial zero the FE torsion defect vanishes for every triple.
+The zeros are exactly the points where the SO(8) twist closes the torsion
+loop.  Because the $S^7$ direction is constant, cancellation is governed
+by the radial weight alone, and the radial weight is $\sigma$-driven — so
+the twist sharpens the geometry (single $S^7$ point, odd defect,
+chirality flip, orbit equivalence) without changing the logical status:
+``torsion cancels at every zero'' is an exact RH reformulation with no extra
+conditions.  (Frozen-table caveat: the witness direction $-e_3-e_4$ is
+specific to the current octonion tables; see
+\texttt{AGENTS/OCTONION\_TABLE\_AUDIT\_TODO.md}.)
+
+\subsection{The log edge: phases, Diophantine independence, and the
+Goldbach circle}\label{sec:log-edge}
+
+Every equivalent condition so far has been a modulus formula.
+\leanfile{Hqiv/Story/S3LogPhaseEdge.lean} formalizes why that matters and
+what lives on the other side.
+
+\paragraph{Polar decoupling.}
+The carrier factorizes exactly
+(\leanid{so4SpectralLine\_polar}, \leanid{log\_edge\_decoupling}):
+\[
+  n^{-s} \;=\; n^{-\sigma}\,\cdot\,e^{-it\log n},
+  \qquad
+  \lVert e^{-it\log n}\rVert = 1 .
+\]
+The modulus channel knows only $\sigma$; the unimodular phase channel
+knows only $t$.  This is the machine-checked reason the modulus program
+produced RH-equivalences and nothing more: \emph{no modulus formula can
+import phase data into a $\sigma$-constraint}.  The log edge itself is
+$\texttt{linePhase}(pq)=\texttt{linePhase}(p)\cdot\texttt{linePhase}(q)$
+(\leanid{linePhase\_mul}) --- multiplication becomes addition in phase.
+
+\paragraph{Diophantine phase independence.}
+For distinct primes $p\neq q$, the relation $k\log p=m\log q$ (naturals
+or integers) forces $k=m=0$
+(\leanid{prime\_log\_nat\_rel}, \leanid{prime\_log\_int\_rel}), proved
+from unique factorization ($p^k=q^m$ is impossible).  Consequently
+\textbf{two prime phases pin the height}
+(\leanid{two\_prime\_phases\_pin\_height}): if the phases of two distinct
+primes agree at heights $t_1,t_2$, then $t_1=t_2$.  One prime leaves a
+$2\pi/\log p$ lattice of ghost heights; two incommensurable primes leave
+none.
+
+\paragraph{The Goldbach circle: additive curvature.}
+The additive channel supplies literal curvature
+(\leanid{goldbach\_pair\_circle}): a midpoint pair $p+q=2N$ satisfies
+\[
+  pq + (q-N)^2 \;=\; N^2 ,
+\]
+so Goldbach pairs are points on the circle of radius $N$ in the
+(geometric-mean, deviation) plane.  The multiplicative phase speed is
+capped by the additive constraint: $\log(pq)\le2\log N$, with equality
+exactly at the diagonal $p=q=N$ (\leanid{pair\_phase\_speed\_max}).
+
+\paragraph{Zeros are addressed by two prime phases.}
+Combining the channels
+(\leanid{RH\_zero\_determined\_by\_two\_prime\_phases}): under RH, a
+nontrivial zero is \emph{completely determined} by the phases of any two
+distinct primes at its height --- $\sigma$ from RH, $t$ from phase
+independence.  This is the precise form of the ``transformer that locates
+a zero'': feed it two prime phases, receive the zero.
+
+\paragraph{The frontier, named.}
+The curvature is real, but it lives entirely in the $t$/additive channel,
+and decoupling cleanly separates it from $\sigma$.  Any genuine forcing
+attack must couple the two channels --- which is what the classical
+explicit formula does analytically through the zero set itself, and what
+remains open here.  We name that coupling as the frontier rather than
+claim it.
 
 \section{Explicit \texorpdfstring{$h(s)$}{h(s)} on the strip}\label{sec:explicit-h}
 
@@ -372,7 +1708,7 @@ explicit quotient (Lean:
 Substituting the functional-equation assembly~\eqref{eq:fe-strip} before the
 quotient gives the full closed form with $\Gamma(1-s)$ and
 $\cos(\pi(1-s)/2)$ in the numerator
-(\leanid{interiorStripH\_fe\_closed\_form}): the ``weird'' regional singularities
+(\leanid{interiorStripH\_fe\_closed\_form}): the apparent regional singularities
 are then \emph{visible in $h$ itself}, not hidden inside $\zeta$ alone.
 
 \begin{theorem}[Reflection symmetry of the critical factor]
@@ -393,7 +1729,7 @@ For $0<\sigma<1$, $\sigma\neq\tfrac12$,
 \end{proposition}
 
 Multiplying $h$ by the equator factor recovers $\zeta$ on the strip
-(\leanid{completedInteriorFromH\_eq\_zeta\_on\_strip}); the capstone predicate
+(\leanid{completedInteriorFromH\_eq\_zeta\_on\_strip}); the main conditional predicate
 \texttt{InteriorStripHNonvanishingCapstone} is \textbf{logically equivalent} to
 \texttt{RiemannHypothesis}
 (\leanid{interior\_capstone\_iff\_RiemannHypothesis})---not a weaker statement.
@@ -407,23 +1743,23 @@ On $0<\Re s<1$, $\sigma\neq\tfrac12$, define
 Then $\zeta(s)=h(s)\cdot(2\sigma-1)/\sqrt2$ off the line
 (\leanfile{Hqiv/Story/S3SO4InteriorWitness.lean}).
 
-\begin{definition}[RH capstone predicate]
+\begin{definition}[Main RH conditional hypothesis]
 \texttt{InteriorAssemblyNonzeroAtNontrivialZerosOffLine} $h$ asserts:
 if $\zeta(s)=0$ for a nontrivial zero with $\sigma\neq\tfrac12$, then $h(s)\neq0$.
 \end{definition}
 
 \begin{theorem}[Conditional RH]
-If the capstone predicate holds for \texttt{interiorStripH}, then
+If this hypothesis holds for \texttt{interiorStripH}, then
 \texttt{RiemannHypothesis} follows
 (\leanid{RiemannHypothesis\_of\_SO4\_interior\_witness}).
 \end{theorem}
 
 \begin{remark}[Honesty]
-The factorization identity is proved; the capstone is \emph{not}.  Global
+The factorization identity is proved; this hypothesis is \emph{not}.  Global
 factorization on the entire strip including $\sigma=\tfrac12$ is false because
 $\zeta(\tfrac12+it)$ is generally nonzero while the critical factor vanishes.
 The quotient witness $h=\zeta/\texttt{so4CriticalFactor}$ proves algebra on
-off-line points only; it does not by itself discharge the capstone.
+off-line points only; it does not by itself prove the hypothesis.
 \end{remark}
 
 The even channel \texttt{evenStripChannel} is presently degenerate on the strip
@@ -431,6 +1767,460 @@ because the odd FE channel already carries the full $\zeta$; the physical even
 content is the harmonic--$\Delta$ multiplier $1+\alpha/3$ and the $\pi^4/3$
 sphere orbit (\leanfile{Hqiv/Story/S3HarmonicDeltaEvenOrbit.lean}).  A
 non-degenerate even/odd split is the remaining analytic packaging target.
+
+\section{Vaporization, backprojection, and the thermodynamic arrow}\label{sec:vaporization}
+
+The de Bruijn--Newman picture (Rodgers--Tao: $\Lambda\ge0$, hence RH
+$\Leftrightarrow\Lambda=0$) reads as a heat flow that \emph{vaporizes} off-line
+zeros forward in time; RH holds exactly when the present-day function sits at
+the vaporization front, i.e.\ there is \textbf{no backprojection margin}
+($\Lambda\le0$).  \leanfile{Hqiv/Story/S3HeatFlowArrowNoBackprojection.lean}
+pollinates this picture with the already-proved HQIV temperature ladder and
+thermodynamics.
+
+\subsection{Dilation slot: where $\tau$ lives in $\mathfrak{so}(4,2)$}
+
+The conformal closure of the SO(4) carrier is
+$\mathfrak{so}(4,2)=\mathfrak{so}(4)\oplus D\oplus P_4\oplus K_4$ with dimension
+count $15=6+4+4+1$ (\leanid{conformal\_dilation\_slot\_count}); the chain
+$\mathfrak{so}(4)\subset\mathfrak{so}(4,2)\subset\mathfrak{so}(8)$ is
+$6\le15\le28$ (\leanid{so4\_so42\_so8\_dim\_chain}).  The heat-flow deformation
+time $\tau$ occupies the \emph{one-dimensional dilation slot} $D$;
+backprojection is negative dilation.  This is the same carrier escalation that
+produced the $45^\circ$ equator readout, now read in the time channel.
+
+\subsection{Backprojection dichotomy (proved)}
+
+On the discrete ladder weight
+$w_\tau(m)=\exp(-\tau\,t_{\mathrm{HQIV}}(m))$:
+\begin{itemize}[nosep]
+\item \textbf{forward} ($\tau\ge0$): $w_\tau(m)\le1$ on every shell and the
+      deformed shell sum stays summable on $\Re s>1$
+      (\leanfile{Hqiv/Physics/HQIVHeatFlowDeformation.lean});
+\item \textbf{backward} ($\tau<0$): $w_\tau(m)>1$ off the horizon shell
+      (\leanid{backprojection\_weight\_gt\_one}), grows strictly shell by shell
+      (\leanid{backprojection\_weight\_strict\_growth}), and is
+      \emph{unbounded} along the ladder
+      (\leanid{backprojection\_weight\_unbounded}): no constant dominates a
+      backward semigroup on the discrete carrier.
+\end{itemize}
+The proven second law (entropy-production positivity,
+\leanfile{Hqiv/Physics/ThermodynamicLawsFromLadder.lean}) makes the
+arrow-induced deformation parameter nonnegative, so the physical flow can only
+move \emph{toward} vaporization
+(\leanid{arrow\_forbids\_backprojection},
+\leanid{arrow\_weight\_contractive}).
+
+\subsection{$\lambda$-lock reduction and the honest frontier}
+
+The ladder bundle carries $\lambda_{\mathrm{HQIV}}\ge0$ --- the analogue of the
+Rodgers--Tao inequality.  Exactly as $\Lambda\ge0$ reduces RH from
+$\Lambda=0$ to the one-sided bound $\Lambda\le0$, the analogue zero-lock is
+proved equivalent to the no-backprojection inequality:
+\[
+  \lambda_{\mathrm{HQIV}}=0
+  \quad\Longleftrightarrow\quad
+  \lambda_{\mathrm{HQIV}}\le0
+\]
+(\leanid{lambdaHQIV\_zero\_iff\_no\_backprojection}).  Concrete finite-window
+ladder witnesses already discharge $\lambda_{\mathrm{HQIV}}=0$
+(\leanid{lambdaHQIV\_eq\_zero\_of\_finiteWindowConcrete}).
+
+The genuine analytic frontier is the \emph{identification} of the discrete
+ladder flow with the classical $\xi$ heat flow.  It is named as the payload
+\texttt{VaporizationForcesCriticalLine} and proved \textbf{equivalent to RH}
+(\leanid{vaporization\_iff\_RiemannHypothesis}) --- the same honesty pattern as
+the Weil-positivity slot.  Bundling the proved $\lambda$-lock side with the
+payload gives the \texttt{HeatFlowVaporizationBridge}; given any concrete
+ladder witness,
+\[
+  \texttt{HeatFlowVaporizationBridge}\ \text{inhabited}
+  \quad\Longleftrightarrow\quad
+  \texttt{RiemannHypothesis}
+\]
+(\leanid{vaporizationBridge\_iff\_RiemannHypothesis}): the thermodynamic side is
+free, and the vaporization payload is the entire remaining content.
+
+\subsection{Classical target formalized: $\Phi$, $H_t$, and lattice inheritance}
+
+\leanfile{Hqiv/Story/S3DBNLatticeInheritance.lean} makes the classical side
+concrete in Lean, so the inheritance claim is a precise statement rather than
+prose:
+\begin{itemize}[nosep]
+\item \textbf{The density.}  The de Bruijn--Newman density
+      $\Phi(u)=\sum_{m\ge1}(2\pi^2m^4e^{9u}-3\pi m^2e^{5u})e^{-\pi m^2e^{4u}}$
+      is \texttt{dbnPhi}; for $u\ge0$ every term is \emph{proved} nonnegative
+      (\leanid{dbnPhiTerm\_nonneg}; the quartic shell dominates as soon as
+      $2\pi m^2e^{4u}\ge3$, which holds on every shell since $\pi>3$) and the
+      series is \emph{proved} summable
+      (\leanid{dbnPhi\_summable}; polynomial-times-geometric domination with
+      ratio $e^{-\pi e^{4u}}<1$).
+\item \textbf{The deformed family.}
+      $H_t(z)=\int_{u>0}e^{tu^2}\,\Phi(u)\cos(zu)\,du$ is
+      \texttt{dbnHeatFamily}; $H_0$ is the (normalized) $\xi$.
+\item \textbf{Weight-level dictionary (proved).}  The classical Gaussian
+      factor \emph{is} the repo's discrete heat weight under
+      $(\tau,u)\mapsto(-t,u^2)$:
+      \texttt{dbnGaussianFactor}$\,t\,u=$
+      \texttt{discreteHeatKernelWeight}$\,(-t)\,(u^2)$
+      (\leanid{dbnGaussianFactor\_eq\_discreteHeatKernelWeight}).  The
+      dichotomy transfers: $t\le0$ contracts every mode
+      (\leanid{dbn\_backward\_factor\_le\_one}), $t>0$ amplifies without bound
+      (\leanid{dbn\_forward\_factor\_unbounded}) --- the continuum mirror of
+      the lattice backprojection blow-up.
+\end{itemize}
+The bridge \texttt{DBNLatticeInheritance} then carries the classical constant
+$\Lambda$ with the two classical theorems as explicit fields (Rodgers--Tao
+$\Lambda\ge0$; Newman/de Bruijn RH $\Leftrightarrow\Lambda\le0$ --- neither yet
+in Mathlib) plus the single new claim
+$\Lambda\le\lambda_{\mathrm{HQIV}}$.  Since the ladder witness proves
+$\lambda_{\mathrm{HQIV}}=0$, the bridge forces $\Lambda=0$
+(\leanid{Lambda\_eq\_zero\_of\_inheritance}) and hence RH
+(\leanid{RiemannHypothesis\_of\_dbnLatticeInheritance}); it also instantiates
+the vaporization bridge
+(\leanid{vaporizationBridge\_of\_dbnLatticeInheritance}).
+
+\begin{remark}[The conviction, faithfully named]
+Given the two classical imports, the lattice-domination bound is proved
+\emph{equivalent} to RH:
+\[
+  \Lambda\le\lambda_{\mathrm{HQIV}}(W)
+  \quad\Longleftrightarrow\quad
+  \texttt{RiemannHypothesis}
+\]
+(\leanid{lattice\_dominates\_iff\_RiemannHypothesis}).  The thermodynamic side
+is free and the classical constants are pinned; the entire content of ``the
+discrete no-backprojection lock transfers to the continuum'' is the RH
+frontier itself --- now a single named inequality between two Lean terms
+rather than an informal analogy.
+\end{remark}
+
+\subsection{Discrete dominates continuum: comparison inequality and exact
+phase lock}\label{sec:dbn-comparison}
+
+\leanfile{Hqiv/Story/S3DBNDiscreteContinuumComparison.lean} pushes the proved
+boundary flush against the inheritance frontier with a genuine one-sided
+comparison between the two heat families, on the region where both converge
+absolutely.  All of the following is unconditional (no hypotheses beyond
+parameter ranges).
+
+\paragraph{Analytic control of the classical side.}
+The dBN density is \emph{strictly} positive for $u\ge0$
+(\leanid{dbnPhi\_pos}), decays super-exponentially,
+$\Phi(u)\le C\,e^{-3u}$ via $e^{-\pi m^2e^{4u}}\le
+e^{-\pi(m^2-1)}e^{-\pi e^{4u}}$ and $\pi>3$
+(\leanid{dbnPhi\_le\_decay}), is continuous on $u\ge0$ by a Weierstrass
+M-test (\leanid{dbnPhi\_continuousOn}), and is Lebesgue-integrable on
+$(0,\infty)$ (\leanid{dbnPhi\_integrableOn}).  Consequently the
+\emph{backward} family is uniformly bounded on the real axis:
+\[
+  t\le0,\ z\in\mathbb{R}
+  \quad\Longrightarrow\quad
+  \lVert H_t(z)\rVert \;\le\; \int_{u>0}\Phi(u)\,du
+\]
+(\leanid{dbnHeatFamily\_norm\_le}), while the forward family is unbounded
+(\leanid{dbn\_forward\_factor\_unbounded}).  At the anchor $z=0$ the backward
+family is a strictly positive real
+(\leanid{dbnWeightedIntegral\_pos}), so its phase is exactly $0$
+(\leanid{dbnHeatFamily\_arg\_at\_zero}).
+
+\paragraph{The heat flow fixes the horizon shell.}
+Since $t_{\mathrm{HQIV}}(0)=0$, the $m=0$ weight of the discrete deformed sum
+is $e^{-\tau\cdot0}=1$ for \emph{every} deformation time $\tau$
+(\leanid{hqivHeatKernelWeight\_horizon}).  At trivial twist ($\varphi=0$) and
+real anchor $s=\sigma>1$ the full complex sum is the coercion of a convergent
+positive real series (\leanid{HQIVDeformedSum\_real\_anchor}), so the
+flow-invariant horizon term gives the unconditional lower bound
+$\mathrm{eff}_0^{-\sigma}\le\lVert\texttt{HQIVDeformedSum}\rVert$
+(\leanid{HQIVDeformedSum\_anchor\_lower}): the flow can never dim the horizon,
+and every other shell only adds positive mass.
+
+\paragraph{The comparison inequality and phase alignment.}
+Combining the two sides, for every $\tau\ge0$, $t\le0$, $\sigma>1$ and every
+real $z$ there is an \emph{explicit} constant
+$c=\mathrm{eff}_0^{-\sigma}/(\int\Phi+1)>0$ with
+\[
+  c\,\lVert H_t(z)\rVert \;\le\;
+  \lVert\texttt{HQIVDeformedSum}\,\tau\,\dots\,\sigma\rVert
+\]
+(\leanid{discrete\_dominates\_continuum\_anchor}): no backward continuum
+deformation can outgrow the lattice sum --- the growth sign is preserved.
+The phase-alignment statement holds in its strongest form: the arguments of
+the discrete sum and the backward continuum family \emph{coincide} at the
+anchor, so the cosine of their difference is exactly $1$
+(\leanid{phase\_alignment\_anchor}), in particular bounded below by $\tfrac12$
+(\leanid{phase\_alignment\_cos\_ge\_half}).
+
+\begin{remark}[Honest scope]
+The comparison lives on the absolutely-convergent region ($\Re s>1$ discrete
+$\times$ real axis continuum, all $t\le0$).  Extending it into the critical
+strip \emph{with zero tracking} is precisely the inheritance bound
+$\Lambda\le\lambda_{\mathrm{HQIV}}$, which
+\leanid{lattice\_dominates\_iff\_RiemannHypothesis} shows is RH itself.  The
+module advances the proved boundary up to that frontier; it does not cross it.
+\end{remark}
+
+\subsection{The constant itself: $\Lambda$ ported as a Lean definition}
+\label{sec:dbn-port}
+
+\leanfile{Hqiv/Story/S3DBNConstantPort.lean} removes the last abstraction from
+the inheritance bridge: the classical constant is no longer an arbitrary real
+packaged in a structure field but a \emph{concrete Lean term},
+\[
+  \texttt{dbnLambda} \;=\;
+  \inf\,\{\,t\in\mathbb{R} \mid \forall z,\ H_t(z)=0\Rightarrow\Im z=0\,\},
+\]
+the infimum of the hyperbolicity locus of the very \texttt{dbnHeatFamily}
+whose Gaussian factor was proved identical to the lattice heat kernel.  The
+two classical imports are now precisely typed statements about \emph{that}
+constant --- the form required for an actual Mathlib contribution:
+\begin{itemize}[nosep]
+\item \texttt{RodgersTaoStatement} $:= 0\le\texttt{dbnLambda}$
+      (Rodgers--Tao, Annals 191 (2020));
+\item \texttt{NewmanDBNStatement} $:=$ \texttt{RiemannHypothesis}
+      $\Leftrightarrow \texttt{dbnLambda}\le0$ (Newman 1976; de Bruijn 1950);
+\item \texttt{DBNUpwardClosure} --- de Bruijn's heat-flow preservation of
+      hyperbolicity (the locus is an upper ray): the continuum analytic
+      mirror of the lattice no-backprojection dichotomy;
+\item \texttt{DBNXiBridge} --- the normalization
+      $H_0(z)\propto\xi(\tfrac12+\tfrac{iz}2)$ against Mathlib's
+      \texttt{completedRiemannZeta}, stated normalization-robustly.
+\end{itemize}
+Unconditionally proved on top of the definition: the backward family is
+nondegenerate at the anchor, $H_t(0)\ne0$ for $t\le0$
+(\leanid{dbnHeatFamily\_ne\_zero\_at\_anchor}); the $\inf$ interface
+(\leanid{dbnLambda\_le\_of\_realZerosAt},
+\leanid{le\_dbnLambda\_of\_forall}); upper-set propagation under de Bruijn
+closure (\leanid{dbnRealZerosAt\_mono\_of\_upwardClosure}); and, given the two
+classical statements, $\texttt{dbnLambda}=0\Leftrightarrow$ RH
+(\leanid{dbnLambda\_eq\_zero\_iff\_RH}).  The honesty theorems of the
+inheritance bridge now hold verbatim at the concrete constant:
+\[
+  \texttt{dbnLambda}\le\lambda_{\mathrm{HQIV}}(W)
+  \quad\Longleftrightarrow\quad
+  \texttt{RiemannHypothesis}
+\]
+(\leanid{concrete\_lattice\_dominates\_iff\_RiemannHypothesis},
+\leanid{concrete\_dbnLatticeInheritance\_iff\_RiemannHypothesis}).  Porting
+the \emph{proofs} of Rodgers--Tao and Newman/de Bruijn (Laguerre--P\'olya
+theory, heat-flow zero dynamics) remains a major formalization programme; the
+objects and statements now have their precise Lean targets.
+
+\section{The shared $\tfrac12$ bridge: Riemann Hypothesis and Goldbach}\label{sec:rh-goldbach}
+
+\subsection{Two classical problems, one projection constant}
+
+The Riemann Hypothesis and Goldbach's conjecture (even parity case: every even
+$n>2$ is a sum of two primes) are unrelated in classical analytic number theory.
+In the HQIV $\mathfrak{so}(8)$ / SO(4) projection story they meet on the same
+normalized constant $\tfrac12$:
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Channel & Geometric object & $\tfrac12$ meaning \\
+\midrule
+$\zeta$ / zeros & critical line $\Re s=\tfrac12$ &
+  \texttt{rot45Free}$(\sigma)=0\Leftrightarrow\sigma=\tfrac12$ \\
+Prime sums & midpoint $N$, pair $(p,q)$ with $p+q=2N$ &
+  tangent slope $N/(p+q)=\tfrac12$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The $\zeta$ row is the pointwise equator condition of \S\ref{sec:45-proj}.  The
+Goldbach row is proved \emph{for any certified midpoint pair}, without assuming
+Goldbach:
+\[
+  \frac{N}{p+q}=\frac{N}{2N}=\frac12
+  \quad\text{whenever }p+q=2N
+\]
+(\leanfile{Hqiv/Geometry/GoldbachG2Parity.lean},
+\leanid{so4\_orthogonal\_tangent\_midpoint\_slope\_eq\_half}).
+Diagonal partitions $N+N=2N$ when $N$ is prime carry the same slope; there is no
+exception branch (\leanid{so4\_orthogonal\_diagonal\_tangent\_slope\_eq\_half}).
+
+\subsection{Midpoint Goldbach and the holonomy bridge}
+
+Lean names the arithmetic target in \emph{midpoint} form: for each midpoint $N$,
+primes $p\le N\le q$ with $p+q=2N$ (\texttt{GoldbachMidpointPair}).  Eventual
+midpoint Goldbach above a threshold $N_0$ is
+\texttt{MidpointGoldbachEventually}~$N_0$; even Goldbach parity
+(\texttt{GoldbachParity}) follows at $N_0=2$ via
+\texttt{goldbach\_pair\_of\_midpoint\_pair}.
+
+The open arithmetic--geometric bridge is positivity of the finite paired-prime
+count around each midpoint:
+\[
+  \texttt{goldbachMidpointCount}(N)>0
+  \quad\Longrightarrow\quad
+  \exists\,p,q:\ \texttt{GoldbachMidpointPair}\,N\,p\,q,
+\]
+packaged as \texttt{SO4ZetaHolonomyForcesMidpointPairs}~$N_0$
+(\leanid{midpoint\_goldbach\_of\_so4\_zeta\_holonomy\_bridge}).
+Any certified midpoint pair lifts to integrable Hopf-shell holonomy with
+$\Delta$/G$_2$/triality fields
+(\leanid{hopf\_fiber\_midpoint\_holonomy\_support\_of\_midpoint\_pair}).
+
+The constructive $G_2+\Delta$ harmonic landing layer
+(\leanfile{Hqiv/Geometry/GoldbachG2Parity.lean}) states the complementary
+finite certificate target \texttt{DeltaHarmonicCompleteness}: once every even
+$n>2$ has a $\Delta$-harmonic landing, \texttt{goldbach\_from\_delta\_harmonic}
+extracts \texttt{GoldbachParity} with no extra arithmetic input.
+
+\subsection{The bridge \emph{is} RH $\wedge$ Goldbach: proved equivalence}
+
+\leanfile{Hqiv/Story/S3ExplicitFormulaDualitySlot.lean} names the shared payload
+explicitly.  An \texttt{SO8ProjectedHalfSlopeBridge}~$N_0$ bundles:
+\begin{itemize}[nosep]
+\item \textbf{$\zeta$ side.} \texttt{WeilPositivityForcesCriticalLine}, i.e.\ the
+      explicit-formula / positivity localization step equivalent to RH
+      (\leanid{weilPositivity\_iff\_RiemannHypothesis});
+\item \textbf{prime side.} \texttt{SO4ZetaHolonomyForcesMidpointPairs}~$N_0$.
+\end{itemize}
+Both directions are now machine-checked, so the packaging is a proved
+\emph{logical equivalence}, not merely a sufficient condition:
+\begin{align}
+  \texttt{SO8ProjectedHalfSlopeBridge}\,N_0
+  &\Longleftrightarrow
+  \texttt{RiemannHypothesis}
+  \wedge
+  \texttt{MidpointGoldbachEventually}\,N_0,
+  \label{eq:bridge-iff-general}\\
+  \texttt{SO8ProjectedHalfSlopeBridge}\,2
+  &\Longleftrightarrow
+  \texttt{RiemannHypothesis}
+  \wedge
+  \texttt{GoldbachParity}.
+  \label{eq:bridge-iff-two}
+\end{align}
+Equation~\eqref{eq:bridge-iff-general} is
+\leanid{so8\_projected\_half\_slope\_iff\_rh\_and\_midpoint\_goldbach};
+equation~\eqref{eq:bridge-iff-two} is the capstone
+\leanid{so8\_projected\_half\_slope\_two\_iff\_rh\_and\_goldbach\_parity}.
+The converse direction is built from two reconstruction lemmas:
+\begin{itemize}[nosep]
+\item a certified midpoint pair forces a positive midpoint count
+      (\leanid{midpoint\_count\_pos\_of\_midpoint\_pair}), so the holonomy
+      payload is \emph{equivalent} to eventual midpoint Goldbach
+      (\leanid{so4\_zeta\_holonomy\_bridge\_iff\_midpoint\_goldbach});
+\item an unordered Goldbach pair for $2N$ reorders into a midpoint pair at $N$
+      (\leanid{midpoint\_pair\_of\_goldbach\_pair\_two\_mul}), giving
+      \texttt{MidpointGoldbachEventually}~$2\Leftrightarrow
+      \texttt{GoldbachParity}$
+      (\leanid{midpoint\_goldbach\_two\_iff\_goldbach\_parity}).
+\end{itemize}
+The channels are also separated: the $\zeta$ field alone is exactly RH, and the
+midpoint field at threshold~$2$ alone is exactly Goldbach parity, with no
+leakage between them
+(\leanid{bridge\_channels\_are\_rh\_and\_goldbach},
+\leanid{so4\_zeta\_holonomy\_bridge\_two\_iff\_goldbach\_parity}).
+
+\begin{remark}[What ``RH $=$ Goldbach'' means here]
+This note does \emph{not} claim a classical theorem $\text{RH}\Leftrightarrow
+\text{Goldbach}$ in Mathlib.  What \emph{is} proved is the identification of
+the geometric payload with the conjunction: the half-slope bridge is
+\textbf{provably the same proposition} as
+$\text{RH}\wedge\text{Goldbach parity}$
+(equation~\eqref{eq:bridge-iff-two}), with the same normalized $\tfrac12$
+readout serving as the critical-line lock on the $\zeta$ channel and the
+midpoint tangent slope on the prime channel.  The packaging therefore has zero
+slack: discharging the bridge is exactly as hard as the two open problems
+combined---by the equivalence theorem, \emph{provably} so---and conversely any
+future proof of RH and Goldbach immediately instantiates the bridge.  Neither
+classical conjecture is proved here; what is discharged is the faithfulness of
+the geometric encoding itself.
+\end{remark}
+
+\subsection{Prime side of the explicit formula}
+
+The von Mangoldt weight $\Lambda(n)=\log p$ on prime powers is the concrete
+prime-power content dual to the zero sum in the explicit formula
+(\leanfile{Hqiv/Story/S3ExplicitFormulaDualitySlot.lean},
+\texttt{chebyshevPsi}, \leanid{vonMangoldt\_prime\_eq\_log}).  Positivity on
+that prime side is the standard route to critical-line zero localization; in this
+repo it is named faithfully as RH-equivalent, parallel to the interior capstone
+on $h(s)$.
+
+\section{PTE degree~3 and SO(4) cancellation}\label{sec:pte-parallel}
+
+Recent work of Lee, Takahashi, and Tsai~\cite{LeeTakahashiTsai2026PTE} shows that
+anomaly cancellation in a chiral hidden sector with unbroken vector-like
+$U(1)_{\mathrm H}\times U(1)_{\mathrm X}$ is \emph{equivalent} to the degree
+$k=3$ Prouhet--Tarry--Escott (PTE) problem: two equal-size multisets
+$A=\{a_i\}$, $B=\{b_i\}$ must satisfy
+\[
+  \sum_i a_i^{\ell}=\sum_i b_i^{\ell}
+  \qquad(\ell=1,2,3).
+\]
+Minimal ideal solutions have size $n=k+1=4$, matching the four-dimensional
+SO(4) quaternion carrier of \S\ref{sec:harmonic-delta}.  The phenomenological
+prediction---at least four hidden mass eigenstates, typically organized as
+near-degenerate doublets when the PTE solution is sign-symmetric---parallels
+the six-pole geometry of \S\ref{sec:quaternion}: antipodal pairs
+$(+i,-i)$, $(+j,-j)$, $(+k,-k)$ cancel as \emph{orbits} while each pole retains
+a nonzero $\pm$ residual (\leanfile{Hqiv/Story/S3SixPolesResidual.lean}).
+
+\subsection{Sign-symmetric multisets and head/tail reflection}
+
+Lee \emph{et al.}\ focus on \textbf{symmetric} PTE solutions
+$A=\{\pm a_1,\ldots,\pm a_m\}$, $B=\{\pm b_1,\ldots,\pm b_m\}$.
+Under this sign pairing, the $\ell=1$ and $\ell=3$ constraints are automatic
+(both sides sum to zero), so the only nontrivial ideal-$n=4$ condition is
+\[
+  a_1^2+a_2^2=b_1^2+b_2^2,
+\]
+a matching of \emph{even} (quadratic) invariants.
+This is the same parity split as head/tail reflection on the S$^3$ shell:
+\[
+  \texttt{criticalProj}(p)+\texttt{criticalProj}(\texttt{headTailReflect}\,p)=0
+\]
+(\leanid{headTail\_orbit\_pair\_cancels}) forces \textbf{linear} ($\ell=1$)
+cancellation for every orbit pair, while single-axis poles never vanish
+pointwise (\leanid{criticalProj\_ne\_zero\_of\_singleAxis}).
+Geometrically, the PTE even constraint is orthogonal invariance of a
+two-vector norm; the $45^\circ$ readout in \S\ref{sec:45-proj} is the same
+rotation that fixes the diagonal slot at $1/\sqrt2$ and isolates the equator
+slot $(2\sigma-1)/\sqrt2$.
+
+\subsection{Orbit vs.\ pointwise: two readings of ``cancellation''}
+
+Lee \emph{et al.}\ distinguish PTE solutions related by affine charge shifts
+(number-theoretically equivalent, physically distinct mass/coupling assignments)
+from the orbit-level doublet structure their symmetric solutions predict.
+The S$^3$ story makes the same distinction internally:
+\begin{itemize}[nosep]
+\item \textbf{Orbit cancellation} --- reflection pairs $\{\sigma,1-\sigma\}$ and
+      head/tail pairs always sum to zero in the free coordinate
+      (\leanfile{Hqiv/Story/S3OrbitVsPointwiseGap.lean},
+      \leanid{orbit\_free\_sum\_cancels}); this holds even off
+      $\Re s=\tfrac12$.
+\item \textbf{Pointwise cancellation} --- a \emph{single} slot vanishes iff
+      $\sigma=\tfrac12$ (Theorem~\ref{thm:critical-line}); upgrading orbit
+      cancellation to pointwise cancellation at actual $\zeta$ zeros is the RH
+      capstone (\S\ref{sec:rh-status}).
+\end{itemize}
+Reading PTE through this lens: matching power sums is the discrete
+charge-theoretic avatar of orbit cancellation; selecting a \emph{physical}
+spectrum (mass doublets, minicharge partners) is the pointwise upgrade---an
+analogue of RH-hard localization on the critical line.
+
+\subsection{Extension toward hidden-sector model building}
+
+Three concrete bridges from this note to~\cite{LeeTakahashiTsai2026PTE}:
+\begin{enumerate}[label=(\roman*),nosep]
+\item \textbf{Lean packaging.}  Formalize symmetric PTE-$k=3$ solutions as
+      charge multisets with proved automatic $\ell=1,3$ cancellation under sign
+      pairing, parallel to \leanfile{Hqiv/Story/S3PrimeAxisCancellation.lean}.
+\item \textbf{Ideal $n=4$ sum-of-squares.}  Embed minimal PTE solutions as
+      integer samples on the $\pm i,\pm j$ (or $\pm j,\pm k$) pole lattice;
+      the surviving constraint $a_1^2+a_2^2=b_1^2+b_2^2$ is then a
+      two-axis norm match on $S^3$.
+\item \textbf{TUFT hidden readout.}  In the HQIV patch ontology, finite SM
+      anomaly traces are proved at the coefficient level
+      (\leanfile{Hqiv/Algebra/AnomalyCancellation.lean}); extending the same
+      finite-sum discipline to $U(1)_{\mathrm H}\times U(1)_{\mathrm X}$ content
+      would import Lee \emph{et al.}'s PTE equivalence as a \emph{model-building
+      corollary} of the SO(4) cancellation geometry, not as an external axiom.
+\end{enumerate}
 
 \section{Pathways toward an unconditional proof}\label{sec:pathways}
 
@@ -453,6 +2243,15 @@ external regularization claims) include:
 \item \textbf{Non-degenerate even split.}  Promote the harmonic--$\Delta$
       multiplier into \texttt{evenStripChannel} so $h$ is a genuine even/odd
       assembly rather than a pure quotient.
+\item \textbf{Shared half-slope bridge (\S\ref{sec:rh-goldbach}).}  Prove
+      \texttt{SO4ZetaHolonomyForcesMidpointPairs} from finite patch holonomy on
+      the same $\tfrac12$ readout that locks $\zeta$-zeros to $\Re s=\tfrac12$,
+      or prove \texttt{DeltaHarmonicCompleteness} on the $G_2+\Delta$ landing
+      channel.
+\item \textbf{PTE hidden-sector packaging (\S\ref{sec:pte-parallel}).}
+      Import~\cite{LeeTakahashiTsai2026PTE} symmetric PTE-$k=3$ solutions as
+      charge samples on the six-pole lattice; use sum-of-squares matching as the
+      even-channel counterpart to $\texttt{rot45Diag}$ rigidity.
 \end{enumerate}
 
 \section{Lean module index}\label{sec:lean-index}
@@ -464,6 +2263,16 @@ Build target: \texttt{lake build HQIVStory}.  Core modules (import order in
 \item \leanfile{Hqiv/Story/S3HarmonicPrimeZetaPath.lean} --- harmonic $\Rightarrow$ primes $\Rightarrow\zeta\Rightarrow\Lambda$;
 \item \leanfile{Hqiv/Story/S3FortyFiveProjection.lean} --- $45^\circ$ diagonal / equator;
 \item \leanfile{Hqiv/Story/S3RotationRigidity.lean} --- projection line, twiddle rigidity;
+\item \leanfile{Hqiv/Story/S3MirroredTwiddlePair.lean} --- mirrored twiddle pairs
+      at $\theta$ and $\pi/2-\theta$, symmetric zero loci, FE orbit cancellation,
+      critical-line coincidence;
+\item \leanfile{Hqiv/Story/S3CubicPlasticTwiddle.lean} --- higher-twiddle
+      factorization probes: linear $\text{free}_c$, plastic
+      \texttt{so4PlasticCubicFree}, mirror pairs; not a zero-locator channel
+      (\S\ref{sec:higher-twiddle-probes});
+\item \leanfile{Hqiv/Story/S3HigherTwiddleFactorizationProbe.lean} ---
+      per-channel \texttt{twiddleInteriorAssembly}, patch factorization off probe
+      loci, semiprime-supported finite cross-talk, frame-radius obstruction;
 \item \leanfile{Hqiv/Story/S3ZetaClosedForm.lean} --- regional closed forms, factorization predicate;
 \item \leanfile{Hqiv/Story/S3SO4ZetaProjectionClosedForm.lean} --- $\pi^4/6$ sphere slot, master packaging;
 \item \leanfile{Hqiv/Story/S3HarmonicDeltaEvenOrbit.lean} --- $1+\alpha/3=6/5$ orbit;
@@ -471,10 +2280,122 @@ Build target: \texttt{lake build HQIVStory}.  Core modules (import order in
 \item \leanfile{Hqiv/Story/S3SO4InteriorWitness.lean} --- even/odd channels, \texttt{interiorStripH};
 \item \leanfile{Hqiv/Story/S3FESlotDischarge.lean} --- negative-integer slot discharge;
 \item \leanfile{Hqiv/Story/S3DeltaOrbitOffStrip.lean} --- off-strip confinement;
+\item \leanfile{Hqiv/Story/S3SigmaReadoutScope.lean} --- $\sigma$-blindness, no global
+      $\zeta=$ readout;
+\item \leanfile{Hqiv/Story/S3ZeroQuadrupletOrbit.lean} --- FE pairs, Schwarz quadruplet;
 \item \leanfile{Hqiv/Story/S3OrbitVsPointwiseGap.lean} --- orbit vs pointwise RH gap;
 \item \leanfile{Hqiv/Story/S3RHDischarge.lean} --- discharge packaging;
 \item \leanfile{Hqiv/Story/S3InteriorStripHClosedForm.lean} --- explicit $h(s)$,
-      reflection symmetry, capstone $\Leftrightarrow$ RH.
+      reflection symmetry, capstone $\Leftrightarrow$ RH;
+\item \leanfile{Hqiv/Story/S3ExplicitFormulaDualitySlot.lean} --- prime side
+      $\psi(x)$, \texttt{SO8ProjectedHalfSlopeBridge}, RH $\wedge$ Goldbach joint
+      packaging;
+\item \leanfile{Hqiv/Geometry/GoldbachG2Parity.lean} --- midpoint slope $\tfrac12$,
+      holonomy bridge, $G_2+\Delta$ landing certificates;
+\item \leanfile{Hqiv/Story/S3HeatFlowArrowNoBackprojection.lean} --- dilation slot
+      count, backprojection dichotomy, arrow $\Rightarrow$ no backprojection,
+      $\lambda$-lock, \texttt{HeatFlowVaporizationBridge} $\Leftrightarrow$ RH;
+\item \leanfile{Hqiv/Story/S3DBNLatticeInheritance.lean} --- concrete $\Phi$ and
+      $H_t$, term positivity and summability, weight-level lattice dictionary,
+      \texttt{DBNLatticeInheritance}, inheritance bound $\Leftrightarrow$ RH;
+\item \leanfile{Hqiv/Story/S3DBNDiscreteContinuumComparison.lean} --- strict
+      positivity, decay, continuity and integrability of $\Phi$; uniform bound
+      on backward $H_t$; flow-invariant horizon term; comparison inequality
+      $c\lVert H_t(z)\rVert\le\lVert\texttt{HQIVDeformedSum}\rVert$ and exact
+      phase alignment;
+\item \leanfile{Hqiv/Story/S3DBNConstantPort.lean} --- the de Bruijn--Newman
+      constant \texttt{dbnLambda} as a concrete $\inf$, Rodgers--Tao and
+      Newman/dBN as precisely typed statements, honesty theorems at the
+      concrete constant;
+\item \leanfile{Hqiv/Story/S3TangentOrbitCriticalLine.lean} --- tangent law of
+      the quadruplet orbit: FE inverts, Schwarz conjugates, modulus identity
+      $\lVert\sin\rVert^2-\lVert\cos\rVert^2=-\cos(\pi\sigma)$, critical line
+      $=$ unimodular locus, orbit collapse $\Leftrightarrow$ line, equator
+      factor tie;
+\item \leanfile{Hqiv/Story/S3EulerSpectralCancellation.lean} --- zeros as
+      spectral cancellations: nonvanishing Euler factors and no cancellation
+      in the product region, breakdown-locus confinement, tame von Mangoldt
+      spectrum, resonance blow-up of $\lVert1/\zeta\rVert$ at every zero,
+      spectral-cancellation profile with the tangent orbit attached;
+\item \leanfile{Hqiv/Story/S3SpectralResonanceChanneling.lean} --- collective
+      cancellation (single prime lines and finite truncations never vanish
+      for $\Re s>0$), two-channel dichotomy at every zero, geometric-channel
+      absorption $\Leftrightarrow$ RH, SO(4) spectral-line transformer with
+      FE pairing, geometric-mean and square-root-weight locators, prime
+      generation of lines, RH $\Leftrightarrow$ square-root spectral
+      weights;
+\item \leanfile{Hqiv/Story/S3VerticalAxisRigidity.lean} --- vertical mirror
+      and its fixed line, FE closure of the zero set, two-mirrors-make-a-%
+      translation rigidity (abstract and zeta-instantiated unique axis),
+      FE-partner collinearity pin, square-root-weight locus as a globally
+      straight vertical line with flow invariance;
+\item \leanfile{Hqiv/Story/S3SameHeightOrbitCollapse.lean} ---
+      $\sigma$-uniform collectivity of spectral weights, same-height
+      quadruplet partner and
+      merge law, RH $\Leftrightarrow$ height pins $\Re$ (FE only), RH
+      $\Leftrightarrow$ one zero per height (with Schwarz hypothesis);
+\item \leanfile{Hqiv/Story/S3PolarProjectionCollapse.lean} --- polar partner
+      and same-height law, polar separation $=$ equator factor
+      ($-\sqrt2\cdot\texttt{so4CriticalFactor}$), separation norm $=$ twice
+      the line deviation, collapse law, single-point polar projection
+      $\Leftrightarrow$ RH, chain to one-zero-per-height;
+\item \leanfile{Hqiv/Story/S3ZeroHolonomyGoldbachChain.lean} --- pair
+      activation at every zero, AM--GM joint-weight cap $1/(pq)\ge1/N^2$,
+      zero-contains-pair-holonomy capstone, parity gives holonomy support,
+      bridge $\Leftrightarrow$ spectral weights $\wedge$ parity
+      $\Leftrightarrow$ polar collapse $\wedge$ parity;
+\item \leanfile{Hqiv/Story/S3TuftNestedFrameTower.lean} --- level-$N$
+      spectral frame radius, nesting recursion, $\sigma$-blind flow
+      rigidity, positivity, harmonic radius law at every level $N\ge2$,
+      RH $\Leftrightarrow$ harmonic tower radii at every zero, divergence
+      of the ladder on the line, curvature domination $H_N\le K(N)$;
+\item \leanfile{Hqiv/Story/S3DiophantineTransformer.lean} --- level-$N$
+      diagonal transformer $D_N(s)$, trace ladder $\to\zeta$ on
+      $\Re s>1$, HS norm $=$ frame radius, FE composition $=$ fixed
+      rational harmonic operator $\mathrm{diag}(1/n)$ with trace $H_N$,
+      adjoint law $D_N(1-s)=D_N(s)^{\dagger}\Leftrightarrow$ line,
+      scaled isometry on the line, RH $\Leftrightarrow$ adjoint law at
+      every zero;
+\item \leanfile{Hqiv/Story/S3OctonionicAssociatorChannel.lean} ---
+      commutative saturation of the transformer family (abelian, normal),
+      trilinear associator scaling, concrete witness
+      $[e_1,e_2,e_4]=-e_3-e_4$ with norm$^2=2$, associator channel
+      $2(abc)^{-2\sigma}$, positivity at every zero, square-root locator,
+      FE pairing $4/(abc)^2$, RH $\Leftrightarrow$ torsion weights at
+      zeros, Goldbach floor $1/N^3$ on the line;
+\item \leanfile{Hqiv/Story/S3OctonionS7TorsionCancellation.lean} ---
+      torsion vector $=(abc)^{-\sigma}\cdot(-e_3-e_4)$ (single S$^7$
+      point), FE defect closed form and oddness, cancellation
+      $\Leftrightarrow$ line, chirality flip across the line, SO(8)
+      orbit law and orbit $\Rightarrow$ vector collapse, RH
+      $\Leftrightarrow$ torsion cancellation at every zero;
+\item \leanfile{Hqiv/Story/S3CriticalLineCarrierBundle.lean} ---
+      line/off-line carrier contrast: maximal Hopf circle and unimodular
+      tangent only on $\Re s=\tfrac12$, shrunk fiber and hyperbolic tangent
+      sorting off-line, Path C via rolling on the line;
+\item \leanfile{Hqiv/Story/S3HopfJKUnitCircleZeroReadout.lean} ---
+      critical line as $j$--$k$ unit circle; $e^{\pi i j k}$ phase readout;
+      amplitude balance $\Leftrightarrow$ $\zeta$-zero (conditional);
+\item \leanfile{Hqiv/Story/S3HopfJKEulerPrimeCircleCounting.lean} ---
+      Euler polar split on the line; prime phases at shell slots; two-prime
+      circle pinning; $\zeta$-zero $\Leftrightarrow$ prime twiddle at slot;
+\item \leanfile{Hqiv/Story/S3HarmonicShellZeroCounting.lean} ---
+      height $t$ as non-injective cover; harmonic-shell slots $(n,k)$ at arc
+      angles $2\pi k/n$; sweep refines under $n\mid m$; countable slot encoding;
+\item \leanfile{Hqiv/Story/S3AnalyticStripLift.lean} --- cylinder lift
+      $\texttt{stripPointLift}$, $45^\circ$ free coordinate and Hopf radius,
+      $2\pi$ periodicity (\texttt{sameStripHeight}), $\sigma$-equator
+      $=\tfrac12$, whole-strip twiddle;
+\item \leanfile{Hqiv/Story/S3AnalyticStripClassification.lean} ---
+      conditional zero classification on the full strip (cancellation,
+      Path C/E, rolling recovery on the line, centered model);
+\item \leanfile{Hqiv/Story/S3LogPhaseEdge.lean} --- polar decomposition
+      and decoupling theorem, log edge
+      $\texttt{linePhase}(pq)=\texttt{linePhase}(p)\texttt{linePhase}(q)$,
+      prime-log incommensurability over $\mathbb{N}$ and $\mathbb{Z}$,
+      two-prime phase height pinning, Goldbach circle
+      $pq+(q-N)^2=N^2$, phase-speed cap with diagonal equality case,
+      RH $\Rightarrow$ zeros addressed by two prime phases.
 \end{itemize}
 
 \appendix
@@ -499,8 +2420,108 @@ $1+\alpha/3=6/5$ harmonic-third projection & yes & no \\
 Nontrivial zeros $\notin$ negative integers & yes & no \\
 Nontrivial zeros in open strip $0<\Re s<1$ & yes & no \\
 $\zeta=h\cdot(2\sigma-1)/\sqrt2$ off $\sigma=\tfrac12$ & yes & no \\
+Readout factors through $\Re s$ only & yes & no \\
+No global $\zeta=\texttt{exactTwiddleReadout}$ & yes & no \\
+FE pair at nontrivial zeros & yes & no \\
+Quadruplet zeros (with $\zeta(\overline{s})=\overline{\zeta(s)}$) & yes & no \\
+Midpoint tangent slope $N/(p+q)=\tfrac12$ for pairs & yes & no \\
+Hopf holonomy support for midpoint pairs & yes & no \\
+Bridge payload $\Leftrightarrow$ midpoint Goldbach & yes & no \\
+Bridge at $2$ $\Leftrightarrow$ \texttt{GoldbachParity} & yes & no \\
+\texttt{SO8ProjectedHalfSlopeBridge}\,$2$ $\Leftrightarrow$ RH $\wedge$ Goldbach & yes & no \\
+$\mathfrak{so}(4,2)$ dilation slot count $15=6+4+4+1$ & yes & no \\
+Backward weights $>1$, strict growth, unbounded & yes & no \\
+Arrow (2nd law) $\Rightarrow$ no backprojection & yes & no \\
+$\lambda_{\mathrm{HQIV}}=0\Leftrightarrow\lambda_{\mathrm{HQIV}}\le0$ & yes & no \\
+Vaporization bridge $\Leftrightarrow$ RH (given witness) & yes & no \\
+$\Phi$ terms $\ge0$ and summable ($u\ge0$) & yes & no \\
+Gaussian factor $=$ lattice weight at $(-t,u^2)$ & yes & no \\
+$\Phi>0$, continuous, $\Phi\le Ce^{-3u}$, integrable on $(0,\infty)$ & yes & no \\
+$\lVert H_t(z)\rVert\le\int\Phi$ for $t\le0$, $z$ real & yes & no \\
+Horizon shell weight $=1$ for all $\tau$ & yes & no \\
+$c\lVert H_t(z)\rVert\le\lVert\texttt{HQIVDeformedSum}\rVert$ (anchor region) & yes & no \\
+Phase alignment $\cos(\Delta\arg)=1$ at anchor & yes & no \\
+\texttt{dbnLambda} $=\inf$ hyperbolicity locus (concrete def.) & yes & no \\
+$H_t(0)\ne0$ for $t\le0$ (anchor nondegeneracy) & yes & no \\
+Tangent orbit law $T(1-s)=T(s)^{-1}$, $T(\overline{s})=\overline{T(s)}$ & yes & no \\
+$\lVert\sin\rVert^2-\lVert\cos\rVert^2=-\cos(\pi\sigma)$ at $\pi s/2$ & yes & no \\
+Critical line $\Leftrightarrow$ $\lVert\tan(\pi s/2)\rVert=1$ (strip) & yes & no \\
+Strip cylinder lift on $S^3$; $t\sim t+2\pi n$ same point & yes & no \\
+Line carrier: $f=0$, $r=1$, unimodular $T$, orbit collapse & yes & no \\
+Off-line: $r<1$, tangent sorts half-planes, no quadruplet collapse & yes & no \\
+Whole-strip cancellation $f(\sigma)+r(\sigma)(\cos t+\sin t)=0$ & yes & yes \\
+Path C/E classification under lift $+$ bridge & yes & yes \\
+Tangent orbit collapse $T^{-1}=\overline{T}$ $\Leftrightarrow$ line & yes & no \\
+Equator factor $=0$ $\Leftrightarrow$ unimodular tangent & yes & no \\
+Euler factors nonvanishing; no cancellation for $\Re s>1$ & yes & no \\
+Zero $\Rightarrow$ product breakdown ($\Re s<1$, incl.\ boundary) & yes & no \\
+Tame spectrum: $\sum\Lambda(n)n^{-s}=-\zeta'/\zeta$ for $\Re s>1$ & yes & no \\
+Resonance: $\lVert1/\zeta\rVert\to\infty$ at every zero $\rho\neq1$ & yes & no \\
+Spectral-cancellation profile of nontrivial zeros & yes & no \\
+Single prime lines/finite truncations $\neq0$ for $\Re s>0$ & yes & no \\
+Two-channel dichotomy at every nontrivial zero & yes & no \\
+\texttt{InteriorAssemblyNonzero} $\Leftrightarrow$ RH (equivalence) & yes & no \\
+FE pairing $\lVert n^{-s}\rVert\lVert n^{-(1-s)}\rVert=1/n$ (all $s$) & yes & no \\
+Locators: geometric mean / $\lVert n^{-s}\rVert^2=1/n$ $\Leftrightarrow$ line & yes & no \\
+RH $\Leftrightarrow$ square-root spectral weights at zeros & yes & no \\
+Mirror fixed set $=$ axis line; FE closure of zero set & yes & no \\
+FE-partner collinearity $\Rightarrow$ line is $\Re=\tfrac12$ & yes & no \\
+Unique vertical axis (abstract strip sets) & yes & no \\
+Unique vertical axis for $\zeta$ zeros (given a zero) & yes & no \\
+Weight locus globally $=$ straight line $\Re=\tfrac12$ & yes & no \\
+Weights $n^{-2\sigma}$ consistent at every $\sigma$ (collectivity blind) & yes & no \\
+Same-height partner $1-\overline{s}$; merge $\Leftrightarrow$ line & yes & no \\
+RH $\Leftrightarrow$ height pins $\Re$ (FE only) & yes & no \\
+RH $\Leftrightarrow$ one zero per height (given Schwarz) & yes & no \\
+Polar separation $=-\sqrt2\cdot\texttt{so4CriticalFactor}$ & yes & no \\
+Separation norm $=2\,\lvert\sigma-\tfrac12\rvert$; collapse $\Leftrightarrow$ line & yes & no \\
+Single-point polar projection $\Leftrightarrow$ RH & yes & no \\
+Pair activation at every zero; joint line factorization & yes & no \\
+AM--GM joint-weight cap $1/(pq)\ge1/N^2$ on the line & yes & no \\
+Zero contains pair holonomy (slope $+$ Hopf certificate) & yes & no \\
+Bridge $\Leftrightarrow$ polar collapse $\wedge$ parity & yes & no \\
+Frame tower: nesting, flow rigidity, positivity & yes & no \\
+Harmonic radius law $\texttt{frameNormSq}=H_N\Leftrightarrow$ line ($N\ge2$) & yes & no \\
+RH $\Leftrightarrow$ harmonic tower radii at every zero & yes & no \\
+Radius ladder diverges on the line; $H_N\le K(N)$ bound & yes & no \\
+Transformer trace ladder $\to\zeta$ on $\Re s>1$ & yes & no \\
+HS norm of $D_N$ $=$ frame radius & yes & no \\
+$D_N(s)D_N(1-s)=\mathrm{diag}(1/n)$ (all $s$); trace $=H_N$ & yes & no \\
+Adjoint law $D_N(1-s)=D_N(s)^{\dagger}\Leftrightarrow$ line & yes & no \\
+RH $\Leftrightarrow$ transformer adjoint law at every zero & yes & no \\
+Transformer family abelian and normal (saturation) & yes & no \\
+$[e_1,e_2,e_4]=-e_3-e_4$, norm$^2=2$ (frozen tables) & yes & no \\
+Associator channel $=2(abc)^{-2\sigma}$; positive at zeros & yes & no \\
+Channel $=2/(abc)$ $\Leftrightarrow$ line; FE pair $=4/(abc)^2$ & yes & no \\
+RH $\Leftrightarrow$ associator torsion weights at zeros & yes & no \\
+Goldbach triple channel floor $1/N^3$ on the line & yes & no \\
+Torsion $=(abc)^{-\sigma}(-e_3-e_4)$: single S$^7$ point & yes & no \\
+FE torsion defect odd; cancels $\Leftrightarrow$ line & yes & no \\
+Chirality flip of the defect across the line & yes & no \\
+SO(8) orbit coincidence $\Leftrightarrow$ vector collapse $\Leftrightarrow$ line & yes & no \\
+RH $\Leftrightarrow$ S$^7$ torsion cancellation at every zero & yes & no \\
+Polar decoupling: modulus $\sigma$-only, phase $t$-only & yes & no \\
+Prime-log incommensurability ($\mathbb{N}$, $\mathbb{Z}$) & yes & no \\
+Two prime phases pin the height exactly & yes & no \\
+Goldbach circle $pq+(q-N)^2=N^2$ & yes & no \\
+Phase-speed cap $\log(pq)\le2\log N$; diagonal equality & yes & no \\
+RH $\Rightarrow$ zeros addressed by two prime phases & yes & no \\
+Rodgers--Tao $0\le\texttt{dbnLambda}$ (stated; proof) & no & --- \\
+Newman/dBN RH $\Leftrightarrow\texttt{dbnLambda}\le0$ (stated; proof) & no & --- \\
+$\texttt{dbnLambda}\le\lambda_{\mathrm{HQIV}}$ (inheritance bound) & no & yes \\
+\texttt{DeltaHarmonicCompleteness} $\Rightarrow$ Goldbach & no & yes \\
 \texttt{interiorStripH}$\neq0$ at nontrivial zeros off line & no & yes \\
+Witness for \texttt{SO8ProjectedHalfSlopeBridge}\,$2$ & no & yes \\
+Height $t$ is cover, not injective counter on $S^1$ & yes & no \\
+Harmonic-shell slots $(n,k)$ at $2\pi k/n$, encodable & yes & no \\
+Arc sweep refines when $n\mid m$ & yes & no \\
+$j$--$k$ unit circle $(\cos t,\sin t)$ on Hopf fiber & yes & no \\
+$e^{\pi i j k}$ phase readout on circle & yes & no \\
+$\zeta=0$ on line $\Leftrightarrow$ $j/\sqrt2+k/\sqrt2=0$ & cond.\ bridge & yes \\
+Harmonic-shell slot inherits $j$--$k$ twiddle readout & yes & no \\
+$\zeta=0$ on line $\Leftrightarrow$ rolled cover balance & cond.\ bridge & yes \\
 Unconditional \texttt{RiemannHypothesis} & no & yes \\
+Unconditional \texttt{GoldbachParity} & no & yes \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -510,6 +2531,7 @@ Unconditional \texttt{RiemannHypothesis} & no & yes \\
 \begin{tabular}{@{}ll@{}}
 $\alpha$ & HQIV imprint $3/5$ (\leanid{alpha\_eq\_3\_5}) \\
 $H_n$ & harmonic partial sum (\texttt{harmonicPartialSum}) \\
+$(n,k)$ & harmonic-shell slot, angle $2\pi k/n$ (\texttt{HarmonicShellSlot}) \\
 $K(n)$ & curvature integral (\texttt{curvature\_integral}) \\
 $\texttt{so4CriticalFactor}(s)$ & $(2\sigma-1)/\sqrt2$ \\
 $\texttt{oddStripChannel}$ & FE assembly~\eqref{eq:fe-strip} \\

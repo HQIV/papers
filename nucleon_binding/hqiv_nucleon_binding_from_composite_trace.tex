@@ -1,25 +1,49 @@
-\documentclass[11pt]{amsart}
+\documentclass[11pt,notitlepage]{amsart}
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb,amsthm,mathtools,booktabs}
 \usepackage{enumitem}
 \usepackage{threeparttable}
 \usepackage{hyperref}
-\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue,
+  pdftitle={Binding Energy and the Weak Force from HQIV Composite-Trace Weights},
+  pdfauthor={Steven Ettinger Jr},
+  pdfsubject={HQIV nucleon binding; three-ledger beta decay; composite-trace weights; Lean formalization},
+  pdfkeywords={HQIV, nucleon binding, beta decay, half-life, composite trace, weak force, Lean}}
 \usepackage[final]{microtype}
 \setlength{\emergencystretch}{3em}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{xurl}
+\urlstyle{same}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning}
+\usetikzlibrary{arrows.meta,positioning,calc,angles,quotes}
 
 \newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
-\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\nolinkurl{#1}}}
-\newcommand{\leanid}[1]{\nolinkurl{#1}}
+\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\footnotesize\url{#1}}}
+\newcommand{\leanid}[1]{{\footnotesize\path{#1}}}
+\newcommand{\scriptfile}[1]{{\footnotesize\url{scripts/#1}}}
+\newcommand{\datafile}[1]{{\footnotesize\url{data/#1}}}
+\newcommand{\leanterm}[3]{\hyperref[#2]{#1}}
+\newcommand{\scriptref}[1]{\hyperref[app:scripts]{#1}}
+\newcommand{\fitbox}[1]{\begin{adjustbox}{max width=\linewidth,center}#1\end{adjustbox}}
+
+\providecommand{\leanCertAnomaly}{}
+\providecommand{\leanCertTopology}{}
+\providecommand{\leanCertStrongColor}{}
+\providecommand{\leanPatchHolonomyWitness}{}
+\providecommand{\leanPatchWilsonKinetic}{}
+\providecommand{\leanPatchHaarMeasure}{}
+\providecommand{\leanPatchDiscretePoincare}{}
+\providecommand{\leanPatchSpatialRotation}{}
 
 \title[Binding energy and the weak force]{Binding Energy and the Weak Force from HQIV Composite-Trace Weights:\\
 Lock-In Masses, Three Ledgers, and Zero-Knob Half-Lives}
 \author{Steven Ettinger Jr}
 \address{Independent Researcher}
 \email{steven@disregardfiat.tech}
-\date{Preprint v3 --- \today}
+\date{Preprint v4 --- \today}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
@@ -28,21 +52,41 @@ Lock-In Masses, Three Ledgers, and Zero-Knob Half-Lives}
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{remark}[theorem]{Remark}
 
+% Keep title + abstract on page 1: amsart stores the abstract in an unbreakable
+% \vtop; unvbox lets it start below the title instead of jumping to page 2.
+\makeatletter
+\renewcommand{\@setabstracta}{%
+  \ifvoid\abstractbox
+  \else
+    \skip@12\p@ \advance\skip@-\lastskip
+    \advance\skip@-\baselineskip \vskip\skip@
+    {\footnotesize\unvbox\abstractbox}%
+    \prevdepth\z@
+  \fi
+}
+\patchcmd{\@maketitle}{\global\topskip42\p@}{\global\topskip30\p@}{}{}
+\makeatother
+
 \begin{document}
 
 \begin{abstract}
 \noindent\textbf{Position in the publication chain.}
-This is the eighth paper in the HQIV preprint series and the fourth Tier-2
+Companion to the published TUFT+SM synthesis \cite{hqiv-tuft-sm-lagrangian-paper}
+(DOI \href{https://doi.org/10.5281/zenodo.20601215}{10.5281/zenodo.20601215}).
+This is the seventh paper in the HQIV preprint series and the third Tier-2
 Standard-Model layer entry \emph{after} the published TUFT+SM synthesis
 \cite{hqiv-tuft-sm-lagrangian-paper}. Tier~0--1 fix the discrete spine
 \cite{ettinger2026hqiv,hqiv-lightcone-paper,hqiv-so8-paper,hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper,hqiv-thermo-arrow-paper}.
 \textbf{This note establishes} the local-curvature slot equations---named
 $B_{\mathrm{curv}}(\xi)$, three $\beta$ ledgers, slot-wise mass/binding closure, and
 outside-contact primitives---witnessed from nucleon binding through bulk condensed matter.
-\textbf{Queued next} in Tier~2 are baryogenesis lock-in and BBN abundances
-\cite{hqiv-baryogenesis-paper,hqiv-bbn-paper}; they are epoch-dynamic applications of
-the \emph{same} equations ($\xi(T)$, outside release, opacity slots), not separate
-physics layers. Outside temperature and gravity cite
+\textbf{Companion} Tier~2 notes on baryogenesis lock-in
+\cite{hqiv-baryogenesis-paper} (published:
+DOI \href{https://doi.org/10.5281/zenodo.20711255}{10.5281/zenodo.20711255}) and BBN abundances
+\cite{hqiv-bbn-paper} apply the \emph{same} equations
+($\xi(T)$, outside release, opacity slots, dynamic-$C_2$ lapse clock) at cosmological
+epoch; they do not introduce separate physics layers (\S\ref{sec:downstream}).
+Outside temperature and gravity cite
 \cite{hqiv-thermo-arrow-paper,hqiv-flyby-paper}.
 
 \noindent\textbf{Result (masses).}
@@ -69,13 +113,24 @@ parameters. Integrated clock time $\tau_n\approx 880\,\mathrm{s}$ at $300\,\math
 ($\approx 1.00\times$ the $879\,\mathrm{s}$ reference band; envelope
 $875$--$884\,\mathrm{s}$ brackets bottle and beam representatives) uses the same
 $B_{\mathrm{curv}}(\xi)$ stack as bound-state and BBN integrator witnesses.
-Light-isotope masses agree at mean $0.12\%$ on the $A\le 4$ panel. Tritium $\beta^-$:
+Light-isotope masses agree at mean $0.003\%$ on the $A\le 4$ panel (curvature
+$G_{\mathrm{eff}}$ spine @ $\xi_{\mathrm{lock}}$). The same spine extends through
+$A=16$ on the post-$\alpha$ and multi-$\alpha$ ledger with mean
+$|\Delta B|/B_{\mathrm{PDG}}\approx 1.2\%$ on the full twelve-isotope witness panel
+($\approx 1.2\%$ for $A>4$ alone; Table~\ref{tab:extended-panel}).
+Tritium $\beta^-$:
 the width ledger requires a distinct interior valence well (mass and width slots
 cannot collapse---radical ledger locality); with slot-wise local curvature closure on
 each mass and binding budget,
 $\tau_T/\tau_{\mathrm{ref}}=1.000$ on the same equations that fix $M_T$
-(relic-bath catalysis is \emph{shielded} for $A>1$). Together these validate the
-local-curvature spine against laboratory readouts.
+(relic-bath catalysis is \emph{shielded} for $A>1$). Post-$\alpha$ EC/$\beta^+$ on
+$^7\mathrm{Be}$ books facet-proton \emph{local contact} mass for endpoint $Q$ and the
+same post-$\alpha$ outside-valley count for the weak width ledger
+(\hyperref[script:decay-chain]{decay-chain calculator}).
+$^8\mathrm{Be}$ $\alpha$ breakup discharges through the two-$\alpha$
+trapped-inside saddle and width ledger ($\tau\approx 5.5\times 10^{-17}\,\mathrm{s}$
+witness vs.\ reference $\sim 6.7\times 10^{-17}\,\mathrm{s}$).
+Together these validate the local-curvature spine against laboratory readouts.
 
 \noindent\textbf{Outside environment.}
 Lab readouts book temperature through $T(\xi)=T_{\mathrm{Pl}}/\xi$ and a cumulative
@@ -83,9 +138,10 @@ weak-field binding stack (Earth + Sun @ 1\,AU + Galactic $v_c^2/c^2$) folded int
 \hyperref[lean:geff-outside]{outside G-eff support}. Galactic binding
 dominates the gravity ledger ($\sim 98\%$ of $\varepsilon_g$); Earth-surface labs
 are blind to it at sub-ppm on $\tau_n$, while BBN at $T\sim 0.1\,\mathrm{MeV}$ sees
-outside weakening at the percent level---the regime relevant to the lithium problem.
+outside weakening at the percent level---feeding the coupled neutron inventory and
+$^7\mathrm{Li}/H$ witnesses documented in \cite{hqiv-bbn-paper}.
 
-\noindent\textbf{Single absolute anchor (quarantined).}
+\noindent\textbf{Single absolute anchor (strictly isolated).}
 Laboratory proton mass $938.272\,\mathrm{MeV}$ appears only as a lapse-readout
 anchor for comparison, not as an input to $E_{\mathrm{bind}}$ or weak widths.
 Reference half-lives and isotope masses in tables are comparison targets only.
@@ -100,15 +156,37 @@ Computed witnesses (Python): light-panel masses, $\tau_n$, tritium width,
 temperature/gravity sweeps, BBN integrator opacity export
 (\S\ref{sec:computational-witnesses}, \S\ref{sec:phenomenology});
 \textbf{derived allotropes} and bulk geometry from molecular inputs via the
-\path{hqiv_lab} package (\S\ref{sec:hqiv-lab}, \S\ref{sec:phase-geometry-density});
+\texttt{hqiv\_lab} package (\S\ref{sec:hqiv-lab}, \S\ref{sec:phase-geometry-density});
 condensed-phase $\rho_{\mathrm{curv}}$, melt, and material response on the same spine
 (raw contact lattice vs.\ medium-closed bulk readout); response slots use standard
 continuum formulae \cite{hecht2017optics,ashcroft1976ssp,atkins2018pchem}.
-Not re-derived here: full $\beta$ spectra; dynamical $\mathrm{SU}(3)$; full nuclear chart
-beyond $A=4$; MS\=bar current-quark inputs; lithium closure; sub-leading non-contact
-network refinements (conjecture in \S\ref{sec:scope}).
+Not re-derived here: full $\beta$ spectra; dynamical $\mathrm{SU}(3)$; actinide
+fission decay chains; MS\=bar current-quark inputs; sub-leading non-contact
+network refinements (conjecture in \S\ref{sec:scope}). \textbf{Extended binding panel}
+($A\le 16$, Table~\ref{tab:extended-panel}) is a computed witness on the same spine;
+\textbf{post-$\alpha$ $\beta^+$/EC and two-$\alpha$ width} witnesses are wired on the
+decay-chain calculator (\S\ref{sec:beta-roadmap}); full actinide $\alpha$ ladders remain
+open. \textbf{Light-element BBN} (D, $^3$He, $^7$Li) is a
+computed witness via the faithful integrator (\S\ref{sec:computational-witnesses},
+Appendix~\ref{app:scripts}); $^7$Li uses the $^3$He+$^4$He$\to^7$Be$\to^7$Li network ladder
+with trimer-width, stoichiometric D-budget, and synthesis-window tail-gate slots
+(\hyperref[lean:bbn-stoichiometric]{BBN stoichiometric integrator}).
 \end{abstract}
 \maketitle
+
+\renewcommand{\leanCertAnomaly}{; see Appendix~\ref{app:lean-index},
+\hyperref[lean:anomaly-cancellation]{anomaly cancellation}}
+\renewcommand{\leanCertTopology}{; see
+\hyperref[lean:patch-topology-discharge]{patch topology discharge}}
+\renewcommand{\leanCertStrongColor}{; optional strong-colour certificate in the Lean catalog}
+\renewcommand{\leanPatchHolonomyWitness}{(\hyperref[lean:so8-plaquette]{SO(8) plaquette holonomy},
+witness \leanid{so8PlaquetteHolonomyDischarged_holds})}
+\renewcommand{\leanPatchWilsonKinetic}{(\hyperref[lean:action-holonomy-glue]{Wilson--kinetic glue},
+witness \leanid{wilsonKineticPlaquetteEquivalence_discharged})}
+\renewcommand{\leanPatchHaarMeasure}{(\hyperref[lean:non-abelian-haar]{non-abelian Haar measure scaffold})}
+\renewcommand{\leanPatchDiscretePoincare}{(\hyperref[lean:discrete-action-poincare]{discrete action Poincaré programme})}
+\renewcommand{\leanPatchSpatialRotation}{(\hyperref[lean:spatial-rotation-lorentz-closure]{spatial-rotation Lorentz closure},
+witness \leanid{spatial_rotation_lorentz_closure_discharged})}
 
 \input{../include/patch_theory_messaging.tex}
 
@@ -141,7 +219,7 @@ no global potential fits. The present note is the Tier-2 foundation that proves 
 witnesses that spine from lock-in nucleons through light isotopes and laboratory
 condensed phases (water as the primary melt witness; \S\ref{sec:condensed-universality}),
 with explicit Lean certificates and reproducible Python readouts. Baryogenesis and BBN
-companions queued after this note inherit the identical slot equations, evaluated at
+companions inherit the identical slot equations, evaluated at
 cosmological $\xi(T)$ rather than Earth-lab lock-in.
 
 \paragraph{Minimal axioms and where to enter the series.}
@@ -161,8 +239,8 @@ New readers should start with the framework overview on Zenodo
 records \cite{hqiv-lightcone-paper,hqiv-so8-paper}, the Tier-1 variational spine
 \cite{hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper,hqiv-thermo-arrow-paper},
 and the published Tier-2 TUFT+SM synthesis \cite{hqiv-tuft-sm-lagrangian-paper}.
-The baryogenesis and BBN notes queued after this paper apply the same local-curvature
-equations at epoch-dependent $\xi(T)$; they do not introduce alternate binding rules.
+The baryogenesis and BBN companion notes apply the same local-curvature equations at
+epoch-dependent $\xi(T)$; they do not introduce alternate binding rules.
 
 \paragraph{Scope and contributions.}
 We do \textbf{not} reproduce continuum QCD or a full shell-model chart. We \textbf{do}
@@ -179,15 +257,16 @@ data used only to \textbf{validate} the slot readouts, never as fit inputs.
   spine, three scales, zero alternate equations.
 \item \textbf{Geometric binding.} Proton and neutron masses are constituent energies
   minus shared $E_{\mathrm{bind}}$ on the $\mathfrak{so}(8)$ network; cluster binding
-  adds Fresnel/Casimir caustics and slot-wise isotope weighting
-  (\S\ref{sec:binding-network}).
+  follows the curvature + $G_{\mathrm{eff}}$ shared-well network spine (inside trapped
+  curvature plus outside ladder, $\gamma$-network, barbell, tetrahedral closure) with
+  slot-wise isotope weighting (\S\ref{sec:binding-network}).
 \item \textbf{Lapse renormalization.} Laboratory comparison uses a one-point proton
-  anchor and shell lapse readout (\S\ref{sec:lapse}). The anchor is quarantined: it
-  does not feed $E_{\mathrm{bind}}$ or weak widths.
+  anchor and shell lapse readout (\S\ref{sec:lapse}). The anchor is strictly isolated:
+  it does not feed $E_{\mathrm{bind}}$ or weak widths.
 \item \textbf{$\beta$-decay programme.} Weak tipping uses three non-collapsible ledgers
   plus skew alignment on the octonion carrier (\S\ref{sec:beta-programme}). On the
   $A\le 4$ panel, witnesses validate free-neutron width to $\lesssim 0.01\%$ in
-  effective phase space, masses at $0.12\%$ mean, and tritium
+  effective phase space, masses at $0.003\%$ mean, and tritium
   $\tau_T/\tau_{\mathrm{ref}}=1.000$ from the same slot closure as $M_T$
   (Table~\ref{tab:light-panel}).
 \item \textbf{Lean audit.} Binding positivity, ledger separation, endpoint-$Q$
@@ -202,13 +281,13 @@ data used only to \textbf{validate} the slot readouts, never as fit inputs.
 Section~\ref{sec:scope} states claim discipline and collects headline witness numbers.
 Sections~\ref{sec:binding}--\S\ref{sec:lapse} derive lock-in nucleon masses (mode
 counts, isospin split, lock-in sensitivity). Section~\ref{sec:beta-programme} is the
-$\beta$-decay core: skew alignment, ledgers, endpoints, weak width, Fano/Hopf bridge,
-and milestone roadmap. \S\ref{sec:binding-network} constructs the cluster network;
+$\beta$-decay core: skew alignment, ledgers, endpoints, weak width, explicit width
+assembly (\S\ref{sec:width-assembly}), Fano/Hopf bridge, and milestone roadmap. \S\ref{sec:binding-network} constructs the cluster network;
 \S\ref{sec:masses}--\S\ref{sec:lapse} fix lock-in masses; \S\ref{sec:valley}--\S\ref{sec:outside} treat bonded-cluster geometry,
 outside temperature and gravity, and local neutrino-opacity catalysis.
 Section~\ref{sec:phenomenology} tabulates the light-isotope panel.
 \S\ref{sec:downstream} shows the same local-curvature equations carried forward to
-queued baryogenesis and BBN notes. Appendices~\ref{app:lean-index}
+the baryogenesis and BBN companions. Appendices~\ref{app:lean-index}
 and~\ref{app:scripts} map reader-friendly names to Lean modules and reproducer scripts.
 
 \section{Scope and claim discipline}
@@ -229,10 +308,10 @@ ladder and Yukawa readouts.
 HQIV physics is organized as \textbf{named slots} on a discrete null lattice: each
 contact, ledger, and budget carries local curvature closure, not a fitted global
 potential. The same slot algebra propagates causally from a single nucleon trace
-(\eqref{eq:network-bind}) through cluster Fresnel/Casimir geometry, three non-collapsible
+(\eqref{eq:network-bind}) through cluster Casimir caustic geometry, three non-collapsible
 $\beta$ ledgers, molecular outside contacts, and bulk $\rho_{\mathrm{curv}}$
 (\S\ref{sec:phase-geometry-density}). Laboratory tables validate the slot readouts;
-they do not supply tunable parameters. Queued baryogenesis and BBN papers
+they do not supply tunable parameters. Baryogenesis and BBN companions
 (\S\ref{sec:downstream}) change only the epoch witness $\xi(T)$ and outside-release
 modulator---the equations are unchanged. That continuity is the central claim of this
 note: \emph{radical locality} from nucleon binding through water, with cosmology as
@@ -243,7 +322,7 @@ The witnesses in this note cover the light-isotope ladder through helium-4
 ($p$, $n$, $D$, $T$, ${}^3\mathrm{He}$, ${}^4\mathrm{He}$): shared-surface
 composite-trace binding, valley-count geometry, and interior width-well booking
 suffice \emph{without} alternate binding rules per nucleus. On that panel the derived
-network readouts agree with laboratory readouts at mean $0.12\%$, free-neutron $\tau_n$ at
+network readouts agree with laboratory readouts at mean $0.003\%$, free-neutron $\tau_n$ at
 $1.00\times$ reference width, and tritium $\tau_T/\tau_{\mathrm{ref}}=1.00$ under the
 same slot-wise local curvature closure as the mass table (Table~\ref{tab:light-panel}).
 
@@ -271,24 +350,19 @@ independent import). \textbf{This note consumes those slots}; it does not re-der
 full Lagrangian bridge, a dynamical non-abelian $\mathrm{SU}(3)$ theory, or spectral
 $\beta$ shapes here. The upstream synthesis also discharges \emph{finite-patch} gauge
 consistency: explicit SM anomaly-trace cancellation and single-sector instanton/$\theta$/Chern/winding
-obligations (\leanfile{Hqiv/Algebra/AnomalyCancellation.lean},
-\leanfile{Hqiv/QuantumMechanics/PatchTopologicalObstruction.lean}),
+obligations (\hyperref[lean:anomaly-cancellation]{anomaly cancellation},
+\hyperref[lean:patch-topology-discharge]{patch topology discharge}),
 plus rapidity-phase and spatial-rotation Lorentz closure on the flat patch chart
-(\leanfile{Hqiv/Geometry/RapidityLorentzClosure.lean}, witness
-\leanid{rapidity_lorentz_closure_discharged};
-\leanfile{Hqiv/Geometry/SpatialRotationLorentzClosure.lean}, witness
-\leanid{full_lorentz_closure_discharged}),
+(\hyperref[lean:rapidity-lorentz-closure]{rapidity--Lorentz closure},
+\hyperref[lean:spatial-rotation-lorentz-closure]{spatial-rotation Lorentz closure}),
 full four-edge SO(8) Wilson plaquettes, abelian Wilson--kinetic equivalence, and a partial
 strong-interacting discrete-action Poincaré bundle
-(\leanfile{Hqiv/Physics/SO8PlaquetteHolonomy.lean},
-\leanfile{Hqiv/Physics/ActionHolonomyGlue.lean},
-\leanfile{Hqiv/Physics/DiscreteActionStrongPoincareBridge.lean};
-witnesses \leanid{so8PlaquetteHolonomyDischarged_holds},
-\leanid{wilsonKineticPlaquetteEquivalence_discharged},
-\leanid{fullActionStrongPoincare_discharged})---not a continuum path-integral or
+(\hyperref[lean:so8-plaquette]{SO(8) plaquette holonomy},
+\hyperref[lean:action-holonomy-glue]{action holonomy glue},
+\hyperref[lean:discrete-action-poincare]{discrete action Poincaré programme})---not a continuum path-integral or
 smooth-bundle upgrade. What remains open on the discrete spine are
 \emph{extensions} of the same upstream bridge---Haar measure on rotated charts, general
-flat HQVM kinetic invariance under \texttt{boostDiscretePotential41}, forbidden transitions, radiative normalization,
+flat HQVM kinetic invariance under the strong-Poincaré bridge, forbidden transitions, radiative normalization,
 higher-$A$ non-contact propagation (\S\ref{sec:scope}), and a derived lock-in principle for
 $m_{\mathrm{lockin}}$ without the proton anchor---not replacement of the Lagrangian by
 legacy effective potentials or lattice tables.
@@ -310,9 +384,11 @@ Remark~\ref{sec:computational-witnesses}.
 
 \begin{table}[h]
 \centering
+\small
 \caption{Claim map: proved in Lean vs computed witnesses vs not claimed.}
 \label{tab:claims}
-\begin{tabular}{@{}lll@{}}
+\fitbox{%
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight\arraybackslash}p{0.34\linewidth}>{\RaggedRight\arraybackslash}p{0.22\linewidth}X@{}}
 \toprule
 Topic & Lean status & Witness \\
 \midrule
@@ -324,20 +400,22 @@ Derived $M_p,M_n,\Delta M$ & proved & \S\ref{sec:masses} \\
 Three $\beta$ ledgers & definitions + identities & \S\ref{sec:beta-programme} \\
 Endpoint $Q_{\beta^-}=\Delta M-m_e$ & proved & \S\ref{sec:beta-programme} \\
 Weak width slot ($G_F$, matrix element) & proved wiring (upstream) & \S\ref{sec:beta-programme} \\
+Explicit $\Gamma$ assembly (referee stack) & defined + witnessed & \S\ref{sec:width-assembly} \\
 $\beta$ spectral shapes / forbidden / radiative & upstream extension milestone & \S\ref{sec:beta-roadmap} \\
 Local $\nu$-opacity catalysis ($B_{\mathrm{curv}}$) & defined + OOM theorem & \S\ref{sec:neutrino-opacity} \\
 Valley geometry factor & defined & \S\ref{sec:valley} \\
 Fano/Hopf bridge energy & proved shape & \S\ref{sec:fano-hopf} \\
 Outside $T(\xi)$ + gravity $\varepsilon_g$ & partial Lean + Python & \S\ref{sec:outside} \\
 Bottle/beam ledger (weak Ledger III) & proved structure & \S\ref{sec:phenomenology} \\
-$\beta$ width qualification (`betaWidthLedgerQualified`) & proved wiring & \S\ref{sec:beta-programme} \\
-Allotrope from bonds + VSEPR motif & structural Lean + \path{hqiv_lab} & \S\ref{sec:hqiv-lab} \\
+$\beta$ width qualification & proved wiring & \S\ref{sec:beta-programme} \\
+Allotrope from bonds + VSEPR motif & structural Lean + \texttt{hqiv\_lab} & \S\ref{sec:hqiv-lab} \\
 $\rho_{\mathrm{curv}}$, melt, $n$, $k_{\mathrm{th}}$, $C_p$ & witness (raw + medium-closed) & \S\ref{sec:phase-geometry-density} \\
 $\tau_n\approx 880\,\mathrm{s}$, light masses & witness ($A\le 4$ panel) & \S\ref{sec:phenomenology} \\
 Higher-order non-contact network / Casimir caustics & conjecture (untreated) & \S\ref{sec:scope} \\
-Full nuclear chart, lithium closure & not claimed & --- \\
+Full nuclear chart beyond light isotopes & not claimed & --- \\
+$^7$Li / BBN light-element integrator & structural Lean + witness & \S\ref{sec:computational-witnesses} \\
 \bottomrule
-\end{tabular}
+\end{tabularx}}
 \end{table}
 
 \begin{remark}[Computational witnesses (lock-in panel)]
@@ -350,23 +428,47 @@ Recompute with the scripts in Appendix~\ref{app:scripts}.
   $\tau_n\approx 880\,\mathrm{s}$ ($\approx 1.00\times$ the $879\,\mathrm{s}$ band);
   width ledger $\Gamma_{\mathrm{ref}}/\Gamma_{\mathrm{pred}}\approx 1.000$,
   $\Delta Q_{\mathrm{phase}}/Q_{\mathrm{phase}}\lesssim 0.01\%$.
-\item \textbf{Light-isotope masses:} mean $|\Delta M|/M_{\mathrm{ref}}\approx 0.12\%$
-  on the $p,n,D,T,{}^3\mathrm{He},{}^4\mathrm{He}$ panel (Table~\ref{tab:light-panel}).
+\item \textbf{Light-isotope masses:} mean $|\Delta M|/M_{\mathrm{ref}}\approx 0.003\%$
+  on the $p,n,D,T,{}^3\mathrm{He},{}^4\mathrm{He}$ panel (curvature spine;
+  Table~\ref{tab:light-panel}).
 \item \textbf{Tritium $\beta^-$:} ledger separation (mass vs width wells) is mandatory
   for causal locality; slot-wise local curvature on each budget yields
   $\tau_T/\tau_{\mathrm{ref}}=1.000$ on the same equations as $M_T$
   (\S\ref{sec:valley}, Table~\ref{tab:light-panel}).
+\item \textbf{BBN light elements} @ $\eta_{\mathrm{paper}}$ (faithful integrator witness;
+  \cite{hqiv-bbn-paper}): $Y_p\approx 0.244$ (post-synthesis neutron inventory;
+  obs.\ $0.244\pm0.004$); $D/H\approx 2.51\times 10^{-5}$ (synthesis window +
+  $n\!+\!p\!\to\!D$ + coupled inventory + \leanid{bbnSynthesisDWindowTailGate};
+  obs.\ $(2.53\pm0.04)\times 10^{-5}$, $z\approx -0.5$);
+  $^3\mathrm{He}/\mathrm{H}\approx 1.01\times 10^{-5}$; $^7\mathrm{Li}/\mathrm{H}\approx 2.54\times 10^{-10}$
+  (pre-depletion; Coc semi-analytic comparison $4.65\times 10^{-10}$)
+  (Spite-plateau band $(1.6\text{--}4.5)\times 10^{-10}$ via $^3\mathrm{He}$ stratification gates).
+  Recompute: \hyperref[app:scripts]{BBN integrator script}; tables: \hyperref[app:scripts]{BBN paper tables script}.
 \item \textbf{Outside environment:} Earth-lab $\tau_n$ shift $\sim 0.15\,\mathrm{ppm}$
   from gravity; BBN-relevant $T\sim 0.1\,\mathrm{MeV}$ sees $\sim 22\%$ outside
   weakening on the free branch.
 \item \textbf{Condensed phase:} \texttt{hqiv\_lab} derives allotropes and material response on
-  four GMTKN55 motifs (\S\ref{sec:condensed-universality}): mean $|\Delta\rho|/\rho_{\mathrm{NIST}}\approx 2.5\%$,
+  four GMTKN55 motifs (\S\ref{sec:condensed-universality}): mean $|\Delta\rho|/\rho_{\mathrm{NIST}}\approx 0.4\%$,
   $|\Delta n|/n_{\mathrm{NIST}}\approx 2\%$, $|\Delta T_{\mathrm{sl}}|/T_{\mathrm{NIST}}\lesssim 1\%$
   on the $\kappa_6(\xi,\rho_\kappa(n))$ spine---parameter-free vs.\ periodic PBE-D3
   \cite{grimme2011d3,santra2013ice,brandenburg2016jctc} at comparable accuracy on density
   without per-species crystallographic inputs.
 \end{itemize}
 \end{remark}
+
+\section*{Data and code availability}
+\label{sec:data-availability}
+
+Machine-checked proofs build under the \texttt{paper\_nucleon\_binding} Lake target in the
+public HQIV Lean repository \cite{hqiv-lean}.
+Quantitative witnesses are reproduced by the Python scripts listed in
+Appendix~\ref{app:scripts}; a self-contained bundle ships on the Zenodo record as
+\texttt{scripts.zip} (see Appendix~\ref{app:scripts} and the bundled
+\texttt{README.md} / \texttt{MANIFEST.sha256}).
+The bundle includes the \texttt{hqiv\_lab} package (\texttt{pip install -e .}),
+isotope/phase/BBN entry scripts, and frozen witness JSON exports.
+The proton lock-in anchor $938.272\,\mathrm{MeV}$ calibrates comparison tables only;
+it does not enter $E_{\mathrm{bind}}$, width slots, or $B_{\mathrm{curv}}(\xi)$.
 
 \section{The $8\times 8$ composite-trace binding law}
 \label{sec:binding}
@@ -417,8 +519,8 @@ $\mathbb{F}_2^3$. The full synthesis theorem is in \cite{hqiv-3d-growth-paper}; 
 note uses only~\eqref{eq:Am} and Theorem~\ref{thm:alpha}.
 \end{remark}
 
-The composite-trace binding law below evaluates at a chosen shell $m$ through
-\texttt{latticeSimplexCount}$(m)\propto N_{\mathrm{simp}}(m)$ and
+The composite-trace binding law below evaluates at a chosen shell $m$ through the
+\hyperref[lean:bound-states]{lattice simplex count} and
 $\alpha_{\mathrm{eff}}(m)$; no additional exponent is tuned.
 
 \subsection{Network binding functional}
@@ -451,8 +553,8 @@ not imported here as a separate legacy model.
 HQIV allows \textbf{any} high-precision local quantity to serve as the active
 \emph{scale witness} that fixes the MeV chart for a given pipeline
 (\hyperref[lean:scale-witness]{scale witness discipline};
-\cite{hqiv-tuft-sm-lagrangian-paper}): default \texttt{proton\_lockin} at
-$\mathrm{referenceM}=4$, with \texttt{codata\_alpha} and \texttt{cmb\_now} as
+\cite{hqiv-tuft-sm-lagrangian-paper}): default proton lock-in at
+$\mathrm{referenceM}=4$, with CODATA-$\alpha$ and CMB-now as
 explicitly labelled comparison charts. Exactly one witness anchors a solve; all
 PDG/CODATA rows in the tables are \textbf{comparison targets}, not simultaneous fit
 inputs.
@@ -480,20 +582,29 @@ Cluster binding is assembled in three layers, all on the $\mathfrak{so}(8)$ netw
 \item \textbf{Shared nucleon trace} --- $E_{\mathrm{bind}}(\mathrm{referenceM})$
   from \eqref{eq:network-bind} subtracted equally from $p$ and $n$
   (\S\ref{sec:masses}).
-\item \textbf{Inside trapped curvature} --- meta-horizon volume ratio
-  $\texttt{metaHorizonTrappedInsideRatio}$ times the trace, when the cluster closes
-  onto a readout shell.
-\item \textbf{Outside Casimir caustics} --- hierarchical Fresnel stack:
-  spherical pair overlap, barbell torus, torus deepen steps, and (for $A\ge 4$)
-  tetrahedral closure (\hyperref[lean:casimir-caustic-stack]{caustic hierarchy}).
+\item \textbf{Inside trapped curvature} --- $B_{\mathrm{in}}=A\times E_{\mathrm{trace}}
+  \times\Delta(\texttt{metaHorizonTrappedInsideRatio})$ when the cluster closes onto a
+  readout shell (\hyperref[lean:nuclear-curvature-binding]{inside binding}).
+\item \textbf{Outside $G_{\mathrm{eff}}$ network} --- contact units $\times
+  G_{\mathrm{eff}}(\theta/\theta_0)\times E_{\mathrm{trace}}$ on the shared-well spine:
+  intrinsic well deepening $D_{\mathrm{intr}}$ from valley occupancy, constructive ladder,
+  $\gamma$-network (for $A\ge 3$), barbell torus (for $A\ge 3$), tetrahedral closure
+  (for $A\ge 4$), and post-$\alpha$ ledger for $A>4$
+  (\hyperref[lean:nuclear-curvature-binding]{outside binding};
+  \hyperref[lean:casimir-caustic-stack]{caustic hierarchy} names the geometric sublayers).
 \end{enumerate}
 
-Each nucleon wraps a \emph{Fresnel caustic envelope} at meta-horizon radius $R_m$
-(\leanid{fresnelCaustic}, \leanid{sphericalFresnelEnvelope}): vacuum-mode density
-$\texttt{available\_modes}/R_m$ sets the curvature proxy. Pairwise
-\leanid{valleyPotential} is the scalar reduction of horizon overlap; each bind step
-on the constructive isotope ladder adds two Fresnel valley contacts
-(\leanid{valleyCount}, proved additive in \leanid{valleys\_are\_additive}).
+Each nucleon books a meta-horizon shell at radius $R_m=m+1$
+(\hyperref[lean:hqiv-nuclei]{vacuum-mode density witness}): available modes
+$\propto(m+1)(m+2)$ sets the curvature proxy. Pairwise contact uses the
+\hyperref[lean:hqiv-nuclei]{valley potential} scalar; each constructive rung adds two
+valley contacts (\hyperref[lean:hqiv-nuclei-valley-scaffold]{valley count}, proved
+additive). Casimir caustic layers (sphere-pair, barbell, deepen, tetra) are
+\emph{diagnostic} outside witnesses
+(\hyperref[script:nuclear-caustic]{nuclear caustic binding script}); PDG-comparable
+totals $B_{\mathrm{net}}=B_{\mathrm{in}}+B_{\mathrm{out}}$ export from the curvature
+program (\hyperref[script:curvature-binding]{curvature binding program script},
+\datafile{curvature_binding_program.json}).
 
 \subsection{Slot-wise local curvature on each isotope budget}
 
@@ -514,53 +625,128 @@ own curvature budget:
   tipping for bonded clusters.
 \end{itemize}
 
-Witness export: \path{scripts/hqiv\_nuclear\_caustic\_binding.py},
-\path{scripts/hqiv\_nuclear\_inside\_outside\_binding.py},
-\path{data/isotope\_pdg\_benchmark.json}.
+Witness export: \hyperref[script:curvature-binding]{curvature binding program script},
+\hyperref[script:nuclear-caustic]{nuclear caustic binding script} (diagnostic layers),
+\hyperref[script:inside-outside]{inside/outside binding script},
+\hyperref[app:scripts]{isotope benchmark JSON}.
 
 \begin{table}[h]
 \centering
-\caption{Constructive light panel: Fresnel valleys, Casimir caustic stack, and
-structural stability @ lock-in ($300\,\mathrm{K}$, isolated). Caustic depths are
-HQIV witness MeV from the hierarchical stack; cluster totals match
-\texttt{cluster\_caustic\_total\_mev} in
-\nolinkurl{scripts/hqiv_isotope_stability_halflife.py}.}
+\caption{Light-panel binding @ lock-in ($\xi$ lock-in, $m=4$): curvature +
+$G_{\mathrm{eff}}$ shared-well network vs PDG total binding (comparison only).
+Mean $|\Delta B|/B_{\mathrm{PDG}}$ on the $A\le 4$ rows below compares the curvature
+$G_{\mathrm{eff}}$ binding ledger to PDG total-$B$ tables (reference nucleon masses;
+$\sim 1.1\%$ on these four isotopes). The authoritative light-panel witness is cluster mass:
+$|\Delta M|/M_{\mathrm{ref}}\approx 0.003\%$ (Table~\ref{tab:light-panel}).
+Extended post-$\alpha$ isotopes ($A>4$) use the same spine
+(Table~\ref{tab:extended-panel}; mean $\sim 1.2\%$ on the full panel).
+Witness: \hyperref[script:curvature-binding]{curvature binding program script}
+@ $m=4$; \datafile{curvature_binding_program.json},
+\datafile{binding_energy_program.json}.}
 \label{tab:caustic-panel}
-\begin{tabular}{@{}llllp{4.2cm}@{}}
+\fitbox{%
+\begin{tabular}{@{}llrrrrrr>{\RaggedRight\arraybackslash}p{0.22\linewidth}@{}}
 \toprule
-Isotope & $A$ & Valley & $B_{\mathrm{cluster}}$ & Caustic / geometry narrative \\
-& & contacts & (MeV) & \\
+Isotope & $A$ & Valley & $B_{\mathrm{in}}$ & $B_{\mathrm{out}}$ & $B_{\mathrm{net}}$ &
+  $B_{\mathrm{PDG}}$ & $\Delta$ & Network narrative \\
+& & contacts & \multicolumn{4}{c}{(MeV)} & (\%) & \\
 \midrule
-$D$   & 2 & 2 & $\approx 8.2$ &
-  Fresnel pair overlap + barbell torus; stable, both $\beta$ channels shielded. \\
-$T$   & 3 & 4 & $\approx 10.4$ &
-  Barbell closes to torus (+ one deepen step); Fresnel valley on the torus;
-  $\beta^-$ open after well split; $\tau$ from slot-wise local curvature. \\
-$\mathrm{He4}$ & 4 & 6 & $\approx 20.5$ &
-  \textbf{All nucleons touch} (tetrahedral closure); deepest simple shape on the
-  ladder; pairwise valley count $=6$; stable. \\
+$D$   & 2 & 2 & $0.59$ & $1.60$ & $2.19$ & $2.22$ & $-1.8$ &
+  Ladder + $D_{\mathrm{intr}}$; stable. \\
+$T$   & 3 & 4 & $0.88$ & $7.54$ & $8.42$ & $8.48$ & $-0.7$ &
+  $\gamma$-net + barbell; $\beta^-$ open; $\tau$ from slot-wise $\kappa$
+  (\S\ref{sec:valley}). \\
+$\mathrm{He3}$ & 3 & 4 & $0.88$ & $6.82$ & $7.70$ & $7.72$ & $-0.3$ &
+  Same contact spine as $T$; stable. \\
+$\mathrm{He4}$ & 4 & 6 & $2.44$ & $25.34$ & $27.79$ & $28.30$ & $-1.8$ &
+  Tetra closure + six valley contacts; stable. \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 \paragraph{$D$.}
-The deuteron is the minimal Fresnel pair: two spherical caustics overlap
-(\leanid{deuteronBindingScale}$\,=\gamma\cdot\texttt{modes}/R_m$), then the
-barbell torus deepens the same well. Two valley contacts; both $\beta$ residuals are
-structurally shielded by the nuclear well ($\approx 4.1\,\mathrm{MeV}$).
+The deuteron books $B_{\mathrm{net}}\approx 2.19\,\mathrm{MeV}$ ($B_{\mathrm{in}}+B_{\mathrm{out}}$
+on the $A=2$ ladder with $G_{\mathrm{eff}}\approx 0.68$ at lock-in). Two valley contacts;
+both $\beta$ channels structurally shielded at per-nucleon well depth
+$B_{\mathrm{net}}/A\approx 1.09\,\mathrm{MeV}$.
 
 \paragraph{$T$.}
-Tritium adds a torus deepen step on the $A=3$ barbell---the Fresnel valley lives on
-the torus, not on an isolated sphere---with four valley contacts. The decaying
-valence neutron books the interior width well; slot-wise local curvature on each
-mass and binding budget fixes the clock (\S\ref{sec:valley}).
+Tritium reaches $B_{\mathrm{net}}\approx 8.42\,\mathrm{MeV}$ via the $A=3$ barbell plus
+$\gamma$-network (four valley contacts). The decaying valence neutron books the interior
+width well; without slot-wise $\kappa$ closure the width ledger gives
+$\tau_T/\tau_{\mathrm{ref}}\approx 0.93$; with per-budget closure on the same equations
+as $M_T$ the ratio is $1.00$ (\S\ref{sec:valley}, Table~\ref{tab:light-panel}).
 
 \paragraph{$\mathrm{He4}$.}
-Helium-4 is the most complex \emph{simple} closed shape on the constructive ladder:
-four nucleon Fresnel spheres close tetrahedrally with six pairwise valley contacts
-(\leanid{helium4\_valleyCount\_eq\_six}, \leanid{tetrahedralClosureCausticScale}).
-Every nucleon shares a contact edge; the tetrahedral closure caustic is the deepest
-cooperative spot in the $A\le 4$ panel. Both $\beta$ channels remain shielded.
+Helium-4 closes the $A\le 4$ ladder at $B_{\mathrm{net}}\approx 27.79\,\mathrm{MeV}$:
+tetrahedral closure and $\gamma$-network dominate $B_{\mathrm{out}}$
+(\hyperref[lean:hqiv-nuclei]{helium-4 valley count},
+\hyperref[lean:hqiv-nuclei]{tetrahedral closure caustic}). Six pairwise valley contacts;
+every nucleon shares a contact edge. Both $\beta$ channels remain shielded.
+
+\subsection{Extended panel: post-$\alpha$ and multi-$\alpha$ binding ($A>4$)}
+\label{sec:extended-panel}
+
+For $A>4$ the canonical spine does \emph{not} reuse the bare constructive valley ladder.
+Nucleons attach by \textbf{sphere touching} on the closed $\alpha$ compound surface
+(\hyperref[lean:hqiv-nuclei]{post-$\alpha$ facet ledger}): staged facet-proton contacts
+(three at full triangular overlap, one on first occupation), far-neutron touches at
+strong-channel weight $(4/8)$, well deepening on the $\alpha$ core, and a $\gamma$-network
+on deepened wells (\hyperref[script:post-alpha-binding]{post-$\alpha$ binding program}).
+Pure $\alpha$ multiples ($A=4n$, $Z=N$) additionally book
+\hyperref[script:curvature-binding]{multi-$\alpha$ cluster coupling}
+($^8$Be, $^{12}$C, $^{16}$O, \ldots): inter-$\alpha$ barbell links from $n\ge 3$ and a
+tetrahedral $\alpha$ lattice term at $n\ge 4$, with a dedicated two-$\alpha$ resonance
+width eroding $^8$Be (\S\ref{sec:valley}).
+
+\begin{table}[h]
+\centering
+\caption{Extended binding witness @ lock-in ($m=4$): same curvature +
+$G_{\mathrm{eff}}$ spine through $A=16$. $B_{\mathrm{net}}=B_{\mathrm{in}}+B_{\mathrm{out}}$
+from \datafile{curvature_binding_program.json}; PDG totals are comparison only.
+Mean $|\Delta B|/B_{\mathrm{PDG}}\approx 1.2\%$ on these eight isotopes
+($\approx 1.2\%$ on the full twelve-isotope program panel including $A\le 4$).}
+\label{tab:extended-panel}
+\fitbox{%
+\begin{tabular}{@{}llrrrrr>{\RaggedRight\arraybackslash}p{0.20\linewidth}@{}}
+\toprule
+Isotope & $A$ & Contacts & $B_{\mathrm{in}}$ & $B_{\mathrm{out}}$ & $B_{\mathrm{net}}$ &
+  $B_{\mathrm{PDG}}$ & $\Delta$ & Geometry role \\
+& & (eff.) & \multicolumn{4}{c}{(MeV)} & (\%) & \\
+\midrule
+$^5\mathrm{Li}$  & 5  & 7.6  & $3.05$ & $22.93$ & $25.99$ & $26.33$ & $-1.3$ &
+  First facet proton; post-$\alpha$ cap. \\
+$^5\mathrm{Be}$ & 5  & 9.5  & $3.05$ & $22.46$ & $25.51$ & $25.00$ & $+2.0$ &
+  Facet vs far-$n$ split; $^7\mathrm{Be}>{}^7\mathrm{Li}$ ordering. \\
+$^6\mathrm{Li}$ & 6  & 8.3  & $3.66$ & $28.55$ & $32.22$ & $31.99$ & $+0.7$ &
+  Post-$\alpha$ + $\gamma$-net on core. \\
+$^7\mathrm{Li}$ & 7  & 9.1  & $6.65$ & $32.95$ & $39.60$ & $39.24$ & $+0.9$ &
+  Two far neutrons; EC/$\beta^-$ competition slot. \\
+$^7\mathrm{Be}$ & 7  & 9.5  & $6.65$ & $31.73$ & $38.38$ & $37.60$ & $+2.1$ &
+  EC/$\beta^+$; local facet $Q$ + post-$\alpha$ width valley. \\
+$^8\mathrm{Be}$ & 8  & 11.0 & $7.60$ & $48.28$ & $55.89$ & $56.50$ & $-1.1$ &
+  Two-$\alpha$ per-contact width slot; $\alpha$ channel open ($\tau\approx 6.4\times 10^{-17}\,\mathrm{s}$). \\
+$^{12}\mathrm{C}$ & 12 & 12.5 & $15.72$ & $77.43$ & $93.15$ & $92.16$ & $+1.1$ &
+  Triple closed-$\alpha$; first $n=3$ barbell links. \\
+$^{16}\mathrm{O}$ & 16 & 20.5 & $20.96$ & $107.66$ & $128.62$ & $127.62$ & $+0.8$ &
+  Tetrahedral $\alpha$ lattice ($n=4$). \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\paragraph{No new knobs.}
+The extended rows use the identical lock-in trace, $G_{\mathrm{eff}}(\eta)$, and
+geometry-to-MeV coupling as the $A\le 4$ panel; only the contact ledger changes
+(post-$\alpha$ / multi-$\alpha$). Legacy ``valley ladder only'' columns remain at
+$\sim 60$--$85\%$ under PDG on these rows and are retained as \emph{diagnostic}
+undercount witnesses (\datafile{binding_energy_program.json}).
+
+\paragraph{$^{12}\mathrm{C}$ and $^{16}\mathrm{O}$.}
+Carbon-12 is the first stable \emph{triple-$\alpha$} closure ($n_\alpha=3$): three
+complete $K_4$ cores with inter-$\alpha$ barbell coupling, not a fourth copy of the
+single-nucleon valley ladder. Oxygen-16 adds the tetrahedral multi-$\alpha$ collective
+term. Both sit within $\sim 1\%$ of PDG total binding on the canonical spine---the
+structural motivation for stellar $\alpha$ capture without a separate nuclear potential.
 
 \section{Derived proton and neutron masses at lock-in}
 \label{sec:masses}
@@ -628,6 +814,22 @@ open (\S\ref{sec:beta-roadmap}, \S\ref{sec:conclusion}).
 Positivity and meta-harmonic alignment are proved in
 \hyperref[lean:derived-nucleon-pack]{derived nucleon mass pack}.
 
+\paragraph{Fully interacting particle and zero contact deficit.}
+Independently of the open variational lock-in programme, the constructive isotope
+ladder proves a **no-information-loss** chart for light nuclei: each bind step books
+two toroidal valley overlaps, and through ${}^4\mathrm{He}$ the count saturates the six
+pairwise contacts of tetrahedral $\alpha$ closure ($K_{4}$, $C(4,2)=6$). Define the
+\emph{contact information deficit} $\Delta_{\mathrm{contact}}(A)=6-N_{\mathrm{valley}}(A)$
+on the canonical ladder; $\Delta_{\mathrm{contact}}(A)=0$ iff $A=4$
+(\hyperref[lean:nuclear-contact-closure]{nuclear contact closure module}).
+Below $A=4$ the normalized closure fraction $N_{\mathrm{valley}}/6$ is strictly
+less than unity; at $A=4$ the BBN valley factor reaches its ceiling ($1+N_{\mathrm{valley}}/6=2$).
+This is the first mass number where the additive ladder matches the complete pairwise
+graph---not a fitted binding potential. The lock-in shell
+$m_{\mathrm{lockin}}=\mathrm{referenceM}=4$ \emph{coincides numerically} with that
+first zero-deficit mass number under the current HQIV pins; equating horizon shell index
+with baryon number is \textbf{not} derived here (see \S\ref{sec:lockin-sensitivity}).
+
 \section{Lapse readout and the proton anchor}
 \label{sec:lapse}
 
@@ -663,7 +865,13 @@ in \S\ref{sec:phenomenology}. Qualitatively, $N<1$ would strengthen effective bi
 readouts in a well and weaken outside-release factors at high $T(\xi)$; the BBN note
 \cite{hqiv-bbn-paper} handles hot-epoch weakening explicitly. Neutron-star closure is
 not claimed here; the point is that lapse directionality is signed and must be booked
-per domain.
+per domain. A conjectural compact-object comparison layer (slip angle $\psi$, dipole
+torque balance, induction closure) and pulsar-catalog overlays are documented with
+repository data bundles~\cite{hqiv-compact-object-witness-data,hqiv-pulsar-witness-data}
+and external catalogs~\cite{atnf_psrcat,xao_atnf_pulsar_mirror,lorimer2004handbook};
+mass measurements follow NICER and Shapiro-delay literature~\cite{miller2019_j0030,riley2021_j0740,rutherford2024_msp_masses,freire2012_shapiro,antoniadis2013_ns_max,crombie2020_j0740}.
+The Lagrangian faithfulness map for those witnesses is
+\cite{hqiv-lagrangian-faithfulness-audit} (see \texttt{papers/compact\_object\_witness/}).
 
 The \hyperref[lean:proton-anchor]{proton anchor condition} is a one-point calibration
 witness: when $\texttt{shellLapse}\cdot 938.272 = M_p^{\mathrm{derived}}$, the lapse
@@ -707,34 +915,46 @@ comoving observer in normalized units.
 Equation~\eqref{eq:skew-phase} packages skew alignment as a modeling definition on the
 $\mathrm{SO}(8)$ carrier. Proved in Lean on the same spine: Theorem~\ref{thm:alpha};
 skew-adjointness of the concrete $\Delta$ matrix
-(\leanfile{Hqiv/Algebra/PhaseLiftDelta.lean}, \leanid{phaseLiftDelta\_antisymm}); ledger separation
+(\hyperref[lean:phase-lift-delta]{phase-lift skew generator}); ledger separation
 (\hyperref[lean:neutron-scaffold]{NeutronBindingStabilityScaffold}); bottle/beam method
 structure (\hyperref[lean:neutron-lifetime-method]{NeutronLifetimeMethod}). Variational
 wiring of~\eqref{eq:skew-phase} into nuclear wells remains an extension of
-\leanid{TrapWeakBridgeDecoherenceSlot}.
+\hyperref[lean:neutron-lifetime-method]{trap weak-bridge decoherence slot}.
 \end{remark}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
-\begin{tikzpicture}[>=Latex,scale=0.95,every node/.style={font=\small}]
-  % (e1, e7) plane — Delta rotation
-  \draw[->] (-0.2,0) -- (2.8,0) node[below] {$e_1$};
-  \draw[->] (0,-0.2) -- (0,2.2) node[left] {$e_7$};
-  \draw[thick,blue] (0.4,0.4) -- (2.2,1.8);
-  \node[blue,above right] at (1.3,1.1) {$\Delta$ (skew)};
-  \draw[->,blue,thick] (1.8,0.6) arc (30:75:0.55);
-  % timelike lapse axis
-  \draw[->,red,thick] (3.2,0.3) -- (3.2,2.0) node[right] {$N(t)$ axis};
-  \node[red,align=left] at (4.5,1.6) {real time\\(lapse)};
-  % misalignment vs alignment
-  \node[align=center] at (1.4,-0.55) {free $n$: skew misaligned};
-  \node[align=center] at (4.5,0.35) {weak channel\\open if aligned};
-  % triality slots on products
-  \draw[->,gray] (2.5,2.0) -- (3.0,2.5) node[above,align=center] {triality match\\$p+e+\bar\nu$};
-\end{tikzpicture}
-\caption{Schematic: skew generator $\Delta$ rotates internal phase in the
-$(e_1,e_7)$ plane; weak $\beta^-$ tipping requires lapse-axis registration and
-Spin$(8)$ triality compatibility of decay products. Not to scale.}
+\footnotesize
+\setlength{\fboxsep}{8pt}
+\begin{minipage}{0.94\linewidth}
+\centering
+\begin{tabular}{@{}c @{\quad$\longrightarrow$\quad} c @{\quad$\longrightarrow$\quad} c@{}}
+\fbox{\begin{minipage}{0.24\linewidth}
+\centering
+\textbf{1.\ Nuclear well}\\[4pt]
+Phase aligned with lapse $N(t)$\\[2pt]
+$\beta$ \emph{shielded}
+\end{minipage}} &
+\fbox{\begin{minipage}{0.24\linewidth}
+\centering
+\textbf{2.\ Free neutron}\\[4pt]
+Phase misaligned ($\theta$ from $\Delta$)\\[2pt]
+weak channel \emph{open}
+\end{minipage}} &
+\fbox{\begin{minipage}{0.24\linewidth}
+\centering
+\textbf{3.\ Decay (if allowed)}\\[4pt]
+$Q_{\beta^-}>0$; $n\to p+e^-+\bar\nu$\\[2pt]
+triality match
+\end{minipage}} \\
+\end{tabular}
+\end{minipage}
+\caption{Geometric $\beta^-$ selection (Conjecture~\ref{conj:beta}; schematic).
+A bound nucleus keeps the internal rotation~\eqref{eq:skew-phase} aligned with the
+lapse axis; a free neutron does not, so the weak ledger can tip once kinematic
+$Q_{\beta^-}>0$ and Spin$(8)$ triality permit the channel.
+The width well deepens inside clusters without moving endpoint~$Q$
+(Ledgers I--III, \S\ref{sec:three-ledgers}).}
 \label{fig:skew-diagram}
 \end{figure}
 
@@ -755,8 +975,8 @@ Fermi theory, a $W$ propagator, or spectral partial widths. That omission is
 $G_F$ from $\beta$, and the named width slot wired in Ledger~III---is discharged
 upstream as a sector projection of the discrete action in the published TUFT+SM
 Lagrangian synthesis \cite{hqiv-tuft-sm-lagrangian-paper} (same spine as
-\hyperref[lean:gf-from-beta]{G\_F\_from\_beta} and
-\hyperref[lean:beta-decay-rate]{beta\_decay\_rate}). This note \emph{consumes} those
+\hyperref[lean:gf-from-beta]{Fermi coupling from $\beta$} and
+\hyperref[lean:beta-decay-rate]{beta decay rate scaffold}). This note \emph{consumes} those
 slots; it does not re-derive the full SM Lagrangian bridge or $\beta$ spectra here.
 
 Proved and witnessed on the same spine: three-ledger separation; endpoint-$Q$
@@ -781,21 +1001,21 @@ geometric stabilization without closing the free-neutron channel.
 \subsection{Structured programme (four milestones)}
 \label{sec:beta-milestones}
 
-\begin{enumerate}[leftmargin=2em]
-\item[\textbf{M1 --- Operator skeleton.}]
+\begin{enumerate}[label=\textbf{M\arabic*}, leftmargin=2.4em, labelsep=0.65em, itemsep=0.45em]
+\item \textbf{Operator skeleton.}
   Derive an effective low-energy four-fermion operator skeleton from the octonionic
   weak--Higgs scaffold and triality bookkeeping (\cite{hqiv-tuft-sm-lagrangian-paper});
   match leading $|\mathcal{M}|^2\propto(\mathrm{residual}/m_e)^4$ already wired in Lean.
-\item[\textbf{M2 --- Selection rules.}]
+\item \textbf{Selection rules.}
   Implement skew/triality selection (including $\mu_n$ participation) to obtain
   branching ratios and mirror-transition suppressions; connect to
-  \leanid{weakBetaChannelOpen} and Fano/Hopf bridge steps.
-\item[\textbf{M3 --- Width closure.}]
+  \hyperref[lean:weak-channel-open]{weak beta channel open} and Fano/Hopf bridge steps.
+\item \textbf{Width closure.}
   Compute or bound free-neutron $\Gamma_{\beta^-}$ from the discrete spine used for
   masses---\emph{done as witness}: $\Gamma_{\mathrm{ref}}/\Gamma_{\mathrm{pred}}\approx 1.000$
   with $\delta_w\approx 7.3\%\pm\gamma/5$ catalysis envelope
   (\S\ref{sec:neutrino-opacity}).
-\item[\textbf{M4 --- Post-dictions.}]
+\item \textbf{Post-dictions.}
   Predict geometrically allowed/forbidden transitions (e.g.\ why certain mirror channels
   vanish); discharge bottle/beam and molecular-host shifts without method knobs
   (\S\ref{sec:phenomenology}, Table~\ref{tab:environment-shifts}).
@@ -808,19 +1028,19 @@ A recurring error in early readouts was collapsing distinct physics into one ene
 slot. The \hyperref[lean:dynamic-beta]{dynamic beta isotope module} keeps three
 ledgers explicit:
 
-\begin{description}[leftmargin=2.5em,style=nextline]
-\item[\textbf{Ledger I: curvature overlap.}]
-  Strong/sub-lock-in overlap from the neutron stability scaffold
+\begin{description}[leftmargin=1.5em,labelwidth=2.35cm,labelsep=0.5em,style=nextline,font=\bfseries]
+\item[Ledger I]
+  \normalfont Strong/sub-lock-in overlap from the neutron stability scaffold
   (\hyperref[lean:neutron-scaffold]{neutron stability scaffold}).
   For a free branch this adds a curvature deficit on top of the isospin gap; it
   measures \emph{structural} tipping cost, not the weak width.
-\item[\textbf{Ledger II: kinematic endpoint $Q$.}]
-  Mass-budget endpoint after lepton mass:
+\item[Ledger II]
+  \normalfont Mass-budget endpoint after lepton mass:
   $Q_{\beta^-}=M_n-M_p-m_e=\Delta M-m_e$.
   Proved independent of environment:
   \hyperref[lean:endpoint-q-theorem]{endpoint Q identity}.
-\item[\textbf{Ledger III: weak width.}]
-  Fermi phase space from \hyperref[lean:gf-from-beta]{Fermi coupling from beta}
+\item[Ledger III]
+  \normalfont Fermi phase space from \hyperref[lean:gf-from-beta]{Fermi coupling from beta}
   (\cite{hqiv-tuft-sm-lagrangian-paper}) with matrix element
   $|\mathcal{M}|^2\propto(\mathrm{residual}/m_e)^4$ and optional geometry factor
   for bonded clusters (\S\ref{sec:valley}).
@@ -831,6 +1051,22 @@ positive endpoint $Q$ and positive shielded overlap residual
 (\hyperref[lean:beta-width-qualified]{beta width ledger qualified}).
 Stable isotopes use structural shielding; half-life width claims on open channels
 require the qualification predicate (\hyperref[lean:em-tipping]{EM tipping gate}).
+
+\begin{center}
+\fbox{\begin{minipage}{0.92\textwidth}
+\textbf{Ledger locality (non-negotiable).}\\[0.35em]
+\textit{Ledger I} --- strong/sub-lock-in overlap residual; enters $|\mathcal{M}|^2$ as
+$(\mathrm{residual}/m_e)^4$, \emph{not} endpoint $Q$.\\
+\textit{Ledger II} --- kinematic $Q_{\beta^-}=M_{\mathrm{parent}}-M_{\mathrm{daughter}}-m_e$;
+proved environment-independent (\hyperref[lean:endpoint-q-theorem]{endpoint-$Q$ identity}).\\
+\textit{Ledger III} --- $G_F$ phase space, valley geometry $f_{\mathrm{geom}}$, optional
+free-branch opacity $f_w$; assembled explicitly in \S\ref{sec:width-assembly}.\\[0.35em]
+\textbf{Tritium falsifier:} using only the symmetric mass well
+$B_{\mathrm{cluster}}/A$ in the width ledger yields $\tau_T/\tau_{\mathrm{ref}}\approx 0.56$;
+a distinct interior valence well plus slot-wise $\kappa$ restores $1.00$ without
+tritium-only knobs (\S\ref{sec:valley}). Ledger collapse would break causal locality.
+\end{minipage}}
+\end{center}
 
 \subsection{Endpoint $Q$ from the dynamic mass budget}
 \label{sec:endpoint-q}
@@ -844,7 +1080,7 @@ HQIV isotope mass budgets:
 \]
 not from the inflated structural overlap residual ($\sim 1.17\,\mathrm{MeV}$ for
 free neutrons). At lock-in, the Lean theorem
-\hyperref[lean:endpoint-q-theorem]{betaMinusEndpointQAtXi\_eq\_derivedDeltaM\_minus\_m\_e}
+\hyperref[lean:endpoint-q-theorem]{endpoint-$Q$ identity}
 identifies this with $\Delta M-m_e$ for the nucleon pair when parent and daughter
 share the same p/n environment
 (\hyperref[lean:endpoint-q-nucleon-gap]{nucleon-gap endpoint policy}).
@@ -919,7 +1155,7 @@ gives $\rho_{\mathrm{mag}}=1$ and $f_{\mathrm{trap}}\approx 1+\gamma/18$ ($\sim 
 dressing); beam lines at $B\approx 0$ sit at $f\approx 1$. Lab temperature ($4\,\mathrm{K}$ vs
 $300\,\mathrm{K}$) remains a sub-leading outside-support witness ($\sim 10^3\,\mathrm{ppm}$),
 proved insufficient alone for the $\sim 1.2\times 10^4\,\mathrm{ppm}$ split
-(\leanid{temperature\_ppm\_insufficient\_for\_bottle\_beam\_split}).
+(\hyperref[lean:neutron-lifetime-method]{bottle/beam temperature insensitivity}).
 Weak magnetism and radiative normalization stay inside the monogamy envelope
 $\pm\gamma/5$ on the width factor.
 
@@ -939,7 +1175,7 @@ $G_F$ channel is active---the strong resonance line is quarantined in Lean and
 does not set $\tau_n$. For bonded clusters ($A>1$) the valley geometry factor
 adds the ``$+1$'' fermionic spin-statistics slot in the exponent
 (\S\ref{sec:valley}), suppressing weak tipping relative to the free branch; this
-is the same Pauli/meta ledger that odd--odd nuclei book in \texttt{HQIVNuclei}.
+is the same Pauli/meta ledger that odd--odd nuclei book in the \hyperref[lean:hqiv-nuclei]{HQIV nuclei module}.
 
 \subsection{Weak Fano/Hopf bridge}
 \label{sec:fano-hopf}
@@ -960,39 +1196,152 @@ $m_\ast=4$. Python reserves $E_{\mathrm{bridge}}$ from phase space before applyi
 the $G_F$ width; the scale $S_{\mathrm{endpoint}}$ defaults to the HQIV neutrino
 mass witness so the bridge remains a small correction slot.
 
+\subsection{Explicit width assembly (referee-facing)}
+\label{sec:width-assembly}
+
+Referees reasonably ask whether the width agreements are a disguised effective model.
+Ledger~III is \emph{not} a standalone Fermi fit on top of masses: every factor is either
+proved upstream in \cite{hqiv-tuft-sm-lagrangian-paper}, defined as a named slot on the
+discrete carrier (Appendix~\ref{app:lean-index}), or exported as a witness with zero
+per-isotope half-life knobs. This subsection assembles the width ledger in one equation
+stack.
+
+\paragraph{Master formula (Ledger~III only).}
+For a qualified open $\beta^-$ channel,
+\begin{equation}\label{eq:width-master}
+  \Gamma_{\beta^-}
+    = \frac{G_F^2\, m_e^5}{\hbar}\,
+      \underbrace{\Bigl(\frac{\mathrm{residual}_{\mathrm{I}}}{m_e}\Bigr)^4}_{\text{Ledger I in } |\mathcal{M}|^2}
+      \underbrace{f_{\mathrm{geom}}}_{\text{valley exponent}}
+      \underbrace{f_w(B_{\mathrm{curv}},\varepsilon_g)}_{\text{free branch}}
+      \underbrace{f_{\mathrm{trap}}(B)}_{\text{method dress}}
+      \,\Theta\!\bigl(Q_{\mathrm{phase}}\bigr),
+\end{equation}
+where $\mathrm{residual}_{\mathrm{I}}$ is the overlap ledger from
+\hyperref[lean:neutron-scaffold]{neutron stability scaffold}
+($\approx 0.293\,\mathrm{MeV}$ on the free branch),
+$G_F$ from \hyperref[lean:gf-from-beta]{Fermi coupling from beta},
+and $\Theta$ is unity only when $Q_{\mathrm{phase}}>0$ and
+\hyperref[lean:em-tipping]{EM tipping qualification} holds.
+Bonded clusters ($A>1$) set $f_w\equiv 1$ (opacity shielded; \S\ref{sec:neutrino-opacity}).
+
+\paragraph{Ledgers II and III stay orthogonal.}
+Ledger~II fixes kinematics:
+$Q_{\beta^-}=M_{\mathrm{parent}}-M_{\mathrm{daughter}}-m_e=\Delta M-m_e$
+(\hyperref[lean:endpoint-q-theorem]{proved endpoint identity}).
+Phase space reserves the Fano/Hopf bridge and neutrino mass:
+\begin{equation}\label{eq:q-phase-stack}
+  Q_{\mathrm{phase}}
+    = \max\bigl(Q_{\beta^-} - m_{\nu_e} - E_{\mathrm{bridge}},\,0\bigr),
+  \qquad
+  \Gamma_{\beta^-}\propto Q_{\mathrm{phase}}^{5}
+  \quad\text{(allowed limit)}.
+\end{equation}
+Ledger~I never substitutes for $Q_{\beta^-}$: routing the inflated overlap residual
+($\sim 1.17\,\mathrm{MeV}$) into endpoint kinematics would violate
+\hyperref[lean:endpoint-q-theorem]{endpoint-$Q$ policy} and break the tritium clock
+(\S\ref{sec:valley}).
+
+\paragraph{Valley geometry factor.}
+Free nucleons ($A\le 1$): $f_{\mathrm{geom}}=1$.
+Bonded pre-$\alpha$ clusters ($A\le 4$, $A>1$) book
+\begin{align}
+  f_{\mathrm{geom}}
+    &= \Bigl(\frac{\mathrm{residual}_{\mathrm{I}}}{\mathrm{well}_{\mathrm{width}}}\Bigr)^{\,
+        2(A-1)+1},
+  \label{eq:fgeom-stack}\\
+  \mathrm{well}_{\mathrm{width}}
+    &= \mathrm{blend}\cdot\frac{B_{\mathrm{cluster}}}{A}
+      + (1-\mathrm{blend})\cdot\frac{B_{\mathrm{cluster}}}{A-1},
+  \qquad
+  \mathrm{blend}=\frac{1}{2(A-1)},
+  \notag
+\end{align}
+with exponent $2(A-1)$ from pairwise valley contacts plus one Pauli spin-statistics slot
+with proton partners weighted by $m_p/m_n$ in the interior blend
+(\hyperref[lean:width-well-geometric-blend]{width-well geometric blend}).
+Post-$\alpha$ nuclei use the sphere-touch outside-valley count from the decay chart, not
+the bare $2(A-1)$ ladder (\S\ref{sec:valley}).
+
+\paragraph{Free-branch neutrino-opacity catalysis.}
+For $A\le 1$, multiply \eqref{eq:width-master} by $f_w=1+\delta_w$ from
+\S\ref{sec:neutrino-opacity}, using the same-epoch $B_{\mathrm{curv}}(\xi)$ and outside
+gravity modulator $f_g(\varepsilon_g)$ as contact networks and homogeneous melt dressing.
+At lock-in, $\delta_w\approx 7.3\%$ with monogamy envelope $\pm\gamma/5$; bonded clusters
+shield this channel because valley wells already suppress weak tipping.
+
+\paragraph{Upstream electroweak discharge (not note-local import).}
+$G_F$, \texttt{beta\_decay\_rate}, electroweak kinetic aggregate, and leading
+$|\mathcal{M}|^2\propto(\mathrm{residual}/m_e)^4$ are sector projections of the discrete
+action in \cite{hqiv-tuft-sm-lagrangian-paper}; this note \emph{consumes} those slots
+(Remark~\ref{rem:beta-conjecture-scope}). The interpretive step from discrete carrier
+geometry to weak width is the \emph{named} valley exponent \eqref{eq:fgeom-stack} and
+opacity catalysis on the free branch---not an undocumented Breit--Wigner or spectral fit.
+
+\paragraph{Witness anchors.}
+Free neutron @ $300\,\mathrm{K}$: $\Delta Q_{\mathrm{phase}}\approx 0.02\,\mathrm{keV}$ on
+$Q_{\mathrm{phase}}\approx 782\,\mathrm{keV}$ ($\lesssim 0.01\%$ phase-space error);
+$\Gamma_{\mathrm{ref}}/\Gamma_{\mathrm{pred}}\approx 1.000$.
+Tritium: shared nucleon-gap $Q$ with the neutron, distinct width well,
+$\tau_T/\tau_{\mathrm{ref}}=1.000$ (Table~\ref{tab:light-panel}).
+
 \subsection{Roadmap: $\beta$-decay milestones}
 \label{sec:beta-roadmap}
 
 The programme proceeds in layers, each with a defined Lean or witness target:
-\begin{enumerate}[leftmargin=2em]
-\item[\textbf{Done (structure).}]
+\begin{enumerate}[label=\arabic*., leftmargin=2.2em, labelsep=0.55em, itemsep=0.45em]
+\item \textbf{Done (structure).}
   Three-ledger separation; endpoint-$Q$ theorem; $G_F$ width slot;
   spin-statistics quarantine of the $\sim 10^{-22}\,\mathrm{s}$ strong line;
   Fano/Hopf bridge shape; valley/caustic geometry factor for $A>1$;
   bottle/beam method ordering (trap $B$ on bridge, not Zeeman energy).
-\item[\textbf{Done (witnesses).}]
+\item \textbf{Done (witnesses).}
   Free-neutron width to $\lesssim 0.01\%$ in $Q_{\mathrm{phase}}$;
-  light-panel masses at $0.12\%$ mean; tritium $\tau_T/\tau_{\mathrm{ref}}=1.000$ from
+  light-panel masses at $0.003\%$ mean; tritium $\tau_T/\tau_{\mathrm{ref}}=1.000$ from
   slot-wise local curvature on the same equations as $M_T$;
+  extended binding panel ($A\le 16$) at $\sim 1.2\%$ mean $|\Delta B|/B_{\mathrm{PDG}}$
+  on the canonical curvature spine (Table~\ref{tab:extended-panel});
   BBN opacity export on the same $B_{\mathrm{curv}}(\xi)$
-  stack (epoch application queued in \S\ref{sec:downstream}).
-\item[\textbf{Next: partial widths.}]
+  stack (epoch application in \S\ref{sec:downstream}, \cite{hqiv-bbn-paper}).
+\item \textbf{Done (witnesses, post-$\alpha$ weak).}
+  $^7\mathrm{Be}$ EC/$\beta^+$: facet-proton local-contact endpoint $Q$; valence
+  overlap on the proton slot; width well $=B_{\mathrm{facet,local}}$ and valley
+  $=\texttt{postAlphaOutsideValleyCountEffective}$ on the same post-$\alpha$ chart as
+  binding (\hyperref[script:decay-chain]{decay-chain calculator},
+  \hyperref[script:dynamic-beta]{dynamic beta isotope script}).
+\item \textbf{Done (witness, two-$\alpha$ breakup).}
+  $^8\mathrm{Be}\to 2\,{}^4\mathrm{He}$: endpoint
+  $Q=M({}^8\mathrm{Be})-2M({}^4\mathrm{He})+\Gamma_{\alpha\alpha}$ with
+  $\Gamma_{\alpha\alpha}=\texttt{multiAlphaResonanceWidthMev}$ on the binding spine;
+  half-life from \hyperref[lean:spin-stats-half-life]{spin-statistics resonance slot}
+  using the \emph{width} ledger
+  ($Q_{\mathrm{saddle}}$ from $\Delta B_{\mathrm{inside}}$, not erosion $\Gamma$).
+\item \textbf{Next: partial widths.}
   Discharge $\beta$ spectra and forbidden transitions from the weak matrix-element
   slot beyond the leading $|\mathcal{M}|^2\propto(\mathrm{residual}/m_e)^4$ proxy;
   connect radiative and inner-bremsstrahlung normalization to the monogamy envelope
   already booked on $f_w$.
-\item[\textbf{Next: $m_{\mathrm{lockin}}$ determination.}]
+\item \textbf{Next: lock-in shell determination.}
   The lock-in shell is fixed at $\mathrm{referenceM}=4$ by the proton anchor witness;
   a \emph{derived} lock-in principle (without the quarantined $938.272\,\mathrm{MeV}$
   input) remains open---closing the PDG mass gap on meta-harmonic readouts is the
   paired strong-sector and dressing problem named in the TUFT synthesis.
-\item[\textbf{Next: method discharge.}]
+\item \textbf{Next: method discharge.}
   Facility-specific UCN $B$ profiles, wall losses, and quantitative
-  \leanid{TrapWeakBridgeDecoherenceSlot} beyond the structural $f(B)$ slot;
+  \hyperref[lean:neutron-lifetime-method]{trap weak-bridge decoherence slot} beyond the structural $f(B)$ slot;
   molecular-host booking for tritium chemistry (\S\ref{sec:molecular-host}).
-\item[\textbf{Next: chart extension.}]
-  Odd--odd and $A>4$ isotopes on the dynamic ladder without isotope-by-isotope patches;
-  $\beta^{+}$ and electron-capture channels as inverse skew tipping.
+\item \textbf{Next: chart extension (decay).}
+  Extend $\alpha$ emission to $A>8$ odd--even ladders and odd--odd $\beta$ chains on
+  \hyperref[script:decay-chain]{decay-chain calculator}; heavy actinide $\alpha$ widths
+  beyond the two-$\alpha$ resonance slot.
+\item \textbf{Next: spontaneous-fission barrier (structural).}
+  Define a saddle slot on the post-$\alpha$ compound sphere: Coulomb repulsion of the
+  surface proton charge at separation $\texttt{sphereTouchSeparation}(m)$ versus the
+  deepest shared well booked by the $\alpha$ network
+  (\hyperref[lean:hqiv-nuclei]{sphere-touch separation}). Fission is open when the
+  Coulomb ledger exceeds the well depth per emitted fragment; no fitted barrier
+  penetration integral---width follows the same $\gamma$-network erosion pattern as
+  $^8$Be and trimer slots (\S\ref{sec:valley}).
 \end{enumerate}
 
 \section{Valley and caustic geometry for bonded clusters}
@@ -1006,14 +1355,20 @@ tipping through a generic valley count (\hyperref[lean:valley-bound]{valley coun
   \qquad
   \mathrm{valley} = 2(A-1),
 \]
-plus one fermionic spin-statistics slot. The caustic layer count
+for pre-$\alpha$ clusters ($A\le 4$). Post-$\alpha$ bonded nuclei ($A>4$) use the
+effective outside-valley count from the sphere-touch chart
+(\texttt{postAlphaOutsideValleyCountEffective}) in the width ledger, not the bare
+$2(A-1)$ ladder; proton-rich EC/$\beta^+$ additionally books \emph{local facet contact}
+mass for endpoint $Q$ (full facet triangle on the decaying proton slot), not symmetric
+$B_{\mathrm{cluster}}/A$ spread.
+Plus one fermionic spin-statistics slot. The caustic layer count
 (\hyperref[lean:caustic-layers]{caustic layer count}) records the hierarchical stack
 (pair, torus, deepen, optional tetra closure) for future exponent refinement.
 
 \paragraph{Two well ledgers: mass vs width.}
 Exterior caustics are identical for the cluster, but HQIV keeps two well slots separate
-(\path{scripts/hqiv\_dynamic\_nucleon\_pn.py},
-\path{scripts/hqiv\_dynamic\_beta\_isotope.py}):
+(\hyperref[app:scripts]{dynamic nucleon p/n script},
+\hyperref[app:scripts]{dynamic beta isotope script}):
 \begin{center}
 \fbox{\begin{minipage}{0.88\textwidth}
 \textbf{Two-ledger cluster booking.}\\[0.4em]
@@ -1043,7 +1398,21 @@ $f_{\mathrm{geom}}=1$; opacity catalysis active.
   less than a neutron partner), blended toward the mass well with
   $\mathrm{blend}=1/(2(A-1))$.  Witness export:
   \texttt{width\_well\_shield\_mev} vs \texttt{well\_shield\_mev} in
-  \path{scripts/hqiv\_isotope\_stability\_halflife.py}.
+  \hyperref[app:scripts]{isotope stability half-life script}.
+\item[\textbf{Post-$\alpha$ $\beta^+$ mass ledger.}]
+  For $A>4$ proton-rich nuclei, endpoint $Q_{\beta^+}$ uses facet-proton local binding
+  minus far-neutron local binding on the post-$\alpha$ contact chart; the width ledger
+  uses the same $B_{\mathrm{facet,local}}$ well and post-$\alpha$ valley exponent
+  (\hyperref[script:dynamic-beta]{dynamic beta isotope script},
+  \texttt{beta\_width\_ledger\_slots}).
+\item[\textbf{Two-$\alpha$ width ledger.}]
+  Pure $\alpha$ multiples with $n_\alpha=2$ ($^8\mathrm{Be}$) book binding erosion on total
+  $B_{\mathrm{cluster}}$ (BBN) separately from the decay clock.  Per-contact inter-$\alpha$
+  chart: mass $Q$ from ``$2n$'' barbell units plus ``$n{-}1$'' link contacts on
+  $\Delta B_{\mathrm{inside}}$; width well
+  $w_{\mathrm{shared}}=\Delta B_{\mathrm{inside}}\cdot 3/(2\gamma)$;
+  $\Gamma_\alpha = Q(Q/w_{\mathrm{shared}})^{2n-2}$
+  (\hyperref[script:decay-chain]{decay-chain calculator}).
 \end{itemize}
 
 Collapsing mass and width into one slot---using only $B_{\mathrm{cluster}}/A$ in the
@@ -1063,8 +1432,8 @@ against laboratory readouts:
   \kappa_{\mathrm{width\,well}}
     =\Bigl(\frac{\tau_{\mathrm{ref}}}{\tau(\kappa_{\mathrm{mass}})}\Bigr)^{1/(\mathrm{valley}+1)}.
 \]
-Witness export: \path{scripts/hqiv\_isotope\_pdg\_benchmark.py}
-(\texttt{curvature\_imprint\_control} in \path{data/isotope\_pdg\_benchmark.json}).
+Witness export: \hyperref[app:scripts]{isotope PDG benchmark script}
+(curvature-imprint control in \hyperref[app:scripts]{benchmark JSON}).
 Each isotope slot carries its own $\kappa_{\mathrm{mass}}$; the cluster caustic depth
 in the geometric-mean width well carries
 $\kappa_{\mathrm{mass}}\cdot\kappa_{\mathrm{width\,well}}$.
@@ -1119,7 +1488,7 @@ the $\sim 12\,\mathrm{yr}$ tritium half-life at 300\,K), comparable in \emph{kin
 the galactic gravity ledger but larger than Earth-surface gravity alone. Two labs
 using different chemical hosts should book different $\varepsilon_{\mathrm{mol}}$;
 isolated-atom benchmarks remain available via \texttt{--isolated-atom} in the
-witness script (\path{papers/nucleon_binding/scripts/README.md}).
+witness script (Appendix~\ref{app:scripts}).
 
 \subsection{Condensed-phase geometry as local curvature density}
 \label{sec:phase-geometry-density}
@@ -1162,56 +1531,55 @@ $0.957\,\text{\AA}$, H--O--H $\approx 104.5^\circ$ (geometry witnesses from
 \cite{nistwebbook_h2o,goerigk2017gmtkn55}).
 At 1\,atm the ranked allotropes are Ih $\succ$ Ic $\succ$ amorphous.
 
-\paragraph{Two-step condensed readout (raw vs.\ medium-closed).}
-Laboratory ice sits in a bulk liquid-water curvature background. The pipeline therefore
-separates two book-keeping steps on the same spine
+\paragraph{Contact lattice + neighbor lapse overlap.}
+Bulk ice Ih is not an isolated O--H$\cdots$O dimer: each O sits in a 4-valent tetrahedral
+network, and overlapping covalent O--H lapses from neighbor molecules shrink the shared
+H-bond well. On the intermolecular leg this books as
+$r_{\mathrm{hbond}} \leftarrow r_{\mathrm{hbond}}\,(1 - \gamma\cdot(4/8)/n_{\mathrm{inter}})$
+(HQIV rationals only; Python \texttt{neighbor\_covalent\_lapse\_overlap\_factor} in
+\texttt{hqiv\_lab/packing.py}). Combined with Bravais Ih topology ($a = r_{\mathrm{nn}}\sqrt{8/3}$,
+$c/a = 2\sqrt6/3$), the mass lattice lands at $\rho_{\mathrm{mass}}\approx 0.920\,\mathrm{g\,cm^{-3}}$
+and $n_{\mathrm{solid}}\approx 1.30$ (Table~\ref{tab:h2o-nist}, Table~\ref{tab:condensed-universality}).
+
+\paragraph{Medium-closed curvature readout.}
+Laboratory ice additionally sits in ambient liquid-water curvature. The pipeline books
+$\rho_{\mathrm{liquid,ref}}=1.0\,\mathrm{g\,cm^{-3}}$ in $B_{\mathrm{hom}}(\xi,\rho)$ and
+$\kappa_6$ second-order feedback for melt and thermodynamic witnesses
 (\hyperref[lean:homogeneous-curvature]{homogeneous-curvature second order},
-\path{scripts/hqiv\_homogeneous\_curvature\_feedback.py}):
-\begin{enumerate}[leftmargin=2em]
-\item \textbf{Raw contact lattice} --- rank-selected Ih unit cell from bond length and
-  $\alpha=3/5$ opening only (no crystallographic fit): $\rho_{\mathrm{mass}}\approx 0.876\,\mathrm{g\,cm^{-3}}$,
-  derived $a,c$ in Table~\ref{tab:h2o-nist}. This is the parameter-free geometric contact
-  rule; the $\sim 4\%$ deficit vs.\ NIST bulk density ($\approx 0.917\,\mathrm{g\,cm^{-3}}$)
-  matches the ice-{Ih} PBE-D3 band \cite{santra2013ice} and is expected at this step.
-\item \textbf{Medium-closed bulk readout} --- book ambient liquid-water curvature density
-  ($\rho_{\mathrm{liquid,ref}}=1.0\,\mathrm{g\,cm^{-3}}$ as the surrounding homogeneous
-  medium in $B_{\mathrm{hom}}(\xi,\rho)$ and $\kappa_6$ second-order feedback). This is what
-  bulk ice-in-water actually samples: \texttt{material\_scales\_bulk\_h2o} exports
-  \texttt{medium\_density\_fraction} from phase geometry; melt lands at
-  $T_{\mathrm{sl}}\approx 272.7\,\mathrm{K}$ (vs.\ $273.15\,\mathrm{K}$), $n$ tracks the
-  ice band, and thermodynamic witnesses use the closed medium path
-  (\path{scripts/hqiv\_thermodynamic\_phase\_from\_tp.py}). Cell constants remain derived
-  geometry witnesses, not NIST calibration inputs.
-\end{enumerate}
+\hyperref[app:scripts]{homogeneous curvature feedback script}):
+\texttt{material\_scales\_bulk\_h2o} exports \texttt{medium\_density\_fraction}; melt at
+$T_{\mathrm{sl}}\approx 272.7\,\mathrm{K}$ (vs.\ $273.15\,\mathrm{K}$). Cell constants remain
+derived geometry witnesses, not NIST calibration inputs.
 
 \begin{table}[h]
 \centering
 \caption{Derived $\mathrm{H_2O}$ ice Ih @ 273\,K, 1\,atm vs.\ experimental benchmarks
 \cite{nistwebbook_h2o,crc2023handbook,petrenko2002ice}.
-Column ``raw contact'' is the parameter-free lattice step; ``medium-closed'' books ambient
-liquid-water curvature in $B_{\mathrm{hom}}$ / $\kappa_6$ feedback
+Column ``contact lattice'' includes neighbor covalent lapse overlap on the H-bond leg;
+``medium-closed'' books ambient liquid-water curvature in $B_{\mathrm{hom}}$ / $\kappa_6$
 (\S\ref{sec:phase-geometry-density}).}
 \label{tab:h2o-nist}
 \begin{threeparttable}
-\begin{tabular}{@{}lrrl@{}}
+\small
+\setlength{\tabcolsep}{4pt}
+\fitbox{%
+\begin{tabular}{@{}>{\RaggedRight\arraybackslash}p{0.20\linewidth}rr>{\RaggedRight\arraybackslash}p{0.36\linewidth}@{}}
 \toprule
-Quantity & Raw contact & Medium-closed / exp. & Notes \\
+Quantity & Contact lattice & Medium-closed / exp. & Notes \\
 \midrule
-$\rho_{\mathrm{mass}}$ [g/cm$^3$] & 0.876 & 0.917 (NIST) / 0.913 (PBE-D3) & raw contact $\sim 4\%$ low vs.\ NIST; PBE-D3 within 1\% \cite{santra2013ice} \\
-$a$ [\AA] & 4.59 & 4.52 (NIST Ih) & derived Bravais from $r_{\mathrm{nn}}$ \\
-$c$ [\AA] & 7.49 & 7.34 (NIST Ih) & hexagonal $c/a=2\sqrt6/3$ \\
+$\rho_{\mathrm{mass}}$ [g/cm$^3$] & 0.920 & 0.917 / 0.913 & lapse overlap + Ih Bravais; PBE-D3 within 1\% \cite{santra2013ice} \\
+$a$ [\AA] & 4.51 & 4.52 (NIST Ih) & derived Bravais from compressed $r_{\mathrm{nn}}$ \\
+$c$ [\AA] & 7.37 & 7.34 (NIST Ih) & hexagonal $c/a=2\sqrt6/3$ \\
 $T_{\mathrm{sl}}$ [K] & 272.7 & 273.15 (NIST) & $\kappa_6(\xi,\rho_\kappa)\times$ motif ladder \\
-$n$ (solid) & 1.28 & 1.31 (NIST) / 1.29 (PBE-D3) & Clausius--Mossotti + $\eta$ orientation \\
+$n$ (solid) & 1.30 & 1.31 / 1.29 & Clausius--Mossotti + $\eta$ orientation \\
 $C_{p,\mathrm{mol}}$ [J/mol/K] & 119 & 37.7 (ice) & contact-mode slot; structural \\
 $k_{\mathrm{th}}$ [W/m/K] & 1.2 & 2.2 & phonon transport slot \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \begin{tablenotes}\small
-\item Raw $\rho_{\mathrm{mass}}$ is the contact-lattice witness only; quantitative bulk
-  agreement uses the ambient liquid-water medium closure, not a hidden density fit.
-\item Experimental rows follow standard compilations
-  \cite{nistwebbook_h2o,crc2023handbook,petrenko2002ice}; remaining gaps on $C_p$ and
-  $k_{\mathrm{th}}$ flag structural slots on the same spine, not ad hoc refits.
+\item Contact-lattice $\rho_{\mathrm{mass}}$ uses the neighbor lapse overlap slot on
+  tetrahedral H-bond networks; remaining gaps on $C_p$ and $k_{\mathrm{th}}$ flag structural
+  slots on the same spine, not ad hoc refits.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
@@ -1219,13 +1587,13 @@ $k_{\mathrm{th}}$ [W/m/K] & 1.2 & 2.2 & phonon transport slot \\
 \begin{table}[h]
 \centering
 \caption{Derived $\mathrm{H_2O}$ allotropes @ 273\,K, 1\,atm (rank score from
-\nolinkurl{hqiv_lab}; no DFT).}
+\texttt{hqiv\_lab}; no DFT).}
 \label{tab:h2o-allotropes}
 \begin{tabular}{@{}lrrl@{}}
 \toprule
 Allotrope & $\rho$ [g/cm$^3$] & Score & Template \\
 \midrule
-Ih (preferred) & 0.876 & 1.73 & hexagonal tetrahedral \\
+Ih (preferred) & 0.920 & 1.80 & hexagonal tetrahedral \\
 Ic & 0.95 & 1.52 & cubic H-bond \\
 amorphous & 0.17 & 0.26 & disordered tetrahedral \\
 \bottomrule
@@ -1241,7 +1609,7 @@ $\rightarrow$ Bravais topology $\rightarrow$ intermolecular contact $r_{\mathrm{
 (distinct from covalent $r_{\mathrm{bond}}$) $\rightarrow$ unit cell
 $\rightarrow$ $\rho_{\mathrm{curv}}$ $\rightarrow$ $B_{\mathrm{hom}}$ $\rightarrow$
 standard continuum response slots---runs on every GMTKN55 molecular spec in
-\path{hqiv_lab} without sector-specific retuning. Intermolecular contacts use only
+\texttt{hqiv\_lab} without sector-specific retuning. Intermolecular contacts use only
 $(\alpha,\gamma)$ and steric-domain counts: H-bond path
 $r_{\mathrm{nn}}=2r_{\mathrm{bond}}+r_{\mathrm{bond}}\alpha(1+\text{strongChannel})(1+\gamma/2\cdot\text{bend})$;
 apolar molecular diameter
@@ -1257,9 +1625,9 @@ is the parameter-free geometric step in every row; $\rho_{\mathrm{curv}}$ clamps
 the species liquid scale ($1.0$, $0.423$, $0.682$, $1.0\,\mathrm{g\,cm^{-3}}$ respectively).
 Refractive indices follow the same Clausius--Mossotti + binding-softness polarizability slot
 (\S\ref{sec:phase-geometry-density}), with \textbf{local-field divisors and orientation factors
-from optical phase participation} $\eta=\theta/\theta_0$ (TUFT bent-centre angle /
-``phaseParticipationEta''; Lean \leanid{localFieldDivisorFromEta},
-\leanid{solidOnsagerLocalFieldDivisor}, \leanid{phaseOrientationCmFactorTetrahedralIh})---a
+from optical phase participation} $\eta=\theta/\theta_0$ (TUFT bent-centre angle;
+\hyperref[lean:phase-material-response]{local-field divisor from $\eta$},
+\hyperref[lean:phase-material-response]{Onsager solid divisor}, \hyperref[lean:phase-material-response]{ice Ih orientation factor})---a
 drop-in replacement for per-species CM tables. Liquid disorder uses $1-c_{\mathrm{Rindler}}\cdot\eta$
 ($4/5$ at $\eta=1$); pyramidal liquids book $n_{\mathrm{domains}}^2/4$;
 apolar liquids $(1+(n_{\mathrm{dom}}-1)\gamma)$; linear chains $(1+\gamma)$.
@@ -1289,11 +1657,13 @@ the DFT columns are literature/standard-workflow references, not inputs to the s
 \centering
 \caption{Condensed-phase panel: HQIV vs.\ NIST vs.\ periodic PBE-D3
 \cite{grimme2011d3,santra2013ice,brandenburg2016jctc,reilly2013mbd}.
-Derived allotropes via \nolinkurl{hqiv_lab}; no crystallographic fit in the HQIV column.}
+Derived allotropes via \texttt{hqiv\_lab}; no crystallographic fit in the HQIV column.}
 \label{tab:condensed-universality}
 \begin{threeparttable}
-\small
-\begin{tabular}{@{}llcccccc@{}}
+\footnotesize
+\setlength{\tabcolsep}{2.5pt}
+\fitbox{%
+\begin{tabular}{@{}>{\RaggedRight\arraybackslash}p{0.12\linewidth}>{\RaggedRight\arraybackslash}p{0.14\linewidth}*{6}{r}@{}}
 \toprule
 & & \multicolumn{3}{c}{$\rho_{\mathrm{solid}}$ [g/cm$^3$]} &
 \multicolumn{3}{c}{$n_{\mathrm{solid}}$} \\
@@ -1302,8 +1672,8 @@ Species & Motif / allotrope & HQIV & NIST & PBE-D3 &
 HQIV & NIST & PBE-D3 \\
 \midrule
 $\mathrm{H_2O}$ @ 273\,K & tetrahedral / Ih &
-0.876 & 0.917 & 0.913 &
-1.28 & 1.31 & 1.29 \\
+0.920 & 0.917 & 0.913 &
+1.30 & 1.31 & 1.29 \\
 $\mathrm{CH_4}$ @ 91\,K & apolar / solid\_I &
 0.525 & 0.523 & 0.496 &
 1.12 & 1.10 & 1.07 \\
@@ -1311,15 +1681,16 @@ $\mathrm{NH_3}$ @ 196\,K & pyramidal / fcc &
 0.816 & 0.817 & 0.795 &
 1.29 & 1.32 & 1.27 \\
 $\mathrm{HF}$ @ 190\,K & linear chain / Z=4 &
-1.205 & 1.15 & 1.12 &
-1.22 & 1.20 & 1.14 \\
+1.159 & 1.15 & 1.12 &
+1.20 & 1.20 & 1.14 \\
 \midrule
 \multicolumn{2}{l}{$|\Delta|/X_{\mathrm{NIST}}$ (mean)} &
-\multicolumn{3}{c}{2.5\% / 2.7\% / 3.3\%} &
-\multicolumn{3}{c}{2.0\% / --- / 3.3\%} \\
+\multicolumn{3}{c}{0.4\% / 2.7\% / 3.2\%} &
+\multicolumn{3}{c}{1.2\% / --- / 3.3\%} \\
 \bottomrule
-\end{tabular}
-\begin{tabular}{@{}llcc@{}}
+\end{tabular}}
+\fitbox{%
+\begin{tabular}{@{}>{\RaggedRight\arraybackslash}p{0.16\linewidth}>{\RaggedRight\arraybackslash}p{0.18\linewidth}cc@{}}
 \toprule
 Species & Motif & $T_{\mathrm{sl}}$ HQIV [K] & $T_{\mathrm{sl}}$ NIST [K] \\
 \midrule
@@ -1331,10 +1702,10 @@ $\mathrm{HF}$ & linear chain / Z=4 & 189.1 & 189.6 \\
 \multicolumn{2}{l}{$|\Delta T_{\mathrm{sl}}|/T_{\mathrm{NIST}}$ (mean)} &
 \multicolumn{2}{c}{0.4\%} \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \begin{tablenotes}\small
-\item HQIV witnesses from \path{scripts/hqiv_phase_geometry_density.py} and
-  \path{scripts/hqiv_phase_material_response.py} at the species solidification temperature.
+\item HQIV witnesses from \hyperref[app:scripts]{phase geometry density script} and
+  \hyperref[app:scripts]{phase material response script} at the species solidification temperature.
 \item NIST/\cite{crc2023handbook} experimental solid densities and melting points; ice
   $n_{\mathrm{solid}}\approx 1.31$ \cite{petrenko2002ice,nistwebbook_h2o}.
 \item PBE-D3: ice {Ih} density \cite{santra2013ice}; $\mathrm{CH_4}$, $\mathrm{NH_3}$,
@@ -1346,18 +1717,23 @@ $\mathrm{HF}$ & linear chain / Z=4 & 189.1 & 189.6 \\
   (NIST $\approx 1.33$, $1.29$, $1.33$, $1.10$ respectively).
 \item Mean absolute percent errors in the summary rows compare each method column to the
   NIST target for that observable (PBE-D3 $n$ row uses NIST as reference for both HQIV and DFT).
-\item $\mathrm{NH_3}$ fcc density at $-0.1\%$ on the pyramidal $(1+\gamma/4)$ breathing slot;
-  $\mathrm{CH_4}$ at $+0.4\%$ after apolar $(T/T_{\mathrm{ref}})^{\gamma/16}$ contraction;
-  $\mathrm{H_2O}$ ice Ih at $-4.5\%$ on raw contact geometry (medium $\rho_\kappa$ closes melt).
+\item $\mathrm{H_2O}$ ice Ih at $+0.3\%$ after tetrahedral neighbor covalent lapse overlap
+  ($1-\gamma\cdot(4/8)/4$ on the H-bond leg); $\mathrm{CH_4}$ at $+0.4\%$ after apolar
+  $(T/T_{\mathrm{ref}})^{\gamma/16}$ contraction at melt $T$; $\mathrm{HF}$ at $+0.8\%$
+  after linear monomer angle ($\pi$, zero bend dress), halogen strong H-bond leg compression
+  ($1-\gamma\cdot(4/8)/Z$), and Bm21b zigzag orthorhombic open ($1+\gamma/(6\,n_{\mathrm{inter}})$).
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 Witness commands (same scripts as \S\ref{sec:phase-geometry-density}):
-\texttt{hqiv-lab CH4}, \texttt{hqiv-lab NH3}, \texttt{hqiv-lab HF};
-\path{scripts/hqiv_phase_geometry_density.py} and
-\path{scripts/hqiv_phase_material_response.py} accept any GMTKN55 name with
-auto-selected preferred allotrope.
+\texttt{hqiv-lab CH4}, \texttt{hqiv-lab NH3}, \texttt{hqiv-lab HF} (default:
+species melt witness $T$ via \texttt{hqiv\_lab/species\_panel.py});
+\hyperref[app:scripts]{condensed phase audit script} exports
+\datafile{hqiv_lab_witnesses.json};
+\hyperref[app:scripts]{phase geometry density script} and
+\hyperref[app:scripts]{phase material response script} accept any GMTKN55 name with
+auto-selected preferred allotrope at the panel melt temperature.
 
 \paragraph{Standard continuum formulae (slot inputs).}
 HQIV does not introduce alternate chemistries in this block: each response readout
@@ -1385,7 +1761,7 @@ contact-mode DOF $\times B_{\mathrm{hom}}$ $\rightarrow$ $C_{p,\mathrm{mol}}$
 $\rightarrow$ $L_{\mathrm{fusion}}$ (structural); Eyring barrier from $E_{\mathrm{melt}}$
 $\rightarrow$ liquid $\eta$ \cite{eyring1936viscosity,atkins2018pchem}; hexagonal
 $c/a$ split $\rightarrow$ ice-Ih $\Delta n$ \cite{hecht2017optics,petrenko2002ice}.
-Witness at 273\,K for derived Ih: $n\approx 1.28$, $C_{p,\mathrm{mol}}\approx 119\,\mathrm{J\,mol^{-1}\,K^{-1}}$
+Witness at 273\,K for derived Ih: $n\approx 1.30$, $C_{p,\mathrm{mol}}\approx 119\,\mathrm{J\,mol^{-1}\,K^{-1}}$
 (solid), $k_{\mathrm{th}}\approx 1.2\,\mathrm{W\,m^{-1}\,K^{-1}}$,
 $\Delta n\approx 4\times 10^{-4}$; liquid water $n\approx 1.33$,
 $C_{p,\mathrm{mol}}\approx 74\,\mathrm{J\,mol^{-1}\,K^{-1}}$,
@@ -1393,16 +1769,16 @@ $\eta\sim 10^{-4}\,\mathrm{Pa\,s}$ (order-of-magnitude Eyring slot). Comparison 
 \cite{nistwebbook_h2o,crc2023handbook,petrenko2002ice}.
 
 Python witnesses:
-\path{hqiv_lab/} (package; \texttt{pip install -e .}, CLI \texttt{hqiv-lab H2O}),
-\path{scripts/hqiv_phase_geometry_density.py},
-\path{scripts/hqiv_phase_material_response.py},
-\path{scripts/hqiv_thermodynamic_phase_from_tp.py},
-\path{scripts/hqiv_homogeneous_curvature_feedback.py}.
+\texttt{hqiv\_lab/} (package; \texttt{pip install -e .}, CLI \texttt{hqiv-lab H2O}),
+\hyperref[app:scripts]{phase geometry density script},
+\hyperref[app:scripts]{phase material response script},
+\hyperref[app:scripts]{thermodynamic phase script},
+\hyperref[app:scripts]{homogeneous curvature feedback script}.
 
-\subsection[HQIV chem and materials lab]{\texorpdfstring{HQIV chem \& materials lab (\nolinkurl{hqiv_lab})}{HQIV chem and materials lab (hqiv\_lab)}}
+\subsection[HQIV chem and materials lab]{\texorpdfstring{HQIV chem \& materials lab (\texttt{hqiv\_lab})}{HQIV chem and materials lab (hqiv\_lab)}}
 \label{sec:hqiv-lab}
 
-The \path{hqiv_lab} Python package is the intended home for a full ``chem and
+The \texttt{hqiv\_lab} Python package is the intended home for a full ``chem and
 materials lab'': one \texttt{MoleculeSpec} in, ranked allotropes and material
 properties out. The pipeline is parameter-free beyond the lattice rationals
 $(\alpha,\gamma)$ already fixed upstream:
@@ -1422,7 +1798,7 @@ $(\alpha,\gamma)$ already fixed upstream:
 Lean structural mirror:
 \hyperref[lean:phase-allotrope-derivation]{phase allotrope derivation module}.
 Extension points: custom fragment graphs (beyond GMTKN55 names), periodic contacts
-from \path{scripts/hqiv_curvature_contact_network.py}, and glass branches from
+from \hyperref[app:scripts]{curvature contact network script}, and glass branches from
 disorder scores---without reintroducing fitted intermolecular potentials.
 
 \section{Outside-curvature environment}
@@ -1434,14 +1810,20 @@ The \hyperref[lean:outside-temp]{outside temperature dynamics module} modulates
 nucleon own-binding and outside caustics through
 \hyperref[lean:outside-release]{outside release factor} at $T(\xi)=T_{\mathrm{Pl}}/\xi$
 \cite{hqiv-thermo-arrow-paper}. At lock-in the outside modulator normalises to unity;
-at BBN ($T\sim 0.1\,\mathrm{MeV}$, $\xi\sim 10^{23}$) the free branch weakens to
-$\approx 0.785$---percent-level outside support relevant to light-element abundances
-and the lithium problem \cite{hqiv-bbn-paper}, not to Earth-surface $\beta$ labs.
-The dynamic bulk baryogenesis integrator
-(\texttt{scripts/hqiv\_dynamic\_bulk\_bbn.py}) now consumes the same cluster
-$Q$ ledger and outside release factor in its per-shell and BBN-network
-conditions (witness block \texttt{nuclear\_binding\_conditions} in
-\texttt{data/dynamic\_bulk\_bbn\_v2.json}).
+at BBN ($T\sim 0.1\,\mathrm{MeV}$, $\xi\sim 10^{23}$) the free-branch outside-release
+factor is $\approx 0.785$---a $\sim 22\%$ weakening of free-branch width support relative
+to lock-in that feeds the coupled $\tau_n(T)$ march, neutron inventory, and
+$^7\mathrm{Li}/H$ witnesses in the BBN and baryogenesis companions
+\cite{hqiv-bbn-paper,hqiv-baryogenesis-paper}, not Earth-surface $\beta$ labs
+($\sim 0.15\,\mathrm{ppm}$ shift on $\tau_n$ at $300\,\mathrm{K}$; Table~\ref{tab:environment-shifts}).
+The faithful BBN integrator
+(\hyperref[script:bbn-integrator]{BBN stoichiometric integrator},
+\hyperref[lean:bbn-stoichiometric]{Lean BBN module}) consumes cluster $Q$ values from the
+curvature shared-well spine (\hyperref[script:curvature-binding]{curvature binding program},
+\datafile{curvature_binding_program.json}; witness \datafile{bbn_integrator.json}),
+outside release, relic-$\nu$ weak-width factor, dynamic-$C_2$ lapse clock, and
+synthesis-window tail gate \leanid{bbnSynthesisDWindowTailGate}
+(decomposition tables via \hyperref[script:bbn-tables]{BBN paper tables script}).
 
 \subsection{Gravity binding stack}
 
@@ -1453,7 +1835,11 @@ Local labs sit in a cumulative weak-field potential (additive $\varepsilon=\Phi/
     (v_c=233\,\mathrm{km/s}),
 \end{align*}
 with Galactic disk support using the same comoving baseline as the flyby readout
-\cite{hqiv-flyby-paper}. The outside gravity modulator folds this through HQIV
+\cite{hqiv-flyby-paper}. The cumulative weak-field ledger
+$\varepsilon_g=\varepsilon_\oplus+\varepsilon_\odot+\varepsilon_{\mathrm{gal}}$ is
+dominated by the Galactic term ($\varepsilon_{\mathrm{gal}}/\varepsilon_g\approx 98\%$ at
+Earth-lab baseline): Sun and Earth contribute sub-percent fractions but are booked for
+cross-lab consistency. The outside gravity modulator folds this through HQIV
 \hyperref[lean:geff-outside]{outside G-eff support}:
 \[
   f_g = 1 + \gamma\Bigl((1+\varepsilon_g)^{\alpha}-1\Bigr),
@@ -1461,7 +1847,14 @@ with Galactic disk support using the same comoving baseline as the flyby readout
 \]
 Combined lab support vs deep-space/CMB reference multiplies temperature and gravity
 branches. At $300\,\mathrm{K}$ the full stack shifts $\tau_n$ by $\sim 0.15\,\mathrm{ppm}$
-relative to zero gravity; temperature dominates at $\sim 1500\,\mathrm{ppm}$. Two labs
+relative to zero gravity---sub-ppm and blind to bottle--beam systematics
+(\S\ref{sec:phenomenology}); temperature dominates at $\sim 1.5\times 10^3\,\mathrm{ppm}$ on
+width readouts. The same $f_g$ stack enters $B_{\mathrm{curv}}(\xi)\,f_g$ in the
+free-branch opacity catalysis (\S\ref{sec:neutrino-opacity}) and is evaluated at hot
+$\xi(T)$ in the faithful BBN integrator (\S\ref{sec:downstream}). On the \emph{mass chart} at $\xi_{\mathrm{lock}}$, Earth gravity plus
+CMB-dipole proper motion contributes $\sim 0.28\,\mathrm{ppm}$ while the inner proton
+anchor stays at the derived $938.272\,\mathrm{MeV}$ witness
+(\hyperref[app:scripts]{proton mass decomposition script}). Two labs
 at the same location share Sun+Galaxy in the ratio---only temperature differences remain
 observable on Earth.
 
@@ -1543,12 +1936,11 @@ Bonded clusters ($A>1$) \textbf{shield} relic-bath catalysis: interior valley we
 already suppress weak tipping (\S\ref{sec:valley}); exterior caustics do not double-count
 the same opacity channel.
 
-Python: \path{scripts/hqiv_nuclear_outside_temperature_dynamics.py}
-(\path{local\_curvature\_neutrino\_opacity\_barn},
-\path{local\_curvature\_weak\_width\_factor\_band}).
-The dynamic BBN integrator exports epoch rows in
-\texttt{local\_curvature\_neutrino\_width} (\path{scripts/hqiv\_dynamic\_bulk\_bbn.py},
-\texttt{data/dynamic\_bulk\_bbn\_v2.json}).
+Python: \hyperref[app:scripts]{outside temperature dynamics script}
+(local $\nu$-opacity and weak-width factor bands).
+The faithful BBN integrator books the same opacity on the free-neutron march
+(\hyperref[app:scripts]{BBN integrator script}, \hyperref[app:scripts]{BBN condition-decay script};
+witness \hyperref[app:scripts]{BBN integrator JSON}).
 
 \section{Phenomenology: light panel at lock-in}
 \label{sec:phenomenology}
@@ -1558,19 +1950,23 @@ layer: the \emph{same} $(\alpha,\gamma,m_{\mathrm{lockin}})$ ladder yields neutr
 lifetime, light-isotope masses, molecular shifts, and condensed-phase bulk readouts without
 separate sector tuning (Tables~\ref{tab:light-panel}--\ref{tab:h2o-nist}).
 
-Witness scripts (\path{scripts/hqiv_isotope_stability_halflife.py},
-\path{scripts/hqiv_isotope_pdg_benchmark.py}) export comparison tables with
+Witness scripts (\hyperref[app:scripts]{isotope stability script},
+\hyperref[app:scripts]{isotope PDG benchmark script}) export comparison tables with
 \emph{reference data used only for benchmark, not for HQIV fit}. EM-tipping
 qualification is required for half-life claims.
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
-\begin{threeparttable}
 \caption{Light-isotope panel at lock-in ($\xi$ lock-in, $T=2.725\,\mathrm{K}$ lab reference).
-Mass errors vs reference tables. For $n$, width-ledger accuracy after local $\nu$-opacity
+Cluster masses use the curvature $G_{\mathrm{eff}}$ spine (\S\ref{sec:binding});
+mass errors vs reference tables. For $n$, width-ledger accuracy after local $\nu$-opacity
 catalysis is $\Delta Q_{\mathrm{phase}}/Q_{\mathrm{phase}}\lesssim 0.01\%$
-(Table~\ref{tab:neutron-width}).}
+(Table~\ref{tab:neutron-width}). Witness:
+\datafile{isotope_pdg_benchmark.json}.}
 \label{tab:light-panel}
+\begin{threeparttable}
+\small
+\setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}llrrrrl@{}}
 \toprule
 Isotope & $(A,Z)$ & $M_{\mathrm{pred}}$ & $M_{\mathrm{ref}}$ & $|\Delta M|/M_{\mathrm{ref}}$ &
@@ -1578,27 +1974,44 @@ Isotope & $(A,Z)$ & $M_{\mathrm{pred}}$ & $M_{\mathrm{ref}}$ & $|\Delta M|/M_{\m
 \midrule
 $p$   & $(1,1)$ & 938.272 & 938.272 & $0.000\%$ & --- & anchor witness \\
 $n$   & $(1,0)$ & 939.565 & 939.565 & $0.000\%$ & $\tau$ ratio 1.00\tnote{a} & free branch \\
-$D$   & $(2,1)$ & 1869.642 & 1875.613 & $0.318\%$ & stable & cluster binding \\
-$T$   & $(3,1)$ & 2807.011 & 2808.921 & $0.068\%$ & $\tau$ ratio 1.00\tnote{b} & local curvature slots \\
-$\mathrm{He3}$ & $(3,2)$ & 2805.718 & 2808.392 & $0.095\%$ & stable & \\
-$\mathrm{He4}$ & $(4,2)$ & 3735.220 & 3727.379 & $0.210\%$ & stable & \\
+$D$   & $(2,1)$ & 1875.651 & 1875.613 & $0.002\%$ & stable & curvature spine \\
+$T$   & $(3,1)$ & 2808.980 & 2808.921 & $0.002\%$ & $\tau$ ratio 1.00\tnote{b} & $\kappa$ slots \\
+$\mathrm{He3}$ & $(3,2)$ & 2808.410 & 2808.392 & $0.001\%$ & stable & \\
+$\mathrm{He4}$ & $(4,2)$ & 3727.886 & 3727.379 & $0.014\%$ & stable & \\
 \midrule
-\multicolumn{4}{l}{Mean $|\Delta M|/M_{\mathrm{ref}}$} & $0.12\%$ & & \\
+\multicolumn{4}{l}{Mean $|\Delta M|/M_{\mathrm{ref}}$} & $0.003\%$ & & \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
 \small
 \item[a] At $300\,\mathrm{K}$ with full gravity stack:
-  $\tau_{\mathrm{pred}}=879.5\,\mathrm{s}$, $\tau_{\mathrm{pred}}/\tau_{\mathrm{ref}}=1.00$;
+  $\tau_{\mathrm{pred}}=879.5\,\mathrm{s}$, $\tau_{\mathrm{pred}}/\tau_{\mathrm{ref}}=1.002$;
   width envelope $875$--$884\,\mathrm{s}$ (Table~\ref{tab:neutron-width}).
 \item[b] Width ledger requires a distinct interior valence well (ledger locality).
-  Slot-wise local curvature on each mass and binding budget yields
-  $\tau_T/\tau_{\mathrm{ref}}=1.00$ on the same equations as $M_T$; collapsing mass
-  and width into one slot ($B_{\mathrm{cluster}}/A$ only) gives $\approx 0.56\times$.
-  Witness: \path{data/isotope\_pdg\_benchmark.json}.
+  Without per-budget $\kappa$ closure, $\tau_T/\tau_{\mathrm{ref}}\approx 0.93$; slot-wise
+  closure on each mass and binding budget yields $1.00$ on the same equations as $M_T$.
+  Collapsing mass and width into one slot ($B_{\mathrm{cluster}}/A$ only) gives $\approx 0.56\times$.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
+
+\paragraph{Post-$\alpha$ EC and two-$\alpha$ breakup.}
+$^7\mathrm{Be}$ is the first proton-rich EC/$\beta^+$ witness on the post-$\alpha$ chart:
+endpoint $Q_{\beta^+}\approx +0.83\,\mathrm{MeV}$ from local facet contact booking,
+valence overlap on the decaying proton slot, width well $\approx 3.16\,\mathrm{MeV}$
+(matching $B_{\mathrm{facet,local}}$), and post-$\alpha$ valley $\approx 8.5$
+(not $2(A{-}1)=12$). The channel is structurally open; integrated $\tau$ is longer than
+the $53\,\mathrm{d}$ laboratory readout because no half-life tuning layer is applied
+beyond faithful slot counting (\hyperref[script:decay-chain]{decay-chain calculator}).
+$^8\mathrm{Be}$ discharges as a broad two-$\alpha$ resonance on three separate
+ledgers (mirroring $\beta$): \emph{binding erosion}
+(\texttt{multiAlphaResonanceWidth} on total $B_{\mathrm{cluster}}$, BBN mass spine);
+\emph{kinematic saddle} $Q_{\alpha\alpha}\approx +91\,\mathrm{keV}$ from per-contact
+inter-$\alpha$ barbell booking ($5$ mass contacts on $\Delta B_{\mathrm{inside}}$);
+and \emph{width} $\Gamma_\alpha\approx 7\,\mathrm{eV}$ with shared-seam well
+$w_{\mathrm{trap}}=\Delta B_{\mathrm{inside}}\cdot 3/(2\gamma)$.
+Integrated $\tau\approx 6.4\times 10^{-17}\,\mathrm{s}$
+(reference $\sim 6.7\times 10^{-17}\,\mathrm{s}$).
 
 \begin{table}[h]
 \centering
@@ -1688,21 +2101,21 @@ method knobs. Lean
 \item both methods read \textbf{Ledger III} (weak $\beta$), not Ledger I (strong overlap);
 \item \textbf{UCN trap $B$} is the primary bottle dressing lever:
   $\rho_{\mathrm{mag}}(B)$ on the weak Fano/Hopf bridge
-  (\leanid{trapWeakWidthFactorFromMagnetic}), distinct from neV Zeeman energy;
+  (\hyperref[lean:neutron-lifetime-method]{trap magnetic width factor}), distinct from neV Zeeman energy;
 \item temperature-only outside support is $\sim 10^3\,\mathrm{ppm}$---sub-leading and
   insufficient for the split
-  (\leanid{temperature\_ppm\_insufficient\_for\_bottle\_beam\_split});
+  (\hyperref[lean:neutron-lifetime-method]{bottle/beam temperature insensitivity});
 \item the central width readout ($880\,\mathrm{s}$) lies between the representative
-  references (\leanid{central\_brackets\_bottle\_beam\_refs});
+  references (\hyperref[lean:neutron-lifetime-method]{bottle/beam reference band});
 \item at representative $B_{\mathrm{bottle}}=2.5\,\mathrm{T}$, $B_{\mathrm{beam}}=0$,
   trap dressing gives $\tau_{\mathrm{beam}}>\tau_{\mathrm{bottle}}$
-  (\leanid{beam\_tau\_gt\_bottle\_from\_magnetic\_trap\_dressing}).
+  (\hyperref[lean:neutron-lifetime-method]{beam exceeds bottle from trap dressing}).
 \end{itemize}
 Open: facility-specific $B$ profiles, wall losses, and quantitative discharge of
-\leanid{TrapWeakBridgeDecoherenceSlot} beyond the structural $f(B)$ slot.
+\hyperref[lean:neutron-lifetime-method]{trap weak-bridge decoherence slot} beyond the structural $f(B)$ slot.
 
-Witness export: \path{neutron\_method\_environment\_ledger} in
-\path{scripts/hqiv\_isotope\_pdg\_benchmark.py}.
+Witness export: \hyperref[app:scripts]{isotope PDG benchmark script}
+(\texttt{neutron\_method\_environment\_ledger} block).
 
 \paragraph{Tritium.}
 Same nucleon-gap endpoint $Q$ as $n$. Three-ledger locality requires a distinct
@@ -1716,15 +2129,18 @@ not an optional refinement.
 
 \paragraph{BBN contrast.}
 At $T=0.1\,\mathrm{MeV}$ outside support weakens binding by $\sim 22\%$ on the free
-branch---the cosmological regime where percent-level effects feed the lithium ledger
-\cite{hqiv-bbn-paper}, orthogonal to Earth-lab gravity at sub-ppm.
+branch---the cosmological regime where percent-level effects feed $Y_p$, $D/H$, and
+$^7\mathrm{Li}/H$ through the faithful stoichiometric integrator
+\cite{hqiv-bbn-paper}, orthogonal to Earth-lab gravity at sub-ppm. At freeze-out the
+same stack exports $\tau_n(T)/\tau_{n,\mathrm{lock}}\approx 1.19$ and a weak-width
+catalysis factor $\approx 1.07$ (\texttt{bbn\_paper\_tables.json}).
 
 \section{Same equations downstream: epoch dynamics}
 \label{sec:downstream}
 
 This note \textbf{establishes} the local-curvature slot equations; baryogenesis and
-BBN companions queued after it \textbf{apply} them. No new binding rules are introduced
-in those papers---only the epoch witness and outside modulator change.
+BBN companions \textbf{apply} them. No new binding rules are introduced in those
+papers---only the epoch witness and outside modulator change.
 
 \paragraph{Shared slot inventory.}
 \begin{center}
@@ -1745,21 +2161,35 @@ Cosmological epoch & $B_{\mathrm{curv}}(\xi(T))$, outside release, $\nu$-opacity
 \end{tabular}
 \end{center}
 
-\paragraph{Baryogenesis (queued).}
-The baryogenesis lock-in note \cite{hqiv-baryogenesis-paper} will consume lock-in
-$\eta$ and the same $B_{\mathrm{curv}}(\xi)$ opacity stack exported here. Epoch
-dependence enters through $T(\xi)=T_{\mathrm{Pl}}/\xi$ and outside release at hot
-$\xi$---dynamic in cosmology, identical in slot form to the laboratory witnesses.
+\paragraph{Baryogenesis (companion, published).}
+The baryogenesis lock-in note \cite{hqiv-baryogenesis-paper}
+(DOI \href{https://doi.org/10.5281/zenodo.20711255}{10.5281/zenodo.20711255}) consumes
+lock-in $\eta_{\mathrm{paper}}$ and the same $B_{\mathrm{curv}}(\xi)$ opacity stack
+exported here (\S\ref{sec:neutrino-opacity}, \eqref{eq:width-master}). Epoch dependence
+enters through $T(\xi)=T_{\mathrm{Pl}}/\xi$ and outside release at hot $\xi$---dynamic in
+cosmology, identical in slot form to the laboratory witnesses. No new binding rules or
+width knobs are introduced in that paper; only $\xi(T)$ and the outside modulator change.
+The coupled free-neutron width march at $T\sim 0.1\,\mathrm{MeV}$ ($\sim 22\%$ free-branch
+weakening, \S\ref{sec:outside}) is the same Ledger~III assembly documented in
+\S\ref{sec:width-assembly}.
 
-\paragraph{BBN abundances (queued).}
-The BBN companion \cite{hqiv-bbn-paper} will import composite-trace binding for cluster
-$Q$ values and partition weights at each integration shell $\xi(T)$. This note supplies
-the nucleon mass spine and $\beta$-channel bookkeeping proved at Earth-lab lock-in; it
-does not integrate abundances. The dynamic BBN integrator
-(\path{scripts/hqiv\_dynamic\_bulk\_bbn.py}) already exports
-\texttt{local\_curvature\_neutrino\_width} at each temperature row---the same
-$B_{\mathrm{curv}}(\xi)$ opacity that catalyses free-branch weak widths in the lab,
-now evaluated at BBN epoch rather than $300\,\mathrm{K}$.
+\paragraph{BBN abundances (companion).}
+The BBN note \cite{hqiv-bbn-paper} imports composite-trace binding for cluster $Q$
+values, dynamic-$C_2$ lapse suppression in the deuterium bottleneck, and
+stoichiometric $n\!+\!p\!\to\!D$ capture on the synthesis window
+$1\,\mathrm{MeV}\to T_{\mathrm{bn}}$, with log-weight tail
+\leanid{bbnSynthesisDWindowTailGate} below the ³He mid-gate
+($T_{\mathrm{peak}}=0.18\,\mathrm{MeV}$). This note supplies the nucleon mass spine and
+$\beta$-channel bookkeeping proved at Earth-lab lock-in; abundance integration lives in
+\texttt{hqiv\_bbn\_integrator.py} (witness \texttt{data/bbn\_integrator.json}). The
+integrator books the same relic-$\nu$ opacity factor and outside-release stack as
+\eqref{eq:width-master} on the epoch march---so $^7\mathrm{Li}/H$ and the neutron
+inventory are not tuned independently of the Earth-lab $\tau_n$ witness. At
+$\eta_{\mathrm{paper}}$ the companion reports $Y_p\approx 0.244$, $D/H\approx
+2.51\times 10^{-5}$ ($z\approx -0.5$ vs.\ Coc), and $^7\mathrm{Li}/H\approx
+2.54\times 10^{-10}$ (pre-depletion; Coc semi-analytic comparison
+$4.65\times 10^{-10}$)---with post-BBN Li destruction documented as
+comparison-layer physics.
 
 \paragraph{Strong sector (upstream).}
 The gluon curvature note \cite{hqiv-gluon-curvature-note} identifies strong binding with inner-Casimir
@@ -1784,12 +2214,14 @@ duplicate the full Lagrangian bridge or legacy effective models.
   and radiative normalization are \S\ref{sec:beta-roadmap} extensions.
 \item MS\=bar current-quark masses or external lattice tables as inputs.
 \item Isotope-by-isotope half-life patches (e.g.\ a tritium-only factor).
-\item Closure of the lithium problem (handled in the BBN epoch network).
+\item Post-BBN lithium destruction and galactic chemical evolution (pre-depletion
+  $^7\mathrm{Li}/H$ is witnessed at \cite{hqiv-bbn-paper}; astrophysical depletion is not).
 \item Great Attractor or bulk-flow gravity layers beyond the Galactic baseline
   (same additive $\varepsilon$ ledger when needed).
-\item Quantitative magnitudes for \leanid{TrapWeakBridgeDecoherenceSlot} and UCN
+\item Quantitative magnitudes for \hyperref[lean:neutron-lifetime-method]{trap weak-bridge decoherence slot} and UCN
   wall-loss channels (structure and directional ordering are in Lean).
-\item Full nuclear chart beyond the $A\le 4$ light panel.
+\item Full actinide chart integration and $\alpha$-decay / fission half-life discharge
+  (extended binding witnesses through $A=16$ are in Table~\ref{tab:extended-panel}).
 \item Sub-leading inverse-square network propagation and Casimir caustics on
   non-contacting nucleon pairs---\textbf{conjecture only}; see \S\ref{sec:scope}.
 \item Quantitative condensed-matter tables from the raw contact lattice alone---ambient
@@ -1828,10 +2260,13 @@ chain. At lock-in, nucleon masses are \emph{constituent sums minus shared
 composite-trace binding} on the $\mathfrak{so}(8)$ network; the imprint ratio
 $\alpha=3/5$ enters through discrete simplex counting. Weak $\beta$ decay runs through
 three strict, non-collapsible ledgers embedded in a geometric programme of curvature
-balance and skew alignment (\S\ref{sec:beta-programme}). The same slot equations continue
+balance and skew alignment (\S\ref{sec:beta-programme}); the explicit width assembly
+\eqref{eq:width-master} discharges $G_F$, valley exponent $2(A{-}1){+}1$, interior
+valence-well blending, and free-branch $B_{\mathrm{curv}}(\xi)$ catalysis without
+half-life fit knobs (\S\ref{sec:width-assembly}). The same slot equations continue
 through molecular hosts and bulk condensed phases
-(\S\ref{sec:phase-geometry-density}, \S\ref{sec:condensed-universality}); queued
-baryogenesis and BBN notes apply them at cosmological $\xi(T)$ without new rules
+(\S\ref{sec:phase-geometry-density}, \S\ref{sec:condensed-universality}); baryogenesis
+and BBN companions apply them at cosmological $\xi(T)$ without new rules
 (\S\ref{sec:downstream}).
 
 \paragraph{Achieved (local-curvature spine).}
@@ -1841,12 +2276,13 @@ readouts used for validation only. Machine-checked: binding positivity, ledger
 separation, endpoint-$Q$ policies, width-slot wiring, Fano/Hopf bridge shape,
 spin-statistics quarantine, and bottle/beam method structure. Witnessed: free-neutron
 weak width to $\lesssim 0.01\%$ in effective phase space; $\tau_n\approx 880\,\mathrm{s}$
-at $300\,\mathrm{K}$; light-isotope masses at $0.12\%$ mean; tritium
+at $300\,\mathrm{K}$; light-isotope masses at $0.003\%$ mean; tritium
 $\tau_T/\tau_{\mathrm{ref}}=1.000$ on the same local-curvature slots as $M_T$
 (Table~\ref{tab:light-panel}). Outside support unifies temperature and gravity on one
 $G_{\mathrm{eff}}$ primitive; bulk $\rho_{\mathrm{curv}}$ extends the spine to water.
-The dynamic BBN integrator already exports the same $B_{\mathrm{curv}}(\xi)$ opacity at
-epoch rows---the downstream application this note prepares.
+The faithful BBN integrator exports the same $B_{\mathrm{curv}}(\xi)$ opacity and
+outside-neutron $\tau_n(T)$ stack at epoch rows---the downstream application this note
+prepares (\cite{hqiv-bbn-paper}, \texttt{data/bbn\_integrator.json}).
 
 \paragraph{Open (extensions on the same spine, not legacy replacements).}
 \begin{itemize}[leftmargin=2em]
@@ -1868,7 +2304,12 @@ epoch rows---the downstream application this note prepares.
   the laboratory proton is consistent but not yet \emph{derived} from a lock-in
   variational principle alone.
 \item \textbf{Nuclear chart and lithium.} Light-isotope witnesses are not a full
-  chart; lithium closure stays in the BBN epoch network \cite{hqiv-bbn-paper}.
+  chart; $^7$Li/H is exported by \texttt{hqiv\_bbn\_integrator.py} on the
+  $^3$He+$^4$He$\to^7$Be$\to^7$Li ladder with trimer-width erosion,
+  stoichiometric D budget, and synthesis-window tail gate (Lean
+  \texttt{BBNStoichiometricIntegrator}).
+  $D/H$ is within $\sim 0.5\sigma$ of the observation anchor at $\eta_{\mathrm{paper}}$
+  (pre-CMB band).
 \item \textbf{Method and facility layers.} UCN wall losses, facility $B$ maps, and
   quantitative trap-decoherence magnitudes beyond structural ordering.
 \item \textbf{Condensed-matter display layers.} Raw contact-lattice $\rho_{\mathrm{mass}}$
@@ -1881,17 +2322,17 @@ epoch rows---the downstream application this note prepares.
 \paragraph{Next milestones.}
 The $\beta$-decay programme (\S\ref{sec:beta-roadmap}) extends the same upstream
 Lagrangian bridge to partial-width discharge and inverse $\beta^{+}$/EC channels.
-Queued baryogenesis and BBN companions inherit the slot inventory of
-\S\ref{sec:downstream}---dynamic in epoch $\xi(T)$, identical in equation form---with
-Lean certificates and laboratory validation discipline unchanged.
+Baryogenesis and BBN companions inherit the slot inventory of \S\ref{sec:downstream}---
+dynamic in epoch $\xi(T)$, identical in equation form---with Lean certificates and
+laboratory validation discipline unchanged.
 
 \section*{Acknowledgments}
 
 Machine-checked proofs live in the public HQIV Lean repository \cite{hqiv-lean}.
-Reproducer scripts are documented in \path{papers/nucleon_binding/scripts/README.md}.
-A self-contained Zenodo bundle \path{papers/nucleon_binding/scripts.zip} ships every
-cited script plus \path{hqiv_lab/}; checksums are listed in
-\path{papers/nucleon_binding/scripts/MANIFEST.sha256}.
+Reproducer scripts are documented in Appendix~\ref{app:scripts}.
+A self-contained Zenodo bundle \texttt{scripts.zip} ships every
+cited script plus \texttt{hqiv\_lab/}; checksums are listed in the bundled
+\texttt{MANIFEST.sha256}.
 Machine-checked Lean for this note: \texttt{lake build paper\_nucleon\_binding} in
 \cite{hqiv-lean}.
 
@@ -1900,7 +2341,38 @@ Machine-checked Lean for this note: \texttt{lake build paper\_nucleon\_binding} 
 \section{Lean module index}
 \label{app:lean-index}
 
-\begin{description}[leftmargin=2.5em,style=nextline]
+\begin{sloppypar}
+\footnotesize
+\begin{description}[leftmargin=1.25em,labelwidth=!,style=nextline,itemsep=0.35em]
+
+\item[\hypertarget{lean:anomaly-cancellation}{Anomaly cancellation (upstream)}]
+  \leanfile{Hqiv/Algebra/AnomalyCancellation.lean}.
+
+\item[\hypertarget{lean:rapidity-lorentz-closure}{Rapidity--Lorentz closure (upstream)}]
+  \leanfile{Hqiv/Geometry/RapidityLorentzClosure.lean} ---
+  \leanid{rapidity_lorentz_closure_discharged}.
+
+\item[\hypertarget{lean:spatial-rotation-lorentz-closure}{Spatial-rotation Lorentz closure (upstream)}]
+  \leanfile{Hqiv/Geometry/SpatialRotationLorentzClosure.lean} ---
+  \leanid{full_lorentz_closure_discharged}.
+
+\item[\hypertarget{lean:phase-lift-delta}{Phase-lift skew generator}]
+  \leanfile{Hqiv/Algebra/PhaseLiftDelta.lean} ---
+  \leanid{phaseLiftDelta\_antisymm}.
+
+\item[\hypertarget{lean:nucleon-trace-witness}{Nucleon trace witness}]
+  \leanfile{Hqiv/Physics/BoundStates.lean} ---
+  triadic nucleon state on three carrier slots.
+
+\item[\hypertarget{lean:triple-coupling}{Triadic triple coupling}]
+  \leanfile{Hqiv/Physics/BoundStates.lean} ---
+  normalisation consumed by BBN and excited-state readouts.
+
+\item[\hypertarget{lean:bbn-stoichiometric}{BBN stoichiometric integrator}]
+  \leanfile{Hqiv/Physics/BBNStoichiometricIntegrator.lean} ---
+  \leanid{bbnSynthesisDWindowTailGate}, \leanid{bbnHe3SynthesisGate},
+  \leanid{bbnSynthesisStrongDepositionBoost}; Python mirror
+  \hyperref[script:bbn-integrator]{BBN integrator script}.
 
 \item[\hypertarget{lean:patch-topology-discharge}{Patch topology discharge}]
   \leanfile{Hqiv/QuantumMechanics/PatchTopologicalObstruction.lean}.
@@ -1914,10 +2386,13 @@ Machine-checked Lean for this note: \texttt{lake build paper\_nucleon\_binding} 
   \leanid{wilsonKineticPlaquetteEquivalence_discharged}.
 
 \item[\hypertarget{lean:discrete-action-poincare}{Discrete action Poincaré programme}]
-  \leanfile{Hqiv/Physics/DiscreteActionPoincareScaffold.lean},
+  \leanfile{Hqiv/Physics/DiscreteActionPoincareScaffold.lean} and
   \leanfile{Hqiv/Physics/DiscreteActionStrongPoincareBridge.lean} ---
   \leanid{discreteActionPoincareProgram_default},
   \leanid{fullActionStrongPoincare_discharged}.
+
+\item[\hypertarget{lean:non-abelian-haar}{Non-abelian Haar measure scaffold (partial)}]
+  \leanfile{Hqiv/Physics/NonAbelianHolonomyMeasureScaffold.lean}.
 
 \item[\hypertarget{lean:scale-witness}{Scale witness discipline}]
   \leanid{ScaleWitness}, \leanid{defaultScaleWitness} in
@@ -1930,10 +2405,16 @@ Machine-checked Lean for this note: \texttt{lake build paper\_nucleon\_binding} 
 \item[\hypertarget{lean:hqiv-nuclei}{HQIV nuclei: Fresnel caustics and ladder}]
   \leanfile{Hqiv/Physics/HQIVNuclei.lean} ---
   \leanid{fresnelCaustic}, \leanid{valleyCount}, \leanid{deuteron},
-  \leanid{helium4}, \leanid{helium4\_valleyCount\_eq\_six}.
+  \leanid{helium4}, \leanid{helium4\_valleyCount}.
+
+\item[\hypertarget{lean:nuclear-contact-closure}{Nuclear contact closure / zero deficit}]
+  \leanfile{Hqiv/Physics/NuclearContactClosure.lean} ---
+  \leanid{contactInformationDeficit}, \leanid{isFullyContactClosed},
+  \leanid{fullyInteractingAlphaWitness},
+  \leanid{first\_zero\_deficit\_mass\_number\_eq\_referenceM}.
 
 \item[\hypertarget{lean:casimir-caustic-stack}{Casimir caustic hierarchy (Python)}]
-  \path{scripts/hqiv\_nuclear\_caustic\_binding.py} ---
+  \scriptfile{hqiv_nuclear_caustic_binding.py} ---
   \texttt{sphere\_pair\_overlap}, \texttt{barbell\_torus},
   \texttt{torus\_deepen\_step\_*}, \texttt{tetrahedral\_closure}.
 
@@ -1975,7 +2456,7 @@ Machine-checked Lean for this note: \texttt{lake build paper\_nucleon\_binding} 
   \leanid{betaMinusMassGapAtXi}, \leanid{betaMinusCurvatureOverlap},
   \leanid{betaMinusResidualAtXi}, \leanid{betaMinusEndpointQAtXi},
   \leanid{betaWeakMatrixElementSquared}, \leanid{betaGeometryWidthFactor},
-  \leanid{betaWeakWidthFromResidual}.
+  \leanid{betaWeakWidthFromResidual} \emph{(see module for full list)}.
 
 \item[\hypertarget{lean:endpoint-q-theorem}{Endpoint-$Q$ identity}]
   \leanid{betaMinusEndpointQAtXi\_eq\_derivedDeltaM\_minus\_m\_e}.
@@ -1996,7 +2477,8 @@ Machine-checked Lean for this note: \texttt{lake build paper\_nucleon\_binding} 
 
 \item[\hypertarget{lean:endpoint-q-per-isotope-imprint}{Per-isotope imprint $\to$ mass-table $Q$}]
   \leanid{betaMinusEndpointQPerIsotopeImprint},
-  \leanid{betaMinusEndpointQPerIsotopeImprint\_eq\_reference\_budgets}.
+  \leanid{betaMinusEndpointQPerIsotopeImprint\_eq\_reference\_budgets}
+  in \leanfile{Hqiv/Physics/DynamicBetaIsotope.lean}.
 
 \item[\hypertarget{lean:width-well-geometric-blend}{Geometric-mean width well}]
   \leanid{betaWidthWellGeometricBlend}, \leanid{widthWellCurvatureImprint}.
@@ -2029,7 +2511,7 @@ Machine-checked Lean for this note: \texttt{lake build paper\_nucleon\_binding} 
   \leanid{trapMagneticCurvatureFraction}, \leanid{trapWeakWidthFactorFromMagnetic},
   \leanid{beam\_tau\_gt\_bottle\_from\_magnetic\_trap\_dressing},
   \leanid{temperature\_ppm\_insufficient\_for\_bottle\_beam\_split},
-  \leanid{TrapWeakBridgeDecoherenceSlot}.
+  \leanid{TrapWeakBridgeDecoherenceSlot}, \leanid{central\_brackets\_bottle\_beam\_refs}.
 
 \item[\hypertarget{lean:dynamic-stability}{Dynamic isotope stability}]
   \leanfile{Hqiv/Physics/DynamicIsotopeStability.lean} ---
@@ -2049,7 +2531,7 @@ Machine-checked Lean for this note: \texttt{lake build paper\_nucleon\_binding} 
   \leanid{T\_MeV\_from\_xi}, \leanid{outsideCurvatureReleaseFactor},
   \leanid{nucleonOwnBindingAtXi}, \leanid{betaMinusOverlapAtXi},
   \leanid{localCurvatureNeutrinoOpacityBarn},
-  \leanid{localCurvatureWeakWidthFactor}.
+  \leanid{localCurvatureWeakWidthFactor} \emph{(see module for full list)}.
 
 \item[\hypertarget{lean:nu-opacity-lockin}{Local $\nu$ opacity at lock-in}]
   \leanid{localCurvatureNeutrinoOpacityBarn\_lockin\_zeroGravity}
@@ -2064,9 +2546,9 @@ Machine-checked Lean for this note: \texttt{lake build paper\_nucleon\_binding} 
   \leanid{outsideCurvatureReleaseFactor\_pos}.
 
 \item[\hypertarget{lean:geff-outside}{Outside $G_{\mathrm{eff}}$ support}]
-  \leanid{OutsideGravityWitness}, \leanid{OutsideGravityLayerWitness},
-  \leanid{outsideGravityPhiSum}, \leanid{outsideGravityGeffModulator},
-  \leanid{outsideEnvironmentModulator}.
+  \leanfile{Hqiv/Physics/NuclearOutsideTemperatureDynamics.lean} ---
+  \leanid{OutsideGravityWitness}, \leanid{outsideEnvironmentModulator}
+  \emph{(see module for full list)}.
 
 \item[\hypertarget{lean:bond-state-network}{Bond-state network module}]
   \leanfile{Hqiv/QuantumChemistry/BondStateNetwork.lean},
@@ -2074,35 +2556,27 @@ Machine-checked Lean for this note: \texttt{lake build paper\_nucleon\_binding} 
 
 \item[\hypertarget{lean:homogeneous-curvature}{Homogeneous-curvature second order}]
   \leanfile{Hqiv/Physics/HomogeneousCurvatureSecondOrder.lean} ---
-  \leanid{clampMediumDensity}, \leanid{homogeneousCurvatureBudgetAtXi},
-  \leanid{effectiveCurvatureBudgetAtXi},
-  \leanid{bindingCurvatureFeedbackSecondOrderHomogeneous},
-  \leanid{nucleationCoordinationExcess}.
+  \leanid{homogeneousCurvatureBudgetAtXi}, \leanid{effectiveCurvatureBudgetAtXi}
+  \emph{(see module for full list)}.
 
-\item[\hypertarget{lean:phase-allotrope-derivation}{Phase allotrope derivation (\nolinkurl{hqiv_lab})}]
+\item[\hypertarget{lean:phase-allotrope-derivation}{Phase allotrope derivation (\texttt{hqiv\_lab})}]
   \leanfile{Hqiv/QuantumChemistry/PhaseAllotropeDerivation.lean} ---
   \leanid{IntermolecularMotif}, \leanid{AllotropeCandidate},
   \leanid{DerivedUnitCell}, \leanid{motif\_h2o\_has\_ice\_ih\_label}.
 
 \item[\hypertarget{lean:phase-geometry-density}{Phase geometry $\rightarrow$ density $\rightarrow$ $\rho_{\mathrm{curv}}$}]
   \leanfile{Hqiv/QuantumChemistry/PhaseGeometryDensity.lean} ---
-  \leanid{PhaseUnitCell}, \leanid{massDensityGPerCm3},
-  \leanid{curvatureDensityFraction}, \leanid{phaseUnitCellH2OIceIh},
-  \leanid{curvatureDensityFractionH2OIceIh},
-  \leanid{homogeneousCurvatureBudgetFromPhase},
-  \leanid{curvatureDensityFractionH2OIceIh\_in\_unit\_interval}.
+  \leanid{PhaseUnitCell}, \leanid{curvatureDensityFraction},
+  \leanid{phaseUnitCellH2OIceIh} \emph{(see module for full list)}.
 
 \item[\hypertarget{lean:phase-material-response}{Phase material response ($n$, $\varepsilon_r$, $k_{\mathrm{th}}$)}]
   \leanfile{Hqiv/QuantumChemistry/PhaseMaterialResponse.lean} ---
   \leanid{clausiusMossottiRatio}, \leanid{refractiveIndexFromCM},
-  \leanid{dielectricConstantFromRefractiveIndex}, \leanid{phononThermalConductivitySlot},
-  \leanid{ionicConductivitySlot}, \leanid{liquidLocalFieldDivisorH2O\_eq\_four\_fifths},
   \leanid{localFieldDivisorFromEta}, \leanid{solidOnsagerLocalFieldDivisor},
   \leanid{phaseOrientationCmFactorTetrahedralIh}, \leanid{gEffFromPhaseParticipation},
-  \leanid{phaseOrientationCmFactorH2OIceIh\_eq\_phaseLiftCoeff\_three},
   \leanid{molarHeatCapacitySlot}, \leanid{latentHeatFusionSlot},
-  \leanid{hexagonalCmFactors}, \leanid{birefringenceDeltaNSlot},
-  \leanid{dynamicViscositySlot}.
+  \leanid{birefringenceDeltaNSlot}, \leanid{dynamicViscositySlot}
+  \emph{(see module for full list)}.
 
 \item[\hypertarget{lean:outside-molecular}{Outside molecular witness}]
   \leanid{OutsideMolecularWitness} in
@@ -2118,45 +2592,93 @@ Machine-checked Lean for this note: \texttt{lake build paper\_nucleon\_binding} 
 \item[\hypertarget{lean:nuclear-spectra}{Nuclear spectra module}]
   \leanfile{Hqiv/Physics/NuclearAndAtomicSpectra.lean}.
 
-\item[\hypertarget{lean:hqiv-nuclei}{Isotope valley scaffold}]
-  \leanfile{Hqiv/Physics/HQIVNuclei.lean}.
+\item[\hypertarget{lean:hqiv-nuclei-valley-scaffold}{Isotope valley scaffold}]
+  \leanfile{Hqiv/Physics/HQIVNuclei.lean} ---
+  \leanid{valleyCount}, \leanid{valleys\_are\_additive}.
 
 \end{description}
+\end{sloppypar}
 
 \section{Witness scripts and JSON exports}
 \label{app:scripts}
 
-\begin{description}[leftmargin=2.5em,style=nextline]
-\item[\nolinkurl{scripts/hqiv_isotope_stability_halflife.py}]
-  Stability readout, half-life, outside support; writes
-  \path{data/isotope_stability_halflife.json}.
-\item[\nolinkurl{scripts/hqiv_dynamic_beta_isotope.py}]
-  Three-ledger $\beta$ channel chart; \path{data/dynamic_beta_isotope_chart.json}.
-\item[\nolinkurl{scripts/hqiv_isotope_pdg_benchmark.py}]
-  Light-panel benchmark table; \path{data/isotope_pdg_benchmark.json}.
-\item[\nolinkurl{scripts/hqiv_nuclear_outside_temperature_dynamics.py}]
-  Outside $T(\xi)$ and gravity binding stack.
-\item[\nolinkurl{scripts/hqiv_bond_state_network.py}]
-  Molecular bond-state network; $\mathrm{T_2}$, $\mathrm{T_2O}$ hosts;
-  \path{molecular_host_phi_epsilon}.
-  Fano/Hopf bridge energy witness.
-\item[\nolinkurl{hqiv_lab/}]
-  Chem \& materials lab package: \texttt{MaterialsLab}, derived allotropes,
-  \texttt{hqiv-lab} CLI; tests in \path{hqiv_lab/tests/}.
-  Install: \texttt{pip install -e .} from repo root (\path{pyproject.toml}).
-\item[\nolinkurl{scripts/hqiv_phase_geometry_density.py}]
-  Legacy bridge: calls \path{hqiv_lab} for unit cells; $\rho_{\mathrm{curv}}$ melt readout.
-\item[\nolinkurl{scripts/hqiv_thermodynamic_phase_from_tp.py}]
-  $(T,P)\rightarrow$ derived phase; bulk scales use derived $\rho_{\mathrm{curv}}$.
-\item[\nolinkurl{scripts/hqiv_homogeneous_curvature_feedback.py}]
-  $B_{\mathrm{hom}}+\delta B$ self-consistent demo (optional chart path).
-\item[\nolinkurl{scripts/hqiv_phase_material_response.py}]
+\begin{sloppypar}
+\footnotesize
+\begin{description}[leftmargin=1.25em,labelwidth=!,style=nextline,itemsep=0.35em]
+\item[\hypertarget{script:isotope-halflife}{Isotope stability half-life script}]
+  \scriptfile{hqiv_isotope_stability_halflife.py} ---
+  stability readout, half-life, outside support;
+  \datafile{isotope_stability_halflife.json}.
+\item[\hypertarget{script:dynamic-beta}{Dynamic beta isotope script}]
+  \scriptfile{hqiv_dynamic_beta_isotope.py} ---
+  three-ledger $\beta$ channel chart;
+  \datafile{dynamic_beta_isotope_chart.json}.
+\item[\hypertarget{script:isotope-pdg}{Isotope PDG benchmark script}]
+  \scriptfile{hqiv_isotope_pdg_benchmark.py} ---
+  light-panel benchmark table;
+  \datafile{isotope_pdg_benchmark.json}.
+\item[\hypertarget{script:outside-temp}{Outside temperature dynamics script}]
+  \scriptfile{hqiv_nuclear_outside_temperature_dynamics.py} ---
+  outside $T(\xi)$ and gravity binding stack.
+\item[\hypertarget{script:curvature-binding}{Curvature binding program script}]
+  \scriptfile{hqiv_curvature_binding_program.py} ---
+  preferred $G_{\mathrm{eff}}$ + shared-well binding witness;
+  \datafile{curvature_binding_program.json}.
+\item[\hypertarget{script:binding-energy-program}{Binding energy program script}]
+  \scriptfile{hqiv_binding_energy_program.py} ---
+  unified constructive + post-$\alpha$ panel;
+  \datafile{binding_energy_program.json}.
+\item[\hypertarget{script:nuclear-caustic}{Nuclear caustic binding script}]
+  \scriptfile{hqiv_nuclear_caustic_binding.py} ---
+  diagnostic outside-caustic layer stack (not PDG-comparable totals).
+\item[\hypertarget{script:inside-outside}{Inside/outside binding script}]
+  \scriptfile{hqiv_nuclear_inside_outside_binding.py}.
+\item[\hypertarget{script:dynamic-pn}{Dynamic nucleon p/n script}]
+  \scriptfile{hqiv_dynamic_nucleon_pn.py}.
+\item[\hypertarget{script:bond-state}{Bond-state network script}]
+  \scriptfile{hqiv_bond_state_network.py} ---
+  molecular bond-state network; $\mathrm{T_2}$, $\mathrm{T_2O}$ hosts.
+\item[\hypertarget{script:hqiv-lab}{Materials lab package (\texttt{hqiv\_lab})}]
+  derived allotropes, \texttt{hqiv-lab} CLI; install via \texttt{pip install -e .}.
+\item[\hypertarget{script:phase-geometry}{Phase geometry density script}]
+  \scriptfile{hqiv_phase_geometry_density.py} ---
+  $\rho_{\mathrm{curv}}$ melt readout via \texttt{hqiv\_lab}.
+\item[\hypertarget{script:phase-material}{Phase material response script}]
+  \scriptfile{hqiv_phase_material_response.py} ---
   $n$, $\varepsilon_r$, $k_{\mathrm{th}}$, $C_p$, $L_f$, $\eta$, $\Delta n$.
-\item[\nolinkurl{scripts/test_hqiv_phase_material_response.py}]
-  H$_2$O ice/liquid response witnesses.
+\item[\hypertarget{script:condensed-audit}{Condensed phase audit script}]
+  \scriptfile{hqiv_condensed_phase_audit.py} ---
+  GMTKN55 panel @ species melt $T$; \datafile{hqiv_lab_witnesses.json}.
+\item[\hypertarget{script:thermo-phase}{Thermodynamic phase script}]
+  \scriptfile{hqiv_thermodynamic_phase_from_tp.py}.
+\item[\hypertarget{script:homogeneous-feedback}{Homogeneous curvature feedback script}]
+  \scriptfile{hqiv_homogeneous_curvature_feedback.py}.
+\item[\hypertarget{script:contact-network}{Curvature contact network script}]
+  \scriptfile{hqiv_curvature_contact_network.py}.
+\item[\hypertarget{script:bbn-integrator}{BBN integrator script}]
+  \scriptfile{hqiv_bbn_integrator.py} ---
+  \datafile{bbn_integrator.json}.
+\item[\hypertarget{script:bbn-condition}{BBN condition-decay script}]
+  \scriptfile{hqiv_bbn_condition_decay.py}.
+\item[\hypertarget{script:bbn-tables}{BBN paper tables script}]
+  \scriptfile{hqiv_bbn_paper_tables.py} ---
+  \datafile{bbn_paper_tables.json}.
+\item[\hypertarget{script:integrator-audit}{Integrator Lean audit script}]
+  \scriptfile{hqiv_integrator_lean_audit.py} ---
+  \datafile{integrator_lean_audit.json}.
+\item[\hypertarget{script:decay-chain}{Decay-chain calculator}]
+  \scriptfile{hqiv_decay_chain.py}, \scriptfile{hqiv_decay_calculator.py} ---
+  nuclear $\beta^\pm$, EC/$\beta^+$ (post-$\alpha$ local contact), and two-$\alpha$
+  breakup on the canonical binding spine.
+\item[\hypertarget{script:post-alpha-binding}{Post-$\alpha$ binding program}]
+  \scriptfile{hqiv_post_alpha_binding_program.py},
+  \scriptfile{hqiv_post_alpha_sphere_touching.py}.
+\item[\hypertarget{script:phase-material-test}{Phase material response tests}]
+  \scriptfile{test_hqiv_phase_material_response.py}.
 \end{description}
+\end{sloppypar}
 
-Run from repository root (see \path{papers/nucleon_binding/scripts/README.md}):
+Run from repository root (see bundled \texttt{scripts/README.md} in \texttt{scripts.zip}):
 \begin{verbatim}
 pip install -e .
 hqiv-lab H2O
@@ -2164,6 +2686,10 @@ hqiv-lab CH4 --json
 python3 scripts/hqiv_isotope_pdg_benchmark.py --qualify-em-tipping
 python3 scripts/hqiv_isotope_stability_halflife.py --A 1 --Z 0 \
   --qualify-em-tipping --lab-temperature-K 300 --gravity-stack full
+PYTHONPATH=scripts python3 scripts/hqiv_bbn_integrator.py
+PYTHONPATH=scripts python3 scripts/hqiv_bbn_paper_tables.py
+PYTHONPATH=scripts python3 scripts/hqiv_decay_calculator.py nuclear --seed Z4A7 --max-depth 3
+PYTHONPATH=scripts python3 scripts/hqiv_decay_calculator.py nuclear --seed Z4A8 --max-depth 2
 \end{verbatim}
 
 \bibliographystyle{plain}

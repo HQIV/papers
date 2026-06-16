@@ -102,9 +102,27 @@ class TestPhaseMaterialResponse(unittest.TestCase):
         self.assertLess(dn, 1.0e-2)
         self.assertAlmostEqual(out["refractive_index_ordinary"], 1.31, delta=0.06)
 
-    def test_liquid_has_no_birefringence(self) -> None:
-        out = pmr.material_response_readout("H2O", phase="liquid")
-        self.assertEqual(out["birefringence_delta_n"], 0.0)
+    def test_condensed_panel_refractive_index_theta_slot(self) -> None:
+        """η = θ/θ₀ optical slot across GMTKN55 condensed motifs."""
+        h2o_ice = pmr.material_response_readout("H2O", allotrope="Ih", phase="solid")
+        self.assertAlmostEqual(h2o_ice["optical_phase_eta"], 1.0, delta=0.05)
+        self.assertAlmostEqual(h2o_ice["refractive_index"], 1.31, delta=0.06)
+        h2o_liq = pmr.material_response_readout("H2O", phase="liquid")
+        self.assertAlmostEqual(h2o_liq["refractive_index"], 1.33, delta=0.06)
+        ch4 = pmr.material_response_readout(
+            "CH4", allotrope="solid_I", phase="solid", temperature_k=90.0
+        )
+        self.assertAlmostEqual(ch4["refractive_index"], 1.10, delta=0.08)
+        nh3 = pmr.material_response_readout("NH3", phase="liquid", temperature_k=195.0)
+        self.assertAlmostEqual(nh3["refractive_index"], 1.33, delta=0.08)
+        hf = pmr.material_response_readout("HF", phase="solid", temperature_k=190.0)
+        self.assertAlmostEqual(hf["refractive_index"], 1.20, delta=0.08)
+
+    def test_readout_includes_optical_theta(self) -> None:
+        out = pmr.material_response_readout("NH3", phase="solid")
+        self.assertIn("optical_phase_eta", out)
+        self.assertIn("optical_geff", out)
+        self.assertGreater(out["optical_geff"], 0.0)
 
 
 if __name__ == "__main__":

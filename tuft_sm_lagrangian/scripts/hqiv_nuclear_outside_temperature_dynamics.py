@@ -601,6 +601,21 @@ def cluster_mass_mev_nuclear(
     return float(A) * m_nucleon - total
 
 
+def binding_q_network_at_xi(
+    m_shell: int,
+    m_nucleon: float,
+    xi: float,
+    *,
+    c: float = 1.0,
+) -> tuple[float, float, float]:
+    """Light-nucleus Q from shared-well network + spin–magnetic residual at ξ."""
+    _ = m_nucleon
+    Q_D = bbn.cluster_binding_network_mev(m_shell, 2, c, Z=1, xi=xi)
+    Q_4 = bbn.cluster_binding_network_mev(m_shell, 4, c, Z=2, xi=xi)
+    Q_3 = bbn.cluster_binding_network_mev(m_shell, 3, c, Z=2, xi=xi)
+    return Q_D, Q_4, Q_3
+
+
 def binding_q_hybrid_at_xi(
     m_shell: int,
     m_nucleon: float,
@@ -608,14 +623,20 @@ def binding_q_hybrid_at_xi(
     *,
     xi_lock: float = XI_LOCKIN,
     c: float = 1.0,
+    use_network_spine: bool = True,
 ) -> tuple[float, float, float]:
     """
-    Nuclear inside/outside shape at ξ with lock-in amplitudes anchored to the
-    legacy BBN valley witness at ``ξ_lock`` (proton anchor unchanged).
+    Nuclear binding Q at ξ with lock-in amplitudes anchored to the network spine
+    (default) or legacy valley witness when ``use_network_spine=False``.
     """
-    Q_n = binding_q_nuclear_at_xi(m_shell, m_nucleon, xi, c=c)
-    Q_nl = binding_q_nuclear_at_xi(m_shell, m_nucleon, xi_lock, c=c)
-    Q_ll = bbn.lockin_binding_q(m_nucleon, m_shell, c)[:3]
+    if use_network_spine:
+        Q_n = binding_q_network_at_xi(m_shell, m_nucleon, xi, c=c)
+        Q_nl = binding_q_network_at_xi(m_shell, m_nucleon, xi_lock, c=c)
+        Q_ll = bbn.lockin_binding_q_network(m_nucleon, m_shell, c, xi=xi_lock)[:3]
+    else:
+        Q_n = binding_q_nuclear_at_xi(m_shell, m_nucleon, xi, c=c)
+        Q_nl = binding_q_nuclear_at_xi(m_shell, m_nucleon, xi_lock, c=c)
+        Q_ll = bbn.lockin_binding_q(m_nucleon, m_shell, c)[:3]
     out: list[float] = []
     for qn, qnl, qll in zip(Q_n, Q_nl, Q_ll):
         if abs(qnl) < 1e-30:

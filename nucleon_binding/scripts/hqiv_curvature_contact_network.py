@@ -11,6 +11,8 @@ Network rule (single engine for molecules → liquids → solids):
   **Contacts** (typed, parameter-free):
     • cluster_deficit     — node self; lowers m_eff → dresses vev down (D, T, valley)
     • covalent_bond       — attractive edge; G_eff(θ) outside closure
+    • ionic_bond          — lattice ion pair; ionicBondSurplus joint−separated seas
+    • ion_solvation       — aqueous ion–H₂O hydration contact
     • steric_repulsion    — repulsive edge (peripheral H–H); adds curvature mass back
     • hyperclosure        — multi-bond graph closure (≥2 bonds)
     • periodic_image      — lattice repeat (solid/liquid scaffold)
@@ -57,6 +59,8 @@ STRONG_FRAC = lean.STRONG_CHANNEL_FRACTION
 class ContactKind(str, Enum):
     CLUSTER_DEFICIT = "cluster_deficit"
     COVALENT_BOND = "covalent_bond"
+    IONIC_BOND = "ionic_bond"
+    ION_SOLVATION = "ion_solvation"
     STERIC_REPULSION = "steric_repulsion"
     HYPERCLOSURE = "hyperclosure"
     PERIODIC_IMAGE = "periodic_image"
@@ -188,10 +192,27 @@ def _bond_contacts(
         centre_bond_count[bond.frag_i] = centre_bond_count.get(bond.frag_i, 0) + 1
         centre_bond_count[bond.frag_j] = centre_bond_count.get(bond.frag_j, 0) + 1
 
+    import hqiv_ionic_bond_network as ibn
+
     for bond in bonds:
         a = nodes[bond.frag_i]
         b = nodes[bond.frag_j]
         dw = 1.0 / (1.0 + bond.distance_angstrom / BOHR_RADIUS_ANGSTROM)
+        kind = ibn.classify_bond_kind(molecule_name, a.z_nuclear, b.z_nuclear)
+        if kind == ContactKind.IONIC_BOND:
+            cation, anion = ibn.ionic_fragments_from_neutral_pair(
+                a.label, a.z_nuclear, a.electrons,
+                b.label, b.z_nuclear, b.electrons,
+            )
+            out.append(
+                ibn._ionic_bond_contact(
+                    nodes,
+                    bond,
+                    cation=cation,
+                    anion=anion,
+                )
+            )
+            continue
         heavy = a if a.mass_number >= b.mass_number else b
         n_centre = centre_bond_count.get(heavy.index, 1)
         z_centre = heavy.z_nuclear if heavy.mass_number >= b.mass_number else None
@@ -530,7 +551,7 @@ def build_network_from_molecule(
 
     coordination: dict[int, int] = {n.index: 0 for n in nodes}
     for c in contacts:
-        if c.kind == ContactKind.COVALENT_BOND and c.j is not None:
+        if c.kind in (ContactKind.COVALENT_BOND, ContactKind.IONIC_BOND, ContactKind.ION_SOLVATION) and c.j is not None:
             coordination[c.i] = coordination.get(c.i, 0) + 1
             coordination[c.j] = coordination.get(c.j, 0) + 1
         if c.kind == ContactKind.STERIC_REPULSION:
@@ -572,7 +593,7 @@ def build_network_from_molecule(
     contacts = [
         c
         for c in contacts
-        if c.kind != ContactKind.COVALENT_BOND
+        if c.kind not in (ContactKind.COVALENT_BOND, ContactKind.IONIC_BOND)
     ]
     contacts.extend(
         _bond_contacts(
