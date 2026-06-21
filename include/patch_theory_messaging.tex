@@ -2,6 +2,9 @@
 % From papers/*.tex:     \input{../include/patch_theory_messaging.tex}
 % Papers with a Lean module index may define \leanCertAnomaly, \leanCertTopology,
 % and \leanCertStrongColor before this include; otherwise they default to empty.
+% Strong-closure notes may define \newcommand{\patchBriefMode}{} before this include
+% for a shorter gauge bullet list. Define \newcommand{\patchOmitZeta}{} to drop the
+% zeta pointer / dictionary (appropriate when zeta is not in the note's proof cone).
 
 \providecommand{\leanCertAnomaly}{}
 \providecommand{\leanCertTopology}{}
@@ -35,6 +38,47 @@ field theory; it is not the definition of the theory.
 The patch QFT has no hidden continuum gauge sector whose consistency must be
 assumed.  The relevant gauge and topological statements are finite statements on
 the same carrier that produces the numerical readouts:
+\ifdefined\patchBriefMode
+\begin{itemize}[nosep]
+\item \textbf{Anomaly cancellation.} For one Standard-Model generation
+($Q_L$, $u^c$, $d^c$, $L$, $e^c$, $\nu^c$), the patch trace identities give
+zero $U(1)_Y^3$, gravitational--$U(1)_Y$, $SU(3)_c^2U(1)_Y$,
+$SU(2)_L^2U(1)_Y$, and $SU(3)_c^3$ anomaly coefficients; the $SU(2)_L^3$
+coefficient vanishes because the weak doublet slot is pseudoreal.  Three
+generations are a finite $\mathrm{Fin}\,3$ label sum of the same cancelled
+one-generation block, not a fitted multiplicity\leanCertAnomaly.
+\item \textbf{Topological sector.} The patch abelian gauge datum has a single
+topological sector.  Instanton number, Pontryagin number, first Chern number, and
+$U(1)$ winding number vanish identically on patch data; the $\theta$ contribution
+is therefore $\theta$-independent; and abelian commutator obstructions vanish\leanCertTopology.
+\item \textbf{Non-abelian charts and holonomy.} Light-cone $\mathfrak{so}(8)$ Lie
+closure, G$_2\cup\{\Delta\}$ data, admissible holonomy on integrable Hopf shells,
+cyclic plaquette flatness, and weak/colour commutator certificates are discharged on
+the octonion carrier.  Matrix Wilson transport and Hopf-shell plaquette witnesses
+\leanPatchHolonomyWitness; Wilson--kinetic equivalence
+\leanPatchWilsonKinetic.  Partial / open: Haar measure on rotated charts
+\leanPatchHaarMeasure; full strong-interacting discrete-action Poincaré
+\leanPatchDiscretePoincare.  Optional strong-colour build: global Gell-Mann bracket
+law on the finite $\mathfrak{su}(3)$ chart\leanCertStrongColor.
+\item \textbf{Rapidity phase and Lorentz invariance.} The null-lattice carrier
+charts into $1{+}1$ Minkowski space by rapidity $\Lambda(\eta)(1,1)$; rapidity
+addition is equivariant under $\mathrm{boostMatrix11}$, the Minkowski pairing is
+bilinearly invariant, and the polar-angle
+\ifdefined\patchOmitZeta
+phase
+\else
+/ \texttt{zetaHQIVTerm} phase
+\fi
+is unchanged
+when $\phi$ transforms as a Lorentz scalar.
+\item \textbf{Spatial rotations and directional readouts.} Orthogonal $O(3)$
+rotations on $\mathrm{Fin}\,3$ preserve Euclidean inner products,
+$\|{\mathbf r}\times{\mathbf v}\|^2$, and the spatial block of \texttt{minkowskiSq4}
+\leanPatchSpatialRotation.  Full patch Lorentz is rapidity plus this spatial bundle
+(witness \leanid{full_lorentz_closure_discharged}).  Continuum interacting QFT /
+Wightman theorems are not claimed.
+\end{itemize}
+\else
 \begin{itemize}[nosep]
 \item \textbf{Anomaly cancellation.} For one Standard-Model generation
 ($Q_L$, $u^c$, $d^c$, $L$, $e^c$, $\nu^c$), the patch trace identities give
@@ -80,11 +124,18 @@ flat chart is the rapidity bundle plus this spatial bundle
 (witness \leanid{full_lorentz_closure_discharged}).  Continuum interacting QFT /
 Wightman theorems are not claimed.
 \end{itemize}
+\fi
 
 \paragraph{External continuum theorems not required.}
 Several textbook continuum constructions are \emph{not} load-bearing prerequisites
 because the patch carrier already fixes the traces, holonomy transport, topological
-charges, and sector zeta bodies used for predictions: BPST instanton classification
+charges, and
+\ifdefined\patchOmitZeta
+finite spectral readout bodies
+\else
+sector zeta bodies
+\fi
+used for predictions: BPST instanton classification
 on a separate smooth four-manifold, Nielsen-style principal-bundle completeness on
 an external $C^\infty$ base, and path-integral measure choice on that base.  HQIV
 does not claim to re-prove those external theorems; it proves the finite patch
@@ -93,6 +144,16 @@ is why familiar QFT language can appear in the comparison layer while the
 predictions remain patch-level statements with fewer adjustable inputs than a
 continuum effective fit.
 
+\ifdefined\patchOmitZeta
+% (zeta paragraph omitted --- not load-bearing for this note's proof cone)
+\else
+\ifdefined\patchBriefMode
+\paragraph{Sector zeta and classical $\zeta$ (pointer).}
+Sector zeta bodies and \texttt{zetaHQIVTerm} phase on Hopf shells are discharged on
+the patch carrier in the TUFT synthesis \cite{hqiv-tuft-sm-lagrangian-paper};
+classical $\zeta(s)$ as an SO(4) projection readout is developed separately in
+\cite{hqiv-s3-zeta-so4-paper}.
+\else
 \paragraph{Projection geometry and the classical $\zeta$ dictionary (2026-06).}
 HQIV uses \emph{zeta} in two distinct, now formally separated roles:
 \begin{itemize}[nosep]
@@ -120,3 +181,5 @@ they are not load-bearing continuum extensions of the patch.  Formal mathematica
 notes may include only the readout-dictionary paragraph
 (\texttt{readout\_dictionary\_messaging.tex}) rather than this full contract when
 the manuscript is projection geometry rather than patch phenomenology.
+\fi
+\fi

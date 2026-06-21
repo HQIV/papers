@@ -1,55 +1,59 @@
-# Reproducer scripts — HEP decay readout
+# HEP decay readout reproducers
 
-This folder is a self-contained, source-only import closure for the paper-cited
-HQIV-LEAN scripts. Run from the repository root when working in HQIV-LEAN, or put
-this folder on `PYTHONPATH` when using the paper repo by itself.
-
-For paper reproducibility, the scripts, comparison data, and generated table are
-also bundled in `papers/hep_decay_readout/scripts.zip`; checksums are in
-`papers/hep_decay_readout/scripts/MANIFEST.sha256`.
-
-## Entry scripts (paper-cited)
-
-| Script | Reproduces | Output |
-| --- | --- | --- |
-| `hqiv_hep_decay_readout.py` | Mass gaps, CKM slots, EM contact factor, OZI weights | inline / import |
-| `hqiv_hep_decay_chain.py` | Unified HEP decay graph; quarkonium hadronic pooling | `data/decay_chain_readout.json` |
-| `hqiv_hep_multichannel_expansion.py` | Programmatic charm/bottom channel expansion | channel lists |
-| `hqiv_hep_production_readout.py` | Facility kinematics and production-rate proxies | inline |
-| `hqiv_hep_decay_sigma.py` | Monte Carlo $\sigma$ propagation on benchmark rows | sigma fields in JSON |
-| `hqiv_hep_decay_benchmark.py` | Lean-aligned calculator vs comparison layer | `data/hep_decay_benchmark.json` |
-| `hqiv_spine_gap_closure_terms.py` | Exact spine-derived candidate terms for residual gaps | `data/spine_gap_closure_terms.json` |
-| `export_hep_branching_table.py` | LaTeX table for paper (Table branch. comparison) | `papers/hep_decay_readout/generated/branching_comparison.tex` |
-| `hqiv_decay_calculator.py` | CLI: `hep`, `nuclear`, `benchmark`, `discharge` | terminal + JSON |
-
-## Unit tests
-
-```bash
-python3 scripts/test_hqiv_hep_decay_readout.py
-python3 scripts/test_hqiv_hep_decay_chain.py
-python3 scripts/test_hqiv_hep_multichannel_expansion.py
-python3 scripts/test_hqiv_hep_decay_benchmark.py
-python3 scripts/test_hqiv_decay_calculator.py
-```
+**100 Python modules** (stdlib only — no ``pip install``). Imports are **local**
+``hqiv_*.py`` files in this folder, closed by import tracing from
+``hqiv_hep_readout_pipeline.py``.
 
 ## Quick start
 
 ```bash
-python3 scripts/hqiv_hep_decay_benchmark.py --json-out data/hep_decay_benchmark.json
-python3 scripts/hqiv_spine_gap_closure_terms.py
-PYTHONPATH=scripts python3 scripts/export_hep_branching_table.py
-cd papers/hep_decay_readout && pdflatex hqiv_hep_decay_readout_from_multichannel.tex
+cd scripts   # this directory (or unzip scripts.zip here)
+export PYTHONPATH=.
+
+# Regenerate all paper numerics + generated/*.tex (needs full HQIV-LEAN tree for TeX paths)
+python3 hqiv_hep_readout_pipeline.py paper --strict
+
+# Or explore one facility / parent
+python3 hqiv_hep_readout_pipeline.py run --facility SPS_p_beam_400GeV --parent B_plus
 ```
 
-## Inputs and comparison layer
+## What is reproduced
 
-- Proton lock-in anchor $938.272\,\mathrm{MeV}$ is a lapse-readout comparison target only.
-- PDG / facility reference branching, masses, and production fractions appear in `data/hep_decay_observations.json` as **comparison rows only**---never as HQIV prediction inputs.
-- Open-flavour topology seeds are unit weighted (`openFlavourTopologySeedWeight = 1`); no relative template priors are bundled.
-- Gap-closure candidates in `spine_gap_closure_terms.json` are exact Lean-spine
-  factors, not applied benchmark weights.
-- Upstream mass ladder: `hqiv-tuft-sm-lagrangian-paper` (Zenodo [`10.5281/zenodo.20601215`](https://doi.org/10.5281/zenodo.20601215)).
+| Output | Role |
+|--------|------|
+| ``data/hep_decay_benchmark.json`` | 81 structural passes + 567 readout rows |
+| ``data/spine_discharge_law.json`` | Unified spine product registry |
+| ``../generated/*.tex`` | Paper tables (branching, EW mass) |
+| ``data/hep_readout_pipeline_manifest.json`` | Step log |
 
-## Citation
+**Comparison-only** inputs (never fed into predictions): ``data/hep_decay_observations.json``,
+``data/hadron_published_masses.json``.
 
-Steven Ettinger Jr., *Heavy-Flavour Decay Chains from HQIV Three-Ledger Readout* (2026). Bib key `hqiv-hep-decay-paper` in `papers/references.bib`.
+**Catalog:** ``data/hadron-catalog.js`` (hadron valence content for mass readout).
+
+## PDF
+
+Numerics are reproducible from this folder inside the HQIV-LEAN repository:
+
+```bash
+cd ../..   # repository root (contains lakefile.toml)
+latexmk -pdf papers/hep_decay_readout/hqiv_hep_decay_readout_from_multichannel.tex
+```
+
+Lean certificates: ``lake build HQIVPhysics`` (optional for Python numerics).
+
+## Verify
+
+Fast smoke test (< 30 s, frozen benchmark contract):
+
+```bash
+PYTHONPATH=. python3 -m unittest test_hqiv_hep_smoke -q
+```
+
+Full regression suite:
+
+```bash
+PYTHONPATH=. python3 -m unittest discover -s . -p 'test_hqiv_hep*.py' -q
+```
+
+See ``REPRODUCIBILITY.md`` for the one-command paper reproduction.

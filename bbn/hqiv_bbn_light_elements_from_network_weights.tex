@@ -8,14 +8,27 @@
 \usepackage[nameinlink,capitalise]{cleveref}
 \usepackage[final]{microtype}
 \setlength{\emergencystretch}{3em}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+\usepackage{xurl}
+\urlstyle{same}
+
+\newcommand{\fitbox}[1]{\begin{adjustbox}{max width=\linewidth,center}#1\end{adjustbox}}
 
 \newcommand{\etap}{\ensuremath{\eta_{\mathrm{paper}}}}
 \newcommand{\etaBBN}{\ensuremath{\eta_{\mathrm{BBN}}}}
 \newcommand{\HQIVbox}[1]{%
-  \medskip\noindent\fbox{\begin{minipage}{0.97\linewidth}\small\textbf{HQIV in five sentences.}\ #1\end{minipage}}\medskip}
+  \medskip
+  \noindent\setlength{\fboxsep}{6pt}%
+  \fbox{\begin{minipage}{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}
+  \sloppy\small\textbf{HQIV in five sentences.}\ #1
+  \end{minipage}}%
+  \medskip}
 
 \newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
-\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\nolinkurl{#1}}}
+\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\footnotesize\url{#1}}}
 \newcommand{\leanid}[1]{\nolinkurl{#1}}
 
 \title[BBN light elements from network weights]{Big-Bang Nucleosynthesis from HQIV Network Weights:\\
@@ -23,7 +36,7 @@ Lock-In $\eta$, Epoch Ladder, and Integrated Witnesses in the Lean Library}
 \author{Steven Ettinger Jr}
 \address{Independent Researcher}
 \email{steven@disregardfiat.tech}
-\date{Preprint v1 --- \today}
+\date{Published v1 --- Zenodo \href{https://doi.org/10.5281/zenodo.20723606}{10.5281/zenodo.20723606} (2026-06-16)}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{proposition}[theorem]{Proposition}
@@ -34,6 +47,8 @@ Lock-In $\eta$, Epoch Ladder, and Integrated Witnesses in the Lean Library}
 
 \begin{abstract}
 \noindent\textbf{Position in the publication chain.}
+Published Tier-2 \#8 (Zenodo
+DOI \href{https://doi.org/10.5281/zenodo.20723606}{10.5281/zenodo.20723606}).
 This is the eighth paper in the HQIV preprint series and the
 fifth Tier-2 closure note. Tier~0--1 fix the discrete spine
 \cite{ettinger2026hqiv,hqiv-lightcone-paper,hqiv-so8-paper,hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper,hqiv-thermo-arrow-paper};
@@ -255,7 +270,7 @@ $\mathcal{O}\propto \Delta\log\xi\times B_{\mathrm{curv}}(\xi)$, where
 $\xi=T_{\mathrm{Pl}}/T$ is the cosmological shell coordinate
 \cite{hqiv-baryogenesis-paper}.  The Hopf--Beltrami mass bridge packages the
 matter slot as $\kappa_6(\xi)=\eta_{\mathrm{local}}\,B_{\mathrm{curv}}(\xi)\,
-\gamma\,C_2(\xi)$ (\leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean}).
+\gamma\,C_2(\xi)$ (\hyperref[lean:bbn-dynamic-c2]{Hopf--Beltrami mass bridge}).
 On the hot BBN chart $B_{\mathrm{curv}}$ is nearly flat while lapse
 concentration $C_2(\xi)$ grows with $\xi$; the anchor-normalized ratio
 $\kappa_{6,\mathrm{ref}}/\kappa_6(T)$ therefore acts as a \emph{local lapse
@@ -273,16 +288,16 @@ release rather than a fitted MeV cutoff.
 \paragraph{Definitions.}
 For $T\le T_{\mathrm{bn}}(\eta)=\gamma\,w_{\mathrm{strong}}\,T_{\mathrm{freeze}}(\eta)$,
 \[
-w_{C_2}(T)=\gamma\,w_{\mathrm{strong}}\,\frac{Q_D^{\mathrm{eff}}(T)}{Q_{np}},
-\qquad
-f_{C_2}(T)=\left(\frac{\kappa_{6,\mathrm{ref}}}{\kappa_6(T)}\right)^{w_{C_2}(T)},
-\qquad
-\kappa_6(T)=\etap\,B_{\mathrm{curv}}(\xi(T))\,\gamma\,C_2(\xi(T)).
+\begin{aligned}
+w_{C_2}(T) &= \gamma\,w_{\mathrm{strong}}\,\frac{Q_D^{\mathrm{eff}}(T)}{Q_{np}}, \\
+f_{C_2}(T) &= \left(\frac{\kappa_{6,\mathrm{ref}}}{\kappa_6(T)}\right)^{w_{C_2}(T)}, \\
+\kappa_6(T) &= \etap\,B_{\mathrm{curv}}(\xi(T))\,\gamma\,C_2(\xi(T)).
+\end{aligned}
 \]
 Lean names: \leanid{bbnDynamicC2BottleneckT\_MeV},
 \leanid{bbnDynamicC2LapseExponent},
 \leanid{bbnDynamicC2OpportunitySuppression}
-(\leanfile{Hqiv/Physics/DynamicBBNBaryogenesis.lean}).
+(\hyperref[lean:bbn-dynamic-c2]{DynamicBBNBaryogenesis}).
 Multiplying opportunity by raw $\kappa_6$ at low $T$ \emph{over-suppresses}
 $D/H$; the inverse lapse ratio is the certified dynamic-$C_2$ readout.
 
@@ -324,17 +339,19 @@ Coc et al.\ comparison \cite{coc2015} & $(2.53\pm0.04)\times10^{-5}$ & $0.244$ \
 \subsection{Faithful stoichiometric integrator}
 \label{sec:faithful-integrator}
 
-The recommended reproduction path is
-\texttt{scripts/hqiv\_bbn\_integrator.py}, mirrored in Lean by
-\hyperref[lean:bbn-stoichiometric]{BBNStoichiometricIntegrator} and
-\texttt{data/bbn\_integrator.json}.  At $\eta_{\mathrm{paper}}=6.10\times
-10^{-10}$ it couples:
+{\sloppy
+The recommended reproduction path is \Cref{app:minimal-repro}
+(\texttt{hqiv\_bbn\_integrator.py}), mirrored in Lean by the
+\hyperref[lean:bbn-stoichiometric]{stoichiometric integrator module}
+and \texttt{data/bbn\_integrator.json}.
+At $\eta_{\mathrm{paper}}=6.10\times 10^{-10}$ it couples:
+}
 
 \begin{itemize}[leftmargin=2em]
 \item \textbf{Synthesis-window $D/H$.}
   Log-weighted integration from $1\,\mathrm{MeV}$ through the $C_2$
   bottleneck ($T_{\mathrm{bn}}\approx 0.14\,\mathrm{MeV}$), not the full
-  cold tail to $0.01\,\mathrm{MeV}$.  Below the ³He synthesis mid-gate
+  cold tail to $0.01\,\mathrm{MeV}$.  Below the $^3\mathrm{He}$ synthesis mid-gate
   ($T_{\mathrm{peak}}=0.18\,\mathrm{MeV}$, Lean
   \leanid{bbnHe3SynthesisMidMeV}) the log weights taper linearly
   $T_{\mathrm{bn}}\!\to\!T_{\mathrm{peak}}$ via
@@ -380,7 +397,7 @@ At the exported lock-in $\eta=6.10\times 10^{-10}$ (partition readout in
   $Q_D\approx 2.34\,\mathrm{MeV}$, $Q_{^4\mathrm{He}}\approx 7.03\,\mathrm{MeV}$,
   $Q_{^3\mathrm{He}}\approx 4.39\,\mathrm{MeV}$; post-$\alpha$ wells
   $Q_{^7\mathrm{Be}}\approx 14.9\,\mathrm{MeV}$,
-  $Q_{^7\mathrm{Li}}\approx 14.4\,\mathrm{MeV}$ (⁷Be deeper than ⁷Li).
+  $Q_{^7\mathrm{Li}}\approx 14.4\,\mathrm{MeV}$ ($^7\mathrm{Be}$ deeper than $^7\mathrm{Li}$).
 \item Integrated window $Y_p\approx 0.247$ lies in the Cooke et al.\ band
   checked in Lean (\hyperref[lean:bbn-yp-band]{freeze-out $Y_p$ band witness}).
 \item Integrated $Y_p$ is within $1\%$ of the freeze-out partition value
@@ -491,7 +508,7 @@ The model $D/H\approx 2.51\times10^{-5}$ lies within $\sim 0.5\sigma$ of the Coc
 semi-analytic anchor $(2.53\pm0.04)\times10^{-5}$ and the high-precision
 deuterium measurements of Cooke et al.\ \cite{cooke2014,cooke2018}.  The
 log-weight tail below $T_{\mathrm{peak}}=0.18\,\mathrm{MeV}$ (shared with the
-³He synthesis mid-gate) closes the prior $\sim 6\%$ undershoot that arose from
+$^3\mathrm{He}$ synthesis mid-gate) closes the prior $\sim 6\%$ undershoot that arose from
 treating the synthesis window as a hard floor at $0.15\,\mathrm{MeV}$.  Recent
 ``high-$D$'' interstellar sightlines and galactic chemical evolution (GCE)
 depletion corrections remain an active comparison layer: HQIV documents offsets
@@ -535,7 +552,10 @@ the table is for external calibration only.
 \caption{Faithful integrator abundances vs.\ $\eta_{10}$
 (\texttt{bbn\_paper\_tables.json}).}
 \label{tab:eta-sweep}
-\begin{tabular}{ccccc}
+\fitbox{%
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lcccc@{}}
 \toprule
 $\eta_{10}$ & $Y_p$ & $D/H$ & $^3\mathrm{He}/H$ & $^7\mathrm{Li}/H$ \\
 \midrule
@@ -547,7 +567,7 @@ $6.2$ & $0.241$ & $2.43\times10^{-5}$ & $9.9\times10^{-6}$ & $2.45\times10^{-10}
 $6.3$ & $0.238$ & $2.35\times10^{-5}$ & $9.7\times10^{-6}$ & $2.36\times10^{-10}$ \\
 $6.4$ & $0.235$ & $2.27\times10^{-5}$ & $9.5\times10^{-6}$ & $2.28\times10^{-10}$ \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 \section{Comparison layer: Coc et al.\ semi-analytics}
@@ -613,75 +633,76 @@ in the body. All modules are in the \texttt{Hqiv.Physics} namespace unless
 noted.
 
 \begin{description}[leftmargin=2.5em,style=nextline]
-\item[\hypertarget{lean:bbn-umbrella}{BBN umbrella}]
+\footnotesize\sloppy
+\item \phantomsection\label{lean:bbn-umbrella}\textbf{BBN umbrella}
   \leanfile{Hqiv/Physics/BigBangNucleosynthesis.lean} ---
   Coc comparison defs; \leanid{bbn\_full\_vital\_readout}.
-\item[\hypertarget{lean:bbn-network}{Network from weights}]
+\item \phantomsection\label{lean:bbn-network}\textbf{Network from weights}
   \leanfile{Hqiv/Physics/BBNNetworkFromWeights.lean} ---
   Valley counts, $Y_p$, $D/H$, $\eta$ identity;
   \leanid{bbn\_network\_vital\_readout\_holds}.
-\item[\hypertarget{lean:bbn-epoch-evolution}{Epoch evolution}]
+\item \phantomsection\label{lean:bbn-epoch-evolution}\textbf{Epoch evolution}
   \leanfile{Hqiv/Physics/BBNEpochEvolution.lean} ---
   Shell ladder, epoch readout;
   \leanid{bbn\_epoch\_vital\_readout\_holds}.
-\item[\hypertarget{lean:bbn-epoch-network}{Epoch network}]
+\item \phantomsection\label{lean:bbn-epoch-network}\textbf{Epoch network}
   \leanfile{Hqiv/Physics/BBNEpochNetwork.lean} ---
   Rate scaffold, cooling integration state.
-\item[\hypertarget{lean:bbn-witness}{BBN witness}]
+\item \phantomsection\label{lean:bbn-witness}\textbf{BBN witness}
   \leanfile{Hqiv/Physics/BBNWitness.lean} ---
   JSON-linked $Y_p$ witnesses;
   \leanid{bbn\_integrated\_witness\_vital\_holds}.
-\item[\hypertarget{lean:bbn-network-vital}{Network vital readout}]
+\item \phantomsection\label{lean:bbn-network-vital}\textbf{Network vital readout}
   \leanid{bbn\_network\_vital\_readout} in
   \leanfile{Hqiv/Physics/BBNNetworkFromWeights.lean}.
-\item[\hypertarget{lean:bbn-epoch-vital}{Epoch vital readout}]
+\item \phantomsection\label{lean:bbn-epoch-vital}\textbf{Epoch vital readout}
   \leanid{bbn\_epoch\_vital\_readout} in
   \leanfile{Hqiv/Physics/BBNEpochEvolution.lean}.
-\item[\hypertarget{lean:bbn-integrated-vital}{Integrated witness vital}]
+\item \phantomsection\label{lean:bbn-integrated-vital}\textbf{Integrated witness vital}
   \leanid{bbn\_integrated\_witness\_vital} in
   \leanfile{Hqiv/Physics/BBNWitness.lean}.
-\item[\hypertarget{lean:bbn-full-vital}{Full BBN vital readout}]
+\item \phantomsection\label{lean:bbn-full-vital}\textbf{Full BBN vital readout}
   \leanid{bbn\_full\_vital\_readout} in
   \leanfile{Hqiv/Physics/BigBangNucleosynthesis.lean}.
-\item[\hypertarget{lean:eta-bbn-eq}{BBN--$\eta$ identity}]
+\item \phantomsection\label{lean:eta-bbn-eq}\textbf{BBN--$\eta$ identity}
   \leanid{eta\_bbn\_eq\_eta\_paper} in
   \leanfile{Hqiv/Physics/BBNNetworkFromWeights.lean}.
-\item[\hypertarget{lean:bbn-mid-shell-order}{Mid-epoch shell ordering}]
+\item \phantomsection\label{lean:bbn-mid-shell-order}\textbf{Mid-epoch shell ordering}
   \leanid{bbnMidEpochShell\_gt\_lockinShell},
   \leanid{bbnMidEpochShell\_lt\_nowShell} in
   \leanfile{Hqiv/Physics/BBNEpochEvolution.lean}.
-\item[\hypertarget{lean:bbn-freezeout-temp}{Freeze-out temperature identity}]
+\item \phantomsection\label{lean:bbn-freezeout-temp}\textbf{Freeze-out temperature identity}
   \leanid{bbnInternalTemperatureMeV\_eq\_freezeout} in
   \leanfile{Hqiv/Physics/BBNEpochEvolution.lean}.
-\item[\hypertarget{lean:bbn-cluster-binding}{Cluster-binding alignment}]
+\item \phantomsection\label{lean:bbn-cluster-binding}\textbf{Cluster-binding alignment}
   \leanid{bbnDeuteronBindingQ\_eq\_clusterBinding},
   \leanid{bbnHelium4BindingQ\_eq\_clusterBinding} in
   \leanfile{Hqiv/Physics/BBNNetworkFromWeights.lean}.
-\item[\hypertarget{lean:bbn-yp-band}{Freeze-out $Y_p$ band witness}]
+\item \phantomsection\label{lean:bbn-yp-band}\textbf{Freeze-out $Y_p$ band witness}
   \leanid{bbnYpFreezeoutWitness\_in\_observed\_band} in
   \leanfile{Hqiv/Physics/BBNWitness.lean}.
-\item[\hypertarget{lean:bbn-yp-near-freeze}{Integrated--freeze-out proximity}]
+\item \phantomsection\label{lean:bbn-yp-near-freeze}\textbf{Integrated--freeze-out proximity}
   \leanid{bbnIntegratedYp\_near\_freezeout\_witness} in
   \leanfile{Hqiv/Physics/BBNWitness.lean}.
-\item[\hypertarget{lean:nuclei}{Nuclear valley scaffold}]
+\item \phantomsection\label{lean:nuclei}\textbf{Nuclear valley scaffold}
   \leanfile{Hqiv/Physics/HQIVNuclei.lean} ---
   Isotope valley counts feeding BBN weights.
-\item[\hypertarget{lean:eta-paper}{Lock-in $\eta$ paper module}]
+\item \phantomsection\label{lean:eta-paper}\textbf{Lock-in $\eta$ paper module}
   \leanfile{Hqiv/Physics/BaryogenesisEtaPaper.lean} (upstream).
-\item[\hypertarget{lean:derived-mass}{Derived nucleon mass}]
+\item \phantomsection\label{lean:derived-mass}\textbf{Derived nucleon mass}
   \leanfile{Hqiv/Physics/DerivedNucleonMass.lean} (upstream).
-\item[\hypertarget{lean:bbn-dynamic-c2}{BBN dynamic-$C_2$ pack}]
+\item \phantomsection\label{lean:bbn-dynamic-c2}\textbf{BBN dynamic-$C_2$ pack}
   \leanfile{Hqiv/Physics/DynamicBBNBaryogenesis.lean} ---
   \leanid{bbnDynamicC2OpportunitySuppression},
   \leanid{bbnShellReactionOpportunity\_dynamic\_integrator};
   \leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean} ---
   \leanid{tuftLapseConcentrationAtXi}, \leanid{tuftHopfKappa6AtXi}.
-\item[\hypertarget{lean:bbn-stoichiometric}{BBN stoichiometric integrator}]
+\item \phantomsection\label{lean:bbn-stoichiometric}\textbf{BBN stoichiometric integrator}
   \leanfile{Hqiv/Physics/BBNStoichiometricIntegrator.lean} ---
   synthesis-window $D/H$ with \leanid{bbnSynthesisDWindowTailGate},
   \leanid{bbnHe3SynthesisGate}, \leanid{bbnSynthesisStrongDepositionBoost},
   coupled neutron inventory; Python mirror \texttt{hqiv\_bbn\_integrator.py}.
-\item[\hypertarget{lean:bbn-outside-neutron}{Outside neutron dynamics}]
+\item \phantomsection\label{lean:bbn-outside-neutron}\textbf{Outside neutron dynamics}
   \leanfile{Hqiv/Physics/NuclearOutsideTemperatureDynamics.lean} ---
   free-neutron $\tau_n(T)$ modulator feeding the faithful integrator.
 \end{description}
@@ -690,7 +711,7 @@ noted.
 \label{app:flow}
 
 Reader-facing pseudocode for \texttt{hqiv\_bbn\_integrator.py} (Lean mirror:
-\hyperref[lean:bbn-stoichiometric]{BBNStoichiometricIntegrator}):
+\hyperref[lean:bbn-stoichiometric]{stoichiometric integrator module}):
 
 \begin{verbatim}
 INPUT: eta_paper, lock-in Q from composite trace, gamma, w_strong
@@ -721,7 +742,7 @@ From the repository root, a single command regenerates the primary witness:
 \begin{verbatim}
 PYTHONPATH=scripts python3 scripts/hqiv_bbn_integrator.py
 \end{verbatim}
-Paper tables (\Cref{tab:provider-decomposition,tab:eta-sweep,tab:sensitivity}):
+Paper tables (\Cref{tab:provider-decomposition}, \Cref{tab:eta-sweep}, \Cref{tab:sensitivity}):
 \begin{verbatim}
 PYTHONPATH=scripts python3 scripts/hqiv_bbn_paper_tables.py
 \end{verbatim}
@@ -752,15 +773,20 @@ python3 scripts/hqiv_integrator_lean_audit.py
 python3 -m unittest scripts.test_hqiv_bbn_integrator
 python3 -m unittest scripts.test_hqiv_dynamic_c2_bbn
 \end{verbatim}
-Outputs: \texttt{data/bbn\_integrator.json} (primary abundance witness),
-\texttt{data/bbn\_paper\_tables.json},
-\texttt{data/bbn\_witnesses.json},
-\texttt{data/dynamic\_bulk\_bbn\_v2.json},
-\texttt{data/integrator\_lean\_audit.json}. See
-\texttt{papers/bbn/scripts/README.md} for the patch-ontology disclaimer and
+\paragraph{Outputs.}
+\begin{itemize}[leftmargin=2em]
+\item \texttt{data/bbn\_integrator.json} --- primary abundance witness
+\item \texttt{data/bbn\_paper\_tables.json}
+\item \texttt{data/bbn\_witnesses.json}
+\item \texttt{data/dynamic\_bulk\_bbn\_v2.json}
+\item \texttt{data/integrator\_lean\_audit.json}
+\end{itemize}
+See \texttt{papers/bbn/scripts/README.md} for the patch-ontology disclaimer and
 input list.
 
 \bibliographystyle{plain}
+{\sloppy\small
 \bibliography{../references}
+}
 
 \end{document}

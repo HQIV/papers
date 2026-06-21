@@ -1,6 +1,6 @@
 # Nucleon Binding (Tier-2 #7)
 
-**Status:** Preprint v4 (2026-06-08), **next in Tier-2 Zenodo queue**  
+**Published:** Zenodo v1 — [`10.5281/zenodo.20711453`](https://doi.org/10.5281/zenodo.20711453) (2026-06-16)  
 **Bib key:** `hqiv-nucleon-binding-paper`
 
 *Binding Energy and the Weak Force from HQIV Composite-Trace Weights: Lock-In Masses, Three Ledgers, and Zero-Knob Half-Lives*
@@ -64,11 +64,13 @@ Machine-checked content builds under the `paper_nucleon_binding` Lake target in 
 lake build paper_nucleon_binding
 ```
 
-## Zenodo deposit checklist
+## Zenodo
 
-- [x] Self-contained `scripts.zip` with entry scripts, `hqiv_lab/`, witness JSON, and `MANIFEST.sha256`
-- [x] PDF metadata (`pdftitle`, `pdfauthor`, `pdfsubject`, `pdfkeywords`)
-- [x] Data & code availability section in the paper (§2, *Data and code availability*)
-- [x] Reader-first Lean/script links in body (appendix module index with hyperlinks)
-- [x] PDF layout pass (no overfull boxes; tables and appendix trimmed)
-- [ ] Deposit on Zenodo (nucleon binding is **next** in Tier-2 queue)
+| Field | Value |
+| --- | --- |
+| DOI | [`10.5281/zenodo.20711453`](https://doi.org/10.5281/zenodo.20711453) |
+| Community | [HQIV](https://zenodo.org/communities/hqiv) |
+| Files on record | PDF, `scripts.zip` |
+| License | CC-BY-4.0 |
+
+Downstream papers (`bbn/`, `hep_decay_readout/`) cite this record via `\cite{hqiv-nucleon-binding-paper}` in `../references.bib`.

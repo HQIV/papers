@@ -11,7 +11,7 @@ Cites the published TUFT+SM synthesis ([`10.5281/zenodo.20601215`](https://doi.o
 
 **This note is a capability demonstration, not the programme goal.** It is the seventh HQIV preprint and functions as a doorway to the shared discrete curvature-ratio spine. Baryon-asymmetry bookkeeping is one application of that spine (null-lattice curvature ratios, $G_2\cup\{\Delta\}\Rightarrow\mathfrak{so}(8)$, inner–outer Casimir balance, binding/contact networks). The primary artefacts are the Lean formalisation and the reproduction bundle.
 
-**On-ramps:** [disregardfiat.tech](https://disregardfiat.tech) (plain-language tour, clickable Lean anchors) · [github.com/HQIV/hqiv-lean](https://github.com/HQIV/hqiv-lean) (formal library) · companion BBN note (`hqiv-bbn-paper`).
+**On-ramps:** [disregardfiat.tech](https://disregardfiat.tech) (plain-language tour, clickable Lean anchors) · [github.com/HQIV/hqiv-lean](https://github.com/HQIV/hqiv-lean) (formal library) · companion BBN note ([`10.5281/zenodo.20723606`](https://doi.org/10.5281/zenodo.20723606), `hqiv-bbn-paper`).
 
 **Lock-in at $m=4$.** `referenceM = 4` is the first shell on the discrete ladder with enough octonion-mode budget to host the full sector spine ($N_{\mathrm{new}}(4)=40$ in `OctonionicLightCone.lean`; $G_2\cup\{\Delta\}\Rightarrow\mathfrak{so}(8)$ in `SO8ClosureAbstract.lean`). Baryogenesis $\Omega_k$ and $\eta$ normalisation are read at this same proton-lock-in row ($\xi_{\mathrm{lock}}=5$).
 
@@ -68,4 +68,4 @@ python3 scripts/bundle_baryogenesis_scripts.py
 | Files on record | PDF, `scripts.zip` |
 | License | CC-BY-4.0 |
 
-Downstream papers (`nucleon_binding/`, `bbn/`) cite this record via `\cite{hqiv-baryogenesis-paper}` in `../references.bib`.
+Downstream papers (`nucleon_binding/`, `bbn/`) cite this record via `\cite{hqiv-baryogenesis-paper}` in `../references.bib`. Nucleon binding is published at [`10.5281/zenodo.20711453`](https://doi.org/10.5281/zenodo.20711453) (`hqiv-nucleon-binding-paper`); BBN abundances at [`10.5281/zenodo.20723606`](https://doi.org/10.5281/zenodo.20723606) (`hqiv-bbn-paper`).

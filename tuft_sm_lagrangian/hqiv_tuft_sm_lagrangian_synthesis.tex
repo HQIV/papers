@@ -281,7 +281,7 @@ From the concrete octonion multiplication table \cite{baez2002octonions,Dixon199
 
 \section{Hopf-Shell Structures on the Discrete Octonion Carrier}
 
-Nielsen's TUFT establishes that the complex Hopf fibration \cite{hopf1931,Husemoller1994,Milnor1956,steenrod1951} is the natural topological setting for charge-quantised U(1) theories and that its nested shells ($S^1$, $S^3$, $S^5$, …) furnish the gauge factors of the Standard Model together with contact Beltrami spectra \cite{beltrami1892,Geiges2008} capable of generating the mass hierarchy from a single scale.
+Nielsen's TUFT establishes that the complex Hopf fibration \cite{hopf1931,Husemoller1994,Milnor1956,steenrod1951} is the natural topological setting for charge-quantised U(1) theories and that its nested shells ($S^1$, $S^3$, $S^5$, \ldots) furnish the gauge factors of the Standard Model together with contact Beltrami spectra \cite{beltrami1892,Geiges2008} capable of generating the mass hierarchy from a single scale. The classical tower is finite at the division-algebra ceiling (§\ref{sec:hopf-tower-ceiling}).
 
 In the HQIV framework these Hopf shells arise dynamically on the discrete octonion carrier. From the light-cone axiom the octonion-indexed null lattice carries a Fano incidence geometry. The three dominant shell structures that emerge (corresponding to the weak, strong, and hypercharge channels under the triality decomposition of $\mathfrak{so}(8)$) are the discrete realisations of Nielsen's Hopf shells. They are not inserted by hand; they are the integrable three-shell complex supported by the carrier combinatorics already fixed by the first axiom.
 
@@ -307,9 +307,81 @@ On each of these discrete shells we have well-defined contact data whose eigenva
     \node[below=0.45cm of disc, lbl, text width=5.2cm] {constructed witness + $\mathfrak{so}(8)$ Lie data on the octonion light cone; no external smooth carrier assumed};
     \node[below=0.45cm of cont, lbl, text width=5.2cm] {classifying-space necessity theorem on smooth principal bundles};
   \end{tikzpicture}
-  \caption{Discrete Hopf-shell chart on the octonion carrier (left) and Nielsen's nested Hopf fibration (right) carry the same contact-spectrum law; methodology differs (witness vs classification).}
+  \caption{Discrete Hopf-shell chart on the octonion carrier (left) and Nielsen's nested Hopf fibration (right) carry the same contact-spectrum law; methodology differs (witness vs classification). The nested fibration is \emph{finite} at the division-algebra ceiling (§\ref{sec:hopf-tower-ceiling}).}
   \label{fig:hopf-compare}
 \end{figure}
+
+\subsection{Finite Hopf tower, division algebras, and \texorpdfstring{$\mathrm{SO}(8)$}{SO(8)} versus \texorpdfstring{$\mathrm{SO}(10)$}{SO(10)}}
+\label{sec:hopf-tower-ceiling}
+
+Nielsen's synthesis invites a definitional reading of gauge structure: the U(1) factor is the circular symmetry of a twisted Hopf fibration; SU(2) is the $S^3$ layer of the same tower; SU(3) is the stabiliser data on the next shell once the already-embedded weak sector is subtracted; and the programme suggests that higher gauge factors might be obtained by continuing the same nested reduction on odd spheres $S^{2n+1}$ \cite{NielsenTUFT2026,hopf1931,Husemoller1994}. This subsection records a classical topological ceiling on that tower and states its consequence for grand-unification ans\"atze: on a Hopf-tower ontology, $\mathrm{Spin}(8)$ on the octonion carrier is the natural Lie-theoretic endpoint, whereas $\mathrm{SO}(10)$ is a second-stage packaging imported after the tower stops.
+
+\paragraph{Classical Hopf fibrations and division algebras.}
+The standard real Hopf fibrations are principal bundles
+\[
+  S^1 \hookrightarrow S^3 \twoheadrightarrow S^2,\qquad
+  S^3 \hookrightarrow S^7 \twoheadrightarrow S^4,\qquad
+  S^7 \hookrightarrow S^{15} \twoheadrightarrow S^8,
+\]
+with fibre $S^n$, total space $S^{2n+1}$, and base $S^{n+1}$ for $n=1,3,7$ respectively \cite{hopf1931,Husemoller1994,Milnor1956,steenrod1951}. Each step is tied to a normed division algebra---$\mathbb{R}$, $\mathbb{C}$, $\mathbb{H}$, $\mathbb{O}$---via the norm-multiplicative identifications that make the bundle principal \cite{baez2002octonions,Dixon1994}. Hurwitz's theorem limits normed division algebras to dimensions $1,2,4,8$ only; after the octonions there is no new associative norm-preserving multiplication law from which to generate another classical Hopf layer \cite{baez2002octonions}.
+
+\begin{theorem}[Adams \cite{Adams1960}]
+\label{thm:adams-hopf-ceiling}
+A map $S^{2n+1}\to S^{n+1}$ representing a generator of $\pi_{2n+1}(S^{n+1})$---equivalently, a fibration with Hopf invariant one---exists if and only if $n\in\{0,1,3,7\}$. In particular, there is no Hopf fibration with fibre $S^{15}$ and base $S^{16}$.
+\end{theorem}
+
+\begin{definition}[Hopf-tower definitional programme]
+\label{def:hopf-tower-programme}
+Say that a gauge sector is \emph{Hopf-definitional} when its compact factor is read off as the isotropy or quotient data of the next shell in a single nested twisted Hopf tower, with no structure imported beyond the division-algebra norm maps and their stabilisers.
+\end{definition}
+
+\begin{proposition}[Contrapositive to an infinite Hopf-gauge tower]
+\label{prop:hopf-tower-contrapositive}
+If every factor of the observed gauge group were Hopf-definitional in the sense of Definition~\ref{def:hopf-tower-programme}, then arbitrarily many independent compact factors would have to arise from an infinite family of nested Hopf fibrations on odd spheres. Theorem~\ref{thm:adams-hopf-ceiling} and the Hurwitz division-algebra bound exclude such a family: the classical Hopf-tower height is at most four division-algebra rungs, with only three nontrivial fibrations after the initial circle. Therefore the literal ``and so on'' extension of the definitional programme cannot hold.
+\end{proposition}
+
+\begin{proofsketch}
+The forward implication is the author's slogan stated as a uniform reduction rule. Adams's nonexistence theorem is the sharp topological obstruction; Hurwitz's theorem removes any alternate normed-algebra route to further principal layers. The contrapositive follows immediately.
+\end{proofsketch}
+
+\paragraph{Where the SM rungs sit---and where the uniform rule breaks.}
+Table~\ref{tab:hopf-gauge-map} summarises the working TUFT/HQIV map already used in §\ref{sec:reader-guide} and Figure~\ref{fig:hopf-compare}. Two mismatches with a uniform ``next shell, next group'' rule are structurally important.
+
+\begin{table}[ht]
+  \centering
+  \small
+  \caption{Hopf-shell chart versus classical Hopf data. The strong sector uses $S^5\cong\mathrm{SU}(3)/\mathrm{U}(2)$ projective geometry; the \emph{next} classical Hopf step after $S^3$ is $S^7\to S^4$, not $S^5$.}
+  \label{tab:hopf-gauge-map}
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    \textbf{Shell / chart} & \textbf{Classical Hopf data} & \textbf{Gauge readout} & \textbf{Carrier dim.} \\
+    \midrule
+    $S^1$ fibre & $S^1\hookrightarrow S^3\to S^2$ & U(1)$_{\rm EM/Y}$ & $1$ \\
+    $S^3$ ($n=1$) & quaternionic / same fibration & SU(2)$_L$ & $3$ \\
+    $S^5$ ($n=2$) & $\mathbb{C}P^2\cong S^5/U(1)$, not next Hopf map & SU(3)$_c$ & $8$ \\
+    $S^7$ layer & $S^3\hookrightarrow S^7\to S^4$ (next Hopf step) & octonionic / confinement chart & $7$ \\
+    $S^9$ ($n=4$) & outer neutral shell; hyperbolic beyond $n=3$ & neutrino / outer sector & --- \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+First, SU(3) is naturally the automorphism group $G_2\supset\mathrm{SU}(3)$ on the imaginary octonions and the stabiliser data of $\mathbb{C}P^2$, not the fibre isotropy of the quaternionic Hopf map $S^7\to S^4$. Second, TUFT's integrable torus sectors stop at fibre windings $n=1,2,3$; the transition at $n=4$ is hyperbolic and supplies no fourth fermion generation \cite{NielsenTUFT2026}. The HQIV Lean library encodes the same cap as \leanterm{HopfFiberWinding}{lean:hopf-shell-complex}{Hqiv/Physics/HopfShellBeltramiMassBridge.lean} on the three-shell complex ($n=1,2,3$ only).
+
+\paragraph{\texorpdfstring{$\mathrm{SO}(8)$}{SO(8)} as the natural Hopf-tower endpoint.}
+Once the octonionic rung is reached, the rotation algebra of the carrier is $\mathfrak{so}(8)$. The exceptional embedding $G_2\subset\mathfrak{so}(8)$ hosts the SM factors constructed in \leanterm{SMEmbedding}{lean:so8-closure}{Hqiv/Algebra/SMEmbedding.lean}; triality supplies exactly three inequivalent eight-dimensional representations \leanfn{Hqiv/Algebra/Triality.lean}, matching three generations without enlarging the carrier \cite{baez2002octonions,Gunaydin1974}. On this ontology, unification means exhibiting the SM as a reduction of the \emph{same} eight-dimensional octonion spinor already forced by the last division algebra---not postulating a new defining representation in dimension ten or sixteen.
+
+\begin{corollary}[Hopf-natural unification carrier]
+\label{cor:so8-natural}
+Under Definition~\ref{def:hopf-tower-programme}, the natural grand-unification carrier compatible with the Hopf/division-algebra tower is $\mathrm{Spin}(8)$ (equivalently $\mathfrak{so}(8)$ with triality on the three $8$-dimensional irreps), not $\mathrm{SO}(10)$.
+\end{corollary}
+
+\paragraph{\texorpdfstring{$\mathrm{SO}(10)$}{SO(10)} as a second-stage GUT ansatz.}
+The textbook $\mathrm{SO}(10)$ programme \cite{georgi1974,peskin1995,schwartz2014} pursues a different selection principle: one $16$-dimensional spinor multiplet per generation, minimal rank extension above the SM gauge group, and coupling unification in a single high-scale group. None of these data are the next Hopf layer. Dimension $10$ is not a division-algebra dimension; the next classical Hopf total space after the octonionic layer is $S^{15}$, not a vector space whose rotation group is $\mathrm{SO}(10)$. The $16$ of $\mathrm{Spin}(10)$ is a \emph{derived} packaging---conceptually $8_s\oplus 8_c$ or complexified octonion data---together with an chosen breaking chain and high-scale boundary conditions. It should therefore be read as $\mathrm{SO}(8)$ plus complex structure, spinor extension, and GUT-breaking data, not as the unique continuation of Nielsen's twisted Hopf tower.
+
+\begin{remark}[Scope in this paper]
+\label{rem:so8-so10-scope}
+HQIV does not claim that nature \emph{forbids} an $\mathrm{SO}(10)$ description at a comparison layer; patch-closed completeness is not equated with textbook GUT rank \cite{georgi1974}. The point is ontological ordering. Where Nielsen's synthesis and the discrete octonion carrier both stop---at three integrable Hopf windings, octonionic dimension eight, and Adams's Hopf ceiling---$\mathrm{Spin}(8)$ is the native unification group. $\mathrm{SO}(10)$ enters only if one \emph{adds} post-tower structure. The dynamic mass readouts and longitudinal O-Maxwell signatures developed here follow the former route; they differ in detail from continuum embeddings of the Hopf fibration into $\mathrm{SO}(10)$ (\S\ref{sec:hopf-tower-ceiling}, \S\ref{sec:error-budget}).
+\end{remark}
 
 \section{Complementary Perspectives}
 
@@ -568,7 +640,7 @@ The resulting masses are
 \[
 m_n(\xi)=\Lambda_{\rm Hopf}(\xi)\cdot M_n(\xi),
 \]
-where $\Lambda_{\rm Hopf}(\xi)=\sqrt{2\pi}\,v(\xi)\,\kappa_6(\xi,\Phi,t)$ and the dimensionless $M_n(\xi)$ are read from the discrete shell data. The electroweak vev itself is an output of the same balance. This is entirely internal to the HQIV axioms and yields predictions (including the longitudinal forces from the O-Maxwell phase gradient) that differ in detail from those obtained by embedding a continuum Hopf fibration into SO(10).
+where $\Lambda_{\rm Hopf}(\xi)=\sqrt{2\pi}\,v(\xi)\,\kappa_6(\xi,\Phi,t)$ and the dimensionless $M_n(\xi)$ are read from the discrete shell data. The electroweak vev itself is an output of the same balance. This is entirely internal to the HQIV axioms and yields predictions (including the longitudinal forces from the O-Maxwell phase gradient) that differ in detail from those obtained by embedding a continuum Hopf fibration into $\mathrm{SO}(10)$ after the tower ceiling of §\ref{sec:hopf-tower-ceiling}.
 
 \section{Ground and Excited-State Readouts}
 
