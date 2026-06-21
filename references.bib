@@ -2,6 +2,15 @@
 % Sources: paper/refs.bib + paper/octonion_lightcone_to_oshoracle_refs.bib
 % Papers reference this file via \bibliography{../references}.
 
+@misc{Sievers2026Glueball,
+  author       = {Sievers, John},
+  title        = {Topological Drag and Stiffness in the Octonionic Vacuum: A Geometric Origin of the {SU(3)} Mass Gap},
+  year         = {2026},
+  month        = apr,
+  howpublished = {Independent research preprint},
+  note         = {Octonionic Hopf fibration $S^7\hookrightarrow S^{15}\to S^8$; two-channel drag/stiffness glueball backreaction}
+}
+
 @book{Dixon1994,
   author    = {Dixon, Geoffrey M.},
   title     = {Division Algebras: Octonions, Quaternions, Complex Numbers, and the Algebraic Design of Physics},
@@ -79,12 +88,14 @@
   url          = {https://github.com/HQIV/hqiv-lean/tree/main/papers/complex_time_stokes_bridge}
 }
 
-@unpublished{hqiv-s3-zeta-so4-paper,
+@misc{hqiv-s3-zeta-so4-paper,
   author       = {Ettinger Jr, Steven},
   title        = {$\zeta(s)$ as an {SO(4)} Projection to the Complex Plane: Harmonic--$\Delta$ Closure, Quaternion Axis Readout, and Regional Closed Forms},
   year         = {2026},
-  note         = {Lean formal proof note in \texttt{papers/s3\_zeta\_so4\_projection/}; build \texttt{lake build HQIVStory}.},
-  url          = {https://github.com/HQIV/hqiv-lean/tree/main/papers/s3_zeta_so4_projection}
+  howpublished = {Preprint, HQIV-LEAN repository (\texttt{papers/s3\_zeta\_so4\_projection/})},
+  note         = {Lean formal proof note; build \texttt{lake build HQIVStory}.},
+  url          = {https://github.com/HQIV/hqiv-lean/tree/main/papers/s3_zeta_so4_projection},
+  urldate      = {2026-06-16}
 }
 
 @unpublished{hqiv-tuft-bridge-paper,
@@ -163,6 +174,17 @@
   number  = {25},
   pages   = {1804--1807},
   doi     = {10.1103/PhysRevLett.49.1804}
+}
+
+@article{Adams1960,
+  author  = {Adams, J. Frank},
+  title   = {On the Nonexistence of Elements of Hopf Invariant One},
+  journal = {Annals of Mathematics},
+  year    = {1960},
+  volume  = {72},
+  number  = {1},
+  pages   = {20--104},
+  doi     = {10.2307/1970117}
 }
 
 @article{baez2002octonions,
@@ -966,40 +988,46 @@
   author       = {Ettinger, Steven Jr},
   title        = {Binding Energy and the Weak Force from {HQIV} Composite-Trace Weights: Lock-In Masses, Three Ledgers, and Zero-Knob Half-Lives},
   year         = {2026},
-  howpublished = {Preprint, HQIV-LEAN repository (\texttt{papers/nucleon\_binding/})},
-  note         = {In preparation. Tier-2 \#7: $8\times8$ composite-trace binding at \texttt{referenceM}; three-ledger $\beta$ tipping (endpoint $Q$, $G_F$ width, valley geometry); outside $T(\xi)$ and gravity stack; free-neutron $\tau$ witness with zero half-life knobs. Cites \texttt{hqiv-tuft-sm-lagrangian-paper} (DOI 10.5281/zenodo.20601215) and \texttt{hqiv-baryogenesis-paper} (DOI 10.5281/zenodo.20711255); precursor to BBN (\texttt{hqiv-bbn-paper}).},
-  url          = {https://github.com/HQIV/hqiv-lean/blob/main/papers/nucleon_binding/hqiv_nucleon_binding_from_composite_trace.tex},
-  urldate      = {2026-06-03}
+  publisher    = {Zenodo},
+  howpublished = {Zenodo (HQIV community)},
+  doi          = {10.5281/zenodo.20711453},
+  url          = {https://doi.org/10.5281/zenodo.20711453},
+  note         = {Version v1 (2026-06-16). Tier-2 \#7: $8\times8$ composite-trace binding at \texttt{referenceM}; three-ledger $\beta$ tipping (endpoint $Q$, $G_F$ width, valley geometry); outside $T(\xi)$ and gravity stack; free-neutron $\tau$ witness with zero half-life knobs. Cites \texttt{hqiv-tuft-sm-lagrangian-paper} (DOI 10.5281/zenodo.20601215) and \texttt{hqiv-baryogenesis-paper} (DOI 10.5281/zenodo.20711255); companion BBN (\texttt{hqiv-bbn-paper}, DOI 10.5281/zenodo.20723606). Source: \texttt{papers/nucleon\_binding/}.},
+  urldate      = {2026-06-16}
 }
 
 @misc{hqiv-bbn-paper,
   author       = {Ettinger, Steven Jr},
   title        = {Big-Bang Nucleosynthesis from {HQIV} Network Weights: Lock-In $\eta$, Epoch Ladder, and Integrated Witnesses in the Lean Library},
   year         = {2026},
-  howpublished = {Preprint, HQIV-LEAN repository (\texttt{papers/bbn/})},
-  note         = {In preparation. Tier-2 \#8; companion to \texttt{hqiv-baryogenesis-paper} (DOI 10.5281/zenodo.20711255) and \texttt{hqiv-nucleon-binding-paper}; consumes lock-in $\eta$ and nucleon witnesses. Upstream mass lock-in: \texttt{hqiv-tuft-sm-lagrangian-paper} (DOI 10.5281/zenodo.20601215).},
-  url          = {https://github.com/HQIV/hqiv-lean/blob/main/papers/bbn/hqiv_bbn_light_elements_from_network_weights.tex},
-  urldate      = {2026-05-27}
+  publisher    = {Zenodo},
+  howpublished = {Zenodo (HQIV community)},
+  doi          = {10.5281/zenodo.20723606},
+  url          = {https://doi.org/10.5281/zenodo.20723606},
+  note         = {Version v1 (2026-06-16). Tier-2 \#8: lock-in $\eta$, epoch ladder, faithful stoichiometric integrator ($Y_p$, $D/H$, $^3$He/H, $^7$Li/H at $\eta_{\mathrm{paper}}$); Lean vital bundles + \texttt{scripts.zip}. Cites \texttt{hqiv-tuft-sm-lagrangian-paper} (DOI 10.5281/zenodo.20601215), \texttt{hqiv-baryogenesis-paper} (DOI 10.5281/zenodo.20711255), and \texttt{hqiv-nucleon-binding-paper} (DOI 10.5281/zenodo.20711453). Source: \texttt{papers/bbn/}.},
+  urldate      = {2026-06-16}
 }
 
 @misc{hqiv-gluon-curvature-note,
   author       = {Ettinger, Steven Jr},
-  title        = {The Gluon as Curvature Artifact: Strong Binding from the Inner--Outer Casimir on the Octonion Carrier},
+  title        = {The Gluon as Curvature Artifact: Strong Binding from Inner--Outer Casimir Trapping on the Octonion Carrier},
   year         = {2026},
-  howpublished = {Preprint, HQIV-LEAN repository (\texttt{papers/gluon\_curvature\_artifact/})},
-  note         = {Tier-2 closure note. Cites \texttt{hqiv-tuft-sm-lagrangian-paper} (DOI 10.5281/zenodo.20601215), nucleon binding, and Tier-1 records. Explicit identification of the gluon with the inner trapped-Casimir binding factor; no fundamental gluon fields in the proved discrete action.},
-  url          = {https://github.com/HQIV/hqiv-lean/blob/main/papers/gluon_curvature_artifact/hqiv_gluon_as_curvature_artifact.tex},
-  urldate      = {2026-05-27}
+  publisher    = {Zenodo},
+  howpublished = {Zenodo (HQIV community)},
+  doi          = {10.5281/zenodo.20724572},
+  url          = {https://doi.org/10.5281/zenodo.20724572},
+  note         = {Version v1 (2026-06-17). Tier-2 closure note (after BBN \#8): trapped-Casimir factorisation, strong-sector kernel bridge, LO collider discharge + HEP refinements; Lean \texttt{paper\_gluon\_curvature} + curated \texttt{scripts.zip}. Cites \texttt{hqiv-tuft-sm-lagrangian-paper} (DOI 10.5281/zenodo.20601215), \texttt{hqiv-baryogenesis-paper} (DOI 10.5281/zenodo.20711255), \texttt{hqiv-nucleon-binding-paper} (DOI 10.5281/zenodo.20711453), and \texttt{hqiv-bbn-paper} (DOI 10.5281/zenodo.20723606). Load-bearing for \texttt{hqiv-hep-decay-paper}. Source: \texttt{papers/gluon\_curvature\_artifact/}.},
+  urldate      = {2026-06-17}
 }
 
 @misc{hqiv-hep-decay-paper,
   author       = {Ettinger, Steven Jr},
-  title        = {Heavy-Flavour Decay Chains from {HQIV} Three-Ledger Readout: Discrete Multichannel Rules, Quarkonium Contact, and Branching without Partial-Width Inputs},
+  title        = {Heavy-Flavour Branching Ratios Derived from Discrete Three-Ledger Rules on the {HQIV} Null-Lattice Carrier},
   year         = {2026},
   howpublished = {Preprint, HQIV-LEAN repository (\texttt{papers/hep\_decay\_readout/})},
-  note         = {Tier-2 decay-calculator extension; cites \texttt{hqiv-tuft-sm-lagrangian-paper} (DOI 10.5281/zenodo.20601215) and \texttt{hqiv-nucleon-binding-paper}. HEP mass panel, programmatic multichannel expansion ($\sim 190$ $J/\psi$, $\sim 222$ $\Upsilon$ channels), hidden-quarkonium EM contact $39/10$, strict benchmark discharge ($87/87$).},
+  note         = {Version v1 (2026-06-21). Tier-2 decay-calculator extension (\#10, after gluon curvature closure). Cites \texttt{hqiv-tuft-sm-lagrangian-paper} (DOI 10.5281/zenodo.20601215), \texttt{hqiv-baryogenesis-paper} (DOI 10.5281/zenodo.20711255), \texttt{hqiv-nucleon-binding-paper} (DOI 10.5281/zenodo.20711453), \texttt{hqiv-bbn-paper} (DOI 10.5281/zenodo.20723606), and \texttt{hqiv-gluon-curvature-note} (DOI 10.5281/zenodo.20724572). Programmatic multichannel readout ($567$ open-channel rows), hidden-quarkonium EM contact $37/10$, nine-class anomaly discharge ledger, bundled \texttt{scripts.zip}. No strong partial-width inputs. Source: \texttt{papers/hep\_decay\_readout/}.},
   url          = {https://github.com/HQIV/hqiv-lean/blob/main/papers/hep_decay_readout/hqiv_hep_decay_readout_from_multichannel.tex},
-  urldate      = {2026-06-05}
+  urldate      = {2026-06-21}
 }
 
 @misc{graneau2026,
@@ -1674,13 +1702,13 @@
 @misc{hqiv-pulsar-witness-data,
   author       = {{HQIV Collaboration}},
   title        = {Pulsar catalog and slip-torque witness comparison},
-  howpublished = {Repository data \texttt{data/pulsar\_catalog.json}, \texttt{data/pulsar\_mass\_measurements.json}, \texttt{data/pulsar\_witness\_comparison.json}},
-  note         = {Generated by \texttt{scripts/hqiv\_pulsar\_witness\_benchmark.py}; catalogs \cite{atnf_psrcat,xao_atnf_pulsar_mirror}}
+  howpublished = {Repository data \texttt{data/pulsar\_*.json}},
+  note         = {Script \texttt{hqiv\_pulsar\_witness\_benchmark.py}; catalogs \cite{atnf_psrcat,xao_atnf_pulsar_mirror}}
 }
 
 @misc{hqiv-lagrangian-faithfulness-audit,
   author       = {{HQIV Collaboration}},
   title        = {Lagrangian faithfulness audit for compact-object witnesses},
   howpublished = {Repository data \texttt{data/lagrangian\_faithfulness\_audit.json}},
-  note         = {Generated by \texttt{scripts/hqiv\_lagrangian\_faithfulness\_audit.py}; prose in \texttt{papers/compact\_object\_witness/LAGRANGIAN\_FAITHFULNESS\_AUDIT.md}}
+  note         = {Script \texttt{hqiv\_lagrangian\_faithfulness\_audit.py}; audit prose in \texttt{papers/compact\_object\_witness/}}
 }

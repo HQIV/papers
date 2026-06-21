@@ -61,4 +61,4 @@ lake build paper_tuft_sm_lagrangian
 | Files on record | PDF, `scripts.zip` |
 | License | CC-BY-4.0 |
 
-Downstream Tier-2 papers (`nucleon_binding/`, `bbn/`, `gluon_curvature_artifact/`) cite the TUFT+SM record via `\cite{hqiv-tuft-sm-lagrangian-paper}`; baryogenesis lock-in is published at [`10.5281/zenodo.20711255`](https://doi.org/10.5281/zenodo.20711255) (`hqiv-baryogenesis-paper`).
+Downstream papers (`nucleon_binding/`, `bbn/`, `gluon_curvature_artifact/`, `hep_decay_readout/`) cite the TUFT+SM record via `\cite{hqiv-tuft-sm-lagrangian-paper}`; baryogenesis lock-in is published at [`10.5281/zenodo.20711255`](https://doi.org/10.5281/zenodo.20711255) (`hqiv-baryogenesis-paper`); nucleon binding at [`10.5281/zenodo.20711453`](https://doi.org/10.5281/zenodo.20711453) (`hqiv-nucleon-binding-paper`); BBN abundances at [`10.5281/zenodo.20723606`](https://doi.org/10.5281/zenodo.20723606) (`hqiv-bbn-paper`); gluon curvature closure at [`10.5281/zenodo.20724572`](https://doi.org/10.5281/zenodo.20724572) (`hqiv-gluon-curvature-note`).

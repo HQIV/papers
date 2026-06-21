@@ -1,0 +1,65 @@
+% Shared programme pin: referenceM = 4 across Tier-0--2 HQIV papers.
+% From papers/*.tex: \input{../include/referenceM_programme_pin.tex}
+
+\paragraph{The \texttt{referenceM}$=4$ programme pin.}
+The lock-in shell index $\mathrm{referenceM}=4$ is \emph{not} a per-channel fit knob.
+Lean defines it as $\mathrm{referenceM}=\texttt{qcdShell}+\texttt{stepsFromQCDToLockin}$
+with the current substrate pins $\texttt{qcdShell}=1$ and $\texttt{latticeStepCount}=3$
+(\leanfile{Hqiv/Geometry/OctonionicLightCone.lean};
+theorem \leanid{referenceM_eq_four}).
+It is the \textbf{first horizon row with enough octonion-mode degrees of freedom}
+to host the full sector spine: at $m=4$ the library proves
+$N_{\mathrm{new}}(4)=40$ (\leanid{new_modes_referenceM_numeric}), and the
+machine-checked closure $G_2\cup\{\Delta\}\Rightarrow\mathfrak{so}(8)$
+(\leanfile{Hqiv/Algebra/SO8ClosureAbstract.lean},
+\leanid{G2_plus_Delta_closes_to_so8}) supplies the fourteen $G_2$ derivation
+generators plus harmonic $\Delta$ on the eight-dimensional carrier.
+Three generations remain a Spin(8)/triality readout (\leanfile{Hqiv/Algebra/Triality.lean}),
+not a consequence of the numeral~$4$ itself.
+
+Changing \texttt{qcdShell} or \texttt{latticeStepCount} moves which grid row is
+named ``reference''; it does not alter the algebraic fact that generation space
+is threefold.
+The numeral~$4$ also coincides with $\texttt{tuftHeavyChartShell}=n+1$ for heavy
+Hopf winding $n=3$, but Lean records that equality only as a numeric coincidence
+under the current pins, not as chart identification
+(\leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean}).
+
+\textbf{Downstream uses} (same pin, no independent refits):
+\begin{enumerate}[label=\textbf{R\arabic*.},leftmargin=2.5em,nosep]
+\item \textbf{Proton lock-in / binding} ---
+  composite-trace binding and lapse readout at the nucleon anchor
+  (\leanfile{Hqiv/Physics/HadronMassReadout.lean},
+  \leanfile{Hqiv/Physics/LapseMassReadout.lean}).
+\item \textbf{Quark meta-resonance mass panel} ---
+  heavy-flavour gaps anchored to the TUFT chart at this shell
+  (\leanfile{Hqiv/Physics/QuarkMetaResonance.lean},
+  \leanfile{Hqiv/Physics/TuftGlobalHadronReadout.lean}).
+\item \textbf{Baryogenesis $\eta$ normalisation} ---
+  curvature-ratio lock-in at $\xi_{\mathrm{lock}}=\mathrm{referenceM}+1=5$
+  (\leanfile{Hqiv/Physics/CosmologicalShellLadder.lean},
+  \cite{hqiv-baryogenesis-paper}).
+\item \textbf{Nucleon $\beta$ / three-ledger decay prototype} ---
+  $G_F$ slot and weak bridge energy before heavy-flavour extension
+  (\leanfile{Hqiv/Physics/WeakFanoHopfBridge.lean},
+  \cite{hqiv-nucleon-binding-paper}).
+\item \textbf{BBN multichannel network} ---
+  binding-from-weights readout on the same composite trace
+  (\cite{hqiv-bbn-paper}).
+\item \textbf{Strong-sector trapping / gluon-as-curvature closure} ---
+  inner--outer Casimir factorisation and collider discharge at the lock-in shell
+  (\leanfile{Hqiv/Physics/GluonCurvatureArtifact.lean},
+  \cite{hqiv-gluon-curvature-note}).
+\item \textbf{HEP decay readout (this note)} ---
+  mass panel, OZI overlap, open-flavour topology contacts, and collider
+  environment dressing inherit the same pin; PDG masses enter only as comparison
+  targets (\leanfile{Hqiv/Physics/HepDecayReadout.lean}).
+\item \textbf{Electroweak Gauss row} ---
+  EM imprint at $\mathrm{referenceM}-1=3$ vs.\ weak readout at
+  $\mathrm{referenceM}+1=5$
+  (\leanfile{Hqiv/Physics/DoublePreferredAxis.lean}).
+\end{enumerate}
+
+Laboratory proton mass ($938.272\,\mathrm{MeV}$) calibrates the \emph{export}
+at this row; it never enters partial-width formulas or open-flavour seed priors
+in the HEP decay programme.

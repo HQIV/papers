@@ -20,19 +20,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal
 
+import hqiv_repo_paths as paths
+
 ScaleWitness = Literal["proton_lockin", "codata_alpha", "cmb_now"]
 DEFAULT_SCALE_WITNESS: ScaleWitness = "proton_lockin"
 
-
-def _repo_root() -> Path:
-    """Locate repo-level witness data from the paper subtree."""
-    for parent in Path(__file__).resolve().parents:
-        if (parent / "lakefile.toml").exists() and (parent / "data").is_dir():
-            return parent
-    return Path(__file__).resolve().parents[1]
-
-
-_ROOT = _repo_root()
+_ROOT = paths.repo_root(Path(__file__))
 DEFAULT_WITNESS_JSON = _ROOT / "data" / "hqiv_witnesses.json"
 
 # Comparison layer (not active anchors under proton_lockin)
@@ -68,6 +61,18 @@ class WitnessBundle:
     codata_inv_alpha: float
     reference_m: int
     gev_per_mev: float
+    proton_inner_raw_mev: float | None = None
+    proton_observed_mev: float | None = None
+    proton_outside_increment_mev: float | None = None
+
+    @property
+    def proton_mass_inner_anchor_mev(self) -> float:
+        """Inner composite-trace anchor (defaults to derived proton mass)."""
+        return (
+            self.proton_inner_raw_mev
+            if self.proton_inner_raw_mev is not None
+            else self.derived_proton_mass_mev
+        )
 
     @property
     def m_nu_e_gev(self) -> float:
@@ -153,6 +158,19 @@ def load_witness_bundle(path: Path | None = None) -> WitnessBundle:
         codata_inv_alpha=float(raw.get("CODATA_inv_alpha", CODATA_INV_ALPHA)),
         reference_m=int(raw.get("referenceM", REFERENCE_M)),
         gev_per_mev=gev_per_mev,
+        proton_inner_raw_mev=(
+            float(raw["protonInnerRawMass_MeV"])
+            if "protonInnerRawMass_MeV" in raw
+            else None
+        ),
+        proton_observed_mev=(
+            float(raw["protonObservedMass_MeV"]) if "protonObservedMass_MeV" in raw else None
+        ),
+        proton_outside_increment_mev=(
+            float(raw["protonOutsideIncrement_MeV"])
+            if "protonOutsideIncrement_MeV" in raw
+            else None
+        ),
     )
 
 

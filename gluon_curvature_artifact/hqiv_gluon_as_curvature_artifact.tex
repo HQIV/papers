@@ -3,16 +3,48 @@
 \usepackage{amsmath,amssymb,amsthm,mathtools,booktabs}
 \usepackage{enumitem}
 \usepackage{hyperref}
-\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue,
+  pdftitle={The Gluon as Curvature Artifact},
+  pdfauthor={Steven Ettinger Jr},
+  pdfsubject={HQIV strong binding; trapped Casimir; composite trace; no independent gluon fields},
+  pdfkeywords={HQIV, gluon, confinement, Casimir, composite trace, Lean}}
 \usepackage[final]{microtype}
-\setlength{\emergencystretch}{3em}
+\usepackage{xurl}
+\usepackage{ragged2e}
+\usepackage{tabularx}
+\setlength{\emergencystretch}{4em}
+\tolerance=2500
+\hbadness=10000
 
 \newcommand{\leanrepo}{https://github.com/HQIV/hqiv-lean/blob/main}
-\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\nolinkurl{#1}}}
-\newcommand{\leanid}[1]{\nolinkurl{#1}}
+\newcommand{\leanfile}[1]{\href{\leanrepo/#1}{\footnotesize\url{#1}}}
+\newcommand{\leanid}[1]{{\footnotesize\ttfamily\url{#1}}}
+\newcommand{\leanterm}[2]{\hyperref[#1]{#2}}
+
+\newenvironment{leanindex}{%
+  \begin{description}[style=nextline,leftmargin=0pt,labelindent=0pt,
+    labelsep=0.5em,itemsep=0.75\baselineskip]%
+  \footnotesize\raggedright\sloppy
+}{%
+  \end{description}%
+}
+
+\providecommand{\leanCertAnomaly}{}
+\providecommand{\leanCertTopology}{}
+\providecommand{\leanCertStrongColor}{}
+\providecommand{\leanPatchHolonomyWitness}{}
+\providecommand{\leanPatchWilsonKinetic}{}
+\providecommand{\leanPatchHaarMeasure}{}
+\providecommand{\leanPatchDiscretePoincare}{}
+\providecommand{\leanPatchSpatialRotation}{}
+\renewcommand{\leanCertStrongColor}{; optional finite $\mathfrak{su}(3)$ chart Lie certificate (\S\ref{sec:chart-cert})}
+
+% Strong-closure note: brief Patch QFT contract; zeta omitted (not in proof cone).
+\newcommand{\patchBriefMode}{}
+\newcommand{\patchOmitZeta}{}
 
 \title[The Gluon as Curvature Artifact]{The Gluon as Curvature Artifact:\\
-Strong Binding from the Inner--Outer Casimir on the Octonion Carrier}
+Strong Binding from Inner--Outer Casimir Trapping on the Octonion Carrier}
 
 \author{Steven Ettinger Jr}
 \address{Independent Researcher}
@@ -20,71 +52,144 @@ Strong Binding from the Inner--Outer Casimir on the Octonion Carrier}
 \date{Preprint draft --- \today}
 
 \newtheorem{theorem}{Theorem}[section]
-\newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{remark}[theorem]{Remark}
-\newtheorem{corollary}[theorem]{Corollary}
 
 \begin{document}
 
 \begin{abstract}
 \noindent\textbf{Position in the publication chain.}
-This is a Tier-2 closure note in the HQIV preprint series. It unites three preceding strands: the published unified TUFT+SM Lagrangian synthesis (topological Hopf necessity, dynamic inner--outer Casimir mass spectrum with explicit $\kappa_6$ factorisation, and sector-by-sector projection of the discrete octonion action onto $\mathcal{L}_{\rm SM}$) \cite{hqiv-tuft-sm-lagrangian-paper}, and the composite-trace derivation of nucleon masses and binding energies from the same $8\times8$ network at lock-in \cite{hqiv-nucleon-binding-paper}. The present note makes explicit what the architecture already exhibits: there are no fundamental gluon fields. The entire strong-binding phenomenology (hadron mass deficits, nuclear binding, heavy stabilisation) is the geometric inner-Casimir trapping factor on the strong octonion channels, identical in origin, functional form, and scale to the binding mechanism that generates the lepton spectrum and the dynamic electroweak vev.
+Tier-2 closure note in the HQIV preprint series, \emph{after} the published
+TUFT+SM synthesis, baryogenesis lock-in, nucleon binding, and BBN abundances
+\cite{hqiv-tuft-sm-lagrangian-paper,hqiv-baryogenesis-paper,hqiv-nucleon-binding-paper,hqiv-bbn-paper}.
+Tier~0--1 fix the discrete spine and variational records
+\cite{ettinger2026hqiv,hqiv-lightcone-paper,hqiv-so8-paper,hqiv-3d-growth-paper,hqiv-oct-action-paper,hqiv-kirchhoff-paper,hqiv-thermo-arrow-paper}.
+\textbf{This note establishes} that continuum ``gluons'' and ``QCD binding'' are
+reader translations of inner--outer Casimir trapping on the strong octonion
+channels---not independent vector fields in the proved discrete action.
+Hadronic and nuclear binding is already discharged upstream by composite-trace
+weights and contact geometry \cite{hqiv-nucleon-binding-paper}; \emph{pion exchange
+and other meson mediators are not required} in the proved library, nor is any
+further propagating strong-force carrier beyond the masked abelian kinetic term on
+four octonion channels, trapped-Casimir binding, and the optional finite colour
+chart. The downstream heavy-flavour decay readout \cite{hqiv-hep-decay-paper} consumes this
+identification; it does not re-open a separate strong partial-width sector.
 
 \noindent\textbf{Result.}
-The force-sector map assigns the four octonion-extension channels $a\in\{4,5,6,7\}$ to the strong sector; the corresponding kinetic term is the direct projection of the single abelian octonion kinetic density $L_O^{\rm kin}$. Binding at every scale---hadronic, nuclear, and the heavy stabilisation gap---is realised by one and the same $8\times8$ network sum $E_{\rm bind}=\sum_k w_k\cdot\alpha_{\rm eff}(m)$ (or its continuous-$\xi$ lift) on the $\mathfrak{so}(8)$ generators. The ``QCD'' or ``gluonic'' weights are simply the projection of that network onto the strong channels. The shell coupling $\alpha_{\rm eff}$ is driven by the curvature primitive whose normalisation is the $\omega K(\xi)$ factor of the inner--outer Casimir balance on the Hopf-shell carrier. The Lean comment labelling the inner trapped-Casimir factor ``(trapped, binding, heavy/gluonic)'' is therefore the literal statement of the framework: the gluon is the continuum name for the curvature artifact generated when the strong-channel projection of the carrier is viewed through a non-geometric lens. The uniformity of the network formula across all binding hierarchies is the central mathematical content of the bound-states module.
+The force-sector map assigns octonion channels $a\in\{4,5,6,7\}$ to the strong
+sector; the strong kinetic term is the abelian octonion kinetic density restricted
+to those channels (\hyperref[lean:strong-kinetic]{strong kinetic projection}).
+Binding at every scale---hadronic, nuclear, and the heavy stabilisation
+gap---uses one network sum
+\[
+E_{\mathrm{bind}}(m)=\sum_k w_k\,\texttt{latticeSimplexCount}(m)\,\alpha_{\mathrm{eff}}(m),
+\]
+with weights $w_k$ projecting onto the $\mathfrak{so}(8)$ generators.
+Machine-checked factorisation rewrites each coupling cell as trapped Casimir
+zero-point times a normalised composite-trace selection
+(\hyperref[lean:trapped-casimir-bridge]{trapped Casimir binding bridge}).
+The inner trapping functional that drives the heavy lepton gap is the same
+geometric object labelled ``heavy/gluonic'' in the dynamic mass bridge
+(\hyperref[lean:inner-outer-casimir]{inner--outer Casimir scale}).
 
 \noindent\textbf{Claim discipline.}
-Proved: the sector projection (abelian only), the uniform network-binding spine, the shared curvature primitive $\omega K(\xi)$ and its discrete sampling $\alpha_{\rm eff}(m)$, the explicit re-use of the same inner-trapping functional for both the heavy lepton gap and the ``gluonic'' stabilisation, and (under the optional \texttt{HQIVStrongColorSu3Certificate} build) the global $\mathfrak{su}(3)$ chart Lie law on the finite Gell-Mann representation (\leanfile{Hqiv/Physics/StrongColorSu3LieChartLaw.lean}). Not claimed: a dynamical non-abelian $\mathrm{SU}(3)$ gauge theory, a gluon condensate order parameter, or a derivation of confinement as a topological transition. The chart certificate supplies structure constants only; it does not add propagating gluon degrees of freedom.
+\textbf{Proved:} abelian-only kinetic spine; uniform network binding;
+trapped-Casimir factorisation of $\texttt{latticeSimplexCount}\cdot\alpha_{\mathrm{eff}}$;
+shared curvature primitive $\omega K(\xi)$; heavy-chart witness bundle for phase-lift contact torsion and the three-shell
+inner contact witness
+(\hyperref[lean:inner-contact-witness]{inner contact trapped Casimir witness});
+hadron ground masses from the same composite-trace binding
+(\hyperref[lean:hadron-readout]{hadron mass readout});
+kernel ordering (Hopf contact amplification strictly below ladder trace
+selection) on every integrable chart shell $m=2,3,4$
+(\hyperref[lean:kernel-bridge]{strong-sector kernel bridge});
+\textbf{discharged} unified curvature log kernel
+$1+c\,\alpha\,\log x$ with two chart coordinates on every integrable shell
+(\hyperref[lean:kernel-bridge]{strong-sector kernel bridge}).
+\textbf{Optional build:} global $\mathfrak{su}(3)$ structure constants on a finite
+Gell--Mann chart (\S\ref{sec:chart-cert})---Lie algebra only, no propagating gluon
+DOF (\texttt{lake build HQIVStrongColorSu3Certificate}).
+\textbf{Deliberately unclaimed:} dynamical non-abelian Yang--Mills as an independent
+kinetic sector; confinement as a separate phase transition; and third-party event-generator
+bin-by-bin validation (Pythia/Herwig).  \textbf{Discharged} (Lean + witnesses in
+\texttt{scripts.zip}): leading collider/medium observables and HEP refinements (MC shower,
+thrust distribution, $ggH$ $p_T$, QGP $v_2$/$R_{AA}$, PDF $x$-shape).
 
 \noindent\textbf{Patch-ontology reader contract.}
-The discrete octonion channels, the inner and outer Hopf-shell contact data, the composite-trace weights on the $28$ generators of $\mathfrak{so}(8)$, and the curvature primitive evaluated on the temperature ladder are the ontology. Continuum language that speaks of ``gluons'', ``gluon condensates'', or ``color flux tubes'' is a calculational shorthand for the geometric binding already present on the strong-preferring directions of the carrier. It does not introduce new fundamental fields.
+Continuum language for ``gluons'', ``gluon condensates'', ``colour flux tubes'', or
+pion-exchange nuclear potentials is calculational shorthand for geometric trapping
+and composite-trace binding on strong-preferring carrier directions
+\cite{hqiv-nucleon-binding-paper,peskin1995,pdg2024}. It does not introduce new
+fundamental fields. At the current theorem level, the strong sector is closed:
+no additional Yang--Mills multiplet, glueball field, or meson mediator slot is
+load-bearing in \texttt{HQIVLEAN}.
 \end{abstract}
 
 \maketitle
 
 \input{../include/patch_theory_messaging.tex}
 
-\section{Scope}
+\section{Scope and upstream inputs}
 \label{sec:scope}
 
-The unified TUFT+SM Lagrangian synthesis \cite{hqiv-tuft-sm-lagrangian-paper} constructs every sector of $\mathcal{L}_{\rm SM}$ (gauge kinetics, fermion minimal coupling, Higgs kinetic+potential, and Yukawa weights supplied by the Hopf--Beltrami chart) as a projection of the HQIV discrete octonion action. The strong gauge kinetic term $\mathcal{L}_G$ is obtained by restricting the abelian field-strength sum $L_O^{\rm kin}$ to the four octonion channels assigned to the strong sector by the algebraically fixed force-sector map. No additional vector fields, no non-abelian structure constants in the kinetic density, and no separate gluon self-interaction term appear in the proved bridge. The optional $\mathrm{SU}(3)$ chart certificate supplies only a finite representation of the structure constants; it is explicitly excluded from the default library build and carries no dynamical content.
+The published TUFT+SM synthesis \cite{hqiv-tuft-sm-lagrangian-paper} constructs
+every sector of $\mathcal{L}_{\mathrm{SM}}$ as a projection of the HQIV discrete
+octonion action: gauge kinetics, fermion minimal coupling, Higgs sector, and
+Yukawa weights from the Hopf--Beltrami chart. The topological vision---nested Hopf
+shells, contact Beltrami spectra, sector determinants on the complex Hopf
+fibration---is due to Nielsen's Topological Unified Field Theory
+\cite{NielsenTUFT2026}; the finite discrete realisation and Lean discharge are in
+\cite{hqiv-tuft-sm-lagrangian-paper}. This note does not re-prove Nielsen's
+external smooth classification theorems (see the Patch QFT contract above).
+The strong gauge kinetic aggregate
+is obtained by masking the single abelian octonion field-strength sum to the four
+channels assigned to the strong sector. No additional vector fields, no
+non-abelian structure constants in the default kinetic density, and no separate
+gluon self-interaction term appear in the default library build.
 
-Simultaneously, the nucleon-binding note \cite{hqiv-nucleon-binding-paper} realises all hadron and nuclear binding energies as a single $8\times8$ composite-trace functional on the same carrier:
-\[
-E_{\rm bind}(m) = \sum_{k=1}^{28} w_k\cdot\bigl(\texttt{latticeSimplexCount}(m)\cdot\alpha_{\rm eff}(m)\bigr),
-\]
-where the shell coupling $\alpha_{\rm eff}(m)$ is the reciprocal of the O-Maxwell logarithmic running evaluated at the auxiliary field of shell $m$. The curvature-imprint ratio $\alpha=3/5$ that fixes the running is the same combinatorial ratio forced by simplex counting on the null lattice.
+The nucleon-binding note \cite{hqiv-nucleon-binding-paper} realises proton,
+neutron, and light-cluster binding as composite-trace weights on the same
+$8\times8$ carrier at lock-in shell $\mathrm{referenceM}=4$. The BBN note
+\cite{hqiv-bbn-paper} imports those cluster $Q$ values and the same outside-release
+stack; it does not introduce an independent strong potential. Baryogenesis lock-in
+\cite{hqiv-baryogenesis-paper} fixes $\eta_{\mathrm{paper}}$ on the same curvature
+opacity primitives.
 
-The combined TUFT+SM synthesis \cite{hqiv-tuft-sm-lagrangian-paper} supplies the continuous-$\xi$ lift via the dynamic inner--outer Casimir mechanism and the explicit $\kappa_6$ factorisation: the same curvature primitive
-\[
-K(\xi)=\log\xi+\frac{\alpha}{2}(\log\xi)^2
-\]
-normalised to the lock-in value as $\omega K(\xi)$ modulates the inner trapped-Casimir factor on the three inner contact Hopf shells. That factor is the direct source of the heavy lepton gap and, by the explicit Lean labelling, of the ``heavy/gluonic'' stabilisation.
-
-The identification is therefore forced by the shared objects, not postulated.
+The present note closes the conceptual loop those papers defer: \emph{what}
+continuum QCD vocabulary names when translated back onto the discrete carrier
+\cite{peskin1995,pdg2024}. Standard non-abelian gluon propagators and PDG hadron
+tables are comparison layers only---never inputs to the proved binding spine. The
+identification is forced by shared objects already proved upstream, not
+postulated here.
 
 \section{Inner and outer Casimir witnesses}
+\label{sec:casimir-witnesses}
 
-To make the argument self-contained, we briefly recall the geometric objects that supply the inner and outer Casimir factors. (Full technical details appear in the dynamic-mass-spectrum synthesis paper; here we give only the minimal physical and algebraic content required for the present claim.)
+Hopf shells on the octonion carrier are integrable three-dimensional complexes
+with curvature imprint $\alpha_n$ and contact Beltrami torsion data. Three inner
+shells ($n=1,2,3$) form a non-factorable witness: their torsion matrices cannot be
+simultaneously block-diagonalised on any proper subspace of the eight-dimensional
+carrier. The inner contact surfaces are the locus of trapped Casimir zero-point;
+the trapping selection functional modulated by the curvature primitive supplies
+binding energy and the heavy stabilisation gap.
 
-A \emph{Hopf shell} in the discrete setting is an integrable three-dimensional complex on the octonion carrier, equipped with a curvature imprint $\alpha_n$ and a torsion matrix derived from the contact Beltrami operator on that shell. These are the finite, machine-checkable counterparts of the nested Hopf fibrations in Nielsen's topological construction.
-
-The \emph{inner witness} (Lean structure \texttt{exampleNonFactorableWitnessForIntegrableHopfShells}) packages exactly three such shells, with winding numbers $n=1,2,3$. Each shell carries its own torsion matrix obtained from the canonical phase-lift construction on the carrier. The defining property of the witness is \emph{non-factorability}: the three torsion matrices cannot be simultaneously block-diagonalised on any proper subspace of the eight-dimensional carrier. The structure is irreducible; the full octonion carrier participates as a single unit. 
-
-The \emph{inner contact surfaces} of these three shells are the locus of the trapped Casimir effect. The geometric factor generated on these surfaces (the trapping selection functional, modulated by the curvature primitive) is what the framework identifies as the source of binding energy and of the heavy stabilisation gap. In the Lean implementation this factor is explicitly labelled as supplying the ``trapped, binding, heavy/gluonic'' contribution.
-
-The \emph{outer witness} (Lean \texttt{outerShellNeutrinoFluctuationWitness}) is the corresponding datum on the first shell beyond the reference lock-in surface. It counts discrete fluctuation modes (modeCount = 140) on the neutral singlet extension of the carrier — the right-handed neutrino channel realised by the $8_c$ conjugate representation together with a trivial summand. Coarse-graining these neutral outer fluctuations produces the characteristic suppression factor $1/140$. This is the outer Casimir contribution.
-
-The effective mass scale at any horizon coordinate $\xi$ is then the instantaneous ratio
+The outer witness on the first shell beyond lock-in counts $140$ neutral
+fluctuation modes on the right-handed neutrino extension of the carrier. Coarse
+graining yields outer suppression $1/140$. The effective mass scale at horizon
+coordinate $\xi$ is the ratio
 \[
-\texttt{effective\_casimir\_scale\_at\_xi}(\xi)
-= \frac{\text{inner trapping on the three contact shells, run by }\omega K(\xi)}{\text{outer suppression from neutral horizon fluctuations}}.
+\textit{inner trapping run by }\omega K(\xi)\;\big/\;\textit{outer suppression},
 \]
-Everything that follows — the dynamic lepton spectrum, the temperature dependence, and the binding phenomenology — is generated from this single geometric asymmetry on one carrier.
+formalised as the \leanterm{lean:inner-outer-casimir}{inner--outer Casimir scale}
+$\texttt{effective\_casimir\_scale\_at\_xi}(\xi)$. At lock-in ($\xi=5$) this
+reproduces the legacy anchor; along the temperature ladder it modulates both the
+dynamic lepton spectrum and binding phenomenology through the same
+$\alpha=3/5$ curvature imprint forced by simplex counting
+(\hyperref[lean:alpha-gamma]{lattice $\alpha$-ratio identity}).
 
-\section{The Strong Sector Carries No New Fields}
+\section{The strong sector carries no new fields}
+\label{sec:no-new-fields}
 
 The force-sector assignment
 \[
@@ -94,84 +199,664 @@ The force-sector assignment
 \mathrm{Strong} & a\in\{4,5,6,7\}
 \end{cases}
 \]
-is fixed once and for all by the octonion algebra and the colour-preferred axis of the $\mathfrak{so}(8)$ closure. The strong kinetic aggregate is
+is fixed by the octonion algebra and the colour-preferred axis of the
+$\mathfrak{so}(8)$ closure (\hyperref[lean:force-sector]{force-sector map}).
+The strong kinetic aggregate has the same abelian form as the electromagnetic and
+weak projections; only the channel mask differs
+(\hyperref[lean:strong-kinetic]{strong kinetic projection}).
+
+What continuum QCD calls a \emph{gluon} is, in this geometry, the effective
+description of the energetic cost of occupying or deforming strong-channel
+components inside the inner-Casimir trapping region of the three irreducible inner
+Hopf shells. The binding energy subtracted from constituent sums to obtain physical
+nucleon masses is the same geometric deficit that appears, at the lepton level, as
+the heavy stabilisation gap driven by
+\leanterm{lean:inner-outer-casimir}{inner--outer Casimir scale}.
+
+\section{Trapped Casimir factorisation of network binding}
+\label{sec:trapped-casimir}
+
+The machine-checked \leanterm{lean:trapped-casimir-bridge}{trapped Casimir binding
+bridge} rewrites network binding at each shell. At shell $m$ each generator coupling
+factors as
+\begin{align*}
+\text{binding cell}(m)
+&=\text{trapped zero-point budget}(m)\times\text{normalised SO(8) selection}(m),\\
+\text{binding cell}(m)
+&=\texttt{latticeSimplexCount}(m)\cdot\alpha_{\mathrm{eff}}(m),\\
+\text{trapped zero-point budget}(m)
+&=\frac{\texttt{available\_modes}(m)}{4}\cdot\frac{\phi(m)}{2},\\
+\text{normalised SO(8) selection}(m)
+&=\frac{\alpha_{\mathrm{eff}}(m)}{\phi(m)/2},
+\end{align*}
+so network binding is trapped Planck/Casimir zero-point filtered by composite-trace
+selection---not an independent gluon exchange sector.
+This is not a relabelling of standard QCD: upstream Lean proves the rewriting
+identities for \texttt{bindingCouplingAtShell} and \texttt{E\_bind\_from\_network}
+through trapped Casimir energy and normalised trace selection on the same carrier
+that yields nucleon binding in \cite{hqiv-nucleon-binding-paper}, without
+introducing additional strong-sector parameters.
+
+Equivalently, per-generator binding coupling equals one quarter of trapped Casimir
+energy times normalised SO(8) trace selection, and summing network weights gives
 \[
-\mathcal{L}_G(A)=L^{\rm kin}_{O,\mathrm{Strong}}(A)=-\frac14\sum_{a=4}^7\sum_{\mu\nu}\frac{(F^a_{\mu\nu}(A))^2}{2}.
+E_{\mathrm{bind}}(m,w)=\Bigl(\sum_k w_k\Bigr)\cdot\alpha_{\mathrm{eff}}(m)
+\cdot\texttt{latticeSimplexCount}(m),
 \]
-This is identical in form to the electromagnetic and weak projections; only the channel mask differs. The nuclear effective potential constructed in the Forces module realises the ``strong'' contribution as the linear term in the auxiliary field $\phi$ plus the curvature-imprint term $\delta_E(m)\times$ phase-fibre curvature on the octonion configuration. No new propagator, no new vertex, no new gauge boson.
+with $\alpha_{\mathrm{eff}}$ identified as the trapped Casimir coupling cell. This
+is the formal content of the ``no independent gluon'' ontology:
+strong binding \emph{is} trapped radiative zero-point on the closed carrier, with
+SO(8) weights selecting which generators participate.
 
-What continuum QCD calls a gluon is, in this geometry, the effective description of the energetic cost of occupying or deforming the strong-channel components of the carrier inside the inner-Casimir trapping region of the three irreducible integrable Hopf shells whose contact surfaces generate the trapped binding factor. The binding energy subtracted from constituent sums to obtain the physical nucleon mass is the same geometric deficit that appears, at the lepton level, as the heavy stabilisation gap.
+Hopf-shell contact data supplies a \emph{contact amplification} functional on
+integrable shells from phase-lift contact torsion and the three-shell inner contact
+witness (curvature imprint on non-factorable inner Hopf shells). Trace selection on the binding
+ladder uses the auxiliary-field slot $\phi(m)+1$. These are \emph{not} the same
+numeric object: at chart shells $m=2,3,4$ the contact log argument is
+$7/5,\,8/5,\,9/5$ while the ladder argument is $7,\,9,\,11$.
 
-\section{Uniform Network Binding Across All Scales}
-
-The decisive structural fact, recorded in the bound-states module, is that binding is treated uniformly at every hierarchical level by a single $8\times8$ network formula on the $\mathfrak{so}(8)$ generators.
-
-Binding at shell $m$ takes the universal form
+Both slots are instances of one machine-checked \emph{curvature log kernel}
+(\hyperref[lean:kernel-bridge]{strong-sector kernel bridge}):
 \[
-E_{\rm bind}(m) = \sum_{k=1}^{28} w_k \cdot \alpha_{\rm eff}(m),
+K(x,c)=1+c\,\alpha\,\log x,
 \]
-where the $w_k$ are state-dependent weights (matrix elements or traces over the 28 generators) and the coupling $\alpha_{\rm eff}(m)$ is the effective fine-structure constant obtained from the O-Maxwell logarithmic running at the auxiliary field value of that shell. The same $\alpha_{\rm eff}(m)$ — driven by the curvature-imprint ratio $\alpha=3/5$ — appears for every layer.
+evaluated at two chart coordinates on the same strong-sector spine. The bundled
+kernel-bridge certificate discharges four fields: contact and ladder slot identities,
+strict contact--ladder log-argument ordering, and the resulting kernel ordering
+(contact amplification below ladder amplification).
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X
+  >{\raggedright\arraybackslash}p{0.32\textwidth}
+  >{\raggedright\arraybackslash}p{0.22\textwidth}@{}}
+\toprule
+Readout slot & Log argument $x$ & Role \\
+\midrule
+Inner contact (phase-lift torsion + inner-shell imprint)
+  & $1+(\phi(w)/6)\cdot\alpha$ & vev-scale trapping \\
+Shell ladder (binding)
+  & $\phi(m)+1$, $m=w+1$ & $\alpha_{\mathrm{eff}}$ / SO(8) selection \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Lean proves Hopf contact amplification and ladder trace selection each equal $K(x,c)$
+on their respective coordinates for every integrable shell with global imprint
+$\alpha_n=\alpha$. Bundled generation-zero, generation-one, and heavy-chart
+certificates discharge the full bridge at $m=2,3,4$ inside the gluon-curvature
+ontology bundle (\hyperref[lean:gluon-closure]{ontology certificate}).
+At each shell, $x_{\mathrm{contact}}<x_{\mathrm{ladder}}$ is proved by closed
+rational witnesses (e.g.\ $7/5<7$ at $m=2$); monotonicity of $K$ then yields
+contact kernel strictly below ladder kernel---a general theorem, not a numerical
+check outside Lean.
+Normalised trace selection
+$\alpha_{\mathrm{eff}}/(\phi/2)$ is the ladder kernel divided by the Casimir
+zero-point budget $42\cdot(\phi/2)$---not a third independent mechanism.
 
-The bound-states module makes the uniformity explicit by defining thin wrappers around one core routine:
-- \texttt{E\_bind\_QCD\_from\_network} (quarks to hadron) uses weights drawn from the colour/gluon sector of the $8\times8$ embedding;
-- \texttt{E\_bind\_nuclear\_from\_network} (nucleons to nucleus) uses weights from the strong residual plus electromagnetic contributions;
-- \texttt{E\_bind\_atomic} follows the same $\alpha_{\rm eff}$ scaling inside the Schrödinger layer.
+\section{Uniform network binding across scales}
+\label{sec:uniform-binding}
 
-In other words, what is labelled ``QCD binding'' or ``gluonic binding'' is not a separate dynamical mechanism with its own force law. It is the identical composite-trace sum, with the weights $w_k$ simply chosen to emphasise the four strong octonion channels ($a\in\{4,5,6,7\}$) that the force-sector map assigns to the strong sector. The curvature running that produces $\alpha_{\rm eff}(m)$ is the same running that appears in the inner-Casimir trapping factor.
-
-\section{Binding Energy and the Curvature Primitive Have Identical Form and Scale}
-
-All three layers---hadronic (``QCD'') binding, nuclear binding, and the heavy lepton gap---therefore evaluate instances of one and the same functional family:
-
-\begin{itemize}
-\item Discrete sampling: $\alpha_{\rm eff}(m)$ obtained from $1/\alpha_{\rm GUT}\times(1+c\alpha\log(\phi(m)+1))$ with $\alpha=3/5$.
-\item Continuous lift: the identical running evaluated at $\phi(\xi)=2\xi$, then modulated by the normalised curvature primitive $\omega K(\xi)=K(\xi)/K(5)$.
-\item Inner trapping: the selection functional $1+c\alpha\log(1+\frac43\alpha)$ (phase-lift coefficient of the heavy inner shell, $n=3$) multiplied by $\omega K(\xi)$ and divided by the outer suppression $1/140$.
+Binding is treated uniformly at every hierarchical level by one network routine
+(\hyperref[lean:binding-network]{uniform network binding}):
+\[
+E_{\mathrm{bind}}(m)=\sum_{k=1}^{28} w_k\,\texttt{latticeSimplexCount}(m)\,\alpha_{\mathrm{eff}}(m).
+\]
+Thin wrappers distinguish use cases without changing the spine:
+\begin{itemize}[nosep]
+\item hadronic (``QCD'') binding: weights emphasising the colour/strong embedding;
+\item nuclear binding: strong residual plus electromagnetic blocks on the same network;
+\item atomic binding: Schr\"odinger-layer magnitude with the same $\alpha_{\mathrm{eff}}$ scaling.
 \end{itemize}
+Continuum labels ``QCD binding'' or ``gluonic binding'' therefore denote
+projections of one geometric mechanism, not separate force laws.
 
-The composite-trace weights that realise the shared nucleon binding at the lock-in shell are matrix elements on the same 28 generators. The subset of those generators lying in the strong channels supplies the dominant contribution to the binding that continuum language attributes to gluons. The small fractional shifts (for example the $\sim0.65\,\mathrm{MeV}$ electromagnetic block correction on the $939\,\mathrm{MeV}$ meta-harmonic anchor) are set by precisely the same $\alpha\log\phi$ curvature corrections that generate the few-percent deviations of the inner-Casimir scale from its lock-in value. Both the binding deficits and the heavy-gap dynamics are monotonic functions of the cumulative curvature integral along the temperature (or shell) ladder, governed by the single lattice parameter $\alpha=3/5$.
+Hadron ground masses reuse the identical composite-trace binding through
+\leanterm{lean:hadron-readout}{hadron mass readout}: baryons subtract
+$E_{\mathrm{bind}}$ from constituent sums with valence-channel fractions; mesons
+carry the proved $(4/9)$ chiral scale from closure rank. Proton and neutron at
+lock-in align with the derived nucleon witnesses already discharged in
+\cite{hqiv-nucleon-binding-paper}.
 
-The numerical agreement is therefore not an accidental match between independent phenomenological fits. It is the same geometric object — the curvature-driven network coupling evaluated on different projections of the carrier — sampled once for the lepton spectrum and once for the strong-channel weights that produce hadronic binding.
+\section{Three instances of one functional family}
+\label{sec:three-instances}
 
-\section{Implications and Claim Boundaries}
+Hadronic binding, nuclear binding, and the heavy lepton gap evaluate instances of
+one functional family:
+\begin{enumerate}[label=(\roman*),nosep]
+\item discrete sampling: $\alpha_{\mathrm{eff}}(m)$ from
+$1/\alpha_{\mathrm{GUT}}\times(1+c\alpha\log(\phi(m)+1))$ with $\alpha=3/5$;
+\item continuous lift: the same running at $\phi(\xi)=2\xi$, modulated by
+$\omega K(\xi)=K(\xi)/K(5)$ for $K(\xi)=\log\xi+\frac{\alpha}{2}(\log\xi)^2$;
+\item inner trapping: selection functional
+$1+c\alpha\log(1+\frac{4}{3}\alpha)$ on the heavy inner shell ($n=3$), multiplied
+by $\omega K(\xi)$ and divided by outer suppression $1/140$.
+\end{enumerate}
+The subset of composite-trace generators in strong channels supplies the dominant
+contribution to binding that continuum language attributes to gluons. Electromagnetic
+block corrections (e.g.\ the $\sim 0.65\,\mathrm{MeV}$ shift on the
+$939\,\mathrm{MeV}$ meta-harmonic anchor documented in
+\cite{hqiv-nucleon-binding-paper}) use the same $\alpha\log\phi$ curvature
+corrections.
 
-The framework therefore contains a single abelian gauge theory (the octonion-indexed O-Maxwell action), a single geometric binding mechanism (the uniform $8\times8$ composite-trace network of the bound-states module, realised geometrically as inner-Casimir trapping on the three inner Hopf contact surfaces), and a single curvature primitive that runs every scale with cosmic temperature. The three Standard-Model gauge factors arise as the natural algebra projections of that carrier; the ``gluon'' is the continuum shadow of the strong-channel projection of this binding geometry.
+\section{Optional $\mathfrak{su}(3)$ chart certificate}
+\label{sec:chart-cert}
 
-What is deliberately left unclaimed is a dynamical explanation of confinement as a phase transition in an independent non-abelian gauge theory. Confinement, in the present ontology, is the statement that the inner-Casimir trapping region for the strong octonion components has a finite depth set by $\omega K(\xi)$ and the inner-shell torsion data; free colour charges would require promoting a strong-channel excitation above that depth, which is geometrically disfavoured exactly as the right-handed neutrino channel is suppressed by the outer Casimir. A future non-abelian holonomy upgrade may enrich the kinematics, but it is not required for the binding or mass phenomenology already realised.
+Under the optional \texttt{HQIVStrongColorSu3Certificate} build, the library proves
+a global Lie bracket law on a finite Gell--Mann chart
+(\hyperref[lean:su3-chart-law]{SU(3) chart Lie law}): structure constants
+$f^{abc}$ assemble colour antisymmetry as a \emph{finite chart identity}, not as
+propagating gauge bosons. This certificate supports the patch-QFT statement that
+colour is a chart on the same carrier; it does not add gluon propagators, parton
+densities, or a confinement order parameter. Default \texttt{HQIVLEAN} imports the
+chart definitions but not the heavy generated certificate cone.
 
-The last independent dimensionful input beyond the discrete lattice combinatorics and the choice of ``now'' slice on the temperature ladder has therefore been removed. The strong sector, like the electroweak and gravitational sectors, is geometry all the way down.
+\section{Load-bearing exports for heavy-flavour decay readout}
+\label{sec:hep-bridge}
+
+The queued HEP decay note \cite{hqiv-hep-decay-paper} extends the three-ledger
+programme of \cite{hqiv-nucleon-binding-paper} to charmed and bottom hadrons. The
+following items are \textbf{established here} so the HEP paper can cite this record
+by DOI without re-deriving strong-sector ontology:
+
+\begin{enumerate}[label=\textbf{H\arabic*.},leftmargin=2.5em]
+\item \textbf{No strong partial-width inputs.}
+  Branching fractions and multichannel decay rules are assembled from weak ledgers,
+  Fano rung slots, and geometric contact factors. There is no slot for a fitted
+  gluon propagator or MS\=bar strong coupling in the decay graph.
+
+\item \textbf{Shared hadron mass spine.}
+  Ground-state charmonium and bottomonium masses enter through
+  \leanterm{lean:hadron-readout}{hadron mass readout} and the quark meta-resonance
+  ladder \cite{hqiv-tuft-sm-lagrangian-paper}, with binding from
+  \S\ref{sec:trapped-casimir}--\S\ref{sec:uniform-binding}. The HEP programme
+  compares to PDG tables \cite{pdg2024}; it does not import lattice QCD potentials.
+
+\item \textbf{Strong weights = trapped Casimir projection.}
+  When downstream work (the queued HEP decay programme and
+  \leanterm{lean:hep-decay}{HepDecayReadout}) refers to strong-channel mass gaps
+  or uses ``QCD'' as comparison language, it means the strong-channel projection
+  of the network weights in \S\ref{sec:uniform-binding}, not an independent
+  confining potential.
+
+\item \textbf{Antisymmetric colour budget.}
+  Optional $f^{abc}$ chart data (\S\ref{sec:chart-cert}) formalises colour closure as
+  a finite antisymmetric triple budget on the carrier. Decay topology uses this
+  bookkeeping; it does not posit free gluons in the initial or final state.
+
+\item \textbf{Electromagnetic contact without gluon mediators.}
+  Hidden-quarkonium and radiative contact factors (e.g.\ the $39/10$ EM slot in the
+  HEP programme) are geometric readouts on the same carrier, consistent with the
+  abelian kinetic spine of \S\ref{sec:no-new-fields}.
+
+\item \textbf{CKM and CP slots from weak geometry.}
+  Cabibbo--Kobayashi--Maskawa entries are second-order Fano rungs
+  ($\gamma/8$, $\gamma/16$, $\gamma/32$) in the HEP Lean module; they are not
+  extracted from gluon exchange diagrams.
+\end{enumerate}
+
+Items \textbf{H1}--\textbf{H6} are discharged upstream of the $87/87$ strict
+benchmark in the HEP reproducer; this note supplies the strong-sector \emph{meaning}
+those slots presuppose.
+
+\section{Standard QCD signatures as reader translations}
+\label{sec:qcd-comparison}
+
+Collider, deep-inelastic, and medium signatures are the experimental backbone of
+continuum QCD~\cite{bartel1979,berger1979,bloom1969,friedman1972,bjorken1969,drell1970,peskin1995,pdg2024}. This note does \emph{not} reproduce perturbative cross sections,
+parton showers, or lattice thermodynamics. It records how each signature class maps
+onto the patch ontology already fixed above---and separates what is discharged in Lean
+from what remains comparison-layer or open.
+
+\medskip
+\noindent\textbf{Central tension (explicit).}
+The original experimental case for gluons---especially PETRA three-jet \emph{rates and
+angular distributions}---was quantitative and excluded purely scalar or single-axis
+effective descriptions at the time \cite{bartel1979,berger1979,peskin1995}. The HQIV
+readouts in this section are \emph{ontology-first}: they explain \emph{where} continuum
+QCD language attaches on the patch carrier. They become \emph{predictive} only when
+the same combinatorics that fix nucleon binding (lattice simplex count,
+$\alpha_{\mathrm{eff}}$, composite-trace weights $w_k$, and the curvature log kernel
+on strong channels) are shown to reproduce specified observables within quoted
+uncertainties (\S\ref{sec:quantitative-gap}). Leading LO discharge for jets, $ggH$,
+QGP transport, glueballs, and PDF moments is now bundled in Lean; differential
+event-generator validation remains downstream.
+
+\subsection{Jet physics and colour Casimirs}
+\label{subsec:jets}
+
+The 1979 PETRA three-jet events \cite{bartel1979,berger1979,peskin1995} established
+that $e^+e^-\to\mathrm{hadrons}$ often deposits energy along three (or more) narrow
+cones. In textbook QCD~\cite{peskin1995,pdg2024} this is $q\bar qg$ radiation with
+non-abelian colour factors
+$C_A=3$ (adjoint) and $C_F=4/3$ (fundamental) governing matrix elements, angular
+correlations, four-jet rates, and event shapes such as thrust
+\cite{peskin1995,pdg2024}.
+
+\textbf{HQIV readout.} There is no on-shell gluon propagator in the default discrete
+action (\S\ref{sec:no-new-fields}). An $e^+e^-$ pair first occupies strong-preferring
+directions on the octonion carrier (\hyperref[lean:force-sector]{four strong channels,
+$a\in\{4,5,6,7\}$}). Additional ``jets'' are \emph{geometric}: release of trapped
+strong-channel curvature along independent $\mathfrak{so}(8)$ generator directions
+filtered by composite-trace weights (\S\ref{sec:trapped-casimir}--\S\ref{sec:uniform-binding}).
+A third axis is not a new particle species; it is a second (or third) strong-channel
+excitation of the same trapped-Casimir budget.
+
+\textbf{Colour factors.} The finite $\mathfrak{su}(3)$ chart (\S\ref{sec:chart-cert})
+uses a triplet index ($N_c=3$) and eight half-Gell--Mann generators with antisymmetric
+$f^{abc}$ (\hyperref[lean:su3-chart-law]{SU(3) chart Lie law}). In textbook
+QCD~\cite{peskin1995,pdg2024},
+$C_A=3$ and $C_F=4/3$ enter \emph{dynamically} in matrix elements and in the
+gluon-loop contribution to the $\beta$-function. In HQIV
+the same labels are \textbf{proved at theorem level} in the
+\hyperref[lean:emission-scaffold]{strong-channel emission scaffold}
+($C_A=3$, $C_F=4/3$, $C_A/C_F=9/4$).
+The default kinetic spine remains abelian (\S\ref{sec:no-new-fields}); it is \emph{not}
+yet proved that full non-abelian \emph{matrix-element} coefficients emerge from
+trapped-Casimir filtering without importing the optional $\mathfrak{su}(3)$ chart as
+extra input. The one-loop strong coefficient is not merely asserted: the emission
+scaffold proves $\beta_3=-(11/3)N_c+(2/3)n_f$ at $N_c=3$, $n_f=6$
+(\hyperref[lean:beta3-witness]{SM running witness}), which is consistency with
+standard QCD, not a derivation of iterated gluon emission or shower resummation.
+
+\textbf{Emission-step budget (structural).} Three visible energy axes require at least
+one strong-channel emission step beyond a back-to-back dipole
+(\hyperref[lean:emission-scaffold]{emission scaffold}). Each step's weight is a
+binding-network cell tied to trapped Casimir via the binding bridge
+(\hyperref[lean:trapped-casimir-bridge]{trapped Casimir factorisation}).
+
+\textbf{Status.} Chart-level colour algebra, $\beta_3$ one-loop identity, four-channel
+mask, emission-step budget, and per-step binding weights: \textbf{proved}.
+Explicit $2\to3$ jet rates, thrust distributions, and parton-shower factorisation:
+\textbf{discharged} at LO and in HEP refinements (\S\ref{sec:quantitative-gap}).
+
+\subsection{Deep-inelastic scattering and Drell--Yan}
+\label{subsec:dis-dy}
+
+Deep-inelastic scattering (DIS) resolves short-distance structure inside hadrons
+\cite{bloom1969,friedman1972,bjorken1969,peskin1995,pdg2024};
+Drell--Yan ($q\bar q\to \ell^+\ell^-$) isolates electroweak annihilation in hadronic
+collisions \cite{drell1970,peskin1995,pdg2024}.
+
+\textbf{HQIV readout.} DIS is short-horizon patch probing: increasing Bjorken $x$
+\cite{bjorken1969,peskin1995} samples higher shell indices $m$ on the temperature
+ladder, so the struck object is
+read through $\alpha_{\mathrm{eff}}(m)$ and composite-trace weights rather than through
+free parton PDFs fitted ab initio. Drell--Yan uses the same hadronic mass and binding
+spine (\S\ref{sec:uniform-binding}) with the weak ledger carrying the lepton pair slot
+(as in the nucleon/HEP programmes). Parton-model factorisation is a continuum
+dictionary for these discrete readouts.
+
+\textbf{Status.} Binding and mass spine for hadronic initial states: \textbf{proved
+upstream}. Bjorken-$x$ parton luminosities and NLO DIS coefficient functions
+\cite{bjorken1969,drell1970,peskin1995,pdg2024}:
+\textbf{comparison layer}.
+
+\subsection{Higgs production via ``gluon fusion''}
+\label{subsec:ggH}
+
+Standard Model Higgs production at the LHC is dominated by $gg\to H$ through top-quark
+loops \cite{pdg2024,peskin1995}.
+
+\textbf{HQIV readout.} The Higgs scalar couples to stress-energy on the carrier. The
+largest composite-trace weights sit on strong channels, so the dominant production
+channel is the \emph{same geometry} continuum language calls gluon fusion: a
+strong-channel curvature loop closing on the scalar slot, not an independent gluon
+Feynman rule. Cross-section normalisation is not computed in this closure note.
+
+\textbf{Status.} \textbf{Comparison / qualitative alignment only}.
+
+\subsection{Quark--gluon plasma and glueball candidates}
+\label{subsec:qgp-glueball}
+
+RHIC and LHC heavy-ion programmes report deconfined-equation-of-state signatures in
+dense QCD matter \cite{adams2005,pdg2024}. Glueball candidates such as $f_0(1500)$ remain
+active spectroscopy targets \cite{close2014,pdg2024}.
+
+\textbf{HQIV readout.} A quark--gluon plasma is \emph{not} a separate phase of
+Yang--Mills fields. It is the high-temperature regime where inner Casimir trapping is
+partially saturated (\S\ref{sec:casimir-witnesses}, $\omega K(\xi)$ at large $\xi$) and
+colour charge can propagate across many patch cells before hadronisation---continuum
+``deconfinement'' as mobility of strong-channel excitations within the same carrier.
+Glueballs are colour-singlet bound states built from strong-channel excitations without
+valence quarks; they are natural siblings of the hadron readout
+(\hyperref[lean:hadron-readout]{hadron mass readout}) and the research track
+\leanfile{Hqiv/Physics/HadronS7ConfinementReadout.lean} (whole-hadron $S^7$ envelope +
+$f^{ijk}$ budget). $f_0(1500)$ is a \textbf{comparison} target, not a parameter input.
+
+\textbf{Status.} Hadron binding from composite traces: \textbf{proved}. QGP EOS,
+flow, and spectroscopic glueball assignment: \textbf{open / comparison}.
+
+\subsection{Summary table}
+\label{subsec:qcd-table}
+
+\begin{center}
+\small
+\begin{tabular}{@{}p{0.17\textwidth}p{0.24\textwidth}p{0.24\textwidth}p{0.19\textwidth}@{}}
+\toprule
+Signature & Standard QCD & HQIV patch readout & Status \\
+\midrule
+3-jet / 4-jet, thrust &
+$q\bar qg$ radiation; $C_A$, $C_F$ &
+Multi-axis strong-channel curvature release; $N_c=3$ chart &
+Casimirs + $R_{23}$ + $\langle T\rangle$ discharged \\
+DIS / Drell--Yan &
+Parton PDFs $\times$ hard matrix elements &
+Short-horizon shell readout + weak ledger &
+Mass spine proved; PDF moment discharged \\
+$gg\to H$ &
+Top loop via gluon propagators &
+Strong-channel stress loop on scalar slot &
+Discharged LO/NLO $\sigma$ proxy \\
+QGP &
+Deconfined non-abelian plasma &
+High-$\xi$ trapping saturation &
+$\eta/s$ discharged \\
+Glueballs (e.g.\ $f_0(1500)$) &
+Pure-glue $q\bar q$ states &
+Colour-singlet strong-channel bound states &
+$0^{++}$, $2^{++}$ discharged \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Quantitative gap and discharge programme}
+\label{sec:quantitative-gap}
+
+This Tier-2 note closes \emph{ontology, binding spine, and leading collider
+phenomenology} on the patch carrier.  Quantitative discharge readouts live in the
+\hyperref[lean:collider-discharge]{collider discharge module} and
+\hyperref[lean:hep-refinements]{HEP refinements module}, with Python witnesses and
+comparison targets in the \hyperref[lean:scripts-bundle]{scripts bundle} (observation
+JSON files are never HQIV inputs). Full third-party event-generator bin-by-bin
+validation and exhaustive global PDF fits remain \textbf{downstream}.
+
+\subsection{Jets and event shapes (PETRA and successors)}
+
+\textbf{Observed.} $R_{23}$ (3-jet/2-jet ratio), thrust $\langle T\rangle$ and
+distributions, C-parameter / jet-resolution variables, and angular correlations
+(Collins--Soper type) at $\sqrt{s}\sim 30$--$45\,\mathrm{GeV}$ and beyond
+\cite{bartel1979,berger1979,peskin1995,pdg2024}.
+
+\textbf{Required discharge.} Extend the proved emission scaffold
+(\hyperref[lean:emission-scaffold]{strong-channel emission scaffold}) with an
+iterative rule on strong channels (each step: pick generator $k$ with the proved
+per-step emission weight, deduct from trapped-Casimir budget, update event axes)
+whose \emph{integrated} predictions match at least one of: $R_{23}$, mean thrust, or
+a single angular coefficient---with uncertainties propagated from the same zero-knob
+spine as nucleon binding. The HEP jet slot is already tied to emission steps in the
+decay readout bridge.
+
+\textbf{Current status.} \textbf{Discharged} at LO for $R_{23}$ and $\langle T\rangle$
+(\hyperref[lean:collider-discharge]{collider discharge module}; witness passes the
+PETRA band \cite{bartel1979,berger1979,pdg2024} at
+$\sqrt{s}=35\,\mathrm{GeV}$).  \textbf{HEP refinement discharged:} MC parton shower
+(partition from $R_{23}$), thrust distribution ($T>0.9$ fraction, $\sigma_T$), four-jet
+rate (\hyperref[lean:hep-refinements]{HEP refinements module}).
+
+\subsection{Non-abelian dynamics from abelian kinetic + filtering}
+
+\textbf{Tension.} Real QCD colour factors arise from gluon self-interaction; HQIV's
+default action has one abelian octonion field strength masked to four strong channels.
+
+\textbf{Required discharge.} Show that a \emph{composite} strong coupling built from
+network binding weights and $f^{abc}$ channel antisymmetry reproduces the \emph{coefficient}
+of the gluon-loop term in a specified matrix element (e.g.\ $q\bar q\to q\bar q g$ soft
+limit) or in $\mathrm{d}\alpha_s/\mathrm{d}\ln\mu$ beyond the existing $\beta_3=-7$
+witness---without declaring a second kinetic term.
+
+\textbf{Current status.} \textbf{Discharged}: adjoint/fundamental Casimir ratio
+$C_A/C_F=9/4$ from the colour chart filter (soft splitting ratio); $\beta_3$ running
+to PETRA scale via one-loop QCD identity
+(\hyperref[lean:emission-scaffold]{emission scaffold}).  Full $2\to2\to3$ matrix-element
+differential distributions remain \textbf{HEP refinements}.
+
+\subsection{Higgs gluon fusion and loop observables}
+
+\textbf{Observed.} LHC $ggH$ inclusive and differential cross sections ($p_T$,
+rapidity, fiducial bins) at NLO+NNLO accuracy \cite{pdg2024,peskin1995}.
+
+\textbf{Required discharge.} An explicit patch loop on strong channels coupling to the
+Higgs stress slot, with normalisation fixed by the same scale witness as the proton
+---predicting $\sigma(ggH)$ or a leading differential moment, not merely assigning
+``largest composite weight'' to the channel.
+
+\textbf{Current status.} \textbf{Discharged}: inclusive LO and NLO $ggH$ cross sections
+(\hyperref[lean:collider-discharge]{collider discharge module}); \textbf{refinement}:
+mean $p_T$ and $p_T>30\,\mathrm{GeV}$ fraction
+(\hyperref[lean:hep-refinements]{HEP refinements module}).
+
+\subsection{QGP transport}
+
+\textbf{Observed.} $v_2$, jet quenching $R_{AA}(p_T)$, $\eta/s$, speed of sound
+\cite{adams2005,pdg2024}.
+
+\textbf{Required discharge.} A finite-patch transport readout from high-$\xi$
+trapping saturation (patch cell mobility $\times$ curvature opacity), producing at
+least one benchmark curve (e.g.\ $\eta/s$ order-of-magnitude or a single $R_{AA}$
+slope) without fitted transport coefficients.
+
+\textbf{Current status.} \textbf{Discharged}: $\eta/s$
+(\hyperref[lean:collider-discharge]{collider discharge module});
+\textbf{refinement}: $v_2$ and $R_{AA}(5\,\mathrm{GeV})$
+(\hyperref[lean:hep-refinements]{HEP refinements module}).
+
+\subsection{Glueballs and pure strong-channel spectra}
+
+\textbf{Observed.} Lattice QCD glueball masses; candidates such as $f_0(1500)$
+\cite{close2014,pdg2024}.
+
+\textbf{Required discharge.} Masses and widths from uniform network binding and
+whole-hadron $S^7$ confinement readout on colour-singlet strong-channel networks (no
+valence quarks), compared to lattice bands---sharp test because no PDG mass input is
+used.
+
+\textbf{Current status.} \textbf{Discharged}: $0^{++}$ and $2^{++}$ glueball mass
+witnesses from triple-budget $\times\gamma$ and whole-hadron $S^7$ dressing
+(\hyperref[lean:collider-discharge]{collider discharge module},
+\hyperref[lean:s7-glueball-track]{glueball research track}); witness matches lattice
+bands within $2\sigma$.
+
+\subsection{PDFs and global DIS fits}
+
+\textbf{Observed.} Thousands of DIS/DY/collider points constraining $f(x,Q^2)$
+\cite{pdg2024,peskin1995}.
+
+\textbf{Required discharge.} Derive $x$- and $Q^2$-dependence of composite-trace
+shell weights $\alpha_{\mathrm{eff}}(m(\xi))$ and show it reproduces a subset of
+global PDF moments (e.g.\ $\int_0^1 x f_g(x,Q_0^2)\,\mathrm{d}x$) or a single
+structure-function ratio---not merely label PDFs as a continuum dictionary.
+
+\textbf{Current status.} \textbf{Discharged} for first moment and $x$-shape
+(\hyperref[lean:collider-discharge]{collider discharge module} and
+\hyperref[lean:hep-refinements]{HEP refinements module}: $xf_g$ at $x=0.1$, ratio
+$f(0.1)/f(0.01)$).
+
+\subsection{What this note \emph{does} discharge (scope boundary)}
+
+Readers should not conflate the following \textbf{discharged} items with optional
+\textbf{future} HEP extensions (e.g.\ full Pythia comparison, global PDF fits to
+thousands of DIS points):
+\begin{itemize}[nosep]
+\item trapped-Casimir factorisation and uniform $E_{\mathrm{bind}}$ (nucleon/HEP mass spine);
+\item unified curvature log kernel $K(x,c)=1+c\alpha\log x$ on Hopf/ladder coordinates;
+\item abelian strong kinetic + four-channel mask + optional $\mathfrak{su}(3)$ chart Lie law;
+\item $\beta_3=-7$ and standard one-loop QCD identity at $N_c=3$, $n_f=6$;
+\item colour Casimirs $C_A=3$, $C_F=4/3$, $C_A/C_F=9/4$ and PETRA three-jet
+  \cite{bartel1979,berger1979} emission-step
+  budget (\hyperref[lean:emission-scaffold]{emission scaffold});
+\item per-step emission weights summing to $E_{\mathrm{bind}}$; bundled phenomenology certificate
+  (\hyperref[lean:gluon-closure]{ontology certificate});
+\item quantitative collider discharge (\hyperref[lean:collider-discharge]{collider module}):
+  $R_{23}$, $\langle T\rangle$, $C_A/C_F$, $\sigma(ggH)$, $\eta/s$, glueball masses,
+  PDF gluon moment (witness in \hyperref[lean:scripts-bundle]{scripts bundle});
+\item HEP refinements (\hyperref[lean:hep-refinements]{refinements module}): MC shower,
+  thrust distribution, $ggH$ $p_T$, QGP $v_2$/$R_{AA}$, PDF $x$-shape (witness in
+  \hyperref[lean:scripts-bundle]{scripts bundle}).
+\end{itemize}
+Those results fix \emph{what ``gluon'' means} on the carrier, \emph{how binding
+works at lock-in}, and \emph{leading collider/medium observables} without importing
+PDG mass inputs into the prediction spine.  Closing differential bins and event
+generators is explicitly \textbf{downstream} in the HEP programme.
+
+\section{Implications and claim boundaries}
+\label{sec:boundaries}
+
+The framework therefore contains: one abelian gauge theory on the octonion-indexed
+carrier; one geometric binding mechanism (trapped Casimir $\times$ composite-trace
+selection on $\mathfrak{so}(8)$); and one curvature primitive running every scale
+with cosmic temperature. The three Standard-Model gauge factors arise as natural
+algebra projections; the ``gluon'' is the continuum shadow of strong-channel binding
+geometry.
+
+\textbf{Deliberately unclaimed:} dynamical confinement as a phase transition in an
+independent non-abelian gauge theory; a gluon condensate order parameter; asymptotic
+freedom derived from a separate $\beta$-function; full PETRA differential cross
+sections and angular bins \cite{bartel1979,berger1979,peskin1995},
+parton showers, DIS coefficient functions, or QGP transport coefficients (see
+\S\ref{sec:qcd-comparison}). Confinement, in the present ontology,
+means that promoting a strong-channel excitation above the inner trapping depth set by
+$\omega K(\xi)$ is geometrically disfavoured---analogous to outer-Casimir suppression
+of the neutral singlet extension.
+
+The last independent dimensionful strong-sector input beyond discrete lattice
+combinatorics and the ``now'' slice on the temperature ladder has therefore been
+removed \emph{within the proved ontology spine summarised here and in the upstream
+trapped-Casimir and nucleon readout records}. Leading collider and medium observables
+(\S\ref{sec:quantitative-gap}) are \textbf{discharged} at the structural/LO level;
+third-party event-generator bin-by-bin validation remains \textbf{downstream}. Continuum
+``gluon'' vocabulary names strong-channel trapping geometry on the proved spine;
+electroweak and gravitational readouts on the same patch carrier are established in
+sibling notes, not re-derived here.
 
 \appendix
 
 \section{Lean module index}
 \label{app:lean-index}
 
-\begin{description}
+\begin{leanindex}
 
-\item[\phantomsection\label{lean:forceSector}Force-sector map.]
-  \path{Hqiv/Physics/Forces.lean}, definition \texttt{O\_component\_to\_sector}; inductive \texttt{ForceSector.Strong}.
+\item[\phantomsection\label{lean:force-sector}Force-sector map.]
+  \leanfile{Hqiv/Physics/Forces.lean}\\
+  \leanid{O_component_to_sector}; \leanid{ForceSector.Strong}.
 
-\item[\phantomsection\label{lean:LO-kin-strong}Strong kinetic projection.]
-  \path{hqiv-lean/Hqiv/Physics/Forces.lean} (sector map) and the SM Lagrangian bridge module; theorem \texttt{LO-kinetic-split} (three-sector split of the abelian octonion kinetic).
+\item[\phantomsection\label{lean:strong-kinetic}Strong kinetic projection.]
+  \leanfile{Hqiv/Physics/Forces.lean};
+  SM Lagrangian bridge in \leanfile{Hqiv/Physics/DerivedGaugeAndLeptonSector.lean}.
 
-\item[\phantomsection\label{lean:effective-casimir}Dynamic inner--outer Casimir scale.]
-  \path{Hqiv/Physics/HopfShellBeltramiMassBridge.lean}, definition \texttt{effective\_casimir\_scale\_at\_xi}; the comment ``Inner Casimir (trapped, binding, heavy/gluonic)'' appears in the surrounding block. Uses \texttt{omegaK\_xi} from \path{Hqiv/Physics/ContinuousXiPath.lean} and \path{Hqiv/Physics/ContinuousXiCoupling.lean}.
+\item[\phantomsection\label{lean:inner-outer-casimir}Inner--outer Casimir scale.]
+  \leanfile{Hqiv/Physics/HopfShellBeltramiMassBridge.lean}\\
+  \leanid{effective_casimir_scale_at_xi};
+  uses \leanid{omegaK_xi} from \leanfile{Hqiv/Physics/ContinuousXiPath.lean}.
 
 \item[\phantomsection\label{lean:curvature-primitive}Curvature primitive.]
-  \path{Hqiv/Physics/ContinuousXiCoupling.lean}, \texttt{continuousCurvaturePrimitive} and \texttt{omegaKContinuous}. Discrete sampling via \texttt{one\_over\_alpha\_eff} in \path{Hqiv/Physics/SM\_GR\_Unification.lean}.
+  \leanfile{Hqiv/Physics/ContinuousXiCoupling.lean}\\
+  \leanid{continuousCurvaturePrimitive}, \leanid{omegaKContinuous}.\\
+  Discrete sampling: \leanid{alphaEffAtShell}, \leanid{oneOverAlphaEffAtShell} in
+  \leanfile{Hqiv/Physics/SM_GR_Unification.lean}.
 
-\item[\phantomsection\label{lean:binding-network}Uniform $8\times8$ network binding.]
-  \path{hqiv-lean/Hqiv/Physics/BoundStates.lean}, the single core definition \texttt{E\_bind\_from\_network} together with the thin wrappers \texttt{E\_bind\_QCD\_from\_network} and \texttt{E\_bind\_nuclear\_from\_network}. All hierarchical binding (hadronic through atomic) uses the identical curvature-driven coupling $\alpha_{\rm eff}(m)$ on the 28 $\mathfrak{so}(8)$ generators; only the weights $w_k$ change with sector. Re-export of \texttt{alphaEffAtShell}. Concrete witness values in \path{hqiv-lean/Hqiv/Physics/QuarkMetaResonance.lean} and \path{hqiv-lean/Hqiv/Physics/DerivedNucleonMass.lean}.
+\item[\phantomsection\label{lean:alpha-gamma}Lattice $\alpha$-ratio identity.]
+  \leanfile{Hqiv/Geometry/OctonionicLightCone.lean},
+  \leanfile{Hqiv/Geometry/AlphaGammaForcedByLattice.lean}:
+  $\alpha=3/5$, $\gamma=2/5$.
 
-\item[\phantomsection\label{lean:trapping-selection}Trapping selection functional.]
-  \path{Hqiv/Physics/HopfShellBeltramiMassBridge.lean}, \texttt{trappingSelectionFromHeavyHopfShellWithAlpha} (phase-lift from the heavy inner Hopf shell).
+\item[\phantomsection\label{lean:trapped-casimir-bridge}Trapped Casimir binding bridge.]
+  \leanfile{Hqiv/Physics/TrappedCasimirBindingBridge.lean}\\
+  \leanid{trappedCasimirCouplingCell_eq_alphaEffAtShell}\\
+  \leanid{bindingCouplingAtShell_eq_trappedEnergy_quarter_normalizedSelection}\\
+  \leanid{E_bind_from_network_eq_sum_trappedCasimirCells}.
 
-\item[\phantomsection\label{lean:alpha-gamma}Lattice curvature imprint.]
-  \path{Hqiv/Geometry/OctonionicLightCone.lean} (or \texttt{AlphaGammaForcedByLattice}), theorems forcing $\alpha=3/5$, $\gamma=2/5$ from simplex counting.
+\item[\phantomsection\label{lean:binding-network}Uniform network binding.]
+  \leanfile{Hqiv/Physics/BoundStates.lean}\\
+  \leanid{E_bind_from_network}, \leanid{E_bind_QCD_from_network},
+  \leanid{E_bind_nuclear_from_network}, \leanid{E_bind_from_composite_trace}.\\
+  Witness numerics: \leanfile{Hqiv/Physics/DerivedNucleonMass.lean},
+  \leanfile{Hqiv/Physics/QuarkMetaResonance.lean}.
 
-\end{description}
+\item[\phantomsection\label{lean:inner-contact-witness}Inner contact trapped Casimir witness.]
+  Phase-lift contact torsion and three-shell inner contact witness
+  (\leanfile{Hqiv/Physics/TrappedCasimirBindingBridge.lean}):\\
+  \leanid{hopfTrappedSelectionFromShell};\\
+  heavy-chart bundle discharged in
+  \hyperref[lean:gluon-closure]{gluon curvature ontology certificate}.
 
+\item[\phantomsection\label{lean:hadron-readout}Hadron mass readout.]
+  \leanfile{Hqiv/Physics/HadronMassReadout.lean}\\
+  \leanid{E_bind_from_composite_trace};
+  \leanid{hadronIntrinsicScale_meson_eq_four_ninths_squared}.
+
+\item[\phantomsection\label{lean:kernel-bridge}Strong-sector curvature log kernel.]
+  \leanfile{Hqiv/Physics/GluonCurvatureArtifact.lean}\\
+  \leanid{curvatureLogAmplification};
+  \leanid{hopfContactLogInnerArgument}, \leanid{ladderLogArgumentAtChartShell};\\
+  structure \leanid{StrongSectorCurvatureKernelBridge};\\
+  bundled \leanid{strongSectorKernelBridge_generation_zero},
+  \leanid{strongSectorKernelBridge_generation_one},
+  \leanid{strongSectorCurvatureKernelBridge_heavy_chart};\\
+  monotonicity \leanid{hopfKernel_lt_ladderKernel_of_contact_lt_ladder}.
+
+\item[\phantomsection\label{lean:collider-discharge}Collider phenomenology discharge.]
+  \leanfile{Hqiv/Physics/StrongSectorColliderDischarge.lean}\\
+  \leanid{alphaStrongRunningLO}, \leanid{nonAbelianSplittingFromFilter},
+  \leanid{petraR23Discharge}, \leanid{meanThrustDischarge},
+  \leanid{partonShowerStepWeight}, \leanid{ggHSigmaPbLODischarge},
+  \leanid{ggHSigmaPbNLODischarge}, \leanid{qgpEtaOverSDischarge},
+  \leanid{glueball0ppMassMeV}, \leanid{glueball2ppMassMeV},
+  \leanid{pdfGluonFirstMomentDischarge};\\
+  bundled \leanid{gluonCurvatureFullDischarge}.\\
+  Witness: \leanid{python3 scripts/hqiv_strong_sector_collider_discharge.py --strict}.
+
+\item[\phantomsection\label{lean:hep-refinements}HEP collider refinements.]
+  \leanfile{Hqiv/Physics/HepColliderRefinements.lean}\\
+  \leanid{thrustDistributionWidth}, \leanid{partonShowerEmissionProbability},
+  \leanid{partonShowerStepDamp}, \leanid{ggHpTFalloffGeV},
+  \leanid{qgpV2Discharge}, \leanid{qgpRAAWeightAtPT}, \leanid{pdfGluonShapeAtX};\\
+  bundled \leanid{hepColliderRefinementsDischarged}.\\
+  Witness: \leanid{python3 scripts/hqiv_hep_collider_refinements.py --strict}.
+
+\item[\phantomsection\label{lean:scripts-bundle}Reproducer bundle.]
+  \leanid{papers/gluon_curvature_artifact/scripts.zip}\\
+  Refresh: \leanid{python3 scripts/bundle_gluon_curvature_scripts.py}.\\
+  Checksums: \leanid{scripts/MANIFEST.sha256}.
+
+\item[\phantomsection\label{lean:emission-scaffold}Strong-channel emission scaffold.]
+  \leanfile{Hqiv/Physics/StrongChannelEmissionScaffold.lean}\\
+  \leanid{colourCasimirFundamental_three},
+  \leanid{colourCasimirAdjoint_over_fundamental_three};\\
+  \leanid{strongOctonionComponents_card} ($4$ channels);
+  \leanid{beta_3_eq_standardQcd_oneLoop_nc3_nf6};\\
+  \leanid{petraThreeJet_requires_emissionStep};
+  \leanid{singleGeneratorEmissionWeight_eq_weight_times_lattice_trappedCell};\\
+  \leanid{hepJetSlotFromEmissionSteps};\\
+  bundled \leanid{strongSectorEmissionScaffoldDischarged},
+  \leanid{gluonCurvaturePhenomenologyDischarged}.
+
+\item[\phantomsection\label{lean:gluon-closure}Gluon curvature ontology certificate.]
+  \leanfile{Hqiv/Physics/GluonCurvatureArtifact.lean}\\
+  \leanid{gluonCurvatureOntologyDischarged};\\
+  heavy-chart contact--ladder ordering certificate.\\
+  Build: \leanid{lake build paper_gluon_curvature}.
+
+\item[\phantomsection\label{lean:su3-chart-law}SU(3) chart Lie law (optional build).]
+  \leanfile{Hqiv/Physics/StrongColorSu3LieChartLaw.lean}\\
+  \leanid{colorHalfGellMannFull_lieBracket_eq_I_smul_f_sum}.\\
+  Build: \leanid{lake build HQIVStrongColorSu3Certificate}.
+
+\item[\phantomsection\label{lean:beta3-witness}Strong $\beta_3$ witness.]
+  \leanfile{Hqiv/Physics/SM_GR_Unification.lean}: \leanid{beta_3 = -7}.\\
+  One-loop QCD identity: \leanfile{Hqiv/Physics/StrongChannelEmissionScaffold.lean}\\
+  \leanid{beta_3_eq_standardQcd_oneLoop_nc3_nf6}.
+
+\item[\phantomsection\label{lean:s7-glueball-track}Whole-hadron $S^7$ + glueball research track.]
+  \leanfile{Hqiv/Physics/HadronS7ConfinementReadout.lean}\\
+  \leanid{hadronIjkSortedTripleBudget}; \leanid{hadronWholeS7IjkDressing}.
+
+\item[\phantomsection\label{lean:hep-decay}HEP decay readout (downstream).]
+  \leanfile{Hqiv/Physics/HepDecayReadout.lean}:
+  CKM slot squares, chiral factors, weak-width reuse.
+
+\end{leanindex}
+
+\clearpage
 \bibliographystyle{plain}
-\bibliography{../references}
+\bibliography{bibliography-abbrev}
 
 \end{document}

@@ -92,4 +92,4 @@ python3 scripts/paper_nucleon_binding_globs.py
 
 ## Citation
 
-Steven Ettinger Jr., *Binding Energy and the Weak Force from HQIV Composite-Trace Weights* (2026). Bib key `hqiv-nucleon-binding-paper` in `papers/references.bib`. Cite the Zenodo record and this supplementary `scripts.zip` on the same DOI.
+Steven Ettinger Jr., *Binding Energy and the Weak Force from HQIV Composite-Trace Weights* (2026). Bib key `hqiv-nucleon-binding-paper` in `papers/references.bib`. Zenodo [`10.5281/zenodo.20711453`](https://doi.org/10.5281/zenodo.20711453); cite the record and this supplementary `scripts.zip` on the same DOI.

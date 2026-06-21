@@ -1,0 +1,129 @@
+\documentclass[11pt]{amsart}
+\usepackage{amsmath,amssymb}
+\usepackage{hyperref}
+\input{../include/patch_theory_messaging.tex}
+\input{../include/referenceM_programme_pin.tex}
+
+\title{The HQIV Proof Spine: Machine-Checked Synthesis of Flavor, Electroweak, Strong-Sector, and Cosmological Readouts from the Discrete Octonion Carrier}
+
+\author{Steven Ettinger Jr}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We present a programme-level synthesis of the HQIV physics stack: a self-reinforcing,
+machine-checked proof ladder anchored on the discrete null lattice and octonionic carrier
+at \texttt{referenceM=4}, with horizon coefficient $\gamma=2/5$ and curvature imprint
+$\alpha=3/5$.
+The capstone certificate \texttt{proofSpineInventory\_holds}
+(\texttt{Hqiv.Physics.ProofSpineInventory}) bundles seven phases---Fano holonomy overlap,
+CKM holonomy, PMNS holonomy, rare-decay and differential observables, electroweak precision
+and discrete SMEFT export, collider PDF/unitarity witnesses, and cosmological perturbation
+records---plus a Sievers glueball bridge on the strong sector.
+This document positions the targeted Tier papers (flavor, HEP decay, TUFT+SM, glueball
+curvature, baryogenesis) relative to the verified spine, highlights concrete phenomenology
+(Jarlskog correction ratio, longitudinal shifts on $P_5'$ and $A_{\rm FB}$), and lists
+honest open items (PMNS closure, form-factor-level longitudinal insertion, formal QFT gaps).
+Comparison PDG and facility numerals remain outside Lean proof hypotheses throughout.
+\end{abstract}
+
+\section{Introduction: two axioms, one carrier}
+HQIV organizes physics around (i) a discrete light-cone information budget and
+(ii) informational monogamy on the octonion carrier.
+Masses, mixings, and decay readouts are \emph{discharges} of holonomy and Casimir structure
+on Hopf shells---not fitted post-hoc parameters.
+The proof spine map (\texttt{docs/PROOF\_SPINE\_MAP.md}) records module status
+(\emph{proved}, \emph{witness}, \emph{scaffold}); this paper is the narrative layer for
+a wider audience.
+
+\section{Architecture of the proof ladder}
+\begin{center}
+\fbox{\parbox{0.92\linewidth}{\small
+\textbf{Layer 0:} OctonionicLightCone, HQVMetric \\
+\textbf{Layer 1:} FanoHolonomyOverlap, FanoMixingMatrix, ReadoutGaugeSeed \\
+\textbf{Layer 2:} CkmHolonomyReadout, PMNSHolonomyReadout, RareDecayReadout, FlavorCPObservable \\
+\textbf{Layer 3:} HiggsSelfCouplingReadout, SMEFTDiscreteExporter \\
+\textbf{Layer 4:} PartonCarrierEvolution, PatchScatteringUnitarity \\
+\textbf{Layer 5:} CosmologicalPerturbationReadout (+ QFT scaffold) \\
+\textbf{Capstone:} \texttt{proofSpineInventory\_holds}
+}}
+\end{center}
+Build the flavor closure with \texttt{lake build paper\_flavor\_mixing} (3383 jobs at time of writing).
+
+\section{Targeted papers and their spine hooks}
+Table~\ref{tab:paper-map} maps domain-specific manuscripts to Lean modules.
+The flavour Tier-3 paper is now sufficiently concrete to cite as the CP/mixing anchor;
+this synthesis does not duplicate its proofs.
+\input{generated/paper_map.tex}
+
+\subsection{Flavor Tier-3 (machine-checked highlights)}
+The flavour readout paper proves:
+\begin{itemize}
+\item CKM magnitude ledger with row/column unitarity and $\delta_{\rm CP}=3\pi/32$;
+\item ledger Jarlskog $J_{\rm ledger}=3/80$ from CP-odd holonomy skew;
+\item PDG Jarlskog factorization \texttt{ckmJarlskogFromAngles\_eq\_sin\_delta\_sin\_cos\_envelope}
+  with proved positive correction ratio;
+\item differential skeleton: $P_5'=11/400$, $A_{\rm FB}(B\to K^*\mu\mu)=8800/160121$;
+\item longitudinal amplitude bridge: multiplicative $1+\gamma|\Delta\phi_{\rm imprint}|$ correction;
+\item Sievers bridge: $\kappa_7/\kappa_1=|V_{cb}|^2/|V_{us}|^2=1/4$.
+\end{itemize}
+
+\section{Phenomenology at the remaining edges}
+Several quantities are proved as structural identities; their \emph{magnitudes} carry
+phenomenological content when compared to experiment (outside proof hypotheses).
+Table~\ref{tab:phenomenology-edges} summarizes the current illustrative numerics.
+\input{generated/phenomenology_edges.tex}
+
+\paragraph{Jarlskog correction ratio.}
+The ledger invariant $J_{\rm ledger}=3/80$ is the canonical HQIV CP-odd holonomy slot.
+The standard parameterization product $J_{\rm param}$ evaluates to $\sim 2\%$ of the ledger
+value at lock-in---they are \emph{not} interchangeable.
+The proved correction ratio $J_{\rm param}/J_{\rm ledger}\approx 0.021$ is therefore a
+sharp prediction: either experimental comparison must use the ledger skew as the primary
+HQIV object, or the sin/cos envelope must be promoted to a measured multiplicative factor
+in facility-facing pipelines.
+
+\paragraph{Longitudinal shift on angular observables.}
+At $m=\texttt{referenceM}=4$, the imprint increment
+$\Delta\phi=\alpha\log(\phi+1)\,(\Omega_{m+1}-\Omega_m)\approx 0.21$ yields a longitudinal
+correction $1+\gamma|\Delta\phi|\approx 1.08$.
+Applied to the proved angular skeleton, this moves $P_5'$ and $A_{\rm FB}$ by $\sim 8\times 10^4$ ppm
+($\sim 8\%$)---large enough to matter at LHCb precision if the phase-gradient coupling
+enters the form-factor layer (currently open).
+
+\paragraph{PMNS sector (honest status).}
+PMNS angles and $\delta_{\rm CP}^{\rm PMNS}=\pi/5$ are discharged via the T10 overlap wrapper
+with proved normal ordering; full PMNS Jarlskog closure and sub-percent angle comparison
+are \emph{lighter} than the CKM side and flagged for the next spine increment.
+
+\section{Strong sector convergence}
+Sievers' octonionic Hopf glueball picture~\cite{Sievers2026Glueball} and HQIV's
+\texttt{GluonSieversHopfBridge} share the two-channel drag/stiffness narrative without
+identifying lattice glueball masses as proof inputs.
+The consolidation programme treats this as convergent geometric support, not a merged model.
+
+\section{Open spine items (roadmap)}
+\begin{enumerate}
+\item Promote PMNS from T10 wrapper to full mixing-matrix certificates matching CKM depth.
+\item Insert longitudinal O-Maxwell coupling into rare-decay form factors (beyond multiplicative scaffold).
+\item Resolve ledger vs parameterization Jarlskog normalization for facility pipelines.
+\item Close \texttt{ContinuumManyBodyQFTScaffold} renormalization/microcausality gaps.
+\item Differential distributions beyond angular skeleton ($q^2$ dependence, $B_s\to\mu\mu$ moments).
+\end{enumerate}
+
+\section{Reproducibility}
+\textbf{Capstone:} \texttt{lake build paper\_flavor\_mixing}. \\
+\textbf{Synthesis witness:} \texttt{python3 scripts/hqiv\_proof\_spine\_synthesis\_export.py}. \\
+\textbf{Attachments:} \texttt{data/proof\_spine\_synthesis\_witness.json},
+\texttt{papers/proof\_spine\_synthesis/scripts.zip},
+\texttt{docs/PROOF\_SPINE\_MAP.md}.
+
+\section*{Scope}
+This synthesis cites proved certificates; it does not claim PDG equality for every slot,
+complete SMEFT phenomenology, or closed formal QFT where the spine map marks \emph{scaffold}.
+
+\bibliographystyle{amsplain}
+\bibliography{../references}
+
+\end{document}
